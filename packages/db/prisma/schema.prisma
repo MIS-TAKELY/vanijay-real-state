@@ -1,0 +1,670 @@
+// Lekhaprati Real Estate Archive (Nepal) — Prisma Schema
+// Revised to add: saved searches/alerts, notifications, sold-price records,
+// a reusable document vault, centralized government valuation rates,
+// agency accounts, officer appointment scheduling, and community Q&A.
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+}
+
+// ==========================================
+// ENUMS
+// ==========================================
+
+enum UserRole {
+    BUYER
+    SELLER
+    AGENCY_AGENT
+    AGENCY_ADMIN
+    SURVEYOR_AGENT
+    ADMIN
+}
+
+enum VerificationStatus {
+    UNVERIFIED
+    LEVEL_1_BASIC
+    LEVEL_2_DOC_VERIFIED
+    LEVEL_3_FIELD_VERIFIED
+    REJECTED
+}
+
+enum PropertyStatus {
+    DRAFT
+    UNDER_VERIFICATION
+    LIVE
+    SOLD
+    ARCHIVED
+    REJECTED
+}
+
+enum PropertyType {
+    RESIDENTIAL_LAND
+    COMMERCIAL_LAND
+    AGRICULTURAL_LAND
+    COMMERCIAL_SPACE
+    HERITAGE_HOME
+    RESIDENTIAL_HOUSE
+}
+
+enum FacingDirection {
+    NORTH
+    SOUTH
+    EAST
+    WEST
+    NORTH_EAST
+    NORTH_WEST
+    SOUTH_EAST
+    SOUTH_WEST
+}
+
+enum RoadType {
+    PITCHED
+    GRAVEL
+    SOIL
+    BLOCK_PAVED
+    FOOTPATH
+}
+
+enum DocumentType {
+    LALPURJA // Land Ownership Certificate
+    CITIZENSHIP_FRONT // Identity Verification
+    CITIZENSHIP_BACK
+    TAX_CLEARANCE // Current Fiscal Year Tax Proof
+    SURVEY_NAKSA_MAP // Cadastral Survey Map
+    PAN_CARD
+    OTHER
+}
+
+enum DocumentStatus {
+    PENDING
+    VERIFIED
+    REJECTED
+    EXPIRED
+}
+
+enum MediaType {
+    IMAGE
+    VIDEO_WALKTHROUGH
+    CADASTRAL_MAP
+}
+
+enum InquiryType {
+    WHATSAPP_CHAT
+    VIDEO_WALKTHROUGH_REQUEST
+    GENERAL_INQUIRY
+    EMI_CALCULATION
+}
+
+enum InquiryStatus {
+    OPEN
+    IN_NEGOTIATION
+    CLOSED
+}
+
+enum AlertFrequency {
+    INSTANT
+    DAILY_DIGEST
+    OFF
+}
+
+enum NotificationType {
+    PRICE_DROP
+    NEW_LISTING_MATCH
+    DOCUMENT_EXPIRING
+    DOCUMENT_VERIFIED
+    VERIFICATION_STAMP_ISSUED
+    OFFICER_APPOINTMENT
+    NEW_MESSAGE
+    NEW_INQUIRY
+    WEEKLY_DIGEST
+    SYSTEM
+}
+
+enum AppointmentStatus {
+    REQUESTED
+    SCHEDULED
+    COMPLETED
+    CANCELLED
+    RESCHEDULE_NEEDED
+}
+
+enum QuestionCategory {
+    LEGAL
+    FINANCING
+    NRN
+    AREA_SPECIFIC
+    GENERAL
+}
+
+// ==========================================
+// USER & AUTH SYSTEM
+// ==========================================
+
+// Single merged user table — Better Auth fields + domain business fields.
+// Better Auth owns auth concerns (sessions, OAuth, email verification);
+// domain fields (role, phone, etc.) live here instead of a separate User table.
+
+model User {
+  id            String   @id
+  name          String
+  email         String   @unique
+  emailVerified Boolean
+  image         String?
+  createdAt     DateTime
+  updatedAt     DateTime
+
+  // Domain business fields
+  phoneNumber   String?  @unique // e.g. "+97798XXXXXXXX"
+  role          UserRole @default(BUYER)
+  isVerified    Boolean  @default(false)
+  agreedToTerms Boolean  @default(false)
+  agencyId      String?
+  agency        Agency?  @relation(fields: [agencyId], references: [id])
+
+  sessions Session[]
+  accounts Account[]
+  profile  UserProfile?
+
+  properties          Property[]             @relation("OwnerProperties")
+  assignedAgentFor    Property[]             @relation("AgentProperties")
+  inquiries           Inquiry[]
+  auditLogs           VerificationAuditLog[] @relation("VerifierAudits")
+  documents           UserDocument[]
+  savedSearches       SavedSearch[]
+  favorites           Favorite[]
+  notifications       Notification[]
+  questions           Question[]             @relation("QuestionAuthor")
+  answers             Answer[]               @relation("AnswerAuthor")
+  officerAppointments OfficerAppointment[]   @relation("RequestingUser")
+
+  @@index([phoneNumber])
+  @@index([role])
+  @@index([agencyId])
+  @@map("users")
+}
+
+model Session {
+  id        String   @id
+  userId    String
+  token     String   @unique
+  expiresAt DateTime
+  ipAddress String?
+  userAgent String?
+  createdAt DateTime
+  updatedAt DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("sessions")
+}
+
+model Account {
+  id                    String    @id
+  userId                String
+  accountId             String
+  providerId            String
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime
+  updatedAt             DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("accounts")
+}
+
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime?
+  updatedAt  DateTime?
+
+  @@map("verifications")
+}
+
+model UserProfile {
+    id     String @id @default(cuid())
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    licenseNumber String? // Surveyor / Agency registration number
+    avatarUrl     String?
+    bio           String?
+
+    // Sensitive — must be encrypted at the application layer before persisting,
+    // and access restricted to roles that legitimately need plaintext (admin
+    // verification team only). Never return in a general profile API response.
+    citizenshipNo        String?
+    citizenshipIssueDate DateTime?
+
+    permanentDistrict      String?
+    permanentAddress       String?
+    preferredLanguage      String  @default("en") // "en" | "ne"
+    preferredContactMethod String? // "PHONE" | "WHATSAPP" | "VIBER"
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// Agency accounts (multi-seat) — referenced by User.agencyId above
+model Agency {
+    id             String  @id @default(cuid())
+    name           String
+    panVatNumber   String?
+    seatsAllowed   Int     @default(1)
+    sharedDataPool Boolean @default(false)
+
+    members User[]
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// model Subscription {
+//   id              String    @id @default(cuid())
+//   userId          String?   @unique
+//   agencyId        String?   @unique
+//   agency          Agency?   @relation(fields: [agencyId], references: [id])
+
+//   planTier        String    // "FREE" | "PRO" | "AGENCY"
+//   status          String    // "ACTIVE" | "PAST_DUE" | "CANCELLED"
+//   paymentProvider String?   // "ESEWA" | "KHALTI"
+//   currentPeriodEnd DateTime?
+
+//   createdAt       DateTime  @default(now())
+//   updatedAt       DateTime  @updatedAt
+// }
+
+// ==========================================
+// REUSABLE DOCUMENT VAULT (user-level, not tied to one listing)
+// ==========================================
+
+model UserDocument {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    type       DocumentType
+    fileUrl    String
+    fileName   String
+    fileSizeMb Float
+    status     DocumentStatus @default(PENDING)
+    expiryDate DateTime? // e.g. Tax Clearance Certificates expire annually
+
+    // Optional link if this vault doc was used to verify a specific listing
+    attachedToPropertyIds String[] @default([])
+
+    uploadedAt DateTime @default(now())
+    updatedAt  DateTime @updatedAt
+
+    @@index([userId, type])
+    @@index([expiryDate])
+}
+
+// ==========================================
+// PROPERTY LISTINGS & LAND ARCHIVE
+// ==========================================
+
+model Property {
+    id                String             @id @default(cuid())
+    listingCode       String             @unique // e.g., "LOT-442-BHA"
+    slug              String             @unique // e.g., "bagmate-oo1"
+    title             String
+    description       String?            @db.Text
+    propertyType      PropertyType
+    status            PropertyStatus     @default(DRAFT)
+    verificationLevel VerificationStatus @default(UNVERIFIED)
+
+    // Financial Details (current listing)
+    askingPrice         Decimal  @db.Decimal(14, 2) // NPR Total Asking Price
+    pricePerAana        Decimal? @db.Decimal(14, 2)
+    originalAskingPrice Decimal? @db.Decimal(14, 2) // set on first publish, used to detect/announce price drops
+
+    // Physical & Topographic Specs
+    roadAccessWidthFt Float?
+    roadType          RoadType?
+    facing            FacingDirection?
+    isCornerPlot      Boolean          @default(false)
+
+    // Ownership & Agency Relationships
+    ownerId String
+    owner   User    @relation("OwnerProperties", fields: [ownerId], references: [id])
+    agentId String?
+    agent   User?   @relation("AgentProperties", fields: [agentId], references: [id])
+
+    // Nested Structures & Relations
+    location            PropertyLocation?
+    landArea            LandAreaDetails?
+    cadastralRecord     CadastralRecord?
+    documents           PropertyDocument[]
+    media               PropertyMedia[]
+    inquiries           Inquiry[]
+    views               PropertyViewLog[]
+    auditLogs           VerificationAuditLog[]
+    saleRecord          PropertySaleRecord?
+    officerAppointments OfficerAppointment[]
+    questions           Question[]             @relation("PropertyQuestions")
+
+    createdAt   DateTime  @default(now())
+    updatedAt   DateTime  @updatedAt
+    publishedAt DateTime?
+
+    @@index([status, verificationLevel])
+    @@index([propertyType])
+    @@index([askingPrice])
+    @@index([ownerId])
+    @@index([agentId])
+}
+
+// Closed-deal record — distinct from asking price, this is what powers
+// comps, price trends, and the Area Guide / value-estimator tools.
+model PropertySaleRecord {
+    id         String   @id @default(cuid())
+    propertyId String   @unique
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    soldPrice        Decimal  @db.Decimal(14, 2)
+    soldPricePerAana Decimal? @db.Decimal(14, 2)
+    soldDate         DateTime
+
+    verificationLevel VerificationStatus @default(UNVERIFIED) // government-verified / agent-submitted / estimated
+    submittedById     String?
+    daysOnMarket      Int?
+
+    createdAt DateTime @default(now())
+
+    @@index([soldDate])
+    @@index([soldPricePerAana])
+}
+
+// Nepalese Land Measurement Units (Ropani-Aana-Paisa-Daam / Bigha-Katha-Dhur)
+model LandAreaDetails {
+    id         String   @id @default(cuid())
+    propertyId String   @unique
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    // Ropani System (Hilly / Kathmandu Valley)
+    ropani Int   @default(0)
+    aana   Int   @default(0)
+    paisa  Float @default(0)
+    daam   Float @default(0)
+
+    // Terai System (Bigha-Katha-Dhur)
+    bigha Int?   @default(0)
+    katha Int?   @default(0)
+    dhur  Float? @default(0)
+
+    // Normalized Metric Area for fast search indexing
+    totalSqFt     Float
+    totalSqMeters Float
+
+    @@index([totalSqFt])
+}
+
+// Location Details
+model PropertyLocation {
+    id         String   @id @default(cuid())
+    propertyId String   @unique
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    province     String
+    district     String
+    municipality String
+    wardNumber   Int
+    areaName     String
+    addressText  String?
+
+    latitude  Float?
+    longitude Float?
+
+    @@index([district, municipality, wardNumber])
+    @@index([district, municipality, wardNumber, areaName])
+}
+
+// Official / Government Cadastral Records
+model CadastralRecord {
+    id         String   @id @default(cuid())
+    propertyId String   @unique
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    kittaNumbers    String
+    sheetNumber     String?
+    parcelBoundary  String? @db.Text // WKT or GeoJSON string for plot boundaries
+    cadastralMapUrl String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+// Centralized government minimum valuation rates, set per area + road type —
+// NOT entered per-listing, to avoid duplicate/conflicting manual entry.
+// Property detail pages look this up by location + roadType instead of
+// storing their own copy.
+model GovValuationRate {
+    id            String    @id @default(cuid())
+    district      String
+    municipality  String
+    wardNumber    Int
+    roadType      RoadType?
+    ratePerAana   Decimal   @db.Decimal(14, 2)
+    effectiveDate DateTime
+    source        String? // e.g. "Land Revenue Office, Lalitpur"
+
+    createdAt DateTime @default(now())
+
+    @@unique([district, municipality, wardNumber, roadType, effectiveDate])
+    @@index([district, municipality, wardNumber, roadType])
+}
+
+// ==========================================
+// DOCUMENTS & MEDIA (per-listing)
+// ==========================================
+
+model PropertyDocument {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    type       DocumentType
+    fileUrl    String
+    fileName   String
+    fileSizeMb Float
+    status     DocumentStatus @default(PENDING)
+    isPrivate  Boolean        @default(true) // Visible only to verification team
+    expiryDate DateTime?
+
+    uploadedAt DateTime @default(now())
+
+    @@index([propertyId, type])
+    @@index([expiryDate])
+}
+
+model PropertyMedia {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    type      MediaType @default(IMAGE)
+    url       String
+    altText   String?   @db.Text
+    sortOrder Int       @default(0)
+    isCover   Boolean   @default(false)
+
+    createdAt DateTime @default(now())
+
+    @@index([propertyId, sortOrder])
+}
+
+// ==========================================
+// ENGAGEMENT: SAVED SEARCHES, FAVORITES, NOTIFICATIONS
+// ==========================================
+
+model SavedSearch {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    label          String // human-readable summary, e.g. "Land under 5 Aana, Ward 6, Pokhara"
+    filters        Json // serialized filter state (location, price range, size range, type, etc.)
+    alertFrequency AlertFrequency @default(INSTANT)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([userId])
+}
+
+model Favorite {
+    id         String @id @default(cuid())
+    userId     String
+    user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    propertyId String
+
+    notifyOnPriceChange Boolean  @default(true)
+    createdAt           DateTime @default(now())
+
+    @@unique([userId, propertyId])
+    @@index([propertyId])
+}
+
+model Notification {
+    id     String @id @default(cuid())
+    userId String
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    type    NotificationType
+    title   String
+    body    String           @db.Text
+    linkUrl String?
+    isRead  Boolean          @default(false)
+
+    createdAt DateTime @default(now())
+
+    @@index([userId, isRead])
+    @@index([userId, createdAt])
+}
+
+// ==========================================
+// INQUIRIES & ANALYTICS
+// ==========================================
+
+model Inquiry {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    userId String?
+    user   User?   @relation(fields: [userId], references: [id])
+
+    type           InquiryType   @default(GENERAL_INQUIRY)
+    status         InquiryStatus @default(OPEN)
+    inquirerName   String?
+    inquirerPhone  String?
+    isVerifiedLead Boolean       @default(false) // inquirer has verified phone / prior saved-search history
+    message        String?       @db.Text
+    metadata       Json? // EMI params, video request details, etc.
+
+    createdAt DateTime @default(now())
+
+    @@index([propertyId])
+    @@index([userId])
+    @@index([status])
+}
+
+model PropertyViewLog {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+    ipHash     String?
+    userAgent  String?
+    viewedAt   DateTime @default(now())
+
+    @@index([propertyId, viewedAt])
+}
+
+model VerificationAuditLog {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    verifierId String
+    verifier   User   @relation("VerifierAudits", fields: [verifierId], references: [id])
+
+    previousLevel VerificationStatus
+    newLevel      VerificationStatus
+    remarks       String?            @db.Text
+    createdAt     DateTime           @default(now())
+
+    @@index([propertyId])
+}
+
+// Scheduled physical verification visits ("Registry Officer" appointments)
+model OfficerAppointment {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    requestedById String
+    requestedBy   User   @relation("RequestingUser", fields: [requestedById], references: [id])
+
+    status       AppointmentStatus @default(REQUESTED)
+    scheduledFor DateTime?
+    officerName  String?
+    outcomeNotes String?           @db.Text
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([propertyId])
+    @@index([status, scheduledFor])
+}
+
+// ==========================================
+// COMMUNITY: "ASK THE BROKER" Q&A
+// ==========================================
+
+model Question {
+    id       String @id @default(cuid())
+    authorId String
+    author   User   @relation("QuestionAuthor", fields: [authorId], references: [id])
+
+    propertyId String?
+    property   Property? @relation("PropertyQuestions", fields: [propertyId], references: [id])
+
+    category QuestionCategory @default(GENERAL)
+    areaTag  String? // free-text area label, e.g. "Baluwatar"
+    body     String           @db.Text
+
+    answers Answer[]
+
+    createdAt DateTime @default(now())
+
+    @@index([category])
+    @@index([propertyId])
+}
+
+model Answer {
+    id         String   @id @default(cuid())
+    questionId String
+    question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+    authorId String
+    author   User   @relation("AnswerAuthor", fields: [authorId], references: [id])
+
+    body String @db.Text
+
+    createdAt DateTime @default(now())
+
+    @@index([questionId])
+}
