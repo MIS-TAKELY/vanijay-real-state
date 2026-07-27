@@ -7,6 +7,10 @@
     ".": {
       "types": "./dist/index.d.ts",
       "default": "./dist/index.js"
+    },
+    "./client": {
+      "types": "./dist/client.d.ts",
+      "default": "./dist/client.js"
     }
   },
   "scripts": {
@@ -26,6 +30,9 @@
   },
   "dependencies": {
     "@repo/db": "workspace:*",
-    "better-auth": "^1.6.25"
+    "@types/nodemailer": "^8.0.1",
+    "better-auth": "^1.6.25",
+    "nodemailer": "^9.0.3",
+    "zod": "^4.4.3"
   }
 }

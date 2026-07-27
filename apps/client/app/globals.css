@@ -1,50 +1,165 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
+@import "tailwindcss";
+@source "../../../packages/ui";
+
+@theme inline {
+  --color-surface-container-high: #eae8e3;
+  --color-error-container: #ffdad6;
+  --color-secondary: #54615a;
+  --color-on-secondary-fixed: #121e18;
+  --color-on-primary-fixed-variant: #2c4e38;
+  --color-on-tertiary: #ffffff;
+  --color-on-surface-variant: #424842;
+  --color-surface: #fbf9f4;
+  --color-primary-container: #3b5d46;
+  --color-primary: #244530;
+  --color-on-tertiary-fixed-variant: #891b1f;
+  --color-inverse-on-surface: #f2f1ec;
+  --color-outline-variant: #c2c8c0;
+  --color-on-surface: #1b1c19;
+  --color-tertiary-container: #9e2b2c;
+  --color-error: #ba1a1a;
+  --color-inverse-surface: #30312e;
+  --color-on-error: #ffffff;
+  --color-secondary-container: #d8e6dc;
+  --color-primary-fixed-dim: #aad0b3;
+  --color-primary-fixed: #c5ecce;
+  --color-surface-container-highest: #e4e2dd;
+  --color-on-secondary-container: #5a6760;
+  --color-on-background: #1b1c19;
+  --color-background: #fbf9f4;
+  --color-on-primary-container: #aed4b7;
+  --color-on-tertiary-container: #ffbab5;
+  --color-on-error-container: #93000a;
+  --color-surface-tint: #44664e;
+  --color-surface-container: #f0eee9;
+  --color-tertiary: #7d1118;
+  --color-on-primary: #ffffff;
+  --color-inverse-primary: #aad0b3;
+  --color-secondary-fixed-dim: #bccac1;
+  --color-on-primary-fixed: #00210f;
+  --color-tertiary-fixed: #ffdad7;
+  --color-outline: #727972;
+  --color-surface-container-low: #f5f3ee;
+  --color-surface-bright: #fbf9f4;
+  --color-secondary-fixed: #d8e6dc;
+  --color-surface-variant: #e4e2dd;
+  --color-on-secondary-fixed-variant: #3d4a43;
+  --color-tertiary-fixed-dim: #ffb3ae;
+  --color-on-tertiary-fixed: #410004;
+  --color-on-secondary: #ffffff;
+  --color-surface-dim: #dbdad5;
+
+  /* shadcn UI compatibility tokens */
+  --color-primary-foreground: oklch(1 0 0);
+  --color-secondary-foreground: oklch(1 0 0);
+  --color-destructive: #ba1a1a;
+  --color-destructive-foreground: oklch(1 0 0);
+  --color-accent: #d8e6dc;
+  --color-accent-foreground: #1b1c19;
+  --color-muted: #e4e2dd;
+  --color-muted-foreground: #727972;
+
+  --font-display-lg: "Fraunces", serif;
+  --font-headline-md: "Fraunces", serif;
+  --font-body-md: "Public Sans", sans-serif;
+  --font-body-lg: "Public Sans", sans-serif;
+  --font-label-sm: "Public Sans", sans-serif;
+  --font-data-table: "IBM Plex Mono", monospace;
+  --font-data-price: "IBM Plex Mono", monospace;
+
+  --text-display-lg: 48px;
+  --text-headline-md: 28px;
+  --text-body-lg: 18px;
+  --text-body-md: 15px;
+  --text-label-sm: 13px;
+  --text-data-table: 16px;
+  --text-data-price: 32px;
+
+  --spacing-xs: 4px;
+  --spacing-sm: 12px;
+  --spacing-base: 8px;
+  --spacing-md: 24px;
+  --spacing-lg: 48px;
+  --spacing-xl: 80px;
+  --spacing-gutter: 24px;
+  --spacing-container-max: 1280px;
+  --width-container-max: 1280px;
+  --max-width-container-max: 1280px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+body {
+  background-color: #f7f5f0;
+  font-family: "Public Sans", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: #1b1c19;
+}
+
+.material-symbols-outlined {
+  font-variation-settings:
+    "FILL" 0,
+    "wght" 300,
+    "GRAD" 0,
+    "opsz" 24;
+}
+
+.verification-stamp {
+  border: 2px solid #7d1118;
+  color: #7d1118;
+  transform: rotate(-6deg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  text-transform: uppercase;
+  font-weight: 800;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  background: rgba(125, 17, 24, 0.05);
+  border-radius: 4px;
+  pointer-events: none;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.topo-bg {
+  background-image: radial-gradient(#244530 0.5px, transparent 0.5px);
+  background-size: 24px 24px;
+  opacity: 0.06;
+}
+
+.mono-stat {
+  font-family: "IBM Plex Mono", monospace;
+}
+
+.blueprint-grid {
+  background-image:
+    linear-gradient(#e4e2dd 1px, transparent 1px),
+    linear-gradient(90deg, #e4e2dd 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
   }
 }
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
+.animate-scroll {
+  animation: scroll 40s linear infinite;
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
+.animate-scroll:hover {
+  animation-play-state: paused;
 }
 
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.imgDark {
+.no-scrollbar::-webkit-scrollbar {
   display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-
-  .imgLight {
-    display: none;
-  }
-  .imgDark {
-    display: unset;
-  }
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
