@@ -5,10 +5,8 @@ import {
   ActivityTicker,
   AskArchive,
   BrowseByIntent,
-  Footer,
   Hero,
   MapExplorer,
-  Navbar,
   NRNConcierge,
   PropertyCarousel,
   TrustStack,
@@ -36,8 +34,6 @@ const Home = () => {
 
   return (
     <div className="relative min-h-screen">
-      <div className="fixed inset-0 topo-bg pointer-events-none z-0" />
-      <Navbar />
       <main className="relative z-10">
         <Hero />
         <TrustStack />
@@ -49,7 +45,6 @@ const Home = () => {
         <AskArchive />
         <NRNConcierge />
       </main>
-      <Footer />
     </div>
   );
 };

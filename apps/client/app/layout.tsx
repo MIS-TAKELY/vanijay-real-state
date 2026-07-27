@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Suspense } from "react";
 import "./globals.css";
 import { AuthModalListener } from "./components/auth/AuthModalListener";
+import { Navbar } from "./components/common/Navbar";
+import { Footer } from "./components/common/Footer";
 
 export const metadata: Metadata = {
   title: "Lekhaprati | Verified Land & Property Archive",
@@ -23,7 +25,9 @@ export default function RootLayout({
         />
       </head>
       <body className="text-on-surface">
+        <Navbar/>
         {children}
+        <Footer/>
         <Suspense fallback={null}>
           <AuthModalListener />
         </Suspense>

@@ -1,10 +1,10 @@
 export { ActivityTicker } from "./ActivityTicker";
 export { AskArchive } from "./AskArchive";
 export { BrowseByIntent } from "./BrowseByIntent";
-export { Footer } from "./Footer";
+export { Footer } from "../../common/Footer";
 export { Hero } from "./Hero";
 export { MapExplorer } from "./MapExplorer";
-export { Navbar } from "./Navbar";
+export { Navbar } from "../../common/Navbar";
 export { NRNConcierge } from "./NRNConcierge";
 export { PropertyCarousel } from "./PropertyCarousel";
 export { TrustStack } from "./TrustStack";
