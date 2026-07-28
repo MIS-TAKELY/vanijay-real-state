@@ -4,7 +4,7 @@ import React, { useState } from 'react'
 
 
 export function EligibilityAndDocs() {
-  const [openDoc, setOpenDoc] = useState(null);
+  const [openDoc, setOpenDoc] = useState<string | null>(null);
   const documents = [
     { id: "nrn", title: "NRN Identity Card" },
     { id: "passport", title: "Current Passport" },
