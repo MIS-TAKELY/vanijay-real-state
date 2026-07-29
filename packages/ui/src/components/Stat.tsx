@@ -23,7 +23,7 @@ const Stat = React.forwardRef<HTMLDivElement, StatProps>(
         <span className="mono-stat text-data-price text-primary tracking-tighter font-bold">
           {value}
         </span>
-        <span className="font-label-sm text-[11px] text-outline uppercase tracking-widest">
+        <span className="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest">
           {label}
         </span>
       </div>

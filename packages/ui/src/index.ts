@@ -50,7 +50,7 @@ export {
 export {
   MapContainer,
   TileLayer,
-  Marker,
   Popup,
   useMap,
 } from "react-leaflet";
+

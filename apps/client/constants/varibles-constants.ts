@@ -1,17 +1,17 @@
 import { Marker, Region } from "app/types/nepal-map";
 
 export const navLinks = [
-  { label: "Area Guides", href: "area-guid", active: true },
-  { label: "NRN Concierge", href: "nrn-concierge" },
-  { label: "Listings", href: "listings" },
-  { label: "About", href: "about" },
+  { label: "Area Guides", href: "/area-guid" },
+  { label: "NRN Concierge", href: "/nrn-concierge" },
+  { label: "Listings", href: "/listings" },
+  { label: "About", href: "/about" },
 ];
 
 export const DISTRICTS = [
   {
     name: "Kathmandu",
     badge: "Cadastral Cleared",
-    badgeColor: "bg-[#244530] text-white",
+    badgeColor: "bg-primary text-on-primary",
     desc: "Metropolitan core. High density commercial and premium residential zoning.",
     rate: "Rs 4.5M/Aana",
     trend: "+5.2% YOY",
@@ -21,7 +21,7 @@ export const DISTRICTS = [
   {
     name: "Pokhara",
     badge: "NRN Zone",
-    badgeColor: "bg-[#E8F0ED] text-[#244530]",
+    badgeColor: "bg-secondary-container text-primary",
     desc: "Tourism hub. Strategic plots for hospitality and expat residential development.",
     rate: "Rs 2.8M/Aana",
     trend: "+8.1% YOY",
@@ -31,7 +31,7 @@ export const DISTRICTS = [
   {
     name: "Lalitpur",
     badge: "Cadastral Cleared",
-    badgeColor: "bg-[#244530] text-white",
+    badgeColor: "bg-primary text-on-primary",
     desc: "Heritage conservation alongside modern infrastructure. Mixed-use zoning.",
     rate: "Rs 3.9M/Aana",
     trend: "+4.5% YOY",
@@ -41,7 +41,7 @@ export const DISTRICTS = [
   {
     name: "Bhaktapur",
     badge: "Pending Verification",
-    badgeColor: "bg-[#F5F0E8] text-[#727972]",
+    badgeColor: "bg-surface-container text-on-surface-variant",
     desc: "Rapid residential expansion. High potential for peripheral agricultural land conversion.",
     rate: "Rs 1.5M/Aana",
     trend: "Stable",

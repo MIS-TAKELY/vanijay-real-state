@@ -1,14 +1,13 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
+import { AuthModalListener } from "../components/auth/AuthModalListener";
+import { Footer } from "../components/common/Footer";
+import { Navbar } from "../components/common/Navbar";
 import "./globals.css";
-import { AuthModalListener } from "./components/auth/AuthModalListener";
-import { Navbar } from "./components/common/Navbar";
-import { Footer } from "./components/common/Footer";
 
 export const metadata: Metadata = {
   title: "Lekhaprati | Verified Land & Property Archive",
-  description:
-    "The archive of record for legitimate land ownership in Nepal.",
+  description: "The archive of record for legitimate land ownership in Nepal.",
 };
 
 export default function RootLayout({
@@ -25,9 +24,9 @@ export default function RootLayout({
         />
       </head>
       <body className="text-on-surface">
-        <Navbar/>
+        <Navbar />
         {children}
-        <Footer/>
+        <Footer />
         <Suspense fallback={null}>
           <AuthModalListener />
         </Suspense>

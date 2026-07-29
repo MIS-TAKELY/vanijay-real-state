@@ -10,10 +10,10 @@ import {
   PropertyCarousel,
   TrustStack,
   VerificationSteps,
-} from "./components/pages/home";
+} from "../components/pages/home";
 
 // Dynamically import NepalMap with SSR disabled (Leaflet requires browser APIs)
-const NepalMap = dynamic(() => import("./components/pages/home/Nepalmap"), {
+const NepalMap = dynamic(() => import("../components/pages/home/Nepalmap"), {
   ssr: false,
 });
 
@@ -27,7 +27,7 @@ export default function HomePage() {
       <PropertyCarousel />
       <VerificationSteps />
       <ActivityTicker />
-      <AskArchive />ngs
+      <AskArchive />
       <NRNConcierge />
     </>
   );

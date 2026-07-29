@@ -1,7 +1,7 @@
-import { ArchitectureOfTrust } from "app/components/pages/area-guid/ArchitectureOfTrust";
-import { DistrictLedgers } from "app/components/pages/area-guid/DistrictLedgers";
-import { NRNBanner } from "app/components/pages/area-guid/NRNBanner";
-import { Hero } from "app/components/pages/area-guid/Hero";
+import { ArchitectureOfTrust } from "components/pages/area-guid/ArchitectureOfTrust";
+import { DistrictLedgers } from "components/pages/area-guid/DistrictLedgers";
+import { Hero } from "components/pages/area-guid/Hero";
+import { NRNBanner } from "components/pages/area-guid/NRNBanner";
 
 export default function AreaGuidesPage() {
   return (

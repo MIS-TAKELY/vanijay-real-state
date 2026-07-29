@@ -1,7 +1,10 @@
-import { Pagination } from "app/components/pages/listings/Pagination";
-import { PropertyCard } from "app/components/pages/listings/PropertyCard";
-import { ResultsHeader } from "app/components/pages/listings/ResultsHeader";
-import { SearchFilters } from "app/components/pages/listings/SearchFilters";
+import type { Metadata } from "next";
+import { Pagination } from "components/pages/listings/Pagination";
+import { PropertyCard } from "components/pages/listings/PropertyCard";
+import { ResultsHeader } from "components/pages/listings/ResultsHeader";
+import { SearchFilters } from "components/pages/listings/SearchFilters";
+
+const PAGE_URL = "https://lekhaprati.com/listings";
 
 const PROPERTIES = [
   {
@@ -42,15 +45,115 @@ const PROPERTIES = [
   },
 ];
 
+export const metadata: Metadata = {
+  title: "Verified Land & Property Listings in Nepal | Lekhaprati",
+  description:
+    "Browse field-verified land, residential, commercial & apartment listings across Nepal. Every plot cross-referenced against cadastral records — zero title disputes.",
+  keywords: [
+    "land for sale Nepal",
+    "property listings Nepal",
+    "buy land Kathmandu",
+    "verified real estate Nepal",
+    "residential plot Nepal",
+    "commercial property Kathmandu",
+    "apartment for sale Lalitpur",
+    "Bhaktapur land",
+  ],
+  alternates: {
+    canonical: "/listings",
+  },
+  openGraph: {
+    title: "Verified Land & Property Listings in Nepal | Lekhaprati",
+    description:
+      "Browse field-verified land, residential, commercial & apartment listings across Nepal. Cadastral-cleared, zero title disputes.",
+    url: PAGE_URL,
+    siteName: "Lekhaprati",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Verified Land & Property Listings in Nepal | Lekhaprati",
+    description:
+      "Browse field-verified land & property listings across Nepal. Cadastral-cleared, zero title disputes.",
+  },
+  robots: { index: true, follow: true },
+};
+
+/**
+ * Structured data for the listings directory page.
+ * Uses ItemList (ACTIVE) + BreadcrumbList (ACTIVE) per Schema.org / Google, Feb 2026.
+ * Server-rendered so JSON-LD is present in the initial HTML.
+ */
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Verified Land & Property Listings in Nepal",
+  description:
+    "Field-verified land, residential, commercial, and apartment listings across Nepal, cross-referenced against cadastral records.",
+  url: PAGE_URL,
+  numberOfItems: PROPERTIES.length,
+  itemListElement: PROPERTIES.map((p, i) => ({
+    "@type": "ListItem",
+    position: i + 1,
+    url: `${PAGE_URL}/${p.id}`,
+    name: p.title,
+  })),
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Home",
+      item: "https://lekhaprati.com",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Listings",
+      item: PAGE_URL,
+    },
+  ],
+};
+
 export default function DiscoverPage() {
   return (
-    <div className="min-h-screen bg-[#FBF9F4] text-[#1B1C19] antialiased">
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <main>
         <SearchFilters />
+
+        {/* Page heading + intro — SEO content / E-E-A-T */}
+        <section className="mx-auto max-w-container-max px-gutter pt-xl">
+          <p className="font-label-sm text-[11px] font-bold uppercase tracking-[0.8px] text-on-surface-variant mb-xs">
+            The Verified Archive
+          </p>
+          <h1 className="font-display-lg text-[36px] md:text-[44px] font-semibold leading-[1.1] tracking-[-0.6px] text-primary mb-sm">
+            Verified Land &amp; Property Listings in Nepal
+          </h1>
+          <p className="max-w-2xl font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
+            Every listing in our registry has been field-verified by certified
+            surveyors and cross-referenced against the Land Revenue Office
+            master ledger. Filter by property type, price, district, or land
+            size to find cadastral-cleared plots and buildings with zero title
+            disputes.
+          </p>
+        </section>
+
         <ResultsHeader />
 
         {/* Property grid */}
-        <div className="mx-auto grid max-w-[1280px] grid-cols-1 gap-6 px-6 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-container-max grid-cols-1 gap-md px-gutter sm:grid-cols-2 lg:grid-cols-3">
           {PROPERTIES.map((p) => (
             <PropertyCard key={p.id} property={p} />
           ))}
@@ -58,6 +161,6 @@ export default function DiscoverPage() {
 
         <Pagination />
       </main>
-    </div>
+    </>
   );
 }
