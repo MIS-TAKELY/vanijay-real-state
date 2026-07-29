@@ -8,7 +8,10 @@
     ],
     "strictNullChecks": true,
     "paths": {
-      "@/*": ["../../packages/ui/src/*"]
+      "@/*": ["../../packages/ui/src/*"],
+      "components/*": ["./components/*"],
+      "constants/*": ["./constants/*"],
+      "app/*": ["./app/*"]
     },
     "baseUrl": "."
   },

@@ -9,8 +9,8 @@
       "default": "./dist/index.js"
     },
     "./client": {
-      "types": "./dist/client.d.ts",
-      "default": "./dist/client.js"
+      "types": "./dist/auth-client.d.ts",
+      "default": "./dist/auth-client.js"
     }
   },
   "scripts": {
