@@ -9,4 +9,4 @@ export { NRNConcierge } from "./NRNConcierge";
 export { PropertyCarousel } from "./PropertyCarousel";
 export { TrustStack } from "./TrustStack";
 export { VerificationSteps } from "./VerificationSteps";
-export { default as NepalMap } from "./Nepalmap";
+export { default as NepalMap } from "components/nepalmap/NepalMap";

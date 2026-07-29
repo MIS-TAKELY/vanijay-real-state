@@ -9,7 +9,7 @@ const ICON_MAP: Record<string, string> = {
 
 export function ArchitectureOfTrust() {
   return (
-    <section className="bg-surface border-b border-outline-variant">
+    <section className="bg-surface">
       <div className="mx-auto max-w-container-max px-gutter py-xl">
         <div className="text-center mb-12">
           <h2 className="font-headline-md text-headline-md text-primary mb-3">

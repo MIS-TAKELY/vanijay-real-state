@@ -1,27 +1,6 @@
 import { Icon } from "@repo/ui";
+import { values } from "constants/varibles-constants";
 
-const values = [
-  {
-    icon: "verified",
-    title: "Archival Rigour",
-    desc: "Every document checked against the source. We accept nothing less than the master record from the Land Revenue Office — no photocopies, no hearsay.",
-  },
-  {
-    icon: "location_on",
-    title: "Physical Presence",
-    desc: "We go to the plot. Our surveyors measure boundaries, verify road access, and document the site with drone footage before any listing is approved.",
-  },
-  {
-    icon: "balance",
-    title: "Legal Transparency",
-    desc: "Disputes are flagged, not hidden. Whether an inheritance conflict, a banking lien, or a Guthi trust encroachment, we surface it before the buyer commits.",
-  },
-  {
-    icon: "shield",
-    title: "Institutional Trust",
-    desc: "We operate as a public-trust archive. Every verified plot is indexed with a permanent Archival ID and published for anyone to reference.",
-  },
-];
 
 export function Values() {
   return (

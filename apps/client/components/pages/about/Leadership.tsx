@@ -1,21 +1,7 @@
+import { team } from "constants/varibles-constants";
+
 export function Leadership() {
-  const team = [
-    {
-      name: "Aayush Shrestha",
-      role: "Founder & Archivist",
-      bio: "Former surveyor at the Department of Land Reform & Management. Over a decade of experience in cadastral mapping and land dispute resolution across Bagmati and Gandaki provinces.",
-    },
-    {
-      name: "Priya Sharma",
-      role: "Director of Operations",
-      bio: "Chartered accountant specializing in Nepali real estate compliance. Previously led due diligence for cross-border property investments at a Kathmandu-based law firm.",
-    },
-    {
-      name: "Rabi Thapa",
-      role: "Head of Field Verification",
-      bio: "Licensed surveyor and GIS specialist. Has personally verified over 3,000 plots across 34 districts using drone photogrammetry and satellite overlay.",
-    },
-  ];
+  
 
   return (
     <section className="border-b border-outline-variant bg-surface-container-low">

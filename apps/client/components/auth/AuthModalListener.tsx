@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
-import { useAuthModalStore } from "../../app/store/auth-modal";
+import { useAuthModalStore } from "../../store/auth-modal";
 
 /**
  * Listens for `?auth=signin` in the URL and opens the sign-in modal

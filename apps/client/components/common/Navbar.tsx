@@ -1,14 +1,14 @@
 "use client";
 
 import { signOut, useSession } from "@repo/auth/client";
+import { Button, Icon } from "@repo/ui";
 import SignIn from "components/modals/SignIn";
 import { navLinks } from "constants/varibles-constants";
-import { useAuthModalStore } from "app/store/auth-modal";
 import { LogOut, User } from "lucide-react";
-import { Button, Icon } from "@repo/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { useAuthModalStore } from "store/auth-modal";
 
 export function Navbar() {
   const { data: session, isPending } = useSession();
@@ -97,9 +97,7 @@ export function Navbar() {
               href={item.href}
               key={item.href}
               className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
-                isActive(item.href)
-                  ? "text-primary"
-                  : "text-on-surface-variant"
+                isActive(item.href) ? "text-primary" : "text-on-surface-variant"
               }`}
             >
               {item.label}
@@ -220,7 +218,10 @@ export function Navbar() {
             aria-expanded={mobileOpen}
             className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
           >
-            <Icon name={mobileOpen ? "close" : "menu"} className="text-[26px]" />
+            <Icon
+              name={mobileOpen ? "close" : "menu"}
+              className="text-[26px]"
+            />
           </button>
         </div>
       </nav>

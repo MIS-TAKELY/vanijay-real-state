@@ -1,5 +1,13 @@
+import {
+  CTA,
+  Hero,
+  Leadership,
+  Stats,
+  Story,
+  Timeline,
+  Values,
+} from "components/pages/about";
 import type { Metadata } from "next";
-import { CTA, Hero, Leadership, Stats, Story, Timeline, Values } from "components/pages/about";
 
 const PAGE_URL = "https://lekhaprati.com/about";
 

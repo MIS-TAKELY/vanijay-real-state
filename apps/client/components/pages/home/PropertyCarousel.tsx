@@ -1,6 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import { Button, Badge, Icon } from "@repo/ui";
+import { properties } from "constants/varibles-constants";
 
 interface Property {
   id: string;
@@ -13,41 +14,7 @@ interface Property {
   alt: string;
 }
 
-const properties: Property[] = [
-  {
-    id: "1",
-    location: "Bhaktapur - Sector 04",
-    title: "Mountain View Estate Plot",
-    plotId: "BK-44102",
-    size: "4.5 Aana",
-    price: "रू 24,500,000",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBx-ORyBwj6oYzqTpSn7QY5OrynAjIRBEV2P7G2FywW2BzOy8a7IzdlJT29eEjpoupPL1YnAa8yYlQ6BjtpIZMmR2LbRtlUJlyOEYqxzMC-jm-4x1d2P0JvzgnCkJIPIs0oy6wNCB1Z805bMMnonOW_knMwjt1MmUtBwNnz8kTcACoolXkspjN4v_v1oADoElqpg16XpBAyxYdWxzjimrlhFGfvcdVhWYaaVIEDxc3btiLVXxTuFprmfQRQ5F7XttVB37wYmSayQgg",
-    alt: "Prime Land Plot",
-  },
-  {
-    id: "2",
-    location: "Lalitpur - Patan Heritage",
-    title: "Refurbished Commercial Loft",
-    plotId: "LT-9902",
-    size: "1,200 SqFt",
-    price: "रू 52,000,000",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCwGcMtLGfKoSUnpWGH9wo0TgdIPN-bGosQvG_M-vjID8DcCpHH3H5OAM0-BytOMK7bd6glY7y1BzBqiKXomRnnksOwzZw1pF-ck_W3QBaa0ArIR1dy8r3m_NOP4-XUp7Vw75zyNsRVBgU89V6ev1Cr2lvMZgocxGOFDL-5Idsf4fYV08M0F8BTP3x-TvDvTEx94p_v63b3e0TSQi7n-nNjDdkpOexp7AdsULBXzHON29G4XASR8-EAPwtfavJZ2pXf2jVJm0QDVFM",
-    alt: "Commercial Loft",
-  },
-  {
-    id: "3",
-    location: "Pokhara - Lakeside South",
-    title: "Fertile Multi-Use Plot",
-    plotId: "PK-1108",
-    size: "1.2 Ropani",
-    price: "रू 18,700,000",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCkgfgcvBCs4awPzbDmkhjk-YlSQy_V72_mpHIHTEsNoYYsIvhraaMfRtx7uP1mEbwYmRs3X20z-ekTobs1kndsP5aXB2cP9r_dFiOY6wqYaAPakTuvtt5lddIV7JOfZPCovWkoLZgXgcJ-MtVjymoZuAE7c0SJvrYMabmjJKvoTjgXSYFCWehPWaLtk5MIRzDH-R-qBNPz7OEZvv6bmOH5uG3Are5nnyRTpqbcNzigMbzsg4QR4xwpJ7rQsSrfvG_9FTO9y8fYvgw",
-    alt: "Fertile Plot",
-  },
-];
+
 
 function PropertyCard({ property }: { property: Property }) {
   return (

@@ -1,6 +1,4 @@
-"use client";
-
-import dynamic from "next/dynamic";
+import NepalmapWrapper from "components/pages/home/NepalmapWrapper";
 import {
   ActivityTicker,
   AskArchive,
@@ -13,9 +11,6 @@ import {
 } from "../components/pages/home";
 
 // Dynamically import NepalMap with SSR disabled (Leaflet requires browser APIs)
-const NepalMap = dynamic(() => import("../components/pages/home/Nepalmap"), {
-  ssr: false,
-});
 
 export default function HomePage() {
   return (
@@ -23,7 +18,7 @@ export default function HomePage() {
       <Hero />
       <TrustStack />
       <BrowseByIntent />
-      <NepalMap />
+      <NepalmapWrapper />
       <PropertyCarousel />
       <VerificationSteps />
       <ActivityTicker />
@@ -32,3 +27,4 @@ export default function HomePage() {
     </>
   );
 }
+

@@ -1,11 +1,7 @@
 import React from "react";
 import { Icon } from "@repo/ui";
+import { trustItems } from "constants/varibles-constants";
 
-const trustItems = [
-  { icon: "description", text: "Every document checked before listing" },
-  { icon: "location_on", text: "Field verification, not just paperwork" },
-  { icon: "verified_user", text: "You'll always know what's disputed or clear" },
-];
 
 export function TrustStack() {
   return (

@@ -1,28 +1,7 @@
 import React from "react";
 import { Icon } from "@repo/ui";
+import { browseCards } from "constants/varibles-constants";
 
-const browseCards = [
-  {
-    title: "Browse Land",
-    description: "Filter by area, soil quality, and future infrastructure plans.",
-    icon: "arrow_forward",
-    variant: "default" as const,
-  },
-  {
-    title: "Browse Buildings",
-    description:
-      "Pre-inspected commercial and residential assets with full history.",
-    icon: "arrow_forward",
-    variant: "default" as const,
-  },
-  {
-    title: "What's My Land Worth?",
-    description:
-      "Get an archival-grade valuation based on verified transaction data.",
-    icon: "analytics",
-    variant: "primary" as const,
-  },
-];
 
 export function BrowseByIntent() {
   return (

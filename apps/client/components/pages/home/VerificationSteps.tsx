@@ -1,29 +1,7 @@
 import React from "react";
 import { Icon } from "@repo/ui";
+import { steps } from "constants/varibles-constants";
 
-const steps = [
-  {
-    number: "01",
-    title: "Document Audit",
-    description:
-      "Deep audit of ownership history, tax clearances, and cadastral maps from Land Revenue Offices.",
-    icon: null,
-  },
-  {
-    number: "02",
-    title: "Field Verification",
-    description:
-      "Physical visit by our certified surveyors to confirm boundaries, topography, and absence of physical disputes.",
-    icon: null,
-  },
-  {
-    number: null,
-    title: "Archival Stamp",
-    description:
-      "The property is awarded the 'Verified' status and indexed into our public-trust archival platform.",
-    icon: "check_circle",
-  },
-];
 
 export function VerificationSteps() {
   return (
@@ -60,7 +38,7 @@ export function VerificationSteps() {
             <h3 className="font-label-sm font-bold text-on-surface mb-xs uppercase tracking-widest text-[11px]">
               {step.title}
             </h3>
-            <p className="font-body-md text-on-surface-variant max-w-xs">
+            <p className="font-body-md text-on-surface-variant ">
               {step.description}
             </p>
           </div>

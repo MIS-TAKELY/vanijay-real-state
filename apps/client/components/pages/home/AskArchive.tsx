@@ -1,23 +1,7 @@
 import React from "react";
 import { Card, Icon } from "@repo/ui";
+import { archiveCards } from "constants/varibles-constants";
 
-const archiveCards = [
-  {
-    category: "Title Inquiry",
-    question: "How do I know if a Guthi land plot is safely transferable?",
-    action: "Read Analysis",
-  },
-  {
-    category: "Investment Strategy",
-    question: "What is the projected price trend for plots near the new bypass?",
-    action: "View Projections",
-  },
-  {
-    category: "Process Transparency",
-    question: "What specific field checks are done during Lekhaprati verification?",
-    action: "See Methodology",
-  },
-];
 
 export function AskArchive() {
   return (

@@ -1,11 +1,6 @@
+import { tickerItems } from "constants/varibles-constants";
 import React from "react";
 
-const tickerItems = [
-  "#LT-9923 SOLD • रू 45,000,000",
-  "VERIFICATION IN PROGRESS: DISTRICT LAMJUNG",
-  "#BK-1102 NEW LISTING • रू 12,800,000",
-  "ANNUAL VALUATION UPDATE: KATHMANDU +8.4%",
-];
 
 export function ActivityTicker() {
   return (

@@ -1,11 +1,6 @@
-export function Stats() {
-  const stats = [
-    { value: "74", label: "Districts Indexed" },
-    { value: "12,000+", label: "Verified Listings" },
-    { value: "0%", label: "Title Discrepancies" },
-    { value: "100%", label: "Field-Verified" },
-  ];
+import { about_stats } from "constants/varibles-constants";
 
+export function Stats() {
   return (
     <section className="border-b border-outline-variant bg-primary relative overflow-hidden">
       <div
@@ -27,7 +22,7 @@ export function Stats() {
           </p>
         </div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-md">
-          {stats.map((s) => (
+          {about_stats.map((s) => (
             <div key={s.label} className="text-center">
               <p className="mono-stat text-[36px] md:text-[44px] font-bold text-primary-fixed leading-none mb-xs">
                 {s.value}

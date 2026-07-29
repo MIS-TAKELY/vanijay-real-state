@@ -3,14 +3,12 @@
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Icon, Stat } from "@repo/ui";
+import { stats } from "constants/varibles-constants";
+// import { stats } from "constants/varibles-constants";
 
 const propertyTypes = ["Land", "House", "Commercial"] as const;
 
-const stats = [
-  { value: "12,482", label: "Verified Listings" },
-  { value: "74", label: "Districts Covered" },
-  { value: "0%", label: "Title Discrepancies" },
-];
+
 
 const heroImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBx-ORyBwj6oYzqTpSn7QY5OrynAjIRBEV2P7G2FywW2BzOy8a7IzdlJT29eEjpoupPL1YnAa8yYlQ6BjtpIZMmR2LbRtlUJlyOEYqxzMC-jm-4x1d2P0JvzgnCkJIPIs0oy6wNCB1Z805bMMnonOW_knMwjt1MmUtBwNnz8kTcACoolXkspjN4v_v1oADoElqpg16XpBAyxYdWxzjimrlhFGfvcdVhWYaaVIEDxc3btiLVXxTuFprmfQRQ5F7XttVB37wYmSayQgg";

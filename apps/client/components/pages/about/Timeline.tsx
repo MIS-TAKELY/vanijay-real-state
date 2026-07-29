@@ -1,25 +1,5 @@
-const milestones = [
-  {
-    year: "2022",
-    title: "The Idea",
-    desc: "Co-founders identify the systemic title-dispute problem in Nepali real estate after witnessing a decade-long land conflict within their own families.",
-  },
-  {
-    year: "2023",
-    title: "Field Trials",
-    desc: "Pilot verification programme across three Kathmandu wards. 47 plots field-checked; 22% had discrepancies. The model proves its necessity.",
-  },
-  {
-    year: "2024",
-    title: "Public Launch",
-    desc: "Lekhaprati goes live as a public-trust archive. First 74 districts indexed; 12,000+ cadastral-cleared listings published.",
-  },
-  {
-    year: "2025",
-    title: "NRN Concierge",
-    desc: "Launch of the Non-Resident Nepali concierge desk. Remote verification services extended to NRN citizens and FCNO investors worldwide.",
-  },
-];
+import { milestones } from "constants/varibles-constants";
+
 
 export function Timeline() {
   return (

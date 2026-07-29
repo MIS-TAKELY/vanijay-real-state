@@ -15,7 +15,7 @@ import { authClient, signIn, signUp } from "@repo/auth/client";
 // import { useAuthModalStore } from "../../store/auth-modal";
 import { useEffect, useState } from "react";
 
-import { useAuthModalStore } from "app/store/auth-modal";
+import { useAuthModalStore } from "store/auth-modal";
 import VerifyEmailOtp from "./VerifyEmailOtp";
 
 interface SignInModalProps {
