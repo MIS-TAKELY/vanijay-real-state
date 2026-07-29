@@ -1,20 +1,13 @@
 "use client";
 
-import { Trend } from "app/types/nepal-map";
-import { MARKERS, REGIONS } from "constants/varibles-constants";
-import dynamic from "next/dynamic";
-import React, {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  useCallback,
-} from "react";
+import { Marker, Trend, Region, MapMode } from "app/types/nepal-map";
+import { MARKERS, REGIONS, REGION_CENTERS } from "constants/varibles-constants";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
-function trendColor(trend: Trend, tier: "standard" | "premium" | "emerging" = "standard") {
+function trendColor(trend: Trend, tier: Marker["tier"] = "standard") {
   if (trend === "up") {
-    if (tier === "premium")  return "#dc2626"; // red-600
+    if (tier === "premium") return "#dc2626"; // red-600
     if (tier === "emerging") return "#ea580c"; // orange-600
     return "#dc2626";
   }
@@ -23,7 +16,7 @@ function trendColor(trend: Trend, tier: "standard" | "premium" | "emerging" = "s
 }
 
 function trendLabel(trend: Trend) {
-  if (trend === "up")   return "↑";
+  if (trend === "up") return "↑";
   if (trend === "down") return "↓";
   return "→";
 }
@@ -61,7 +54,8 @@ function PinMarkup({
           : "drop-shadow(0 3px 8px rgba(0,0,0,0.18))",
         transform: selected ? "scale(1.18) translateY(-3px)" : "scale(1)",
         transformOrigin: "bottom center",
-        transition: "transform 0.28s cubic-bezier(.175,.885,.32,1.275), filter 0.28s ease",
+        transition:
+          "transform 0.28s cubic-bezier(.175,.885,.32,1.275), filter 0.28s ease",
       }}
     >
       {/* bubble */}
@@ -164,7 +158,7 @@ function MapController({
     const L = require("leaflet");
     const nepalBounds = L.latLngBounds([
       [26.34, 80.05],
-      [30.45, 88.20],
+      [30.45, 88.2],
     ]);
     map.fitBounds(nepalBounds, { padding: [30, 30], animate: false });
     fitted.current = true;
@@ -223,25 +217,33 @@ function StatCounter({
 ───────────────────────────────────────────────────────────────────────────── */
 
 export default function NepalMap() {
-  const [modules, setModules]         = useState<any>(null);
-  const [loadError, setLoadError]     = useState<string | null>(null);
+  const [modules, setModules] = useState<any>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [nepalOutline, setNepalOutline] = useState<any>(null);
-  const [selectedId, setSelectedId]   = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [activeRegion, setActiveRegion] = useState<Region | "All">("All");
-  const [query, setQuery]             = useState("");
-  const [flyTo, setFlyTo]             = useState<{ lat: number; lng: number; zoom?: number } | null>(null);
-  const [mapReady, setMapReady]       = useState(false);
-  const [showList, setShowList]       = useState(true);
-  const [revealed, setRevealed]       = useState(false);
-  const [mapMode, setMapMode]         = useState<MapMode>("dark");
+  const [query, setQuery] = useState("");
+  const [flyTo, setFlyTo] = useState<{
+    lat: number;
+    lng: number;
+    zoom?: number;
+  } | null>(null);
+  const [mapReady, setMapReady] = useState(false);
+  const [showList, setShowList] = useState(true);
+  const [revealed, setRevealed] = useState(false);
+  const [mapMode, setMapMode] = useState<MapMode>("dark");
   const [streetViewModal, setStreetViewModal] = useState<Marker | null>(null);
-  const [modalTab, setModalTab]       = useState<"street" | "satellite" | "panorama">("street");
+  const [modalTab, setModalTab] = useState<"street" | "satellite" | "panorama">(
+    "street",
+  );
 
   const iframeSrc = useMemo(() => {
     if (!streetViewModal) return "";
     const latLng = `${streetViewModal.lat},${streetViewModal.lng}`;
-    const placeQuery = encodeURIComponent(`${streetViewModal.area}, ${streetViewModal.city}, Nepal`);
-    
+    const placeQuery = encodeURIComponent(
+      `${streetViewModal.area}, ${streetViewModal.city}, Nepal`,
+    );
+
     if (modalTab === "satellite") {
       return `https://maps.google.com/maps?q=${latLng}&t=k&z=18&ie=UTF8&iwloc=&output=embed`;
     }
@@ -253,13 +255,14 @@ export default function NepalMap() {
   }, [streetViewModal, modalTab]);
 
   const sectionRef = useRef<HTMLElement>(null);
-  const listRef    = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement>(null);
 
   /* ── Load Leaflet dynamically ─────────────────────────────────────── */
   useEffect(() => {
     let cancelled = false;
     const t = setTimeout(() => {
-      if (!cancelled) setLoadError("Map took too long — try disabling ad-blockers.");
+      if (!cancelled)
+        setLoadError("Map took too long — try disabling ad-blockers.");
     }, 8000);
 
     (async () => {
@@ -276,7 +279,10 @@ export default function NepalMap() {
       }
     })();
 
-    return () => { cancelled = true; clearTimeout(t); };
+    return () => {
+      cancelled = true;
+      clearTimeout(t);
+    };
   }, []);
 
   /* ── Scroll-entry reveal ──────────────────────────────────────────── */
@@ -284,8 +290,13 @@ export default function NepalMap() {
     const el = sectionRef.current;
     if (!el) return;
     const obs = new IntersectionObserver(
-      (entries) => { if (entries[0]?.isIntersecting) { setRevealed(true); obs.disconnect(); } },
-      { threshold: 0.12 }
+      (entries) => {
+        if (entries[0]?.isIntersecting) {
+          setRevealed(true);
+          obs.disconnect();
+        }
+      },
+      { threshold: 0.12 },
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -298,8 +309,12 @@ export default function NepalMap() {
   useEffect(() => {
     if (!modules) return;
     Promise.all([
-      fetch("/geojson/nepal-districts.json").then((r) => (r.ok ? r.json() : null)),
-      fetch("/geojson/nepal-provinces.json").then((r) => (r.ok ? r.json() : null)),
+      fetch("/geojson/nepal-districts.json").then((r) =>
+        r.ok ? r.json() : null,
+      ),
+      fetch("/geojson/nepal-provinces.json").then((r) =>
+        r.ok ? r.json() : null,
+      ),
     ])
       .then(([districts, provinces]) => {
         if (districts) setDistrictData(districts);
@@ -322,7 +337,8 @@ export default function NepalMap() {
 
     try {
       const rings: any[] = [];
-      const features = geoData.type === "FeatureCollection" ? geoData.features : [geoData];
+      const features =
+        geoData.type === "FeatureCollection" ? geoData.features : [geoData];
       for (const f of features) {
         const geom = f.geometry || f;
         if (geom.type === "Polygon") {
@@ -350,8 +366,10 @@ export default function NepalMap() {
   /* ── Interactive District Hover & Tooltips ────────────────────────── */
   const onEachDistrict = useCallback((feature: any, layer: any) => {
     const props = feature.properties || {};
-    const districtName = props.DISTRICT || props.district || props.FIRST_DIST || "";
-    const provinceNum = props.PROVINCE || props.province || props.FIRST_PROV || "";
+    const districtName =
+      props.DISTRICT || props.district || props.FIRST_DIST || "";
+    const provinceNum =
+      props.PROVINCE || props.province || props.FIRST_PROV || "";
 
     layer.on({
       mouseover: (e: any) => {
@@ -375,15 +393,18 @@ export default function NepalMap() {
     if (districtName) {
       layer.bindTooltip(
         `<div style="font-weight:700; color:#4ade80;">${districtName} ${provinceNum ? `<span style="font-weight:400; opacity:0.75; font-size:10px;">(Province ${provinceNum})</span>` : ""}</div>`,
-        { sticky: true, className: "nm-tooltip", direction: "top" }
+        { sticky: true, className: "nm-tooltip", direction: "top" },
       );
     }
   }, []);
 
   /* ── Derived state ────────────────────────────────────────────────── */
   const hottestId = useMemo(
-    () => [...MARKERS].sort((a, b) => parseFloat(b.change) - parseFloat(a.change))[0]!.id,
-    []
+    () =>
+      [...MARKERS].sort(
+        (a, b) => parseFloat(b.change) - parseFloat(a.change),
+      )[0]!.id,
+    [],
   );
 
   const visibleMarkers = useMemo(() => {
@@ -402,7 +423,7 @@ export default function NepalMap() {
 
   const selected = useMemo(
     () => MARKERS.find((m) => m.id === selectedId) ?? null,
-    [selectedId]
+    [selectedId],
   );
 
   const avgChange = useMemo(() => {
@@ -415,7 +436,7 @@ export default function NepalMap() {
 
   const totalValue = useMemo(
     () => visibleMarkers.reduce((s, m) => s + m.priceValue, 0),
-    [visibleMarkers]
+    [visibleMarkers],
   );
 
   /* ── Build Leaflet divIcons ───────────────────────────────────────── */
@@ -432,12 +453,12 @@ export default function NepalMap() {
               marker={m}
               selected={m.id === selectedId}
               hottest={m.id === hottestId}
-            />
+            />,
           ),
           className: "nm-pin",
           iconSize: [PIN_W, PIN_H],
           iconAnchor: [PIN_W / 2, PIN_H],
-        })
+        }),
       );
     }
     return map;
@@ -653,8 +674,19 @@ export default function NepalMap() {
         <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
           {[
             { label: "Markets Tracked", value: MARKERS.length, suffix: "" },
-            { label: "Avg. Growth", value: avgChange, suffix: "%", prefix: "+", decimals: 1 },
-            { label: "Total Value", value: Math.round(totalValue), suffix: "M", prefix: "रू " },
+            {
+              label: "Avg. Growth",
+              value: avgChange,
+              suffix: "%",
+              prefix: "+",
+              decimals: 1,
+            },
+            {
+              label: "Total Value",
+              value: Math.round(totalValue),
+              suffix: "M",
+              prefix: "रू ",
+            },
           ].map((s) => (
             <div
               key={s.label}
@@ -809,7 +841,8 @@ export default function NepalMap() {
                 }}
                 onMouseLeave={(e) => {
                   if (!active) {
-                    e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                    e.currentTarget.style.borderColor =
+                      "rgba(255,255,255,0.15)";
                     e.currentTarget.style.color = "rgba(209,250,229,0.65)";
                     e.currentTarget.style.background = "rgba(255,255,255,0.06)";
                   }
@@ -890,8 +923,9 @@ export default function NepalMap() {
         }}
       >
         {/* Map area */}
-        <div style={{ position: "relative", flex: 1, minWidth: 0, height: "100%" }}>
-
+        <div
+          style={{ position: "relative", flex: 1, minWidth: 0, height: "100%" }}
+        >
           {/* Loading overlay */}
           {isLoading && !loadError && (
             <div
@@ -918,7 +952,13 @@ export default function NepalMap() {
                   animation: "nm-spin 0.9s linear infinite",
                 }}
               />
-              <p style={{ color: "rgba(209,250,229,0.7)", fontSize: 13, fontWeight: 600 }}>
+              <p
+                style={{
+                  color: "rgba(209,250,229,0.7)",
+                  fontSize: 13,
+                  fontWeight: 600,
+                }}
+              >
                 Loading Nepal market map…
               </p>
             </div>
@@ -942,154 +982,170 @@ export default function NepalMap() {
               }}
             >
               <div style={{ fontSize: 36 }}>🗺️</div>
-              <p style={{ color: "#fca5a5", fontSize: 14, maxWidth: 300 }}>{loadError}</p>
+              <p style={{ color: "#fca5a5", fontSize: 14, maxWidth: 300 }}>
+                {loadError}
+              </p>
             </div>
           )}
 
           {/* Leaflet map */}
-          {modules && icons && (() => {
-            const {
-              MapContainer, TileLayer, Marker, Tooltip, GeoJSON, ZoomControl, Circle,
-            } = modules;
-            return (
-              <MapContainer
-                center={[28.3949, 84.124]}
-                zoom={7}
-                zoomControl={false}
-                scrollWheelZoom
-                style={{ width: "100%", height: "100%" }}
-              >
-                <MapController
-                  markers={visibleMarkers}
-                  flyTo={flyTo}
-                  onReady={() => setMapReady(true)}
-                />
-
-                {/* Dynamic Tile Layer based on mapMode */}
-                {mapMode === "dark" && (
-                  <TileLayer
-                    key="tile-dark"
-                    attribution='&copy; <a href="https://carto.com/">CARTO</a>'
-                    url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
-                    subdomains="abcd"
-                    maxZoom={20}
+          {modules &&
+            icons &&
+            (() => {
+              const {
+                MapContainer,
+                TileLayer,
+                Marker,
+                Tooltip,
+                GeoJSON,
+                ZoomControl,
+                Circle,
+              } = modules;
+              return (
+                <MapContainer
+                  center={[28.3949, 84.124]}
+                  zoom={7}
+                  zoomControl={false}
+                  scrollWheelZoom
+                  style={{ width: "100%", height: "100%" }}
+                >
+                  <MapController
+                    markers={visibleMarkers}
+                    flyTo={flyTo}
+                    onReady={() => setMapReady(true)}
                   />
-                )}
 
-                {mapMode === "satellite" && (
-                  <>
+                  {/* Dynamic Tile Layer based on mapMode */}
+                  {mapMode === "dark" && (
                     <TileLayer
-                      key="tile-sat-imagery"
-                      attribution='&copy; <a href="https://www.esri.com/">Esri World Imagery</a>'
-                      url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
-                      maxZoom={19}
+                      key="tile-dark"
+                      attribution='&copy; <a href="https://carto.com/">CARTO</a>'
+                      url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                      subdomains="abcd"
+                      maxZoom={20}
                     />
+                  )}
+
+                  {mapMode === "satellite" && (
+                    <>
+                      <TileLayer
+                        key="tile-sat-imagery"
+                        attribution='&copy; <a href="https://www.esri.com/">Esri World Imagery</a>'
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
+                        maxZoom={19}
+                      />
+                      <TileLayer
+                        key="tile-sat-labels"
+                        attribution="&copy; Esri"
+                        url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}"
+                        maxZoom={19}
+                      />
+                    </>
+                  )}
+
+                  {mapMode === "streets" && (
                     <TileLayer
-                      key="tile-sat-labels"
-                      attribution='&copy; Esri'
-                      url="https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Transportation/MapServer/tile/{z}/{y}/{x}"
-                      maxZoom={19}
+                      key="tile-streets"
+                      attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
+                      url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+                      subdomains="abcd"
+                      maxZoom={20}
                     />
-                  </>
-                )}
+                  )}
 
-                {mapMode === "streets" && (
-                  <TileLayer
-                    key="tile-streets"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
-                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                    subdomains="abcd"
-                    maxZoom={20}
-                  />
-                )}
+                  <ZoomControl position="bottomright" />
 
-                <ZoomControl position="bottomright" />
+                  {/* World dimming mask - darkens outside countries */}
+                  {worldMask && (
+                    <GeoJSON
+                      key="world-dimming-mask"
+                      data={worldMask}
+                      style={{
+                        color: "transparent",
+                        weight: 0,
+                        fillColor: "#050b07",
+                        fillOpacity: 0.82,
+                      }}
+                    />
+                  )}
 
-                {/* World dimming mask - darkens outside countries */}
-                {worldMask && (
-                  <GeoJSON
-                    key="world-dimming-mask"
-                    data={worldMask}
-                    style={{
-                      color: "transparent",
-                      weight: 0,
-                      fillColor: "#050b07",
-                      fillOpacity: 0.82,
-                    }}
-                  />
-                )}
+                  {/* Detailed 77 Districts Layer with interactive hover */}
+                  {districtData && (
+                    <GeoJSON
+                      key="nepal-districts-layer"
+                      data={districtData}
+                      onEachFeature={onEachDistrict}
+                      style={{
+                        color: "rgba(74, 222, 128, 0.4)",
+                        weight: 0.8,
+                        fillColor: "#244530",
+                        fillOpacity: 0.12,
+                      }}
+                    />
+                  )}
 
-                {/* Detailed 77 Districts Layer with interactive hover */}
-                {districtData && (
-                  <GeoJSON
-                    key="nepal-districts-layer"
-                    data={districtData}
-                    onEachFeature={onEachDistrict}
-                    style={{
-                      color: "rgba(74, 222, 128, 0.4)",
-                      weight: 0.8,
-                      fillColor: "#244530",
-                      fillOpacity: 0.12,
-                    }}
-                  />
-                )}
+                  {/* 7 Province Outer Outline Layer */}
+                  {provinceData && (
+                    <GeoJSON
+                      key="nepal-provinces-layer"
+                      data={provinceData}
+                      style={{
+                        color: "#4ade80",
+                        weight: 2.2,
+                        opacity: 0.95,
+                        fillColor: "transparent",
+                        className: "nepal-highlight-border",
+                      }}
+                    />
+                  )}
 
-                {/* 7 Province Outer Outline Layer */}
-                {provinceData && (
-                  <GeoJSON
-                    key="nepal-provinces-layer"
-                    data={provinceData}
-                    style={{
-                      color: "#4ade80",
-                      weight: 2.2,
-                      opacity: 0.95,
-                      fillColor: "transparent",
-                      className: "nepal-highlight-border",
-                    }}
-                  />
-                )}
+                  {/* Heat halos */}
+                  {visibleMarkers.map((m) => (
+                    <Circle
+                      key={`h-${m.id}`}
+                      center={[m.lat, m.lng]}
+                      radius={
+                        m.id === hottestId
+                          ? 9500
+                          : m.tier === "premium"
+                            ? 6000
+                            : 4000
+                      }
+                      pathOptions={{
+                        fillColor: trendColor(m.trend, m.tier),
+                        fillOpacity: m.id === selectedId ? 0.18 : 0.07,
+                        stroke: m.id === selectedId,
+                        color: trendColor(m.trend, m.tier),
+                        weight: 1,
+                        opacity: 0.3,
+                      }}
+                    />
+                  ))}
 
-                {/* Heat halos */}
-                {visibleMarkers.map((m) => (
-                  <Circle
-                    key={`h-${m.id}`}
-                    center={[m.lat, m.lng]}
-                    radius={m.id === hottestId ? 9500 : m.tier === "premium" ? 6000 : 4000}
-                    pathOptions={{
-                      fillColor: trendColor(m.trend, m.tier),
-                      fillOpacity: m.id === selectedId ? 0.18 : 0.07,
-                      stroke: m.id === selectedId,
-                      color: trendColor(m.trend, m.tier),
-                      weight: 1,
-                      opacity: 0.3,
-                    }}
-                  />
-                ))}
-
-                {/* Markers */}
-                {visibleMarkers.map((m) => (
-                  <Marker
-                    key={m.id}
-                    position={[m.lat, m.lng]}
-                    icon={icons.get(m.id)}
-                    eventHandlers={{ click: () => focusMarker(m) }}
-                  >
-                    <Tooltip
-                      className="nm-tooltip"
-                      direction="top"
-                      offset={[0, -PIN_H + 4]}
-                      permanent={false}
+                  {/* Markers */}
+                  {visibleMarkers.map((m) => (
+                    <Marker
+                      key={m.id}
+                      position={[m.lat, m.lng]}
+                      icon={icons.get(m.id)}
+                      eventHandlers={{ click: () => focusMarker(m) }}
                     >
-                      <strong>{m.area}</strong> · {m.price} ·{" "}
-                      <span style={{ color: trendColor(m.trend) }}>
-                        {trendLabel(m.trend)} {m.change}
-                      </span>
-                    </Tooltip>
-                  </Marker>
-                ))}
-              </MapContainer>
-            );
-          })()}
+                      <Tooltip
+                        className="nm-tooltip"
+                        direction="top"
+                        offset={[0, -PIN_H + 4]}
+                        permanent={false}
+                      >
+                        <strong>{m.area}</strong> · {m.price} ·{" "}
+                        <span style={{ color: trendColor(m.trend) }}>
+                          {trendLabel(m.trend)} {m.change}
+                        </span>
+                      </Tooltip>
+                    </Marker>
+                  ))}
+                </MapContainer>
+              );
+            })()}
 
           {/* Compass rose */}
           <div
@@ -1168,7 +1224,11 @@ export default function NepalMap() {
             }}
             className="lg-hidden"
           >
-            <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}>
+            <svg
+              viewBox="0 0 24 24"
+              fill="white"
+              style={{ width: 18, height: 18 }}
+            >
               {showList ? (
                 <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z" />
               ) : (
@@ -1231,7 +1291,14 @@ export default function NepalMap() {
                 {selected.city} · {selected.region}
               </div>
 
-              <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 10 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
                 <h3
                   style={{
                     margin: 0,
@@ -1260,7 +1327,14 @@ export default function NepalMap() {
                 )}
               </div>
 
-              <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: 10,
+                  marginBottom: 10,
+                }}
+              >
                 <span
                   style={{
                     fontSize: 24,
@@ -1353,7 +1427,14 @@ export default function NepalMap() {
               </div>
 
               {/* Tags */}
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 14 }}>
+              <div
+                style={{
+                  display: "flex",
+                  flexWrap: "wrap",
+                  gap: 6,
+                  marginBottom: 14,
+                }}
+              >
                 {selected.tags.map((t) => (
                   <span
                     key={t}
@@ -1389,12 +1470,23 @@ export default function NepalMap() {
               </div>
 
               {/* Street & Aerial View Action Buttons */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: 8,
+                  marginBottom: 10,
+                }}
+              >
                 <button
                   type="button"
                   onClick={() => {
                     setMapMode("satellite");
-                    setFlyTo({ lat: selected.lat, lng: selected.lng, zoom: 18 });
+                    setFlyTo({
+                      lat: selected.lat,
+                      lng: selected.lng,
+                      zoom: 18,
+                    });
                   }}
                   style={{
                     padding: "8px 0",
@@ -1446,7 +1538,8 @@ export default function NepalMap() {
                   fontWeight: 700,
                   fontFamily: "'Public Sans', sans-serif",
                   color: "#0d1a14",
-                  background: "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)",
+                  background:
+                    "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)",
                   border: "none",
                   borderRadius: 10,
                   cursor: "pointer",
@@ -1653,7 +1746,9 @@ export default function NepalMap() {
                         {m.area}
                       </span>
                       {m.verified && (
-                        <span style={{ fontSize: 11, color: "#4ade80" }}>✓</span>
+                        <span style={{ fontSize: 11, color: "#4ade80" }}>
+                          ✓
+                        </span>
                       )}
                       {m.id === hottestId && (
                         <span
@@ -1789,7 +1884,9 @@ export default function NepalMap() {
                 borderRadius: "50%",
                 background: item.color,
                 flexShrink: 0,
-                animation: item.pulse ? "nm-pulse 2s ease-out infinite" : undefined,
+                animation: item.pulse
+                  ? "nm-pulse 2s ease-out infinite"
+                  : undefined,
               }}
             />
             {item.label}
@@ -1956,7 +2053,14 @@ export default function NepalMap() {
             </div>
 
             {/* Street View Embed Iframe */}
-            <div style={{ flex: 1, position: "relative", width: "100%", height: "100%" }}>
+            <div
+              style={{
+                flex: 1,
+                position: "relative",
+                width: "100%",
+                height: "100%",
+              }}
+            >
               <iframe
                 key={`${streetViewModal.id}-${modalTab}`}
                 title={`Street View - ${streetViewModal.area}`}
@@ -1981,8 +2085,12 @@ export default function NepalMap() {
                 color: "rgba(209,250,229,0.5)",
               }}
             >
-              <span>Coords: {streetViewModal.lat}, {streetViewModal.lng}</span>
-              <span>Drag to rotate 360° · Click arrows to move along streets</span>
+              <span>
+                Coords: {streetViewModal.lat}, {streetViewModal.lng}
+              </span>
+              <span>
+                Drag to rotate 360° · Click arrows to move along streets
+              </span>
             </div>
           </div>
         </div>
