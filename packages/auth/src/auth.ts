@@ -79,9 +79,9 @@ export const auth = betterAuth({
         unique: true,
       },
       role: {
-        type: "string",
+        type: "string[]",
         required: false,
-        defaultValue: "BUYER",
+        defaultValue: ["BUYER"],
       },
       isVerified: {
         type: "boolean",

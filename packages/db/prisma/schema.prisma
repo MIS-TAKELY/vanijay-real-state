@@ -149,88 +149,88 @@ enum QuestionCategory {
 // domain fields (role, phone, etc.) live here instead of a separate User table.
 
 model User {
-  id            String   @id
-  name          String
-  email         String   @unique
-  emailVerified Boolean
-  image         String?
-  createdAt     DateTime
-  updatedAt     DateTime
+    id            String   @id
+    name          String
+    email         String   @unique
+    emailVerified Boolean
+    image         String?
+    createdAt     DateTime
+    updatedAt     DateTime
 
-  // Domain business fields
-  phoneNumber   String?  @unique // e.g. "+97798XXXXXXXX"
-  role          UserRole @default(BUYER)
-  isVerified    Boolean  @default(false)
-  agreedToTerms Boolean  @default(false)
-  agencyId      String?
-  agency        Agency?  @relation(fields: [agencyId], references: [id])
+    // Domain business fields
+    phoneNumber   String?    @unique // e.g. "+97798XXXXXXXX"
+    role          UserRole[] @default([BUYER])
+    isVerified    Boolean    @default(false)
+    agreedToTerms Boolean    @default(false)
+    agencyId      String?
+    agency        Agency?    @relation(fields: [agencyId], references: [id])
 
-  sessions Session[]
-  accounts Account[]
-  profile  UserProfile?
+    sessions Session[]
+    accounts Account[]
+    profile  UserProfile?
 
-  properties          Property[]             @relation("OwnerProperties")
-  assignedAgentFor    Property[]             @relation("AgentProperties")
-  inquiries           Inquiry[]
-  auditLogs           VerificationAuditLog[] @relation("VerifierAudits")
-  documents           UserDocument[]
-  savedSearches       SavedSearch[]
-  favorites           Favorite[]
-  notifications       Notification[]
-  questions           Question[]             @relation("QuestionAuthor")
-  answers             Answer[]               @relation("AnswerAuthor")
-  officerAppointments OfficerAppointment[]   @relation("RequestingUser")
+    properties          Property[]             @relation("OwnerProperties")
+    assignedAgentFor    Property[]             @relation("AgentProperties")
+    inquiries           Inquiry[]
+    auditLogs           VerificationAuditLog[] @relation("VerifierAudits")
+    documents           UserDocument[]
+    savedSearches       SavedSearch[]
+    favorites           Favorite[]
+    notifications       Notification[]
+    questions           Question[]             @relation("QuestionAuthor")
+    answers             Answer[]               @relation("AnswerAuthor")
+    officerAppointments OfficerAppointment[]   @relation("RequestingUser")
 
-  @@index([phoneNumber])
-  @@index([role])
-  @@index([agencyId])
-  @@map("users")
+    @@index([phoneNumber])
+    @@index([role])
+    @@index([agencyId])
+    @@map("users")
 }
 
 model Session {
-  id        String   @id
-  userId    String
-  token     String   @unique
-  expiresAt DateTime
-  ipAddress String?
-  userAgent String?
-  createdAt DateTime
-  updatedAt DateTime
+    id        String   @id
+    userId    String
+    token     String   @unique
+    expiresAt DateTime
+    ipAddress String?
+    userAgent String?
+    createdAt DateTime
+    updatedAt DateTime
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("sessions")
+    @@map("sessions")
 }
 
 model Account {
-  id                    String    @id
-  userId                String
-  accountId             String
-  providerId            String
-  accessToken           String?
-  refreshToken          String?
-  idToken               String?
-  accessTokenExpiresAt  DateTime?
-  refreshTokenExpiresAt DateTime?
-  scope                 String?
-  password              String?
-  createdAt             DateTime
-  updatedAt             DateTime
+    id                    String    @id
+    userId                String
+    accountId             String
+    providerId            String
+    accessToken           String?
+    refreshToken          String?
+    idToken               String?
+    accessTokenExpiresAt  DateTime?
+    refreshTokenExpiresAt DateTime?
+    scope                 String?
+    password              String?
+    createdAt             DateTime
+    updatedAt             DateTime
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  @@map("accounts")
+    @@map("accounts")
 }
 
 model Verification {
-  id         String    @id
-  identifier String
-  value      String
-  expiresAt  DateTime
-  createdAt  DateTime?
-  updatedAt  DateTime?
+    id         String    @id
+    identifier String
+    value      String
+    expiresAt  DateTime
+    createdAt  DateTime?
+    updatedAt  DateTime?
 
-  @@map("verifications")
+    @@map("verifications")
 }
 
 model UserProfile {
