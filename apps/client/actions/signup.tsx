@@ -1,6 +1,6 @@
 "use server";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "/api/auth";
+import { apiFetch, ApiError, API_ENDPOINTS } from "lib/api";
 
 export const sign_up_action = async ({
   name,
@@ -12,24 +12,24 @@ export const sign_up_action = async ({
   password: string;
 }) => {
   try {
-    const response = await fetch(`${API_URL}/sign-up/email`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, email, password }),
-    });
-
-    const data = await response.json();
-
-    if (!response.ok) {
-      return { success: false, error: data.message || "Sign up failed" };
-    }
-
+    const data = await apiFetch<{ message?: string }>(
+      API_ENDPOINTS.auth.signUpEmail,
+      {
+        method: "POST",
+        body: { name, email, password },
+      },
+    );
     return { success: true, data };
   } catch (error) {
     console.error("signup error-->", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Sign up failed",
+      error:
+        error instanceof ApiError
+          ? error.message
+          : error instanceof Error
+            ? error.message
+            : "Sign up failed",
     };
   }
 };

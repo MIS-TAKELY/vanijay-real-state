@@ -1,14 +1,32 @@
 // apps/client/proxy.ts
+import { apiUrl } from "lib/api/core/config";
+import { API_ENDPOINTS } from "lib/api/core/endpoints";
 import { NextRequest, NextResponse } from "next/server";
-import { headers } from "next/headers";
-import { auth } from "@repo/auth"; // your server auth instance
 
 export async function proxy(request: NextRequest) {
-  const session = await auth.api.getSession({
-    headers: await headers(),
-  });
+  let session: { user?: unknown } | null = null;
+  let rejected = false;
 
-  if (!session) {
+  try {
+    const res = await fetch(apiUrl(API_ENDPOINTS.auth.getSession), {
+      headers: {
+        Accept: "application/json",
+        cookie: request.headers.get("cookie") ?? "",
+      },
+      cache: "no-store",
+      signal: AbortSignal.timeout(5_000),
+    });
+
+    if (res.status === 401 || res.status === 403) {
+      rejected = true;
+    } else if (res.ok) {
+      session = (await res.json()) as { user?: unknown } | null;
+    }
+  } catch {
+    return NextResponse.next();
+  }
+
+  if (rejected || !session?.user) {
     return NextResponse.redirect(new URL("/?auth=signin", request.url));
   }
 

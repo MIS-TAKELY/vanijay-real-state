@@ -11,7 +11,8 @@
       "@/*": ["../../packages/ui/src/*"],
       "components/*": ["./components/*"],
       "constants/*": ["./constants/*"],
-      "app/*": ["./app/*"]
+      "app/*": ["./app/*"],
+      "lib/*": ["./lib/*"]
     },
     "baseUrl": "."
   },
