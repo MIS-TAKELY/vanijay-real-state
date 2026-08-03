@@ -13,13 +13,13 @@ jest.mock('better-auth/node', () => ({ fromNodeHeaders: jest.fn(() => ({})) }));
 
 describe('PropertiesResolver', () => {
   let resolver: PropertiesResolver;
-  let service: { create: jest.Mock; findAll: jest.Mock; findOne: jest.Mock };
+  let service: { create: jest.Mock; findOne: jest.Mock; findFeed: jest.Mock };
 
   beforeEach(async () => {
     service = {
       create: jest.fn().mockResolvedValue({ id: 'p1' }),
-      findAll: jest.fn().mockResolvedValue([]),
       findOne: jest.fn().mockResolvedValue({ id: 'p1' }),
+      findFeed: jest.fn().mockResolvedValue({ items: [], nextCursor: null, hasMore: false }),
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -44,9 +44,9 @@ describe('PropertiesResolver', () => {
     expect(service.create).toHaveBeenCalledWith(input, 'u1');
   });
 
-  it('delegates findAll to the shared service', async () => {
-    await resolver.findAll(20, 0);
-    expect(service.findAll).toHaveBeenCalledWith({ take: 20, skip: 0 });
+  it('delegates findFeed to the shared service', async () => {
+    await resolver.findFeed(5, 'cursor-abc');
+    expect(service.findFeed).toHaveBeenCalledWith({ first: 5, after: 'cursor-abc' });
   });
 });
 

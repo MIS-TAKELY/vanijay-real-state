@@ -158,12 +158,13 @@ model User {
     updatedAt     DateTime
 
     // Domain business fields
-    phoneNumber   String?    @unique // e.g. "+97798XXXXXXXX"
-    role          UserRole[] @default([BUYER])
-    isVerified    Boolean    @default(false)
-    agreedToTerms Boolean    @default(false)
-    agencyId      String?
-    agency        Agency?    @relation(fields: [agencyId], references: [id])
+    phoneNumber         String?    @unique // e.g. "+97798XXXXXXXX"
+    phoneNumberVerified Boolean    @default(false)
+    role                UserRole[] @default([BUYER])
+    isVerified          Boolean    @default(false)
+    agreedToTerms       Boolean    @default(false)
+    agencyId            String?
+    agency              Agency?    @relation(fields: [agencyId], references: [id])
 
     sessions Session[]
     accounts Account[]
@@ -365,6 +366,10 @@ model Property {
     @@index([askingPrice])
     @@index([ownerId])
     @@index([agentId])
+    // Backs keyset/cursor pagination (ORDER BY createdAt DESC, id DESC) used by
+    // PropertiesService.findFeed() — a composite index keeps it an index range
+    // scan instead of a sort+scan as the table grows.
+    @@index([createdAt(sort: Desc), id(sort: Desc)])
 }
 
 // Closed-deal record — distinct from asking price, this is what powers

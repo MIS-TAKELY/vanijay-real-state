@@ -4,6 +4,7 @@ import { Icon } from "@repo/ui";
 interface PropertyCardProps {
   property: {
     id: string;
+    listingCode?: string;
     title: string;
     price: string;
     location: string;
@@ -43,7 +44,7 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </h3>
 
         <span className="mb-sm inline-block w-fit rounded bg-surface-container px-2 py-0.5 text-[11px] font-medium text-on-surface-variant">
-          ID: {property.id}
+          ID: {property.listingCode ?? property.id}
         </span>
 
         <p className="mb-0.5 mono-stat text-lg font-semibold text-primary">

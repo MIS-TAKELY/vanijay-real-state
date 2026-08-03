@@ -1,51 +1,35 @@
-export function Pagination() {
-  const pages = ["01", "02", "03"];
+"use client";
+
+interface PaginationProps {
+  hasMore: boolean;
+  loading: boolean;
+  onLoadMore: () => void;
+}
+
+/**
+ * Cursor-driven pagination control.
+ *
+ * Keyset pagination has no notion of "page 7" — you can only advance by passing
+ * the previous response's `nextCursor` back as `after`. So instead of fake
+ * page numbers we render a single "Load more" button driven by `hasMore`.
+ * The parent (`PropertyFeed`) renders the end-of-list marker itself.
+ */
+export function Pagination({ hasMore, loading, onLoadMore }: PaginationProps) {
+  if (!hasMore) return null;
+
   return (
     <nav
       aria-label="Pagination"
-      className="mx-auto flex max-w-container-max items-center justify-center gap-xs px-gutter py-xl"
+      className="mx-auto flex max-w-container-max items-center justify-center px-gutter py-xl"
     >
       <button
         type="button"
-        aria-label="Previous page"
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
+        onClick={onLoadMore}
+        disabled={loading}
+        aria-busy={loading}
+        className="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md border border-outline-variant bg-surface px-md py-2.5 text-sm font-semibold text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        <span aria-hidden>&larr;</span>
-      </button>
-      <button
-        type="button"
-        aria-label="Page 1, current page"
-        aria-current="page"
-        className="cursor-pointer rounded-md border-b-2 border-primary px-sm text-sm font-semibold text-primary transition-colors hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-      >
-        01
-      </button>
-      {pages.slice(1).map((p) => (
-        <button
-          key={p}
-          type="button"
-          aria-label={`Page ${p}`}
-          className="cursor-pointer rounded-md px-sm text-sm text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-        >
-          {p}
-        </button>
-      ))}
-      <span className="px-xs text-sm text-on-surface-variant" aria-hidden>
-        &hellip;
-      </span>
-      <button
-        type="button"
-        aria-label="Page 12"
-        className="cursor-pointer rounded-md px-sm text-sm text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-      >
-        12
-      </button>
-      <button
-        type="button"
-        aria-label="Next page"
-        className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-md text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30"
-      >
-        <span aria-hidden>&rarr;</span>
+        {loading ? "Loading…" : "Load more listings"}
       </button>
     </nav>
   );

@@ -2,42 +2,60 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { Prisma } from '@repo/db';
-import { PrismaService } from '../prisma/prisma.service';
+import { Prisma, PrismaClient } from '@repo/db';
+import {
+  CursorPage,
+  decodeCursor,
+  encodeCursor,
+  resolveFirst,
+} from 'src/common/pagination';
 import { CreatePropertyInput } from './dto/create-property.input';
 import { UpdatePropertyInput } from './dto/update-property.input';
 import { Property } from './entities/property.entity';
 
-/**
- * THE shared domain service for properties.
- *
- * Both `PropertiesController` (REST) and `PropertiesResolver` (GraphQL) inject
- * THIS service and call the same methods — business logic lives in exactly one
- * place. This is the core maintainability rule: controllers/resolvers are
- * transport adapters, the service owns the domain.
- */
 @Injectable()
 export class PropertiesService {
-  // Cap how many rows a single list request can pull, to protect the DB.
-  private static readonly DEFAULT_TAKE = 20;
-  private static readonly MAX_TAKE = 100;
+  constructor(private readonly prisma: PrismaClient) {}
 
-  constructor(private readonly prisma: PrismaService) {}
+  async findFeed(opts: {
+    first?: number;
+    after?: string;
+  } = {}): Promise<CursorPage<Property>> {
+    const first = resolveFirst(opts.first);
+    const after = opts.after ? decodeCursor(opts.after) : undefined;
 
-  /** Public list (only LIVE listings) with take/skip pagination. */
-  findAll(opts: { take?: number; skip?: number } = {}) {
-    const take = Math.min(
-      opts.take ?? PropertiesService.DEFAULT_TAKE,
-      PropertiesService.MAX_TAKE,
-    );
-    const skip = opts.skip ?? 0;
+    const rows = await this.prisma.property.findMany({
+      where: {
+        status: 'LIVE',
+        ...(after && {
+          // "strictly before" the cursor in (createdAt DESC, id DESC) order:
+          // either an older instant, or the same instant with a smaller id.
+          OR: [
+            { createdAt: { lt: after.createdAt } },
+            { createdAt: { equals: after.createdAt }, id: { lt: after.id } },
+          ],
+        }),
+      },
+      orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+      take: first + 1, // lookahead: +1 detects the next page without count()
+    });
 
-    return this.prisma.property.findMany({
-      where: { status: 'LIVE' },
-      take,
-      skip,
-      orderBy: { createdAt: 'desc' },
-    }).then((rows) => rows.map(PropertiesService.mapToResponse));
+    const hasMore = rows.length > first;
+    const slice = hasMore ? rows.slice(0, first) : rows;
+    const last = slice[slice.length - 1];
+    const nextCursor =
+      hasMore && last
+        ? encodeCursor({
+            createdAt: new Date(last.createdAt).toISOString(),
+            id: last.id,
+          })
+        : null;
+
+    return {
+      items: slice.map(PropertiesService.mapToResponse),
+      nextCursor,
+      hasMore,
+    };
   }
 
   /** Any property by id (admin/owner reads; callers gate access via guards). */
@@ -47,26 +65,37 @@ export class PropertiesService {
     return PropertiesService.mapToResponse(row);
   }
 
-  /** Create a new listing. `ownerId` is injected by the transport from auth. */
   async create(input: CreatePropertyInput, ownerId: string): Promise<Property> {
+    const { landArea, location, cadastralRecord, ...propertyData } = input;
+    console.log("imput-->",input)
     const row = await this.prisma.property.create({
       data: {
-        ...input,
+        ...propertyData,
         ownerId,
         listingCode: await this.generateListingCode(),
         slug: this.generateSlug(input.title),
         originalAskingPrice: input.askingPrice,
+        ...(landArea && { landArea: { create: landArea } }),
+        ...(location && { location: { create: location } }),
+        ...(cadastralRecord && { cadastralRecord: { create: cadastralRecord } }),
       },
+      include: { landArea: true, location: true, cadastralRecord: true },
     });
     return PropertiesService.mapToResponse(row);
   }
 
   async update(input: UpdatePropertyInput): Promise<Property> {
-    const { id, ...data } = input;
+    const { id, landArea, location, cadastralRecord, ...rest } = input;
     await this.exists(id);
     const row = await this.prisma.property.update({
       where: { id },
-      data,
+      data: {
+        ...rest,
+        ...(landArea && { landArea: { create: landArea as any } }),
+        ...(location && { location: { create: location as any } }),
+        ...(cadastralRecord && { cadastralRecord: { create: cadastralRecord as any } }),
+      },
+      include: { landArea: true, location: true, cadastralRecord: true },
     });
     return PropertiesService.mapToResponse(row);
   }

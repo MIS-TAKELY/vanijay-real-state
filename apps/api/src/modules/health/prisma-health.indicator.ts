@@ -1,15 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { HealthIndicator, type HealthIndicatorResult } from '@nestjs/terminus';
-import { PrismaService } from '../prisma/prisma.service';
+import { PrismaClient } from '@repo/db';
 
-/**
- * Readiness probe — `GET /health/db` is 200 only if PostgreSQL answers a trivial
- * `SELECT 1`; otherwise Terminus marks the indicator `down` (HTTP 503) so k8s
- * keeps the pod out of rotation until the database is reachable again.
- */
+
 @Injectable()
 export class PrismaHealthIndicator extends HealthIndicator {
-  constructor(private readonly prisma: PrismaService) {
+  constructor(private readonly prisma: PrismaClient) {
     super();
   }
 

@@ -5,7 +5,7 @@ import { PropertiesService } from './properties.service';
 
 /**
  * One module declaring BOTH transports (REST controller + GraphQL resolver)
- * backed by ONE `PropertiesService`. `PrismaService` is `@Global()` so it's
+ * backed by ONE `PropertiesService`. `PrismaClient` is `@Global()` so it's
  * injectable here without importing `PrismaModule`.
  *
  * The service is exported so other modules (e.g. an inquiries module) can reuse

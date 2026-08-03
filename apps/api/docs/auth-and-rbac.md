@@ -55,7 +55,7 @@ export const auth = betterAuth({
 
 ## REST/GraphQL guard — `AuthGuard`
 
-`modules/rest/auth/guards/auth.guard.ts` resolves the Better Auth session and
+`common/guards/auth.guard.ts` resolves the Better Auth session and
 attaches `user` + `session` to the request. **It already works for both REST and
 GraphQL** because it uses `getRequest(context)` from `common/get-request.ts`:
 
@@ -80,7 +80,7 @@ export class AuthGuard implements CanActivate {
 
 ## Role-based access — `RolesGuard` + `@Roles`
 
-`modules/rest/auth/guards/role/role.guard.ts` reads `ROLES_KEY` metadata via
+`common/guards/role.guard.ts` reads `ROLES_KEY` metadata via
 `Reflector` and checks the user's roles:
 
 ```ts
@@ -102,7 +102,7 @@ export class RolesGuard implements CanActivate {
 }
 ```
 
-`normalizeUserRoles()` (in `modules/rest/auth/permissions/role.helper.ts`)
+`normalizeUserRoles()` (in `common/utils/role.helper.ts`)
 tolerates every shape Better Auth / legacy data might return:
 `user.roles` (array), `user.role` as an array, or `user.role` as a single
 string. It also exports `hasRole()` and `hasAllRoles()` helpers.
@@ -112,8 +112,8 @@ string. It also exports `hasRole()` and `hasAllRoles()` helpers.
 ```ts
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { AuthGuard } from '../auth/guards/auth.guard';
-import { RolesGuard } from '../auth/guards/role/role.guard';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { RolesGuard } from 'src/common/guards/role.guard';
 
 @Controller('api/example')
 @UseGuards(AuthGuard, RolesGuard)        // auth first, then RBAC

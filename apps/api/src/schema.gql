@@ -73,8 +73,14 @@ A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date
 """
 scalar DateTime
 
+type PropertyPage {
+  items: [Property!]!
+  nextCursor: String
+  hasMore: Boolean!
+}
+
 type Query {
-  properties(take: Int = 20, skip: Int = 0): [Property!]!
+  propertiesFeed(first: Int = 20, after: String): PropertyPage!
   property(id: ID!): Property!
 }
 
@@ -95,6 +101,39 @@ input CreatePropertyInput {
   facing: FacingDirection
   isCornerPlot: Boolean
   agentId: String
+  landArea: LandAreaDetailsInput!
+  location: PropertyLocationInput!
+  cadastralRecord: CadastralRecordInput
+}
+
+input LandAreaDetailsInput {
+  ropani: Float!
+  aana: Float!
+  paisa: Float
+  daam: Float
+  bigha: Float
+  katha: Float
+  dhur: Float
+  totalSqFt: Float!
+  totalSqMeters: Float!
+}
+
+input PropertyLocationInput {
+  province: String!
+  district: String!
+  municipality: String!
+  wardNumber: Float!
+  areaName: String!
+  addressText: String
+  latitude: Float
+  longitude: Float
+}
+
+input CadastralRecordInput {
+  kittaNumbers: String!
+  sheetNumber: String
+  parcelBoundary: String
+  cadastralMapUrl: String
 }
 
 input UpdatePropertyInput {
@@ -108,5 +147,8 @@ input UpdatePropertyInput {
   facing: FacingDirection
   isCornerPlot: Boolean
   agentId: String
+  landArea: LandAreaDetailsInput
+  location: PropertyLocationInput
+  cadastralRecord: CadastralRecordInput
   id: ID!
 }

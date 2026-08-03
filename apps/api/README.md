@@ -268,8 +268,8 @@ export class AppModule {}
 import { Controller, Get, UseGuards } from '@nestjs/common';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
-import { AuthGuard } from '../auth/guards/auth.guard';
-import { RolesGuard } from '../auth/guards/role/role.guard';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { RolesGuard } from 'src/common/guards/role.guard';
 
 @Controller('api/example')
 @UseGuards(AuthGuard, RolesGuard)
@@ -282,7 +282,7 @@ export class ExampleController {
 }
 ```
 
-> **Note:** The `AuthGuard` in `guards/auth.guard.ts` **already** uses
+> **Note:** The `AuthGuard` in `common/guards/auth.guard.ts` **already** uses
 > `getRequest(context)` from `common/get-request.ts`, so the same guard works for
 > both REST and GraphQL. Apply it with `@UseGuards(AuthGuard)` on either a
 > controller or a resolver. See [Auth & RBAC](./docs/auth-and-rbac.md).
@@ -437,7 +437,7 @@ so it must run **before** `express.json()` parses/transforms the stream.
 
 ### REST guard
 
-`guards/auth.guard.ts` resolves the session via `auth.api.getSession()` and
+`common/guards/auth.guard.ts` resolves the session via `auth.api.getSession()` and
 attaches `user` + `session` to the request.
 
 ### Making guards work for BOTH REST and GraphQL
@@ -447,7 +447,7 @@ switches on `context.getType()` between `'http'` and `'graphql'`, so they work i
 both contexts out of the box:
 
 ```ts
-// guards/auth.guard.ts (current code — already context-agnostic)
+// common/guards/auth.guard.ts (current code — already context-agnostic)
 @Injectable()
 export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
@@ -518,7 +518,7 @@ export class PropertiesService {
 > Better Auth's `additionalFields` now stores `role` as `type: "string[]"` with
 > `defaultValue: ["BUYER"]`, matching the column type. The `RolesGuard`
 > normalizes via `normalizeUserRoles()` in
-> `modules/rest/auth/permissions/role.helper.ts`, so it tolerates both `user.role`
+> `common/utils/role.helper.ts`, so it tolerates both `user.role`
 > (string or array) and `user.roles` (array) — including legacy single-string rows.
 
 ---

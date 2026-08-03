@@ -104,6 +104,6 @@ The schema models a Nepal real-estate archive. Key enums relevant to the API:
   `defaultValue: ["BUYER"]`.
 - **API:** `RolesGuard` reads `ROLES_KEY` metadata and normalizes the session
   user's roles via `normalizeUserRoles()` in
-  `modules/rest/auth/permissions/role.helper.ts`, which tolerates `user.role`
+  `common/utils/role.helper.ts`, which tolerates `user.role`
   as a string or array **and** `user.roles` as an array (handles legacy
   single-string rows). See [Auth & RBAC](./auth-and-rbac.md).

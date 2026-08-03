@@ -7,30 +7,23 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
 import { graphqlValidationRules } from './common/graphql/graphql-validation';
-// Side-effect import: registers Prisma enums as GraphQL enum types before the
-// schema is generated.
+
 import './common/graphql/register-enums';
-import { AuthModule } from './modules/rest/auth/auth.module';
 import { HealthModule } from './modules/health/health.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
-import { PropertiesModule } from './modules/properties/properties.module';
+import { PropertiesModule } from './modules/rest/properties/properties.module';
+import { AuthModule } from './modules/rest/auth/auth.module';
+import { SellerModule } from './modules/rest/seller/seller.module';
 
 @Module({
   imports: [
-    // Structured JSON logging (stdout) for both app logs and HTTP requests.
     LoggerModule.forRoot({
       pinoHttp: {
         level: 'info',
         base: { service: 'vanijay-real-state-api' },
       },
     }),
-        // Global in-memory throttler; the guard itself lives in CommonModule
-    // (GqlThrottlerGuard via APP_GUARD) so it covers REST + GraphQL.
-    // `setHeaders: false` is required for the GraphQL transport: Apollo Server
-    // (via @nestjs/apollo) owns response headers, and the GraphQL execution
-    // context does not expose an express `res` — the base guard would call
-    // `res.header(...)` and throw. Rate-limit headers are still set on REST
-    // responses where an express `res` is available.
+
     ThrottlerModule.forRoot({
       throttlers: [{ ttl: 60000, limit: 100, setHeaders: false }],
     }),
@@ -46,6 +39,7 @@ import { PropertiesModule } from './modules/properties/properties.module';
     }),
     AuthModule,
     PropertiesModule,
+    SellerModule,
   ],
   controllers: [AppController],
   providers: [AppService],

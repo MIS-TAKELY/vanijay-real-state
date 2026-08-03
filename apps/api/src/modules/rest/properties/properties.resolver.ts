@@ -1,18 +1,12 @@
 import { UseGuards } from '@nestjs/common';
-import {
-  Args,
-  ID,
-  Int,
-  Mutation,
-  Query,
-  Resolver,
-} from '@nestjs/graphql';
+import { Args, ID, Int, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { AuthGuard } from 'src/modules/rest/auth/guards/auth.guard';
-import { RolesGuard } from 'src/modules/rest/auth/guards/role/role.guard';
+import { AuthGuard } from 'src/common/guards/auth.guard';
+import { RolesGuard } from 'src/common/guards/role.guard';
 import { CreatePropertyInput } from './dto/create-property.input';
 import { UpdatePropertyInput } from './dto/update-property.input';
+import { PropertyPage } from './entities/property-page.object-type';
 import { Property } from './entities/property.entity';
 import { PropertiesService } from './properties.service';
 
@@ -25,17 +19,37 @@ import { PropertiesService } from './properties.service';
 export class PropertiesResolver {
   constructor(private readonly properties: PropertiesService) {}
 
-  @Query(() => [Property], { name: 'properties' })
-  @Roles('BUYER', 'SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'SURVEYOR_AGENT', 'ADMIN')
-  findAll(
-    @Args('take', { type: () => Int, nullable: true, defaultValue: 20 }) take?: number,
-    @Args('skip', { type: () => Int, nullable: true, defaultValue: 0 }) skip?: number,
+  /**
+   * Cursor-paginated feed (newest first). Returns `{ items, nextCursor,
+   * hasMore }`. Pass the previous response's `nextCursor` back as `after` to
+   * load the next page. Opaque cursor — clients must not parse it.
+   */
+  @Query(() => PropertyPage, { name: 'propertiesFeed' })
+  @Roles(
+    'BUYER',
+    'SELLER',
+    'AGENCY_AGENT',
+    'AGENCY_ADMIN',
+    'SURVEYOR_AGENT',
+    'ADMIN',
+  )
+  findFeed(
+    @Args('first', { type: () => Int, nullable: true, defaultValue: 20 })
+    first?: number,
+    @Args('after', { type: () => String, nullable: true }) after?: string,
   ) {
-    return this.properties.findAll({ take, skip });
+    return this.properties.findFeed({ first, after });
   }
 
   @Query(() => Property, { name: 'property' })
-  @Roles('BUYER', 'SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'SURVEYOR_AGENT', 'ADMIN')
+  @Roles(
+    'BUYER',
+    'SELLER',
+    'AGENCY_AGENT',
+    'AGENCY_ADMIN',
+    'SURVEYOR_AGENT',
+    'ADMIN',
+  )
   findOne(@Args('id', { type: () => ID }) id: string) {
     return this.properties.findOne(id);
   }

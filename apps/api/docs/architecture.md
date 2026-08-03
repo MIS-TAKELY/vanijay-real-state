@@ -120,20 +120,22 @@ apps/api/
 │   ├── app.service.ts
 │   ├── common/                        # shared across REST + GraphQL
 │   │   ├── get-request.ts             # resolve req from http | graphql context
-│   │   └── decorators/
-│   │       ├── current-user.decorator.ts   # @CurrentUser
-│   │       └── roles.decorator.ts          # @Roles(...) + ROLES_KEY
+│   │   ├── decorators/
+│   │   │   ├── current-user.decorator.ts   # @CurrentUser
+│   │   │   └── roles.decorator.ts          # @Roles(...) + ROLES_KEY
+│   │   ├── guards/
+│   │   │   ├── auth.guard.ts               # session → req.user (http + graphql)
+│   │   │   ├── role.guard.ts               # RBAC via Reflector + metadata
+│   │   │   └── gql-throttler.guard.ts      # rate limiting (REST + GraphQL)
+│   │   └── utils/
+│   │       └── role.helper.ts              # normalizeUserRoles, hasRole, hasAllRoles
 │   └── modules/
 │       ├── rest/
 │       │   └── auth/
 │       │       ├── auth.module.ts             # currently empty @Module({})
 │       │       ├── auth.controller.ts         # ⚠️ scaffolding, NOT wired (see auth docs)
 │       │       ├── auth.service.ts            # ⚠️ stub CRUD, NOT wired
-│       │       ├── guards/
-│       │       │   ├── auth.guard.ts          # session → req.user (http + graphql)
-│       │       │   └── role/role.guard.ts     # RBAC via Reflector + metadata
-│       │       ├── permissions/role.helper.ts  # normalizeUserRoles, hasRole, hasAllRoles
-│       │       └── dto/ + entities/           # placeholder DTOs/entities
+│       │       └── dto/ + entities/           # auth feature DTOs/entities
 │       └── graphql/
 │           └── properties/                    # code-first GraphQL (placeholder)
 │               ├── properties.module.ts
