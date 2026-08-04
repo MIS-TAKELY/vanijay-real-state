@@ -34,7 +34,7 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
       { label: "Overview", href: "/dashboard", icon: "space_dashboard" },
       {
         label: "My Listings",
-        href: "/dashboard/listings",
+        href: "/my-listings",
         icon: "list_alt",
         badge: "3",
       },
@@ -43,13 +43,13 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
   {
     heading: "Records",
     items: [
-      { label: "Document Vault", href: "/dashboard/documents", icon: "folder" },
+      { label: "Document Vault", href: "/documents", icon: "folder" },
       {
         label: "Saved Searches",
-        href: "/dashboard/saved-searches",
+        href: "/saved-searches",
         icon: "bookmark",
       },
-      { label: "Favorites", href: "/dashboard/favorites", icon: "favorite" },
+      { label: "Favorites", href: "/favorites", icon: "favorite" },
     ],
   },
   {
@@ -57,16 +57,16 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
     items: [
       {
         label: "Inquiries",
-        href: "/dashboard/inquiries",
+        href: "/inquiries",
         icon: "forum",
         badge: "5",
       },
       {
         label: "Appointments",
-        href: "/dashboard/appointments",
+        href: "/appointments",
         icon: "event",
       },
-      { label: "My Questions", href: "/dashboard/questions", icon: "help" },
+      { label: "My Questions", href: "/questions", icon: "help" },
     ],
   },
   {
@@ -74,7 +74,7 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
     items: [
       {
         label: "Profile & Verification",
-        href: "/dashboard/profile",
+        href: "/profile",
         icon: "badge",
       },
     ],
@@ -137,11 +137,7 @@ export const DASHBOARD_STATS: DashboardStat[] = [
 /* Recent activity feed (overview §5.1 left)                          */
 /* ------------------------------------------------------------------ */
 
-export type ActivityType =
-  | "inquiry"
-  | "document"
-  | "pricedrop"
-  | "appointment";
+export type ActivityType = "inquiry" | "document" | "pricedrop" | "appointment";
 
 export interface ActivityItem {
   id: string;

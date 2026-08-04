@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Icon } from "@repo/ui";
 
 export function NRNConcierge() {
@@ -7,10 +6,17 @@ export function NRNConcierge() {
       <div className="max-w-container-max mx-auto px-gutter">
         <div className="relative bg-surface border border-outline-variant rounded-2xl p-lg md:p-xl flex flex-col md:flex-row items-start md:items-center justify-between gap-lg shadow-sm overflow-hidden">
           {/* Accent corner */}
-          <div className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary/5 blur-2xl" aria-hidden="true" />
+          <div
+            className="absolute -top-16 -right-16 h-48 w-48 rounded-full bg-primary/5 blur-2xl"
+            aria-hidden="true"
+          />
           <div className="relative max-w-2xl">
             <span className="inline-flex items-center gap-xs rounded-full border border-outline-variant bg-surface-container px-3 py-1 mb-sm">
-              <Icon name="public" className="text-primary text-[16px]" filled />
+              <Icon
+                name="public"
+                className="text-primary text-data-table"
+                filled
+              />
               <span className="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant font-bold">
                 For Non-Resident Nepalis
               </span>

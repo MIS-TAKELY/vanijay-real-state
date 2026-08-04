@@ -24,20 +24,21 @@ export function CTA() {
             Start Your Search with Confidence
           </h2>
           <p className="font-body-md text-on-surface-variant leading-relaxed mx-auto mb-lg">
-            Every listing in our archive has been field-verified, cadastral-cleared, and
-            indexed with a permanent Archival ID. Browse with total peace of mind.
+            Every listing in our archive has been field-verified,
+            cadastral-cleared, and indexed with a permanent Archival ID. Browse
+            with total peace of mind.
           </p>
           <div className="flex flex-col sm:flex-row items-center justify-center gap-md">
             <Link
               href="/listings"
-              className="inline-flex cursor-pointer items-center justify-center gap-xs rounded-md bg-primary px-6 py-3 text-[13px] font-semibold tracking-[0.4px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="inline-flex cursor-pointer items-center justify-center gap-xs rounded-md bg-primary px-6 py-3 text-label-sm font-semibold tracking-[0.4px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
               Browse Verified Listings
-              <Icon name="arrow_forward" className="text-[18px]" />
+              <Icon name="arrow_forward" className="text-body-lg" />
             </Link>
             <Link
               href="/area-guid"
-              className="inline-flex cursor-pointer items-center justify-center gap-xs rounded-md border border-outline-variant px-6 py-3 text-[13px] font-semibold tracking-[0.4px] text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="inline-flex cursor-pointer items-center justify-center gap-xs rounded-md border border-outline-variant px-6 py-3 text-label-sm font-semibold tracking-[0.4px] text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
               Explore Area Guides
             </Link>

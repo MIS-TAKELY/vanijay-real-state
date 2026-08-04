@@ -15,19 +15,18 @@ export function Story() {
             </h2>
             <p className="font-body-md text-on-surface-variant leading-relaxed mb-md">
               Land transactions in Nepal have long been plagued by title
-              disputes — overlapping claims, unregistered inheritance
-              transfers, fictitious plots, and missing cadastral records. For
-              buyers, the risk of investing in contested land is devastating:
-              legal battles that drag on for years, frozen assets, and at
-              worst, complete loss of capital.
+              disputes — overlapping claims, unregistered inheritance transfers,
+              fictitious plots, and missing cadastral records. For buyers, the
+              risk of investing in contested land is devastating: legal battles
+              that drag on for years, frozen assets, and at worst, complete loss
+              of capital.
             </p>
             <p className="font-body-md text-on-surface-variant leading-relaxed">
-              Existing registries are fragmented across 77 district Land
-              Revenue Offices, making it nearly impossible to verify a
-              property&apos;s full history without months of manual research.
-              Lekhaprati was founded to solve this asymmetry — by creating a
-              single trusted archive that any buyer, investor, or agent can
-              rely on.
+              Existing registries are fragmented across 77 district Land Revenue
+              Offices, making it nearly impossible to verify a property&apos;s
+              full history without months of manual research. Lekhaprati was
+              founded to solve this asymmetry — by creating a single trusted
+              archive that any buyer, investor, or agent can rely on.
             </p>
           </div>
 
@@ -57,7 +56,7 @@ export function Story() {
                   <Icon
                     name="check_circle"
                     filled
-                    className="text-primary shrink-0 mt-0.5 text-[18px]"
+                    className="text-primary shrink-0 mt-0.5 text-body-lg"
                   />
                   {item}
                 </li>

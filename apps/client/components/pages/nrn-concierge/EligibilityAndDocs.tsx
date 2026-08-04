@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
 import { Icon } from "@repo/ui";
+import { useState } from "react";
 
 export function EligibilityAndDocs() {
   const [openDoc, setOpenDoc] = useState<string | null>("nrn");
@@ -128,10 +128,10 @@ export function EligibilityAndDocs() {
 
               <button
                 type="submit"
-                className="inline-flex w-full cursor-pointer items-center justify-center gap-xs rounded-md bg-primary py-3.5 text-[13px] font-semibold tracking-[0.8px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                className="inline-flex w-full cursor-pointer items-center justify-center gap-xs rounded-md bg-primary py-3.5 text-label-sm font-semibold tracking-[0.8px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
               >
                 Check Eligibility
-                <Icon name="arrow_forward" className="text-[18px]" />
+                <Icon name="arrow_forward" className="text-body-lg" />
               </button>
             </form>
           </div>
@@ -150,7 +150,9 @@ export function EligibilityAndDocs() {
                 <li key={doc.id}>
                   <button
                     type="button"
-                    onClick={() => setOpenDoc(openDoc === doc.id ? null : doc.id)}
+                    onClick={() =>
+                      setOpenDoc(openDoc === doc.id ? null : doc.id)
+                    }
                     aria-expanded={openDoc === doc.id}
                     className="flex w-full cursor-pointer items-center justify-between py-sm text-left text-[15px] text-on-surface transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-md"
                   >

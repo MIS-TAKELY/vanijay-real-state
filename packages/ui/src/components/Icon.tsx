@@ -1,12 +1,97 @@
-import React from "react";
+"use client";
+
 import { cva, type VariantProps } from "class-variance-authority";
+import type { LucideIcon } from "lucide-react";
+import {
+  ArrowLeftRight,
+  ArrowRight,
+  ArrowUp,
+  ArrowUpRight,
+  BadgeCheck,
+  BarChart3,
+  Bookmark,
+  Building,
+  Calculator,
+  Calendar,
+  CalendarClock,
+  Camera,
+  Check,
+  CheckCircle,
+  CheckSquare,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  CircleAlert,
+  CircleX,
+  ClipboardList,
+  Clock,
+  CloudOff,
+  Copy,
+  CreditCard,
+  Download,
+  Edit,
+  ExternalLink,
+  Eye,
+  EyeOff,
+  FileText,
+  FileUp,
+  Filter,
+  Folder,
+  Gavel,
+  Globe,
+  Handshake,
+  Heart,
+  HelpCircle,
+  History,
+  Home,
+  Info,
+  Landmark,
+  Layers,
+  LayoutDashboard,
+  Leaf,
+  ListFilter,
+  Lock,
+  Mail,
+  Map,
+  MapPin,
+  MessageCircle,
+  MessageSquare,
+  MoreVertical,
+  Mountain,
+  Phone,
+  Plane,
+  Play,
+  Plus,
+  Receipt,
+  RefreshCw,
+  Reply,
+  Scale,
+  Search,
+  Send,
+  Shield,
+  ShieldCheck,
+  ShieldQuestion,
+  ShoppingCart,
+  SortAsc,
+  Store,
+  Tag,
+  Timeline,
+  Trash2,
+  TrendingDown,
+  TrendingUp,
+  TriangleAlert,
+  UserCog,
+  Video,
+  X,
+} from "lucide-react";
+import React from "react";
 
 import { cn } from "../lib/utils";
 
-const iconVariants = cva("material-symbols-outlined", {
+const iconVariants = cva("", {
   variants: {
     size: {
-      sm: "text-[16px]",
+      sm: "text-data-table",
       md: "text-[24px]",
       lg: "text-[32px]",
       xl: "text-[40px]",
@@ -18,29 +103,130 @@ const iconVariants = cva("material-symbols-outlined", {
 });
 
 interface IconProps
-  extends React.HTMLAttributes<HTMLSpanElement>,
-    VariantProps<typeof iconVariants> {
+  extends React.SVGProps<SVGSVGElement>, VariantProps<typeof iconVariants> {
   name: string;
   filled?: boolean;
 }
 
-const Icon = React.forwardRef<HTMLSpanElement, IconProps>(
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  add: Plus,
+  add_shopping_cart: ShoppingCart,
+  arrow_forward: ArrowRight,
+  arrow_outward: ArrowUpRight,
+  arrow_upward: ArrowUp,
+  cancel: CircleX,
+  chevron_down: ChevronDown,
+  chevron_left: ChevronLeft,
+  chevron_right: ChevronRight,
+  close: X,
+  expand_more: ChevronDown,
+  more_vert: MoreVertical,
+  open_in_new: ExternalLink,
+  refresh: RefreshCw,
+  reply: Reply,
+  send: Send,
+  sort: SortAsc,
+  sort_asc: SortAsc,
+  swap_horiz: ArrowLeftRight,
+
+  account_balance: Landmark,
+  analytics: BarChart3,
+  apartment: Building,
+  badge: BadgeCheck,
+  bookmark: Bookmark,
+  calculate: Calculator,
+  checklist: ClipboardList,
+  check: Check,
+  check_circle: CheckCircle,
+  chat: MessageSquare,
+  cloud_off: CloudOff,
+  content_copy: Copy,
+  credit_card: CreditCard,
+  delete: Trash2,
+  delete_forever: Trash2,
+  description: FileText,
+  domain: Landmark,
+  download: Download,
+  drive_file_rename_outline: Edit,
+  edit: Edit,
+  email: Mail,
+  error: CircleAlert,
+  event: Calendar,
+  event_repeat: CalendarClock,
+  favorite: Heart,
+  filter: Filter,
+  filter_alt: Filter,
+  filter_list: ListFilter,
+  flight: Plane,
+  folder: Folder,
+  forum: MessageCircle,
+  gavel: Gavel,
+  gpp_maybe: ShieldQuestion,
+  handshake: Handshake,
+  help: HelpCircle,
+  history: History,
+  home: Home,
+  info: Info,
+  inventory: ClipboardList,
+  layers: Layers,
+  list_alt: ClipboardList,
+  location_on: MapPin,
+  lock: Lock,
+  manage_accounts: UserCog,
+  mail: Mail,
+  map: Map,
+  photo_camera: Camera,
+  phone: Phone,
+  play_arrow: Play,
+  public: Globe,
+  receipt_long: Receipt,
+  schedule: Clock,
+  search: Search,
+  security: ShieldCheck,
+  sell: Tag,
+  shield: Shield,
+  space_dashboard: LayoutDashboard,
+  storefront: Store,
+  task_alt: CheckSquare,
+  terrain: Mountain,
+  timeline: Timeline,
+  trending_down: TrendingDown,
+  trending_flat: ArrowRight,
+  trending_up: TrendingUp,
+  upload_file: FileUp,
+  verified: ShieldCheck,
+  verified_user: ShieldCheck,
+  videocam: Video,
+  visibility: Eye,
+  visibility_off: EyeOff,
+  warning: TriangleAlert,
+
+  agriculture: Leaf,
+  balance: Scale,
+  landscape: Mountain,
+
+  alarm: Clock,
+  article: FileText,
+  help_outline: HelpCircle,
+};
+
+const FALLBACK: LucideIcon = HelpCircle;
+
+const Icon = React.forwardRef<SVGSVGElement, IconProps>(
   ({ name, size = "md", filled = false, className, ...props }, ref) => {
+    const Icon = ICON_MAP[name] ?? FALLBACK;
     return (
-      <span
+      <Icon
         ref={ref}
+        size="1em"
+        fill={filled ? "currentColor" : "none"}
+        strokeWidth={filled ? 1 : 2}
         className={cn(iconVariants({ size, className }))}
-        style={{
-          fontVariationSettings: filled
-            ? "'FILL' 1, 'wght' 300, 'GRAD' 0, 'opsz' 24"
-            : "'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 24",
-        }}
         {...props}
-      >
-        {name}
-      </span>
+      />
     );
-  }
+  },
 );
 
 Icon.displayName = "Icon";

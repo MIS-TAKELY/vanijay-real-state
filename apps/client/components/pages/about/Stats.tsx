@@ -27,7 +27,7 @@ export function Stats() {
               <p className="mono-stat text-[36px] md:text-[44px] font-bold text-primary-fixed leading-none mb-xs">
                 {s.value}
               </p>
-              <p className="font-label-sm text-[13px] font-medium text-primary-fixed-dim">
+              <p className="font-label-sm text-label-sm font-medium text-primary-fixed-dim">
                 {s.label}
               </p>
             </div>

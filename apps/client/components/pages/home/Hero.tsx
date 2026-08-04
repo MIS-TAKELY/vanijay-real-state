@@ -1,14 +1,12 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button, Icon, Stat } from "@repo/ui";
 import { stats } from "constants/varibles-constants";
+import { useRouter } from "next/navigation";
+import React, { useState } from "react";
 // import { stats } from "constants/varibles-constants";
 
 const propertyTypes = ["Land", "House", "Commercial"] as const;
-
-
 
 const heroImage =
   "https://lh3.googleusercontent.com/aida-public/AB6AXuBx-ORyBwj6oYzqTpSn7QY5OrynAjIRBEV2P7G2FywW2BzOy8a7IzdlJT29eEjpoupPL1YnAa8yYlQ6BjtpIZMmR2LbRtlUJlyOEYqxzMC-jm-4x1d2P0JvzgnCkJIPIs0oy6wNCB1Z805bMMnonOW_knMwjt1MmUtBwNnz8kTcACoolXkspjN4v_v1oADoElqpg16XpBAyxYdWxzjimrlhFGfvcdVhWYaaVIEDxc3btiLVXxTuFprmfQRQ5F7XttVB37wYmSayQgg";
@@ -16,9 +14,8 @@ const heroImage =
 export function Hero() {
   const router = useRouter();
   const [query, setQuery] = useState("");
-  const [activeType, setActiveType] = useState<
-    (typeof propertyTypes)[number]
-  >("Land");
+  const [activeType, setActiveType] =
+    useState<(typeof propertyTypes)[number]>("Land");
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,7 +87,10 @@ export function Hero() {
               {/* Input + button */}
               <div className="flex flex-col sm:flex-row gap-xs items-stretch sm:items-center border-t border-outline-variant pt-sm">
                 <div className="flex-1 flex items-center px-sm">
-                  <Icon name="search" className="text-outline mr-sm text-[22px]" />
+                  <Icon
+                    name="search"
+                    className="text-outline mr-sm text-[22px]"
+                  />
                   <input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
@@ -101,7 +101,7 @@ export function Hero() {
                   />
                 </div>
                 <Button type="submit" size="lg" className="sm:ml-sm">
-                  <Icon name="search" className="text-[18px]" />
+                  <Icon name="search" className="text-body-lg" />
                   Search Archive
                 </Button>
               </div>
@@ -158,7 +158,11 @@ export function Hero() {
               {/* Floating stat card */}
               <div className="absolute -left-4 sm:-left-8 top-1/3 bg-surface border border-outline-variant rounded-xl shadow-xl p-md w-44 hidden sm:block">
                 <div className="flex items-center gap-xs mb-xs">
-                  <Icon name="verified" filled className="text-primary text-[20px]" />
+                  <Icon
+                    name="verified"
+                    filled
+                    className="text-primary text-[20px]"
+                  />
                   <span className="font-label-sm text-[11px] uppercase tracking-wider font-bold text-on-surface">
                     Field-Verified
                   </span>

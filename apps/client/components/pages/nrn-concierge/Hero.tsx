@@ -4,7 +4,10 @@ export function Hero() {
   return (
     <section className="relative border-b border-outline-variant bg-surface">
       {/* Clipping wrapper for decorative elements only */}
-      <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden>
+      <div
+        className="pointer-events-none absolute inset-0 overflow-hidden"
+        aria-hidden
+      >
         {/* Subtle topographic pattern */}
         <div
           className="absolute inset-0 opacity-[0.04]"
@@ -55,15 +58,27 @@ export function Hero() {
             {/* Trust strip */}
             <div className="flex flex-wrap items-center gap-md mb-lg">
               <span className="inline-flex items-center gap-xs text-sm font-medium text-on-surface">
-                <Icon name="verified" filled className="text-primary text-[18px]" />
+                <Icon
+                  name="verified"
+                  filled
+                  className="text-primary text-body-lg"
+                />
                 Field-Verified Plots
               </span>
               <span className="inline-flex items-center gap-xs text-sm font-medium text-on-surface">
-                <Icon name="gavel" filled className="text-primary text-[18px]" />
+                <Icon
+                  name="gavel"
+                  filled
+                  className="text-primary text-body-lg"
+                />
                 Embassy POA Support
               </span>
               <span className="inline-flex items-center gap-xs text-sm font-medium text-on-surface">
-                <Icon name="security" filled className="text-primary text-[18px]" />
+                <Icon
+                  name="security"
+                  filled
+                  className="text-primary text-body-lg"
+                />
                 Secure Escrow
               </span>
             </div>
@@ -72,14 +87,14 @@ export function Hero() {
             <div className="flex flex-col sm:flex-row gap-md">
               <a
                 href="#eligibility"
-                className="inline-flex items-center justify-center gap-xs rounded-md bg-primary px-6 py-3 text-[13px] font-semibold tracking-[0.4px] text-on-primary hover:bg-primary/90 transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-xs rounded-md bg-primary px-6 py-3 text-label-sm font-semibold tracking-[0.4px] text-on-primary hover:bg-primary/90 transition-colors cursor-pointer"
               >
                 Check Your Eligibility
-                <Icon name="arrow_forward" className="text-[18px]" />
+                <Icon name="arrow_forward" className="text-body-lg" />
               </a>
               <a
                 href="#process"
-                className="inline-flex items-center justify-center gap-xs rounded-md border border-outline-variant px-6 py-3 text-[13px] font-semibold tracking-[0.4px] text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                className="inline-flex items-center justify-center gap-xs rounded-md border border-outline-variant px-6 py-3 text-label-sm font-semibold tracking-[0.4px] text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
               >
                 See How It Works
               </a>
@@ -98,16 +113,22 @@ export function Hero() {
               <ul className="space-y-sm">
                 {[
                   { icon: "flight", text: "No travel to Nepal required" },
-                  { icon: "description", text: "Full Lalpurja (title deed) audit" },
+                  {
+                    icon: "description",
+                    text: "Full Lalpurja (title deed) audit",
+                  },
                   { icon: "videocam", text: "Live video plot walkthroughs" },
-                  { icon: "account_balance", text: "Escrow-protected settlement" },
+                  {
+                    icon: "account_balance",
+                    text: "Escrow-protected settlement",
+                  },
                 ].map((item) => (
                   <li
                     key={item.text}
                     className="flex items-center gap-sm text-sm text-on-surface"
                   >
                     <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                      <Icon name={item.icon} filled className="text-[18px]" />
+                      <Icon name={item.icon} filled className="text-body-lg" />
                     </span>
                     {item.text}
                   </li>

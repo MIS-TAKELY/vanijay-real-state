@@ -1,8 +1,8 @@
 "use client";
 
+import { Icon } from "@repo/ui";
 import { DISTRICTS } from "constants/varibles-constants";
 import { useState } from "react";
-import { Icon } from "@repo/ui";
 
 const PROVINCES = [
   { key: "bagmati" as const, label: "Bagmati", count: 13 },
@@ -92,7 +92,9 @@ export function DistrictLedgers() {
                           {p.label}
                         </span>
                       </span>
-                      <span className="text-[11px] text-on-surface-variant">{p.count}</span>
+                      <span className="text-[11px] text-on-surface-variant">
+                        {p.count}
+                      </span>
                     </label>
                   ))}
                 </div>
@@ -119,7 +121,10 @@ export function DistrictLedgers() {
                         }
                         className="h-3.5 w-3.5 accent-primary rounded"
                       />
-                      <Icon name={t.icon} className="text-[14px] text-on-surface-variant" />
+                      <Icon
+                        name={t.icon}
+                        className="text-[14px] text-on-surface-variant"
+                      />
                       <span className="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">
                         {t.label}
                       </span>
@@ -176,8 +181,10 @@ export function DistrictLedgers() {
                   District Ledgers
                 </h2>
                 <p className="text-sm text-on-surface-variant mt-1">
-                  Showing <span className="font-semibold text-on-surface">1–4</span> of{" "}
-                  <span className="font-semibold text-on-surface">74</span> records
+                  Showing{" "}
+                  <span className="font-semibold text-on-surface">1–4</span> of{" "}
+                  <span className="font-semibold text-on-surface">74</span>{" "}
+                  records
                 </p>
               </div>
               <div className="flex items-center gap-2">
@@ -220,10 +227,7 @@ export function DistrictLedgers() {
                       className={`absolute top-3 left-3 inline-flex items-center gap-1 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.8px] ${d.badgeColor} shadow-sm`}
                     >
                       {d.badge === "Cadastral Cleared" && (
-                        <Icon
-                          name="verified"
-                          className="text-[10px]"
-                        />
+                        <Icon name="verified" className="text-[10px]" />
                       )}
                       {d.badge}
                     </span>
@@ -280,7 +284,10 @@ export function DistrictLedgers() {
                             <Icon name="trending_up" className="text-[14px]" />
                           )}
                           {d.trendUp === false && (
-                            <Icon name="trending_down" className="text-[14px]" />
+                            <Icon
+                              name="trending_down"
+                              className="text-[14px]"
+                            />
                           )}
                           {d.trend}
                         </p>
@@ -308,12 +315,12 @@ export function DistrictLedgers() {
             <div className="mt-10 flex flex-col items-center gap-3">
               <button
                 type="button"
-                className="group relative inline-flex items-center gap-2 rounded-lg border-2 border-outline-variant px-8 py-3 text-[13px] font-semibold tracking-[0.5px] text-on-surface hover:border-primary hover:text-primary hover:bg-primary/5 transition-[border-color,color,background-color] duration-200 cursor-pointer"
+                className="group relative inline-flex items-center gap-2 rounded-lg border-2 border-outline-variant px-8 py-3 text-label-sm font-semibold tracking-[0.5px] text-on-surface hover:border-primary hover:text-primary hover:bg-primary/5 transition-[border-color,color,background-color] duration-200 cursor-pointer"
               >
                 Load More Records
                 <Icon
                   name="expand_more"
-                  className="text-[18px] group-hover:translate-y-0.5 transition-transform duration-200"
+                  className="text-body-lg group-hover:translate-y-0.5 transition-transform duration-200"
                 />
               </button>
               <p className="text-[11px] text-on-surface-variant">

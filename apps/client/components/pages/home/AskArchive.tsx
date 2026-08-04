@@ -1,7 +1,5 @@
-import React from "react";
 import { Card, Icon } from "@repo/ui";
 import { archiveCards } from "constants/varibles-constants";
-
 
 export function AskArchive() {
   return (
@@ -23,7 +21,10 @@ export function AskArchive() {
             </p>
             <button className="font-label-sm text-primary flex items-center gap-xs font-bold cursor-pointer">
               {card.action}
-              <Icon name="arrow_forward" className="text-[16px] transition-transform duration-200 group-hover:translate-x-1" />
+              <Icon
+                name="arrow_forward"
+                className="text-data-table transition-transform duration-200 group-hover:translate-x-1"
+              />
             </button>
           </Card>
         ))}

@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import { renderToStaticMarkup } from "react-dom/server";
 import { Icon } from "@repo/ui";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 
 /**
  * MapExplorer – Full Nepal Interactive Market Map (v3)
@@ -48,21 +48,216 @@ interface MarketMarker {
 }
 
 const mapMarkers: MarketMarker[] = [
-  { id: 1, price: "रू 34.2M", priceValue: 34.2, change: "8.1%", trend: "up", lat: 27.7291, lng: 85.3286, area: "Baluwatar", city: "Kathmandu", region: "Kathmandu Valley", verified: true, description: "Prime residential & diplomatic zone" },
-  { id: 2, price: "रू 41.5M", priceValue: 41.5, change: "12.4%", trend: "up", lat: 27.7172, lng: 85.324, area: "Lazimpat", city: "Kathmandu", region: "Kathmandu Valley", verified: true, description: "High-demand commercial & residential" },
-  { id: 3, price: "रू 28.9M", priceValue: 28.9, change: "6.7%", trend: "up", lat: 27.717, lng: 85.348, area: "Boudha", city: "Kathmandu", region: "Kathmandu Valley", verified: true, description: "Cultural hub with strong rental demand" },
-  { id: 4, price: "रू 22.4M", priceValue: 22.4, change: "4.2%", trend: "up", lat: 27.678, lng: 85.317, area: "Patan", city: "Lalitpur", region: "Kathmandu Valley", verified: true, description: "Heritage city, rising mid-premium segment" },
-  { id: 5, price: "रू 18.6M", priceValue: 18.6, change: "3.1%", trend: "up", lat: 27.671, lng: 85.429, area: "Bhaktapur", city: "Bhaktapur", region: "Kathmandu Valley", verified: false, description: "Traditional city with growing interest" },
-  { id: 6, price: "रू 19.8M", priceValue: 19.8, change: "9.3%", trend: "up", lat: 28.2096, lng: 83.9856, area: "Lakeside", city: "Pokhara", region: "Pokhara", verified: true, description: "Tourism & second-home hotspot" },
-  { id: 7, price: "रू 14.2M", priceValue: 14.2, change: "5.6%", trend: "up", lat: 28.238, lng: 83.973, area: "Mahendrapool", city: "Pokhara", region: "Pokhara", verified: true, description: "Commercial core of Pokhara" },
-  { id: 8, price: "रू 11.5M", priceValue: 11.5, change: "7.8%", trend: "up", lat: 26.4525, lng: 87.2718, area: "Biratnagar", city: "Biratnagar", region: "Eastern", verified: true, description: "Industrial & trading gateway" },
-  { id: 9, price: "रू 9.8M", priceValue: 9.8, change: "4.5%", trend: "up", lat: 26.812, lng: 87.283, area: "Dharan", city: "Dharan", region: "Eastern", verified: false, description: "Hill city with strong local demand" },
-  { id: 10, price: "रू 13.4M", priceValue: 13.4, change: "6.2%", trend: "up", lat: 27.676, lng: 84.433, area: "Bharatpur", city: "Chitwan", region: "Central & Terai", verified: true, description: "Fast-growing commercial hub" },
-  { id: 11, price: "रू 8.9M", priceValue: 8.9, change: "2.1%", trend: "flat", lat: 27.429, lng: 85.032, area: "Hetauda", city: "Makwanpur", region: "Central & Terai", verified: false, description: "Industrial corridor location" },
-  { id: 12, price: "रू 10.2M", priceValue: 10.2, change: "5.9%", trend: "up", lat: 27.01, lng: 84.88, area: "Birgunj", city: "Parsa", region: "Central & Terai", verified: true, description: "Major border trade city" },
-  { id: 13, price: "रू 12.1M", priceValue: 12.1, change: "8.4%", trend: "up", lat: 27.7, lng: 83.45, area: "Butwal", city: "Rupandehi", region: "Western", verified: true, description: "Rapidly expanding commercial center" },
-  { id: 14, price: "रू 9.4M", priceValue: 9.4, change: "3.8%", trend: "up", lat: 27.506, lng: 83.446, area: "Bhairahawa", city: "Rupandehi", region: "Western", verified: false, description: "Border city with Lumbini tourism link" },
-  { id: 15, price: "रू 7.6M", priceValue: 7.6, change: "1.2%", trend: "flat", lat: 28.05, lng: 81.6167, area: "Nepalgunj", city: "Banke", region: "Western", verified: true, description: "Western Terai commercial node" },
+  {
+    id: 1,
+    price: "रू 34.2M",
+    priceValue: 34.2,
+    change: "8.1%",
+    trend: "up",
+    lat: 27.7291,
+    lng: 85.3286,
+    area: "Baluwatar",
+    city: "Kathmandu",
+    region: "Kathmandu Valley",
+    verified: true,
+    description: "Prime residential & diplomatic zone",
+  },
+  {
+    id: 2,
+    price: "रू 41.5M",
+    priceValue: 41.5,
+    change: "12.4%",
+    trend: "up",
+    lat: 27.7172,
+    lng: 85.324,
+    area: "Lazimpat",
+    city: "Kathmandu",
+    region: "Kathmandu Valley",
+    verified: true,
+    description: "High-demand commercial & residential",
+  },
+  {
+    id: 3,
+    price: "रू 28.9M",
+    priceValue: 28.9,
+    change: "6.7%",
+    trend: "up",
+    lat: 27.717,
+    lng: 85.348,
+    area: "Boudha",
+    city: "Kathmandu",
+    region: "Kathmandu Valley",
+    verified: true,
+    description: "Cultural hub with strong rental demand",
+  },
+  {
+    id: 4,
+    price: "रू 22.4M",
+    priceValue: 22.4,
+    change: "4.2%",
+    trend: "up",
+    lat: 27.678,
+    lng: 85.317,
+    area: "Patan",
+    city: "Lalitpur",
+    region: "Kathmandu Valley",
+    verified: true,
+    description: "Heritage city, rising mid-premium segment",
+  },
+  {
+    id: 5,
+    price: "रू 18.6M",
+    priceValue: 18.6,
+    change: "3.1%",
+    trend: "up",
+    lat: 27.671,
+    lng: 85.429,
+    area: "Bhaktapur",
+    city: "Bhaktapur",
+    region: "Kathmandu Valley",
+    verified: false,
+    description: "Traditional city with growing interest",
+  },
+  {
+    id: 6,
+    price: "रू 19.8M",
+    priceValue: 19.8,
+    change: "9.3%",
+    trend: "up",
+    lat: 28.2096,
+    lng: 83.9856,
+    area: "Lakeside",
+    city: "Pokhara",
+    region: "Pokhara",
+    verified: true,
+    description: "Tourism & second-home hotspot",
+  },
+  {
+    id: 7,
+    price: "रू 14.2M",
+    priceValue: 14.2,
+    change: "5.6%",
+    trend: "up",
+    lat: 28.238,
+    lng: 83.973,
+    area: "Mahendrapool",
+    city: "Pokhara",
+    region: "Pokhara",
+    verified: true,
+    description: "Commercial core of Pokhara",
+  },
+  {
+    id: 8,
+    price: "रू 11.5M",
+    priceValue: 11.5,
+    change: "7.8%",
+    trend: "up",
+    lat: 26.4525,
+    lng: 87.2718,
+    area: "Biratnagar",
+    city: "Biratnagar",
+    region: "Eastern",
+    verified: true,
+    description: "Industrial & trading gateway",
+  },
+  {
+    id: 9,
+    price: "रू 9.8M",
+    priceValue: 9.8,
+    change: "4.5%",
+    trend: "up",
+    lat: 26.812,
+    lng: 87.283,
+    area: "Dharan",
+    city: "Dharan",
+    region: "Eastern",
+    verified: false,
+    description: "Hill city with strong local demand",
+  },
+  {
+    id: 10,
+    price: "रू 13.4M",
+    priceValue: 13.4,
+    change: "6.2%",
+    trend: "up",
+    lat: 27.676,
+    lng: 84.433,
+    area: "Bharatpur",
+    city: "Chitwan",
+    region: "Central & Terai",
+    verified: true,
+    description: "Fast-growing commercial hub",
+  },
+  {
+    id: 11,
+    price: "रू 8.9M",
+    priceValue: 8.9,
+    change: "2.1%",
+    trend: "flat",
+    lat: 27.429,
+    lng: 85.032,
+    area: "Hetauda",
+    city: "Makwanpur",
+    region: "Central & Terai",
+    verified: false,
+    description: "Industrial corridor location",
+  },
+  {
+    id: 12,
+    price: "रू 10.2M",
+    priceValue: 10.2,
+    change: "5.9%",
+    trend: "up",
+    lat: 27.01,
+    lng: 84.88,
+    area: "Birgunj",
+    city: "Parsa",
+    region: "Central & Terai",
+    verified: true,
+    description: "Major border trade city",
+  },
+  {
+    id: 13,
+    price: "रू 12.1M",
+    priceValue: 12.1,
+    change: "8.4%",
+    trend: "up",
+    lat: 27.7,
+    lng: 83.45,
+    area: "Butwal",
+    city: "Rupandehi",
+    region: "Western",
+    verified: true,
+    description: "Rapidly expanding commercial center",
+  },
+  {
+    id: 14,
+    price: "रू 9.4M",
+    priceValue: 9.4,
+    change: "3.8%",
+    trend: "up",
+    lat: 27.506,
+    lng: 83.446,
+    area: "Bhairahawa",
+    city: "Rupandehi",
+    region: "Western",
+    verified: false,
+    description: "Border city with Lumbini tourism link",
+  },
+  {
+    id: 15,
+    price: "रू 7.6M",
+    priceValue: 7.6,
+    change: "1.2%",
+    trend: "flat",
+    lat: 28.05,
+    lng: 81.6167,
+    area: "Nepalgunj",
+    city: "Banke",
+    region: "Western",
+    verified: true,
+    description: "Western Terai commercial node",
+  },
 ];
 
 const REGIONS: Region[] = [
@@ -422,7 +617,7 @@ export function MapExplorer() {
             href="/map"
             className="font-label-sm text-label-sm text-primary flex items-center gap-xs hover:underline self-start sm:self-auto"
           >
-            Launch Full Map <Icon name="open_in_new" className="text-[18px]" />
+            Launch Full Map <Icon name="open_in_new" className="text-body-lg" />
           </a>
         </div>
 
@@ -431,7 +626,7 @@ export function MapExplorer() {
           <div className="relative w-full sm:w-64">
             <Icon
               name="search"
-              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-[16px] text-on-surface-variant"
+              className="absolute left-2.5 top-1/2 -translate-y-1/2 text-data-table text-on-surface-variant"
             />
             <input
               type="text"
@@ -477,7 +672,10 @@ export function MapExplorer() {
                     : "text-on-secondary-container"
                 }`}
               >
-                <Icon name={trendIconName(selected.trend)} className="text-[13px]" />
+                <Icon
+                  name={trendIconName(selected.trend)}
+                  className="text-label-sm"
+                />
                 {selected.change}
               </div>
               <div className="text-[11px] font-semibold text-primary mt-1.5 leading-tight">
@@ -495,10 +693,13 @@ export function MapExplorer() {
             <div className="absolute top-4 right-4 z-[1000] flex items-start gap-2">
               <div className="bg-surface/95 backdrop-blur-sm border border-outline-variant px-3 py-2 shadow-sm rounded-sm text-right">
                 <div className="text-[10px] text-on-surface-variant">
-                  {activeRegion === "All" ? "Nationwide" : activeRegion} avg. change
+                  {activeRegion === "All" ? "Nationwide" : activeRegion} avg.
+                  change
                 </div>
                 <div className="font-bold text-primary text-sm">
-                  {visibleMarkers.length > 0 ? `+${avgChange.toFixed(1)}%` : "—"}
+                  {visibleMarkers.length > 0
+                    ? `+${avgChange.toFixed(1)}%`
+                    : "—"}
                 </div>
               </div>
               <button
@@ -506,7 +707,7 @@ export function MapExplorer() {
                 title="Reset view"
                 className="bg-surface/95 border border-outline-variant w-9 h-9 rounded-sm shadow-sm flex items-center justify-center hover:border-primary"
               >
-                <Icon name="refresh" className="text-[16px] text-primary" />
+                <Icon name="refresh" className="text-data-table text-primary" />
               </button>
             </div>
 
@@ -575,7 +776,7 @@ export function MapExplorer() {
                           </span>
                           {m.verified && (
                             <span className="flex items-center gap-1 text-[10px] font-bold text-[#244530]">
-                              <Icon name="verified" className="text-[13px]" />
+                              <Icon name="verified" className="text-label-sm" />
                               Verified
                             </span>
                           )}
@@ -585,13 +786,19 @@ export function MapExplorer() {
                             m.trend === "up" ? "text-red-600" : "text-slate-600"
                           }`}
                         >
-                          {m.trend === "up" ? "↑" : m.trend === "flat" ? "→" : "↓"}{" "}
+                          {m.trend === "up"
+                            ? "↑"
+                            : m.trend === "flat"
+                              ? "→"
+                              : "↓"}{" "}
                           {m.change} this period
                         </div>
                         <div className="text-sm font-semibold text-gray-900">
                           {m.area}
                         </div>
-                        <div className="text-xs text-gray-500 mb-1">{m.city}</div>
+                        <div className="text-xs text-gray-500 mb-1">
+                          {m.city}
+                        </div>
                         <div className="text-xs text-gray-600 leading-snug">
                           {m.description}
                         </div>
@@ -603,7 +810,10 @@ export function MapExplorer() {
             ) : loadError ? (
               <div className="absolute inset-0 flex items-center justify-center px-8">
                 <div className="text-center max-w-sm">
-                  <Icon name="cloud_off" className="text-[28px] text-on-surface-variant mb-2" />
+                  <Icon
+                    name="cloud_off"
+                    className="text-[28px] text-on-surface-variant mb-2"
+                  />
                   <p className="text-sm text-on-surface-variant">{loadError}</p>
                 </div>
               </div>
@@ -626,7 +836,8 @@ export function MapExplorer() {
           >
             <div className="px-3 py-2 border-b border-outline-variant flex items-center justify-between">
               <span className="font-label-sm text-label-sm text-on-surface-variant">
-                {visibleMarkers.length} location{visibleMarkers.length !== 1 ? "s" : ""}
+                {visibleMarkers.length} location
+                {visibleMarkers.length !== 1 ? "s" : ""}
               </span>
               <span className="font-label-sm text-label-sm text-primary">
                 Sorted by value
@@ -645,17 +856,26 @@ export function MapExplorer() {
                     key={m.id}
                     onClick={() => focusMarker(m)}
                     className={`w-full text-left px-3 py-2.5 border-b border-outline-variant/60 transition-colors ${
-                      m.id === selectedId ? "bg-primary/10" : "hover:bg-surface-container"
+                      m.id === selectedId
+                        ? "bg-primary/10"
+                        : "hover:bg-surface-container"
                     }`}
                   >
                     <div className="flex items-center justify-between">
-                      <span className="font-bold text-primary text-sm">{m.price}</span>
+                      <span className="font-bold text-primary text-sm">
+                        {m.price}
+                      </span>
                       <span
                         className={`flex items-center gap-0.5 text-[11px] font-bold ${
-                          m.trend === "up" ? "text-error" : "text-on-secondary-container"
+                          m.trend === "up"
+                            ? "text-error"
+                            : "text-on-secondary-container"
                         }`}
                       >
-                        <Icon name={trendIconName(m.trend)} className="text-[12px]" />
+                        <Icon
+                          name={trendIconName(m.trend)}
+                          className="text-[12px]"
+                        />
                         {m.change}
                       </span>
                     </div>
@@ -664,7 +884,10 @@ export function MapExplorer() {
                         {m.area}
                       </span>
                       {m.verified && (
-                        <Icon name="verified" className="text-[11px] text-primary" />
+                        <Icon
+                          name="verified"
+                          className="text-[11px] text-primary"
+                        />
                       )}
                     </div>
                     <div className="text-[11px] text-on-surface-variant">

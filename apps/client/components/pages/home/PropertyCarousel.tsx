@@ -1,7 +1,6 @@
-import React from "react";
-import Link from "next/link";
-import { Button, Badge, Icon } from "@repo/ui";
+import { Badge, Button, Icon } from "@repo/ui";
 import { properties } from "constants/varibles-constants";
+import Link from "next/link";
 
 interface Property {
   id: string;
@@ -13,8 +12,6 @@ interface Property {
   image: string;
   alt: string;
 }
-
-
 
 function PropertyCard({ property }: { property: Property }) {
   return (
@@ -44,9 +41,7 @@ function PropertyCard({ property }: { property: Property }) {
           <span className="mono-stat text-data-price text-primary tracking-tighter font-bold">
             {property.price}
           </span>
-          <Badge variant="secondary">
-            LKP/VER-{property.plotId.slice(-2)}
-          </Badge>
+          <Badge variant="secondary">LKP/VER-{property.plotId.slice(-2)}</Badge>
         </div>
       </div>
     </div>
@@ -72,10 +67,14 @@ export function PropertyCarousel() {
               className="hidden sm:inline-flex items-center gap-xs font-label-sm text-sm text-primary font-semibold hover:underline underline-offset-4 cursor-pointer"
             >
               View all listings
-              <Icon name="arrow_forward" className="text-[16px]" />
+              <Icon name="arrow_forward" className="text-data-table" />
             </Link>
             <div className="flex gap-sm">
-              <Button variant="outline" size="icon" aria-label="Previous listings">
+              <Button
+                variant="outline"
+                size="icon"
+                aria-label="Previous listings"
+              >
                 <Icon name="chevron_left" />
               </Button>
               <Button variant="outline" size="icon" aria-label="Next listings">

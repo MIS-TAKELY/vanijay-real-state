@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Icon } from "@repo/ui";
 
 export function ProcessAndBooking() {
@@ -62,7 +62,10 @@ export function ProcessAndBooking() {
           {/* Steps */}
           <div>
             <div className="relative flex justify-between">
-              <div className="absolute left-0 right-0 top-5 h-px bg-outline-variant" aria-hidden />
+              <div
+                className="absolute left-0 right-0 top-5 h-px bg-outline-variant"
+                aria-hidden
+              />
               {steps.map((step) => (
                 <div
                   key={step.num}
@@ -72,7 +75,9 @@ export function ProcessAndBooking() {
                     <Icon name={step.icon} filled className="text-[24px]" />
                   </div>
                   <p className="mb-xs text-[12px] font-bold uppercase tracking-[0.8px] text-on-surface">
-                    <span className="mono-stat text-primary mr-xs">{step.num}</span>
+                    <span className="mono-stat text-primary mr-xs">
+                      {step.num}
+                    </span>
                     {step.title}
                   </p>
                   <p className="text-sm leading-5 text-on-surface-variant">
@@ -155,7 +160,7 @@ export function ProcessAndBooking() {
                   </select>
                   <button
                     type="submit"
-                    className="inline-flex h-11 cursor-pointer items-center justify-center rounded-md bg-primary px-6 text-[13px] font-semibold tracking-[0.6px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    className="inline-flex h-11 cursor-pointer items-center justify-center rounded-md bg-primary px-6 text-label-sm font-semibold tracking-[0.6px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   >
                     Confirm
                   </button>

@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { Icon } from "@repo/ui";
 
 export function SearchFilters() {
@@ -11,7 +11,10 @@ export function SearchFilters() {
         >
           {/* Search bar */}
           <div className="mb-md flex items-center gap-sm rounded-2xl border border-outline-variant bg-surface px-md py-sm focus-within:ring-2 focus-within:ring-primary/30 focus-within:border-primary/40 transition-[box-shadow,border-color] duration-200">
-            <Icon name="search" className="text-on-surface-variant text-[20px]" />
+            <Icon
+              name="search"
+              className="text-on-surface-variant text-[20px]"
+            />
             <input
               type="text"
               aria-label="Search by location, property ID, or keyword"
@@ -102,9 +105,9 @@ export function SearchFilters() {
 
             <button
               type="submit"
-              className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-xs rounded-md bg-primary px-5 text-[13px] font-semibold tracking-[0.4px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-xs rounded-md bg-primary px-5 text-label-sm font-semibold tracking-[0.4px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
             >
-              <Icon name="filter_alt" className="text-[16px]" />
+              <Icon name="filter_alt" className="text-data-table" />
               Apply Filters
             </button>
           </div>

@@ -28,7 +28,10 @@ export function NRNBanner() {
         }}
         aria-hidden
       />
-      <div className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/5 blur-3xl" aria-hidden />
+      <div
+        className="pointer-events-none absolute -top-24 -right-24 h-64 w-64 rounded-full bg-white/5 blur-3xl"
+        aria-hidden
+      />
 
       <div className="relative z-10 mx-auto max-w-container-max px-gutter py-16 lg:py-20">
         <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-[1fr_auto]">
@@ -70,12 +73,12 @@ export function NRNBanner() {
             <button
               type="button"
               aria-label="Initiate proxy request"
-              className="group inline-flex items-center gap-2 rounded-md bg-on-primary px-6 py-3 text-[13px] font-semibold text-primary hover:bg-surface transition-all cursor-pointer"
+              className="group inline-flex items-center gap-2 rounded-md bg-on-primary px-6 py-3 text-label-sm font-semibold text-primary hover:bg-surface transition-all cursor-pointer"
             >
               Initiate Proxy Request
               <Icon
                 name="arrow_forward"
-                className="text-[16px] group-hover:translate-x-1 transition-transform duration-200"
+                className="text-data-table group-hover:translate-x-1 transition-transform duration-200"
               />
             </button>
           </div>
@@ -90,7 +93,7 @@ export function NRNBanner() {
                 </span>
                 <Icon
                   name="description"
-                  className="text-white/40 text-[16px]"
+                  className="text-white/40 text-data-table"
                 />
               </div>
 
@@ -106,7 +109,7 @@ export function NRNBanner() {
               {/* Verified stamp */}
               <div className="mt-6 flex justify-end">
                 <div className="flex h-12 w-12 items-center justify-center rounded-full border-2 border-white/40 text-white/80 transition-all duration-300 hover:border-white/70 hover:text-white">
-                  <Icon name="verified" className="text-[18px]" />
+                  <Icon name="verified" className="text-body-lg" />
                 </div>
               </div>
             </div>

@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
 import { Icon, Stat } from "@repo/ui";
+import { useState } from "react";
 
 const CATEGORIES = [
   { label: "Land", icon: "terrain" },
@@ -57,7 +57,7 @@ export function Hero() {
               Area Guide
             </div>
 
-            <h1 className="font-display-lg text-[48px] md:text-[56px] font-semibold tracking-[-1.12px] text-on-surface leading-[1.08] mb-4">
+            <h1 className="font-display-lg text-display-lg md:text-[56px] font-semibold tracking-[-1.12px] text-on-surface leading-[1.08] mb-4">
               Explore 74 Districts.
               <br />
               <span className="text-primary">Every Plot Verified.</span>
@@ -94,7 +94,7 @@ export function Hero() {
                 <div className="flex flex-1 items-center gap-2 border-t md:border-t-0 md:border-l border-outline-variant px-4">
                   <Icon
                     name="search"
-                    className="text-on-surface-variant shrink-0 text-[18px]"
+                    className="text-on-surface-variant shrink-0 text-body-lg"
                   />
                   <input
                     type="text"
@@ -105,7 +105,7 @@ export function Hero() {
                 </div>
                 <button
                   type="button"
-                  className="bg-primary text-on-primary px-6 py-3 text-[13px] font-semibold tracking-[0.4px] hover:bg-primary/90 transition-colors cursor-pointer md:w-auto w-full"
+                  className="bg-primary text-on-primary px-6 py-3 text-label-sm font-semibold tracking-[0.4px] hover:bg-primary/90 transition-colors cursor-pointer md:w-auto w-full"
                 >
                   Search Records
                 </button>
@@ -124,10 +124,7 @@ export function Hero() {
                       : "border-outline-variant bg-white text-on-surface-variant hover:border-primary hover:text-primary hover:bg-secondary-container/50"
                   }`}
                 >
-                  <Icon
-                    name={cat.icon}
-                    className="text-[14px]"
-                  />
+                  <Icon name={cat.icon} className="text-[14px]" />
                   {cat.label}
                 </button>
               ))}

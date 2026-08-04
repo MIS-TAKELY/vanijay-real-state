@@ -1,9 +1,14 @@
 "use client";
 
+import {
+  PAGE_SIZE,
+  fetchFeedPage,
+  toCardProps,
+  type ApiProperty,
+} from "lib/api";
 import { useCallback, useState } from "react";
-import { PAGE_SIZE, fetchFeedPage, type ApiProperty, toCardProps } from "lib/api";
+import { PropertyCard } from "../../common/PropertyCard";
 import { Pagination } from "./Pagination";
-import { PropertyCard } from "./PropertyCard";
 
 interface PropertyFeedProps {
   /** Initial (SSR) page of listings fetched by the server component. */
@@ -67,9 +72,7 @@ export function PropertyFeed({
       setNextCursor(page.nextCursor);
       setHasMore(page.hasMore);
     } catch (e) {
-      setError(
-        e instanceof Error ? e.message : "Failed to load more listings",
-      );
+      setError(e instanceof Error ? e.message : "Failed to load more listings");
     } finally {
       setLoading(false);
     }

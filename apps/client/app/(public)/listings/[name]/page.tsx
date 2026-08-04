@@ -125,7 +125,7 @@ function PageHero() {
           <div className="flex shrink-0 flex-col items-end gap-1">
             <button
               type="button"
-              className="border border-[#C2C8C0] bg-white px-4 py-2 text-[13px] font-semibold text-[#1B1C19] hover:border-[#244530]"
+              className="border border-[#C2C8C0] bg-white px-4 py-2 text-label-sm font-semibold text-[#1B1C19] hover:border-[#244530]"
             >
               Talk to a Local Expert
             </button>

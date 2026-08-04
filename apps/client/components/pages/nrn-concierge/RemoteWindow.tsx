@@ -20,19 +20,19 @@ export function RemoteWindow() {
           <ul className="space-y-sm">
             <li className="flex items-center gap-sm text-sm font-medium text-on-surface">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Icon name="videocam" filled className="text-[18px]" />
+                <Icon name="videocam" filled className="text-body-lg" />
               </span>
               4K drone overlays with boundary marking
             </li>
             <li className="flex items-center gap-sm text-sm font-medium text-on-surface">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Icon name="description" filled className="text-[18px]" />
+                <Icon name="description" filled className="text-body-lg" />
               </span>
               Historical title logs &amp; transaction history
             </li>
             <li className="flex items-center gap-sm text-sm font-medium text-on-surface">
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                <Icon name="map" filled className="text-[18px]" />
+                <Icon name="map" filled className="text-body-lg" />
               </span>
               Cadastral map cross-reference with Naksha
             </li>

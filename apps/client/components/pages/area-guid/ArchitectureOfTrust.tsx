@@ -40,7 +40,7 @@ export function ArchitectureOfTrust() {
               </div>
 
               {/* Title */}
-              <h3 className="text-[13px] font-bold uppercase tracking-[0.6px] text-on-surface group-hover:text-primary transition-colors mb-3">
+              <h3 className="text-label-sm font-bold uppercase tracking-[0.6px] text-on-surface group-hover:text-primary transition-colors mb-3">
                 {p.title}
               </h3>
 

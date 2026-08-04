@@ -8,6 +8,7 @@ import {
   UpcomingAppointments,
   VerificationBanner,
 } from "components/pages/dashboard";
+import Link from "next/link";
 
 export default function DashboardPage() {
   return (
@@ -17,15 +18,15 @@ export default function DashboardPage() {
         description="Your archive at a glance — listings, inquiries and verification status."
         action={
           <Button asChild>
-            <a href="/dashboard/listings/new">
-              <Icon name="add" className="text-[16px]" />
+            <Link href="/my-listings/new">
+              <Icon name="add" className="text-data-table" />
               New Listing
-            </a>
+            </Link>
           </Button>
         }
       />
 
-      <GreetingRow name="Aayush" verificationLevel={2} roles={["Owner"]} />
+      <GreetingRow name="Aayush" verificationLevel={3} />
 
       <VerificationBanner show={true} />
 

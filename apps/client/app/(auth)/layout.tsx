@@ -1,5 +1,5 @@
-import { DashboardSidebar } from "components/pages/dashboard";
 import { Container } from "@repo/ui";
+import { DashboardSidebar } from "components/pages/dashboard";
 
 export default async function DashboardLayout({
   children,

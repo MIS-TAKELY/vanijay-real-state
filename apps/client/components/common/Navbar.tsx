@@ -121,7 +121,7 @@ export function Navbar() {
                   className="inline-flex items-center gap-1.5"
                 >
                   List a Property
-                  <Icon name="arrow_outward" className="text-[16px]" />
+                  <Icon name="arrow_outward" className="text-data-table" />
                 </Link>
               </Button>
             ) : (
@@ -129,7 +129,7 @@ export function Navbar() {
                 trigger={
                   <Button variant="default" size="sm">
                     List a Property
-                    <Icon name="arrow_outward" className="text-[16px]" />
+                    <Icon name="arrow_outward" className="text-data-table" />
                   </Button>
                 }
               />
