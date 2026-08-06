@@ -114,13 +114,21 @@ export async function apiFetch<T>(
     } catch {
       parsed = undefined;
     }
-    const message =
+    // The API's GlobalExceptionFilter passes class-validator messages through
+    // as a string[] (one entry per failed constraint), so normalize both
+    // shapes into a single readable message.
+    const raw =
       typeof parsed === "object" && parsed !== null
-        ? (parsed as { message?: string }).message
+        ? (parsed as { message?: unknown }).message
+        : undefined;
+    const message = Array.isArray(raw)
+      ? raw.filter((m): m is string => typeof m === "string").join("; ")
+      : typeof raw === "string"
+        ? raw
         : undefined;
     throw new ApiError(
       res.status,
-      message ?? `Request failed (${res.status})`,
+      message || `Request failed (${res.status})`,
       parsed,
     );
   }

@@ -1,5 +1,5 @@
 "use client";
-import { Icon } from "@repo/ui";
+import { Button, Icon, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui";
 
 export function SearchFilters() {
   return (
@@ -15,66 +15,70 @@ export function SearchFilters() {
               name="search"
               className="text-on-surface-variant text-[20px]"
             />
-            <input
+            <Input
               type="text"
               aria-label="Search by location, property ID, or keyword"
               placeholder="Search by location, property ID, or keyword..."
-              className="w-full bg-transparent text-sm text-on-surface outline-none placeholder:text-on-surface-variant"
+              className="border-0 bg-transparent text-sm shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant"
             />
           </div>
 
           {/* Filters row */}
           <div className="flex flex-wrap items-end gap-sm">
             <div className="min-w-[140px] flex-1">
-              <label
+              <Label
                 htmlFor="filter-type"
                 className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.5px] text-on-surface"
               >
                 Property Type
-              </label>
-              <select
-                id="filter-type"
-                className="h-10 w-full cursor-pointer rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
-              >
-                <option>All Types</option>
-                <option>Residential</option>
-                <option>Commercial</option>
-                <option>Apartment</option>
-                <option>Plot</option>
-              </select>
+              </Label>
+              <Select>
+                <SelectTrigger id="filter-type" className="h-10 w-full">
+                  <SelectValue placeholder="All Types" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Types</SelectItem>
+                  <SelectItem value="residential">Residential</SelectItem>
+                  <SelectItem value="commercial">Commercial</SelectItem>
+                  <SelectItem value="apartment">Apartment</SelectItem>
+                  <SelectItem value="plot">Plot</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="min-w-[140px] flex-1">
-              <label
+              <Label
                 htmlFor="filter-price"
                 className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.5px] text-on-surface"
               >
                 Price Range (NPR)
-              </label>
-              <select
-                id="filter-price"
-                className="h-10 w-full cursor-pointer rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
-              >
-                <option>Any Price</option>
-                <option>Under 20L</option>
-                <option>20L – 50L</option>
-                <option>50L – 1Cr</option>
-                <option>1Cr+</option>
-              </select>
+              </Label>
+              <Select>
+                <SelectTrigger id="filter-price" className="h-10 w-full">
+                  <SelectValue placeholder="Any Price" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="any">Any Price</SelectItem>
+                  <SelectItem value="under-20l">Under 20L</SelectItem>
+                  <SelectItem value="20l-50l">20L – 50L</SelectItem>
+                  <SelectItem value="50l-1cr">50L – 1Cr</SelectItem>
+                  <SelectItem value="1cr-plus">1Cr+</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="min-w-[160px] flex-1">
-              <label
+              <Label
                 htmlFor="filter-district"
                 className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.5px] text-on-surface"
               >
                 District / Ward
-              </label>
-              <input
+              </Label>
+              <Input
                 id="filter-district"
                 type="text"
                 placeholder="e.g. Kathmandu 03"
-                className="h-10 w-full rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/30"
+                className="h-10"
               />
             </div>
 
@@ -86,30 +90,30 @@ export function SearchFilters() {
                 Land Size (RAPD)
               </span>
               <div className="flex gap-xs">
-                <input
+                <Input
                   type="text"
                   aria-labelledby="filter-size-label"
                   aria-label="Minimum land size"
                   placeholder="Min"
-                  className="h-10 w-full rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  className="h-10"
                 />
-                <input
+                <Input
                   type="text"
                   aria-labelledby="filter-size-label"
                   aria-label="Maximum land size"
                   placeholder="Max"
-                  className="h-10 w-full rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  className="h-10"
                 />
               </div>
             </div>
 
-            <button
+            <Button
               type="submit"
-              className="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-xs rounded-md bg-primary px-5 text-label-sm font-semibold tracking-[0.4px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+              className="inline-flex h-10 shrink-0 items-center justify-center gap-xs rounded-md bg-primary px-5 text-label-sm font-semibold tracking-[0.4px] text-on-primary hover:bg-primary/90 cursor-pointer"
             >
               <Icon name="filter_alt" className="text-data-table" />
               Apply Filters
-            </button>
+            </Button>
           </div>
         </form>
       </div>

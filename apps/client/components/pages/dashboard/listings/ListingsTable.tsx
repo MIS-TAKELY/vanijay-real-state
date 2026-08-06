@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@repo/ui";
+import { Checkbox, cn } from "@repo/ui";
 import type { MyListing } from "./constants";
 import { ListingRow } from "./ListingRow";
 
@@ -36,15 +36,11 @@ export function ListingsTable({
       <div className="min-w-[920px]">
         {/* Header */}
         <div className="grid grid-cols-[auto_56px_minmax(180px,2fr)_1fr_1fr_auto_1fr_1fr_1fr_1fr_auto] items-center gap-sm border-b border-outline-variant bg-surface-container-low px-sm py-2.5">
-          <input
-            type="checkbox"
+          <Checkbox
             aria-label="Select all listings"
-            checked={allSelected}
-            ref={(el) => {
-              if (el) el.indeterminate = someSelected && !allSelected;
-            }}
-            onChange={onToggleAll}
-            className="h-4 w-4 cursor-pointer accent-primary"
+            checked={someSelected && !allSelected ? "indeterminate" : allSelected}
+            onCheckedChange={() => onToggleAll()}
+            className="cursor-pointer"
           />
           <span />
           {COLUMN_HEADERS.map((h, i) => (

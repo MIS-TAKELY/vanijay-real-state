@@ -72,17 +72,29 @@ export const UNIT_SYSTEMS: { key: UnitSystem; label: string }[] = [
 
 /* ------------------------------- road / facing ------------------------- */
 
-export const ROAD_TYPES = ["Pitched", "Gravel", "Paved", "Earthen"];
+/**
+ * `value` is the exact Prisma enum member sent to the API; `label` is what
+ * the user sees. Keep in sync with `enum RoadType` in
+ * packages/db/prisma/schema.prisma.
+ */
+export const ROAD_TYPES = [
+  { value: "PITCHED", label: "Pitched" },
+  { value: "GRAVEL", label: "Gravel" },
+  { value: "SOIL", label: "Earthen" },
+  { value: "BLOCK_PAVED", label: "Block paved" },
+  { value: "FOOTPATH", label: "Footpath" },
+];
 
+/** Matches `enum FacingDirection` in packages/db/prisma/schema.prisma. */
 export const FACING_DIRECTIONS = [
-  "North",
-  "South",
-  "East",
-  "West",
-  "North-East",
-  "North-West",
-  "South-East",
-  "South-West",
+  { value: "NORTH", label: "North" },
+  { value: "SOUTH", label: "South" },
+  { value: "EAST", label: "East" },
+  { value: "WEST", label: "West" },
+  { value: "NORTH_EAST", label: "North-East" },
+  { value: "NORTH_WEST", label: "North-West" },
+  { value: "SOUTH_EAST", label: "South-East" },
+  { value: "SOUTH_WEST", label: "South-West" },
 ];
 
 /* ---------------------- cascaded location mock data -------------------- */
@@ -145,16 +157,5 @@ export const PROVINCES: Province[] = [
 
 /* ---------------------------- review checklist ------------------------- */
 
-export interface ReviewChecklistItem {
-  label: string;
-  state: "ok" | "warn";
-  /** Material-style icon name for the row. */
-  icon: string;
-}
-
-export const REVIEW_CHECKLIST: ReviewChecklistItem[] = [
-  { label: "At least 5 photos uploaded", state: "ok", icon: "photo_camera" },
-  { label: "Lalpurja document attached", state: "ok", icon: "verified" },
-  { label: "Tax clearance attached", state: "warn", icon: "warning" },
-  { label: "Field verification (optional, L3)", state: "warn", icon: "gavel" },
-];
+// (REVIEW_CHECKLIST was static mock data; StepReview now builds the
+// checklist dynamically from the actual wizard draft.)

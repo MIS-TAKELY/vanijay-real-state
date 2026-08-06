@@ -1,4 +1,4 @@
-import { Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
 import { cn } from "@repo/ui";
 import { EXPIRY_SOON_DAYS } from "./constants";
 
@@ -54,13 +54,14 @@ export function ExpiryChip({ daysUntilExpiry, className }: ExpiryChipProps) {
     >
       <Icon name="schedule" filled className="text-[14px]" />
       Expires in {daysUntilExpiry}d
-      <button
+      <Button
         type="button"
-        className="inline-flex items-center gap-0.5 rounded-full bg-[#b45309] px-1.5 py-0.5 text-[10px] font-bold text-white hover:bg-[#92400e] transition-colors cursor-pointer"
+        variant="ghost"
+        className="inline-flex items-center gap-0.5 rounded-full bg-[#b45309] px-1.5 py-0.5 text-[10px] font-bold text-white hover:bg-[#92400e] h-auto cursor-pointer"
       >
         <Icon name="refresh" className="text-[12px]" />
         Renew
-      </button>
+      </Button>
     </span>
   );
 }

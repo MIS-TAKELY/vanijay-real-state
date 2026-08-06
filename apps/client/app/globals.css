@@ -51,15 +51,27 @@
   --color-on-secondary: #ffffff;
   --color-surface-dim: #dbdad5;
 
-  /* shadcn UI compatibility tokens */
-  --color-primary-foreground: oklch(1 0 0);
-  --color-secondary-foreground: oklch(1 0 0);
+  /* shadcn UI semantic tokens (bridge DESIGN.md → packages/ui primitives) */
+  --color-foreground: #1b1c19;
+  --color-card: #ffffff;
+  --color-card-foreground: #1b1c19;
+  --color-popover: #ffffff;
+  --color-popover-foreground: #1b1c19;
+  --color-primary-foreground: #ffffff;
+  --color-secondary-foreground: #ffffff;
   --color-destructive: #ba1a1a;
-  --color-destructive-foreground: oklch(1 0 0);
+  --color-destructive-foreground: #ffffff;
   --color-accent: #d8e6dc;
   --color-accent-foreground: #1b1c19;
   --color-muted: #e4e2dd;
   --color-muted-foreground: #727972;
+  --color-border: #c2c8c0;
+  --color-input: #727972;
+  --color-ring: #244530;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 10px;
+  --radius-xl: 16px;
 
   --font-display-lg: "Fraunces", serif;
   --font-headline-md: "Fraunces", serif;

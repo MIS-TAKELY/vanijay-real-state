@@ -16,6 +16,13 @@ export const API_ENDPOINTS = {
     register: `/api/${API_VERSION}/seller/register`,
   },
 
+  uploads: {
+    single: `/api/${API_VERSION}/uploads`,
+    multiple: `/api/${API_VERSION}/uploads/multiple`,
+    remove: (publicId: string) =>
+      `/api/${API_VERSION}/uploads/${encodeURIComponent(publicId)}`,
+  },
+
   auth: {
     base: `/api/auth`,
     signUpEmail: `/api/auth/sign-up/email`,
@@ -24,5 +31,8 @@ export const API_ENDPOINTS = {
     getSession: `/api/auth/get-session`,
   },
 } as const;
+
+/** Code-first GraphQL endpoint (Apollo Server) — see apps/api/src/app.module.ts. */
+export const GRAPHQL_ENDPOINT = `/api/${API_VERSION}/vanijay-real-state`;
 
 export type ApiDomain = keyof typeof API_ENDPOINTS;

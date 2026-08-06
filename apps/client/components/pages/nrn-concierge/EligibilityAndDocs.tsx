@@ -1,10 +1,8 @@
 "use client";
 
-import { Icon } from "@repo/ui";
-import { useState } from "react";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button, Icon, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui";
 
 export function EligibilityAndDocs() {
-  const [openDoc, setOpenDoc] = useState<string | null>("nrn");
 
   const documents = [
     {
@@ -75,64 +73,67 @@ export function EligibilityAndDocs() {
             >
               <div className="grid grid-cols-1 gap-md sm:grid-cols-3">
                 <div>
-                  <label
+                  <Label
                     htmlFor="nrn-category"
                     className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.6px] text-on-surface"
                   >
                     Category
-                  </label>
-                  <select
-                    id="nrn-category"
-                    className="h-10 w-full cursor-pointer rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
-                  >
-                    <option>Select NRN Status</option>
-                    <option>NRN Citizen</option>
-                    <option>FCNO</option>
-                  </select>
+                  </Label>
+                  <Select>
+                    <SelectTrigger id="nrn-category" className="h-10 w-full">
+                      <SelectValue placeholder="Select NRN Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="nrn">NRN Citizen</SelectItem>
+                      <SelectItem value="fcno">FCNO</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <label
+                  <Label
                     htmlFor="nrn-location"
                     className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.6px] text-on-surface"
                   >
                     Location
-                  </label>
-                  <select
-                    id="nrn-location"
-                    className="h-10 w-full cursor-pointer rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
-                  >
-                    <option>Province / Region</option>
-                    <option>Bagmati</option>
-                    <option>Gandaki</option>
-                    <option>Koshi</option>
-                  </select>
+                  </Label>
+                  <Select>
+                    <SelectTrigger id="nrn-location" className="h-10 w-full">
+                      <SelectValue placeholder="Province / Region" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bagmati">Bagmati</SelectItem>
+                      <SelectItem value="gandaki">Gandaki</SelectItem>
+                      <SelectItem value="koshi">Koshi</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
-                  <label
+                  <Label
                     htmlFor="nrn-size"
                     className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.6px] text-on-surface"
                   >
                     Size (Units)
-                  </label>
-                  <select
-                    id="nrn-size"
-                    className="h-10 w-full cursor-pointer rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
-                  >
-                    <option>Estimated Size</option>
-                    <option>1–5 Aana</option>
-                    <option>5–10 Aana</option>
-                    <option>10+ Aana</option>
-                  </select>
+                  </Label>
+                  <Select>
+                    <SelectTrigger id="nrn-size" className="h-10 w-full">
+                      <SelectValue placeholder="Estimated Size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="1-5">1–5 Aana</SelectItem>
+                      <SelectItem value="5-10">5–10 Aana</SelectItem>
+                      <SelectItem value="10-plus">10+ Aana</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
-              <button
+              <Button
                 type="submit"
-                className="inline-flex w-full cursor-pointer items-center justify-center gap-xs rounded-md bg-primary py-3.5 text-label-sm font-semibold tracking-[0.8px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                className="inline-flex w-full items-center justify-center gap-xs rounded-md bg-primary py-3.5 text-label-sm font-semibold tracking-[0.8px] text-on-primary hover:bg-primary/90 h-auto"
               >
                 Check Eligibility
                 <Icon name="arrow_forward" className="text-body-lg" />
-              </button>
+              </Button>
             </form>
           </div>
 
@@ -145,33 +146,23 @@ export function EligibilityAndDocs() {
               Required Documents
             </h3>
 
-            <ul className="divide-y divide-outline-variant">
+            <Accordion
+              type="single"
+              collapsible
+              defaultValue="nrn"
+              className="divide-y divide-outline-variant"
+            >
               {documents.map((doc) => (
-                <li key={doc.id}>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setOpenDoc(openDoc === doc.id ? null : doc.id)
-                    }
-                    aria-expanded={openDoc === doc.id}
-                    className="flex w-full cursor-pointer items-center justify-between py-sm text-left text-[15px] text-on-surface transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/30 rounded-md"
-                  >
+                <AccordionItem key={doc.id} value={doc.id} className="border-0">
+                  <AccordionTrigger className="py-sm text-[15px] text-on-surface hover:text-primary hover:no-underline">
                     {doc.title}
-                    <Icon
-                      name="expand_more"
-                      className={`text-[20px] text-on-surface-variant transition-transform duration-200 ${
-                        openDoc === doc.id ? "rotate-180" : ""
-                      }`}
-                    />
-                  </button>
-                  {openDoc === doc.id && (
-                    <div className="pb-sm text-sm leading-6 text-on-surface-variant">
-                      {doc.detail}
-                    </div>
-                  )}
-                </li>
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm leading-6 text-on-surface-variant">
+                    {doc.detail}
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </ul>
+            </Accordion>
 
             <p className="mt-md border-t border-outline-variant pt-sm text-[11px] text-on-surface-variant">
               Accepted formats: PDF, JPG, PNG (max 10&nbsp;MB per file).

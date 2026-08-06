@@ -1,6 +1,7 @@
 import { registerEnumType } from '@nestjs/graphql';
 import {
   FacingDirection,
+  MediaType,
   PropertyStatus,
   PropertyType,
   RoadType,
@@ -21,4 +22,5 @@ registerEnumType(PropertyStatus, { name: 'PropertyStatus' });
 registerEnumType(VerificationStatus, { name: 'VerificationStatus' });
 registerEnumType(RoadType, { name: 'RoadType' });
 registerEnumType(FacingDirection, { name: 'FacingDirection' });
+registerEnumType(MediaType, { name: 'MediaType' });
 registerEnumType(UserRole, { name: 'UserRole' });

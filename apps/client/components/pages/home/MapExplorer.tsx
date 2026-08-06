@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@repo/ui";
+import { Icon, Input } from "@repo/ui";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
@@ -628,12 +628,11 @@ export function MapExplorer() {
               name="search"
               className="absolute left-2.5 top-1/2 -translate-y-1/2 text-data-table text-on-surface-variant"
             />
-            <input
-              type="text"
+            <Input
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Search area or city…"
-              className="w-full pl-8 pr-3 py-1.5 text-sm rounded-full border border-outline-variant bg-surface focus:outline-none focus:border-primary"
+              className="w-full pl-8 pr-3 py-1.5 text-sm rounded-full border border-outline-variant bg-surface shadow-none focus-visible:ring-0"
             />
           </div>
           <div className="flex flex-wrap gap-2">

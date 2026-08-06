@@ -1,4 +1,4 @@
-import { Card, Icon } from "@repo/ui";
+import { Button, Card, Icon } from "@repo/ui";
 import { archiveCards } from "constants/varibles-constants";
 
 export function AskArchive() {
@@ -19,13 +19,16 @@ export function AskArchive() {
             <p className="font-body-md font-semibold mb-md leading-snug">
               &quot;{card.question}&quot;
             </p>
-            <button className="font-label-sm text-primary flex items-center gap-xs font-bold cursor-pointer">
+            <Button
+              variant="link"
+              className="font-label-sm text-primary flex items-center gap-xs font-bold cursor-pointer px-0 h-auto"
+            >
               {card.action}
               <Icon
                 name="arrow_forward"
                 className="text-data-table transition-transform duration-200 group-hover:translate-x-1"
               />
-            </button>
+            </Button>
           </Card>
         ))}
       </div>

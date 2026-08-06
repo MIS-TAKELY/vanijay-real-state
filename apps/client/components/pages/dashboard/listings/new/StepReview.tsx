@@ -1,78 +1,175 @@
 "use client";
 
 import { cn, Icon } from "@repo/ui";
-import { REVIEW_CHECKLIST } from "./constants";
+import {
+  formatNPR,
+  labelEnum,
+  TYPE_GRADIENTS,
+  TYPE_LABELS,
+  FALLBACK_GRADIENT,
+} from "lib/api/services/properties/types";
+import { askingPriceNumber, formatLandAreaLabel, totalSqFt } from "./draft";
+import type { StepProps } from "./types";
 
-export function StepReview() {
+interface ChecklistItem {
+  label: string;
+  ok: boolean;
+  hint: string;
+}
+
+export function StepReview({ draft }: StepProps) {
+  const gradient = TYPE_GRADIENTS[draft.propertyType] ?? FALLBACK_GRADIENT;
+  const price = askingPriceNumber(draft);
+  const sqft = totalSqFt(draft);
+  const area = formatLandAreaLabel(draft);
+  const locationLine = [draft.areaName.trim(), draft.district]
+    .filter(Boolean)
+    .join(", ");
+
+  const checklist: ChecklistItem[] = [
+    {
+      label: "Title",
+      ok: draft.title.trim().length >= 5,
+      hint: draft.title.trim().length >= 5 ? "ready" : "missing",
+    },
+    {
+      label: "Photos",
+      ok: draft.media.length > 0,
+      hint: draft.media.length > 0 ? `${draft.media.length} uploaded` : "none",
+    },
+    {
+      label: "Asking price",
+      ok: price > 0,
+      hint: price > 0 ? formatNPR(price) : "missing",
+    },
+    {
+      label: "Location",
+      ok: Boolean(
+        draft.province && draft.district && draft.municipality && draft.ward && draft.areaName.trim(),
+      ),
+      hint: locationLine || "incomplete",
+    },
+    {
+      label: "Land area",
+      ok: sqft > 0,
+      hint: sqft > 0 ? `${sqft.toLocaleString()} sq ft` : "missing",
+    },
+    {
+      label: "Cadastral record",
+      ok: false,
+      hint: "added during verification",
+    },
+  ];
+
+  const meta: string[] = [];
+  if (area) meta.push(area);
+  if (draft.facing) meta.push(`${labelEnum(draft.facing, {})} facing`);
+  if (draft.roadType || draft.roadWidthFt) {
+    meta.push(
+      [
+        draft.roadWidthFt ? `${draft.roadWidthFt}ft` : null,
+        draft.roadType ? labelEnum(draft.roadType, {}) : null,
+      ]
+        .filter(Boolean)
+        .join(" ") + " road",
+    );
+  }
+  if (draft.isCornerPlot) meta.push("Corner plot");
+
   return (
     <div className="grid grid-cols-1 gap-md lg:grid-cols-3">
-      {/* Preview mirror */}
+      {/* Preview mirror — same shape as the public feed card */}
       <div className="lg:col-span-2 flex flex-col overflow-hidden rounded-2xl border border-outline-variant bg-surface">
-        <div className="relative h-44 bg-gradient-to-br from-[#A8C0A0] to-[#5A7A55]">
+        <div
+          className={cn("relative h-44 bg-gradient-to-br", gradient)}
+          aria-hidden
+        >
+          {draft.media[0] && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={draft.media[0].url}
+              alt={draft.media[0].altText ?? "Listing cover"}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+          )}
           <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-surface/95 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-tertiary">
-            <Icon name="verified" className="text-[12px]" /> Verified Archive
+            <Icon name="pending_actions" className="text-[12px]" /> Pending
+            verification
           </span>
+          {draft.media.length > 1 && (
+            <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md bg-surface/95 px-2 py-1 text-[10px] font-bold text-on-surface-variant">
+              <Icon name="photo_camera" className="text-[12px]" />
+              {draft.media.length}
+            </span>
+          )}
         </div>
         <div className="flex flex-col gap-sm p-md">
-          <span className="mono-stat text-[12px] text-on-surface-variant">
-            LOT-442-BHA
+          <span className="rounded bg-surface-container px-2 py-0.5 w-fit text-[11px] font-medium text-on-surface-variant">
+            {labelEnum(draft.propertyType, TYPE_LABELS)}
           </span>
           <h3 className="font-headline-md text-lg font-medium text-on-surface">
-            Bhaisepati Residential Land
+            {draft.title.trim() || "Untitled listing"}
           </h3>
           <p className="mono-stat text-lg font-semibold text-primary">
-            NPR 2,45,00,000
+            {price > 0 ? formatNPR(price) : "—"}
           </p>
           <p className="text-sm text-on-surface-variant">
-            Bhaisepati, Lalitpur
+            {locationLine || "Location not specified"}
           </p>
-          <div className="flex flex-wrap gap-1.5 border-t border-outline-variant pt-sm text-sm text-on-surface-variant">
-            {["0-4-0-0 Ropani", "South facing", "20ft Pitched Road"].map(
-              (m) => (
+          {draft.description.trim() && (
+            <p className="line-clamp-2 text-sm text-on-surface-variant">
+              {draft.description.trim()}
+            </p>
+          )}
+          {meta.length > 0 && (
+            <div className="flex flex-wrap gap-1.5 border-t border-outline-variant pt-sm text-sm text-on-surface-variant">
+              {meta.map((m) => (
                 <span
                   key={m}
                   className="rounded bg-surface-container px-2 py-0.5 text-[12px]"
                 >
                   {m}
                 </span>
-              ),
-            )}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Checklist sidebar */}
+      {/* Checklist sidebar — reflects the actual draft */}
       <div className="flex flex-col gap-md">
         <div className="rounded-2xl border border-outline-variant bg-surface p-md">
           <h4 className="mb-sm font-headline-md text-base font-semibold text-on-surface">
             Readiness checklist
           </h4>
           <ul className="flex flex-col gap-sm">
-            {REVIEW_CHECKLIST.map((item) => (
+            {checklist.map((item) => (
               <li key={item.label} className="flex items-center gap-sm text-sm">
                 <span
                   className={cn(
                     "flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
-                    item.state === "ok"
+                    item.ok
                       ? "bg-primary text-on-primary"
                       : "bg-[#b45309]/10 text-[#b45309]",
                   )}
                 >
                   <Icon
-                    name={item.state === "ok" ? "check" : "warning"}
+                    name={item.ok ? "check" : "pending"}
                     className="text-[16px]"
                   />
                 </span>
-                <span className="flex items-center gap-1.5 text-on-surface">
-                  <Icon
-                    name={item.icon}
-                    className="text-[16px] text-on-surface-variant"
-                  />
-                  {item.label}
+                <span className="flex-1 text-on-surface">{item.label}</span>
+                <span className="text-[11px] text-on-surface-variant">
+                  {item.hint}
                 </span>
               </li>
             ))}
           </ul>
+          <p className="mt-md rounded-md bg-surface-container p-sm text-[12px] leading-5 text-on-surface-variant">
+            The listing is saved as a <strong>DRAFT</strong>. Our verification
+            team reviews ownership documents before it goes live on the public
+            feed.
+          </p>
         </div>
       </div>
     </div>

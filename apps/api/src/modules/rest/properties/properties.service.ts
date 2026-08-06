@@ -1,7 +1,4 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { Prisma, PrismaClient } from '@repo/db';
 import {
   CursorPage,
@@ -13,14 +10,25 @@ import { CreatePropertyInput } from './dto/create-property.input';
 import { UpdatePropertyInput } from './dto/update-property.input';
 import { Property } from './entities/property.entity';
 
+const PROPERTY_SUMMARY_INCLUDE = {
+  location: true,
+  landArea: true,
+  media: {
+    orderBy: { sortOrder: 'asc' },
+    select: { url: true, altText: true, sortOrder: true, isCover: true },
+  },
+} satisfies Prisma.PropertyInclude;
+
 @Injectable()
 export class PropertiesService {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async findFeed(opts: {
-    first?: number;
-    after?: string;
-  } = {}): Promise<CursorPage<Property>> {
+  async findFeed(
+    opts: {
+      first?: number;
+      after?: string;
+    } = {},
+  ): Promise<CursorPage<Property>> {
     const first = resolveFirst(opts.first);
     const after = opts.after ? decodeCursor(opts.after) : undefined;
 
@@ -28,16 +36,15 @@ export class PropertiesService {
       where: {
         status: 'LIVE',
         ...(after && {
-          // "strictly before" the cursor in (createdAt DESC, id DESC) order:
-          // either an older instant, or the same instant with a smaller id.
           OR: [
             { createdAt: { lt: after.createdAt } },
             { createdAt: { equals: after.createdAt }, id: { lt: after.id } },
           ],
         }),
       },
+      include: PROPERTY_SUMMARY_INCLUDE,
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-      take: first + 1, // lookahead: +1 detects the next page without count()
+      take: first + 1,
     });
 
     const hasMore = rows.length > first;
@@ -58,16 +65,34 @@ export class PropertiesService {
     };
   }
 
-  /** Any property by id (admin/owner reads; callers gate access via guards). */
-  async findOne(id: string) {
-    const row = await this.prisma.property.findUnique({ where: { id } });
-    if (!row) throw new NotFoundException(`Property ${id} not found`);
+  async findOne(idOrSlug: string) {
+    const row = await this.prisma.property.findFirst({
+      where: {
+        status: 'LIVE',
+        OR: [{ slug: idOrSlug }, { id: idOrSlug }],
+      },
+      include: PROPERTY_SUMMARY_INCLUDE,
+    });
+    if (!row) throw new NotFoundException(`Property ${idOrSlug} not found`);
     return PropertiesService.mapToResponse(row);
   }
 
+  /**
+   * A user's own properties across ALL statuses (drafts, under-verification,
+   * live, sold, archived, rejected) — powers the "My Listings" dashboard.
+   */
+  async findByOwner(ownerId: string): Promise<Property[]> {
+    const rows = await this.prisma.property.findMany({
+      where: { ownerId },
+      include: PROPERTY_SUMMARY_INCLUDE,
+      orderBy: [{ updatedAt: 'desc' }, { id: 'desc' }],
+    });
+    return rows.map(PropertiesService.mapToResponse);
+  }
+
   async create(input: CreatePropertyInput, ownerId: string): Promise<Property> {
-    const { landArea, location, cadastralRecord, ...propertyData } = input;
-    console.log("imput-->",input)
+    const { landArea, location, cadastralRecord, media, ...propertyData } =
+      input;
     const row = await this.prisma.property.create({
       data: {
         ...propertyData,
@@ -77,15 +102,34 @@ export class PropertiesService {
         originalAskingPrice: input.askingPrice,
         ...(landArea && { landArea: { create: landArea } }),
         ...(location && { location: { create: location } }),
-        ...(cadastralRecord && { cadastralRecord: { create: cadastralRecord } }),
+        ...(cadastralRecord && {
+          cadastralRecord: { create: cadastralRecord },
+        }),
+        ...(media && media.length > 0 && {
+          media: {
+            create: media.map((m, index) => ({
+              url: m.url,
+              altText: m.altText,
+              type: m.type ?? 'IMAGE',
+              sortOrder: m.sortOrder ?? index,
+              isCover: m.isCover ?? index === 0,
+            })),
+          },
+        }),
       },
-      include: { landArea: true, location: true, cadastralRecord: true },
+      include: {
+        landArea: true,
+        location: true,
+        cadastralRecord: true,
+        media: { orderBy: { sortOrder: 'asc' } },
+      },
     });
     return PropertiesService.mapToResponse(row);
   }
 
   async update(input: UpdatePropertyInput): Promise<Property> {
-    const { id, landArea, location, cadastralRecord, ...rest } = input;
+    const { id, landArea, location, cadastralRecord, media, ...rest } = input;
+    void media; // media replacement on update is out of scope for now
     await this.exists(id);
     const row = await this.prisma.property.update({
       where: { id },
@@ -93,7 +137,9 @@ export class PropertiesService {
         ...rest,
         ...(landArea && { landArea: { create: landArea as any } }),
         ...(location && { location: { create: location as any } }),
-        ...(cadastralRecord && { cadastralRecord: { create: cadastralRecord as any } }),
+        ...(cadastralRecord && {
+          cadastralRecord: { create: cadastralRecord as any },
+        }),
       },
       include: { landArea: true, location: true, cadastralRecord: true },
     });
@@ -106,7 +152,6 @@ export class PropertiesService {
     return PropertiesService.mapToResponse(row);
   }
 
-  // ---------------------------------------------------------------- helpers
 
   private async exists(id: string) {
     const found = await this.prisma.property.findUnique({ where: { id } });
@@ -114,13 +159,11 @@ export class PropertiesService {
     return found;
   }
 
-  /** Random-but-unique-ish listing code; Prisma's `@unique` enforces real uniqueness. */
   private async generateListingCode(): Promise<string> {
     const suffix = Math.random().toString(36).slice(2, 8).toUpperCase();
     return `PROP-${Date.now()}-${suffix}`;
   }
 
-  /** Slugify the title with a short random suffix for uniqueness. */
   private generateSlug(title: string): string {
     const base = title
       .toLowerCase()
@@ -132,18 +175,14 @@ export class PropertiesService {
     return `${base || 'property'}-${suffix}`;
   }
 
-  /**
-   * Map a raw Prisma row to the response shape. Critically converts
-   * `Prisma.Decimal` -> `number` (Prisma returns Decimal for @db.Decimal columns)
-   * so GraphQL `Float` and REST JSON serialize correctly. This is the single
-   * boundary that prevents leaking the DB row shape to clients.
-   */
-  private static toNumber(value: Prisma.Decimal | number | null | undefined): number | null {
+  private static toNumber(
+    value: Prisma.Decimal | number | null | undefined,
+  ): number | null {
     if (value == null) return null;
     return typeof value === 'number' ? value : Number(value.toString());
   }
 
-  private static mapToResponse(row: Prisma.PropertyGetPayload<{}>): Property {
+  private static mapToResponse(row: any): Property {
     return {
       id: row.id,
       listingCode: row.listingCode,
@@ -161,6 +200,9 @@ export class PropertiesService {
       isCornerPlot: row.isCornerPlot,
       ownerId: row.ownerId,
       agentId: row.agentId ?? undefined,
+      location: row.location ?? undefined,
+      landArea: row.landArea ?? undefined,
+      media: row.media ?? [],
       createdAt: row.createdAt,
       updatedAt: row.updatedAt,
     } as Property;

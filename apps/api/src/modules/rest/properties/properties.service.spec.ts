@@ -11,9 +11,10 @@ import { encodeCursor } from 'src/common/pagination';
  */
 describe('PropertiesService', () => {
   let service: PropertiesService;
-  let prisma: {
+let prisma: {
     property: {
       findMany: jest.Mock;
+      findFirst: jest.Mock;
       findUnique: jest.Mock;
       create: jest.Mock;
       update: jest.Mock;
@@ -21,7 +22,7 @@ describe('PropertiesService', () => {
     };
   };
 
-  const row = {
+const row = {
     id: 'p1',
     listingCode: 'PROP-123-ABC',
     slug: 'my-house-abc',
@@ -46,6 +47,7 @@ describe('PropertiesService', () => {
     prisma = {
       property: {
         findMany: jest.fn().mockResolvedValue([row]),
+        findFirst: jest.fn().mockResolvedValue(row),
         findUnique: jest.fn().mockResolvedValue(row),
         create: jest.fn().mockResolvedValue(row),
         update: jest.fn().mockResolvedValue(row),
@@ -65,9 +67,21 @@ describe('PropertiesService', () => {
     expect(service).toBeDefined();
   });
 
-  it('findOne throws NotFoundException when missing', async () => {
-    prisma.property.findUnique.mockResolvedValueOnce(null);
+  it('findOne throws NotFoundException when no LIVE listing matches the slug/id', async () => {
+    prisma.property.findFirst.mockResolvedValueOnce(null);
     await expect(service.findOne('missing')).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('findOne looks up a LIVE property by slug OR id', async () => {
+    await service.findOne('my-house-abc');
+    expect(prisma.property.findFirst).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: {
+          status: 'LIVE',
+          OR: [{ slug: 'my-house-abc' }, { id: 'my-house-abc' }],
+        },
+      }),
+    );
   });
 
   it('create passes ownerId from auth (not the body) and generates listingCode/slug', async () => {

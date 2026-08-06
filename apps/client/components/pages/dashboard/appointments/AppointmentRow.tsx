@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
 import { useState } from "react";
 import { AppointmentStatusChip } from "./AppointmentStatusChip";
 import {
@@ -58,33 +58,38 @@ export function AppointmentRow({ appointment }: AppointmentRowProps) {
         <div className="flex items-center justify-between gap-sm sm:justify-end">
           <AppointmentStatusChip status={appointment.status} />
           <div className="flex items-center gap-xs">
-            <button
+            <Button
               type="button"
-              className="inline-flex items-center gap-1 rounded-md border border-outline-variant px-2.5 py-1.5 text-label-sm font-medium text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
+              variant="outline"
+              className="inline-flex items-center gap-1 rounded-md border-outline-variant px-2.5 py-1.5 text-label-sm font-medium text-on-surface hover:border-primary hover:text-primary cursor-pointer"
             >
               <Icon name="event_repeat" className="text-data-table" />
               Reschedule
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               aria-label="Cancel appointment"
-              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-variant hover:bg-error/10 hover:text-error transition-colors cursor-pointer"
+              className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-variant hover:bg-error/10 hover:text-error cursor-pointer"
             >
               <Icon name="cancel" className="text-body-lg" />
-            </button>
+            </Button>
             {isCompleted ? (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setExpanded((v) => !v)}
                 aria-expanded={expanded}
                 aria-label="Toggle outcome notes"
-                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-colors cursor-pointer"
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container hover:text-on-surface cursor-pointer"
               >
                 <Icon
                   name={expanded ? "expand_less" : "expand_more"}
                   className="text-body-lg"
                 />
-              </button>
+              </Button>
             ) : null}
           </div>
         </div>

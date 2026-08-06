@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@repo/ui";
+import { ToggleGroup, ToggleGroupItem } from "@repo/ui";
 import { useState } from "react";
 import { FREQUENCY_OPTIONS, type AlertFrequency } from "./constants";
 
@@ -18,31 +18,26 @@ export function FrequencyToggle({ value, onChange }: FrequencyToggleProps) {
   };
 
   return (
-    <div
-      role="radiogroup"
+    <ToggleGroup
+      type="single"
+      value={active}
+      onValueChange={(v) => {
+        if (v) handleSelect(v as AlertFrequency);
+      }}
+      variant="outline"
       aria-label="Alert frequency"
-      className="inline-flex items-center rounded-full border border-outline-variant bg-surface p-0.5"
+      className="rounded-full border border-outline-variant bg-surface p-0.5"
     >
-      {FREQUENCY_OPTIONS.map((opt) => {
-        const isActive = active === opt.key;
-        return (
-          <button
-            key={opt.key}
-            type="button"
-            role="radio"
-            aria-checked={isActive}
-            onClick={() => handleSelect(opt.key)}
-            className={cn(
-              "rounded-full px-2.5 py-1 text-[12px] font-medium transition-colors cursor-pointer",
-              isActive
-                ? "bg-primary text-on-primary"
-                : "text-on-surface-variant hover:text-on-surface",
-            )}
-          >
-            {opt.label}
-          </button>
-        );
-      })}
-    </div>
+      {FREQUENCY_OPTIONS.map((opt) => (
+        <ToggleGroupItem
+          key={opt.key}
+          value={opt.key}
+          aria-label={opt.label}
+          className="rounded-full px-2.5 py-1 text-[12px] font-medium data-[state=on]:bg-primary data-[state=on]:text-on-primary data-[state=off]:text-on-surface-variant data-[state=off]:hover:text-on-surface"
+        >
+          {opt.label}
+        </ToggleGroupItem>
+      ))}
+    </ToggleGroup>
   );
 }

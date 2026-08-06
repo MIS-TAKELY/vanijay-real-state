@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Icon } from "@repo/ui";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, Button, Icon, Input, Label } from "@repo/ui";
 import { useState } from "react";
 
 export function DangerZone() {
@@ -44,65 +44,48 @@ export function DangerZone() {
       </div>
 
       {/* Typed-confirm dialog */}
-      {confirmOpen ? (
-        <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-gutter"
-          onClick={() => setConfirmOpen(false)}
-          role="dialog"
-          aria-modal="true"
-          aria-label="Confirm account deletion"
-        >
-          <div
-            className="w-full max-w-sm rounded-2xl bg-surface border border-outline-variant shadow-xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex flex-col gap-sm p-md">
-              <div className="flex items-center gap-sm">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-error/10 text-error">
-                  <Icon name="warning" filled className="text-[24px]" />
-                </span>
-                <h3 className="font-headline-md text-lg font-semibold text-on-surface">
-                  Delete account?
-                </h3>
-              </div>
-              <p className="text-sm text-on-surface-variant">
-                This is permanent and cannot be undone. All your listings,
-                documents and favorites will be removed.
-              </p>
-              <div className="flex flex-col gap-xs">
-                <label className="font-label-sm text-label-sm font-semibold text-on-surface">
-                  Type <span className="mono-stat font-bold">DELETE</span> to
-                  confirm
-                </label>
-                <input
-                  type="text"
-                  value={confirmText}
-                  onChange={(e) => setConfirmText(e.target.value)}
-                  placeholder="DELETE"
-                  className="mono-stat h-11 rounded-md border border-outline bg-surface px-3 text-sm text-on-surface outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
-                />
-              </div>
-              <div className="flex justify-end gap-xs">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => setConfirmOpen(false)}
-                >
-                  Cancel
-                </Button>
-                <Button
-                  type="button"
-                  variant="destructive"
-                  disabled={confirmText !== "DELETE"}
-                  onClick={() => setConfirmOpen(false)}
-                >
-                  Confirm delete
-                </Button>
-              </div>
+      <AlertDialog open={confirmOpen} onOpenChange={setConfirmOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <div className="flex items-center gap-sm">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-error/10 text-error">
+                <Icon name="warning" filled className="text-[24px]" />
+              </span>
+              <AlertDialogTitle>Delete account?</AlertDialogTitle>
             </div>
+            <AlertDialogDescription>
+              This is permanent and cannot be undone. All your listings,
+              documents and favorites will be removed.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+
+          <div className="flex flex-col gap-xs">
+            <Label>
+              Type <span className="mono-stat font-bold">DELETE</span> to confirm
+            </Label>
+            <Input
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="DELETE"
+              className="mono-stat h-11"
+            />
           </div>
-        </div>
-      ) : null}
+
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setConfirmOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction
+              disabled={confirmText !== "DELETE"}
+              onClick={() => setConfirmOpen(false)}
+              className="bg-destructive text-white hover:bg-destructive/90"
+            >
+              Confirm delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }

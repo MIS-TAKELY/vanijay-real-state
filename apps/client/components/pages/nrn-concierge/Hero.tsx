@@ -1,4 +1,5 @@
-import { Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
+import Link from "next/link";
 
 export function Hero() {
   return (
@@ -85,19 +86,17 @@ export function Hero() {
 
             {/* Primary CTA */}
             <div className="flex flex-col sm:flex-row gap-md">
-              <a
-                href="#eligibility"
-                className="inline-flex items-center justify-center gap-xs rounded-md bg-primary px-6 py-3 text-label-sm font-semibold tracking-[0.4px] text-on-primary hover:bg-primary/90 transition-colors cursor-pointer"
-              >
-                Check Your Eligibility
-                <Icon name="arrow_forward" className="text-body-lg" />
-              </a>
-              <a
-                href="#process"
-                className="inline-flex items-center justify-center gap-xs rounded-md border border-outline-variant px-6 py-3 text-label-sm font-semibold tracking-[0.4px] text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
-              >
-                See How It Works
-              </a>
+              <Button asChild size="lg">
+                <Link href="#eligibility">
+                  Check Your Eligibility
+                  <Icon name="arrow_forward" className="text-body-lg" />
+                </Link>
+              </Button>
+              <Button asChild size="lg" variant="outline">
+                <Link href="#process">
+                  See How It Works
+                </Link>
+              </Button>
             </div>
           </div>
 

@@ -22,7 +22,6 @@ export class PropertiesController {
   constructor(private readonly properties: PropertiesService) {}
 
   @Get('feed')
-  // @Roles('BUYER', 'SELLER', 'ADMIN')
   findFeed(@Query('first') first?: string, @Query('after') after?: string) {
     return this.properties.findFeed({
       first: first ? Number(first) : undefined,
@@ -31,7 +30,6 @@ export class PropertiesController {
   }
 
   @Get(':id')
-  // @Roles('BUYER', 'SELLER', 'ADMIN')
   findOne(@Param('id') id: string) {
     return this.properties.findOne(id);
   }

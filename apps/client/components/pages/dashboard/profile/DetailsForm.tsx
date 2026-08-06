@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, Icon } from "@repo/ui";
+import { Icon, Input, Label, ToggleGroup, ToggleGroupItem } from "@repo/ui";
 import { useState } from "react";
 import {
   CONTACT_METHODS,
@@ -31,107 +31,87 @@ export function DetailsForm({ profile }: DetailsFormProps) {
       <div className="grid grid-cols-1 gap-sm sm:grid-cols-2">
         {/* Permanent district */}
         <div className="flex flex-col gap-xs">
-          <label
-            htmlFor="pf-district"
-            className="font-label-sm text-label-sm font-semibold text-on-surface"
-          >
-            Permanent district
-          </label>
-          <input
+          <Label htmlFor="pf-district">Permanent district</Label>
+          <Input
             id="pf-district"
             type="text"
             defaultValue={profile.permanentDistrict}
-            className="h-11 rounded-md border border-outline bg-surface px-3 text-sm text-on-surface outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+            className="h-11"
           />
         </div>
 
         {/* Permanent address */}
         <div className="flex flex-col gap-xs">
-          <label
-            htmlFor="pf-address"
-            className="font-label-sm text-label-sm font-semibold text-on-surface"
-          >
-            Permanent address
-          </label>
-          <input
+          <Label htmlFor="pf-address">Permanent address</Label>
+          <Input
             id="pf-address"
             type="text"
             defaultValue={profile.permanentAddress}
-            className="h-11 rounded-md border border-outline bg-surface px-3 text-sm text-on-surface outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+            className="h-11"
           />
         </div>
       </div>
 
       {/* Preferred language toggle */}
       <div className="mt-md flex flex-col gap-xs">
-        <span className="font-label-sm text-label-sm font-semibold text-on-surface">
-          Preferred language
-        </span>
-        <div
-          role="radiogroup"
+        <Label>Preferred language</Label>
+        <ToggleGroup
+          type="single"
+          value={language}
+          onValueChange={(v) => {
+            if (v) setLanguage(v as PreferredLanguage);
+          }}
+          variant="outline"
           aria-label="Preferred language"
           className="inline-flex w-fit items-center rounded-full border border-outline-variant bg-surface p-0.5"
         >
-          {LANGUAGES.map((opt) => {
-            const isActive = language === opt.key;
-            return (
-              <button
-                key={opt.key}
-                type="button"
-                role="radio"
-                aria-checked={isActive}
-                onClick={() => setLanguage(opt.key)}
-                className={cn(
-                  "rounded-full px-3 py-1 text-sm font-medium transition-colors cursor-pointer",
-                  isActive
-                    ? "bg-primary text-on-primary"
-                    : "text-on-surface-variant hover:text-on-surface",
-                )}
-              >
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
+          {LANGUAGES.map((opt) => (
+            <ToggleGroupItem
+              key={opt.key}
+              value={opt.key}
+              aria-label={opt.label}
+              className="rounded-full px-3 py-1 text-sm font-medium data-[state=on]:bg-primary data-[state=on]:text-on-primary data-[state=off]:text-on-surface-variant data-[state=off]:hover:text-on-surface"
+            >
+              {opt.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
 
       {/* Preferred contact method radio */}
       <div className="mt-md flex flex-col gap-xs">
-        <span className="font-label-sm text-label-sm font-semibold text-on-surface">
-          Preferred contact method
-        </span>
-        <div className="flex flex-wrap gap-sm">
-          {CONTACT_METHODS.map((opt) => {
-            const isActive = contact === opt.key;
-            return (
-              <button
-                key={opt.key}
-                type="button"
-                role="radio"
-                aria-checked={isActive}
-                onClick={() => setContact(opt.key)}
-                className={cn(
-                  "inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium transition-colors cursor-pointer",
-                  isActive
-                    ? "border-primary bg-primary/5 text-primary"
-                    : "border-outline-variant text-on-surface-variant hover:border-primary/40",
-                )}
-              >
-                <Icon
-                  name={
-                    opt.key === "PHONE"
-                      ? "phone"
-                      : opt.key === "WHATSAPP"
-                        ? "chat"
-                        : "message"
-                  }
-                  className="text-data-table"
-                />
-                {opt.label}
-              </button>
-            );
-          })}
-        </div>
+        <Label>Preferred contact method</Label>
+        <ToggleGroup
+          type="single"
+          value={contact}
+          onValueChange={(v) => {
+            if (v) setContact(v as ContactMethod);
+          }}
+          variant="outline"
+          aria-label="Preferred contact method"
+          className="flex flex-wrap gap-sm"
+        >
+          {CONTACT_METHODS.map((opt) => (
+            <ToggleGroupItem
+              key={opt.key}
+              value={opt.key}
+              aria-label={opt.label}
+              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:text-primary data-[state=off]:border-outline-variant data-[state=off]:text-on-surface-variant data-[state=off]:hover:border-primary/40"
+            >
+              <Icon
+                name={
+                  opt.key === "PHONE"
+                    ? "phone"
+                    : opt.key === "WHATSAPP"
+                      ? "chat"
+                      : "message"
+                }
+                className="text-data-table"
+              />
+              {opt.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
       </div>
     </div>
   );

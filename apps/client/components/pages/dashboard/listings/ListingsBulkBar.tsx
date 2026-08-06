@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
 
 interface ListingsBulkBarProps {
   selectedCount: number;
@@ -30,30 +30,34 @@ export function ListingsBulkBar({
       </div>
 
       <div className="flex items-center gap-xs">
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={onReverify}
-          className="inline-flex items-center gap-1 rounded-md border border-outline-variant px-3 py-1.5 text-sm font-medium text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 rounded-md border-outline-variant px-3 py-1.5 text-sm font-medium text-on-surface hover:border-primary hover:text-primary cursor-pointer"
         >
           <Icon name="verified" className="text-data-table" />
           Request re-verification
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="ghost"
           onClick={onArchive}
-          className="inline-flex items-center gap-1 rounded-md bg-surface px-3 py-1.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer"
+          className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container-high cursor-pointer"
         >
           <Icon name="archive" className="text-data-table" />
           Archive
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={onClear}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container transition-colors cursor-pointer"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-md text-on-surface-variant hover:bg-surface-container cursor-pointer"
           aria-label="Clear selection"
         >
           <Icon name="close" className="text-body-lg" />
-        </button>
+        </Button>
       </div>
     </div>
   );

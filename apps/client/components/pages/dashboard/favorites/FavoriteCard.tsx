@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, Icon } from "@repo/ui";
+import { Button, cn, Icon } from "@repo/ui";
 import { PropertyCard } from "components/common/PropertyCard";
 import { useState } from "react";
 import type { FavoriteProperty } from "./constants";
@@ -27,16 +27,17 @@ export function FavoriteCard({ property }: FavoriteCardProps) {
       ) : null}
 
       <div className="absolute right-3 bottom-34 z-10 flex items-center gap-1.5">
-        <button
+        <Button
           type="button"
+          variant="outline"
           aria-pressed={notify}
           aria-label="Toggle price-change alerts"
           onClick={() => setNotify((v) => !v)}
           className={cn(
-            "inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium shadow-sm transition-colors cursor-pointer",
+            "inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium shadow-sm cursor-pointer border-outline-variant",
             notify
               ? "bg-primary text-on-primary"
-              : "bg-surface/95 text-on-surface-variant border border-outline-variant",
+              : "bg-surface/95 text-on-surface-variant",
           )}
         >
           <Icon
@@ -45,16 +46,18 @@ export function FavoriteCard({ property }: FavoriteCardProps) {
             className="text-[14px]"
           />
           {notify ? "Alerts on" : "Alerts off"}
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           aria-label="Remove from favorites"
           onClick={() => setSaved(false)}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface/95 border border-outline-variant text-tertiary shadow-sm hover:bg-error/10 hover:text-error hover:border-error/30 transition-colors cursor-pointer"
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface/95 border border-outline-variant text-tertiary shadow-sm hover:bg-error/10 hover:text-error hover:border-error/30 cursor-pointer"
         >
           <Icon name="favorite" filled className="text-body-lg" />
-        </button>
+        </Button>
       </div>
 
       <span className="mono-stat absolute left-3 bottom-34 z-10 rounded bg-surface/90 px-1.5 py-0.5 text-[10px] text-on-surface-variant shadow-sm">

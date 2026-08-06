@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon } from "@repo/ui";
+import { Checkbox, Icon } from "@repo/ui";
 import { DISTRICTS } from "constants/varibles-constants";
 import { useState } from "react";
 
@@ -77,16 +77,15 @@ export function DistrictLedgers() {
                       className="flex cursor-pointer items-center justify-between group"
                     >
                       <span className="flex items-center gap-2.5">
-                        <input
-                          type="checkbox"
+                        <Checkbox
                           checked={provinces[p.key]}
-                          onChange={() =>
+                          onCheckedChange={() =>
                             setProvinces((s) => ({
                               ...s,
                               [p.key]: !s[p.key],
                             }))
                           }
-                          className="h-3.5 w-3.5 accent-primary rounded"
+                          className="h-3.5 w-3.5 rounded"
                         />
                         <span className="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">
                           {p.label}
@@ -110,16 +109,15 @@ export function DistrictLedgers() {
                       key={t.key}
                       className="flex cursor-pointer items-center gap-2.5 group"
                     >
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={topo[t.key]}
-                        onChange={() =>
+                        onCheckedChange={() =>
                           setTopo((s) => ({
                             ...s,
                             [t.key]: !s[t.key],
                           }))
                         }
-                        className="h-3.5 w-3.5 accent-primary rounded"
+                        className="h-3.5 w-3.5 rounded"
                       />
                       <Icon
                         name={t.icon}
@@ -143,16 +141,15 @@ export function DistrictLedgers() {
                       key={v.key}
                       className="flex cursor-pointer items-center gap-2.5 group"
                     >
-                      <input
-                        type="checkbox"
+                      <Checkbox
                         checked={tier[v.key]}
-                        onChange={() =>
+                        onCheckedChange={() =>
                           setTier((s) => ({
                             ...s,
                             [v.key]: !s[v.key],
                           }))
                         }
-                        className="h-3.5 w-3.5 accent-primary rounded"
+                        className="h-3.5 w-3.5 rounded"
                       />
                       <span className="text-sm text-on-surface-variant group-hover:text-on-surface transition-colors">
                         {v.label}

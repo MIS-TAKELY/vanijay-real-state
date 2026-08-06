@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@repo/ui";
+import { Checkbox, cn } from "@repo/ui";
 import {
   formatNPR,
   labelEnum,
@@ -26,12 +26,11 @@ export function ListingRow({ listing, selected, onToggle }: ListingRowProps) {
       )}
     >
       {/* Checkbox */}
-      <input
-        type="checkbox"
+      <Checkbox
         aria-label={`Select ${listing.listingCode}`}
         checked={selected}
-        onChange={() => onToggle(listing.id)}
-        className="h-4 w-4 cursor-pointer accent-primary"
+        onCheckedChange={() => onToggle(listing.id)}
+        className="cursor-pointer"
       />
 
       {/* Cover thumb */}

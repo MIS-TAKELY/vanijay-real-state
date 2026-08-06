@@ -1,5 +1,5 @@
 "use client";
-import { Icon } from "@repo/ui";
+import { Button, Icon, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui";
 
 export function ProcessAndBooking() {
   const steps = [
@@ -127,43 +127,45 @@ export function ProcessAndBooking() {
               </div>
 
               <div>
-                <label
+                <Label
                   htmlFor="walkthrough-email"
                   className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.6px] text-on-surface"
                 >
                   Email Address
-                </label>
-                <input
+                </Label>
+                <Input
                   id="walkthrough-email"
                   type="email"
                   placeholder="you@example.com"
-                  className="mb-sm h-11 w-full rounded-md border border-outline-variant bg-surface px-4 text-sm text-on-surface outline-none transition-colors placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/30"
+                  className="mb-sm h-11 w-full rounded-md border-outline-variant bg-surface px-4"
                 />
               </div>
 
               <div>
-                <label
+                <Label
                   htmlFor="walkthrough-time"
                   className="mb-xs block text-[11px] font-semibold uppercase tracking-[0.6px] text-on-surface"
                 >
                   Time Slot (NPT)
-                </label>
+                </Label>
                 <div className="flex gap-2">
-                  <select
-                    id="walkthrough-time"
-                    className="h-11 flex-1 cursor-pointer rounded-md border border-outline-variant bg-surface px-3 text-sm text-on-surface outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/30"
-                  >
-                    <option>09:00 NPT</option>
-                    <option>11:00 NPT</option>
-                    <option>14:00 NPT</option>
-                    <option>16:00 NPT</option>
-                  </select>
-                  <button
+                  <Select>
+                    <SelectTrigger id="walkthrough-time" className="h-11 flex-1">
+                      <SelectValue placeholder="09:00 NPT" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="09:00">09:00 NPT</SelectItem>
+                      <SelectItem value="11:00">11:00 NPT</SelectItem>
+                      <SelectItem value="14:00">14:00 NPT</SelectItem>
+                      <SelectItem value="16:00">16:00 NPT</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
                     type="submit"
-                    className="inline-flex h-11 cursor-pointer items-center justify-center rounded-md bg-primary px-6 text-label-sm font-semibold tracking-[0.6px] text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    className="inline-flex h-11 items-center justify-center rounded-md bg-primary px-6 text-label-sm font-semibold tracking-[0.6px] text-on-primary hover:bg-primary/90"
                   >
                     Confirm
-                  </button>
+                  </Button>
                 </div>
               </div>
             </form>

@@ -1,6 +1,6 @@
 "use client";
 
-import { Icon, Stat } from "@repo/ui";
+import { Button, Icon, Input, Stat, ToggleGroup, ToggleGroupItem } from "@repo/ui";
 import { useState } from "react";
 
 const CATEGORIES = [
@@ -76,39 +76,46 @@ export function Hero() {
             >
               <div className="flex flex-col md:flex-row">
                 <div className="flex bg-surface-container p-[3px] gap-[2px]">
-                  {PROPERTY_TYPES.map((type) => (
-                    <button
-                      key={type}
-                      type="button"
-                      onClick={() => setActiveType(type)}
-                      className={`px-4 py-2.5 text-[12px] font-semibold tracking-[0.3px] transition-all cursor-pointer rounded-md ${
-                        type === activeType
-                          ? "bg-primary text-on-primary shadow-sm"
-                          : "text-on-surface-variant hover:bg-surface-container-high"
-                      }`}
-                    >
-                      {type}
-                    </button>
-                  ))}
+                  <ToggleGroup
+                    type="single"
+                    value={activeType}
+                    onValueChange={(v) => {
+                      if (v) setActiveType(v);
+                    }}
+                    aria-label="Property type"
+                    variant="outline"
+                    className="gap-[2px]"
+                  >
+                    {PROPERTY_TYPES.map((type) => (
+                      <ToggleGroupItem
+                        key={type}
+                        value={type}
+                        aria-label={type}
+                        className="px-4 py-2.5 text-[12px] font-semibold tracking-[0.3px] rounded-md transition-all data-[state=on]:bg-primary data-[state=on]:text-on-primary data-[state=on]:shadow-sm data-[state=off]:text-on-surface-variant data-[state=off]:hover:bg-surface-container-high"
+                      >
+                        {type}
+                      </ToggleGroupItem>
+                    ))}
+                  </ToggleGroup>
                 </div>
                 <div className="flex flex-1 items-center gap-2 border-t md:border-t-0 md:border-l border-outline-variant px-4">
                   <Icon
                     name="search"
                     className="text-on-surface-variant shrink-0 text-body-lg"
                   />
-                  <input
+                  <Input
                     type="text"
                     aria-label="Search by district, municipality, or plot ID"
                     placeholder="Search by district, municipality, or plot ID..."
-                    className="w-full py-3 bg-transparent text-body-md font-body-md text-on-surface outline-none placeholder:text-on-surface-variant"
+                    className="w-full py-3 bg-transparent border-none text-body-md font-body-md text-on-surface outline-none placeholder:text-on-surface-variant shadow-none focus-visible:ring-0"
                   />
                 </div>
-                <button
+                <Button
                   type="button"
-                  className="bg-primary text-on-primary px-6 py-3 text-label-sm font-semibold tracking-[0.4px] hover:bg-primary/90 transition-colors cursor-pointer md:w-auto w-full"
+                  className="bg-primary text-on-primary px-6 py-3 text-label-sm font-semibold tracking-[0.4px] hover:bg-primary/90 cursor-pointer md:w-auto w-full h-auto"
                 >
                   Search Records
-                </button>
+                </Button>
               </div>
             </div>
 

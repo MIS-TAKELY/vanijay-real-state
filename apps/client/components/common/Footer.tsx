@@ -1,5 +1,5 @@
 import React from "react";
-import { Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
 
 const footerLinks = {
   "The Archive": ["Area Guides", "Cadastral Maps", "Verification Protocol", "Pricing Structure"],
@@ -75,12 +75,22 @@ export function Footer() {
             +977-1-4XXXXXX
           </p>
           <div className="flex gap-sm">
-            <button className="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors">
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Email"
+              className="w-10 h-10 border-outline-variant hover:bg-surface-container"
+            >
               <Icon name="mail" className="text-outline" />
-            </button>
-            <button className="w-10 h-10 border border-outline-variant flex items-center justify-center hover:bg-surface-container transition-colors">
+            </Button>
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Phone"
+              className="w-10 h-10 border-outline-variant hover:bg-surface-container"
+            >
               <Icon name="phone" className="text-outline" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

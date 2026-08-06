@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, Icon } from "@repo/ui";
+import { Button, cn, Icon, Textarea } from "@repo/ui";
 import type { Inquiry } from "./constants";
 
 interface InquiryThreadProps {
@@ -51,27 +51,30 @@ export function InquiryThread({ inquiry }: InquiryThreadProps) {
 
       {/* Quick actions */}
       <div className="flex flex-wrap gap-xs">
-        <button
+        <Button
           type="button"
-          className="inline-flex items-center gap-1 rounded-md border border-outline-variant px-3 py-1.5 text-label-sm font-medium text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
+          variant="outline"
+          className="inline-flex items-center gap-1 rounded-md border-outline-variant px-3 py-1.5 text-label-sm font-medium text-on-surface hover:border-primary hover:text-primary cursor-pointer"
         >
           <Icon name="chat" className="text-data-table" />
           WhatsApp
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="inline-flex items-center gap-1 rounded-md border border-outline-variant px-3 py-1.5 text-label-sm font-medium text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
+          variant="outline"
+          className="inline-flex items-center gap-1 rounded-md border-outline-variant px-3 py-1.5 text-label-sm font-medium text-on-surface hover:border-primary hover:text-primary cursor-pointer"
         >
           <Icon name="handshake" className="text-data-table" />
           Mark negotiating
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
-          className="inline-flex items-center gap-1 rounded-md border border-outline-variant px-3 py-1.5 text-label-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
+          variant="outline"
+          className="inline-flex items-center gap-1 rounded-md border-outline-variant px-3 py-1.5 text-label-sm font-medium text-on-surface-variant hover:text-on-surface cursor-pointer"
         >
           <Icon name="check_circle" className="text-data-table" />
           Close inquiry
-        </button>
+        </Button>
       </div>
 
       {/* Internal note box */}
@@ -79,10 +82,10 @@ export function InquiryThread({ inquiry }: InquiryThreadProps) {
         <span className="font-label-sm text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
           Internal note
         </span>
-        <textarea
+        <Textarea
           rows={2}
           placeholder="Add a private note (only visible to you)…"
-          className="w-full rounded-md border border-outline-variant bg-surface px-3 py-2 text-sm text-on-surface outline-none placeholder:text-on-surface-variant focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+          className="w-full rounded-md border-outline-variant bg-surface"
         />
       </div>
     </div>

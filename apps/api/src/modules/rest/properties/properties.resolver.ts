@@ -10,29 +10,16 @@ import { PropertyPage } from './entities/property-page.object-type';
 import { Property } from './entities/property.entity';
 import { PropertiesService } from './properties.service';
 
-/**
- * GraphQL transport adapter for properties. Same shared `PropertiesService` as
- * the REST controller — same guards, same RBAC, same business logic.
- */
+
 @Resolver(() => Property)
-@UseGuards(AuthGuard, RolesGuard)
 export class PropertiesResolver {
   constructor(private readonly properties: PropertiesService) {}
 
-  /**
-   * Cursor-paginated feed (newest first). Returns `{ items, nextCursor,
-   * hasMore }`. Pass the previous response's `nextCursor` back as `after` to
-   * load the next page. Opaque cursor — clients must not parse it.
-   */
+  // Feed + single-property reads are PUBLIC — they mirror the unguarded REST
+  // `GET /api/v1/properties/feed` and `GET /api/v1/properties/:id`, so the
+  // anonymous `/listings` page can render through GraphQL too. Only writes are
+  // auth + role gated (see the mutations below).
   @Query(() => PropertyPage, { name: 'propertiesFeed' })
-  @Roles(
-    'BUYER',
-    'SELLER',
-    'AGENCY_AGENT',
-    'AGENCY_ADMIN',
-    'SURVEYOR_AGENT',
-    'ADMIN',
-  )
   findFeed(
     @Args('first', { type: () => Int, nullable: true, defaultValue: 20 })
     first?: number,
@@ -42,19 +29,21 @@ export class PropertiesResolver {
   }
 
   @Query(() => Property, { name: 'property' })
-  @Roles(
-    'BUYER',
-    'SELLER',
-    'AGENCY_AGENT',
-    'AGENCY_ADMIN',
-    'SURVEYOR_AGENT',
-    'ADMIN',
-  )
-  findOne(@Args('id', { type: () => ID }) id: string) {
-    return this.properties.findOne(id);
+  findOne(@Args('idOrSlug', { type: () => ID }) idOrSlug: string) {
+    return this.properties.findOne(idOrSlug);
+  }
+
+  // Authenticated, role-gated: returns the caller's own properties across all
+  // statuses (drafts, under-verification, live, …) for the "My Listings" page.
+  @Query(() => [Property], { name: 'myProperties' })
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'ADMIN')
+  myProperties(@CurrentUser('id') ownerId: string) {
+    return this.properties.findByOwner(ownerId);
   }
 
   @Mutation(() => Property)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'ADMIN')
   createProperty(
     @Args('createPropertyInput') input: CreatePropertyInput,
@@ -64,12 +53,14 @@ export class PropertiesResolver {
   }
 
   @Mutation(() => Property)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'ADMIN')
   updateProperty(@Args('updatePropertyInput') input: UpdatePropertyInput) {
     return this.properties.update(input);
   }
 
   @Mutation(() => Property)
+  @UseGuards(AuthGuard, RolesGuard)
   @Roles('AGENCY_ADMIN', 'ADMIN')
   removeProperty(@Args('id', { type: () => ID }) id: string) {
     return this.properties.remove(id);

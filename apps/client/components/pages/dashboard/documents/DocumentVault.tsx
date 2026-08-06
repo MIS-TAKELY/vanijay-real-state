@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@repo/ui";
 import { useMemo, useState } from "react";
 import { EmptyState } from "../../../common/dashboard/EmptyState";
 import {
@@ -12,6 +13,7 @@ import {
 import { DocumentExplainer } from "./DocumentExplainer";
 import { DocumentFilterTabs } from "./DocumentFilterTabs";
 import { DocumentGrid } from "./DocumentGrid";
+import Link from "next/link";
 
 function isExpiring(doc: VaultDocument): boolean {
   return (
@@ -70,12 +72,11 @@ export function DocumentVault() {
         title="Your vault is empty"
         description="Upload your Lalpurja, citizenship or tax clearance to reuse them across listings."
         action={
-          <a
-            href="#"
-            className="inline-flex items-center gap-1 rounded-md bg-primary px-4 py-2 text-sm font-medium text-on-primary hover:bg-primary/90 transition-colors"
-          >
-            Upload your first document
-          </a>
+          <Button asChild>
+            <Link href="#">
+              Upload your first document
+            </Link>
+          </Button>
         }
       />
     );

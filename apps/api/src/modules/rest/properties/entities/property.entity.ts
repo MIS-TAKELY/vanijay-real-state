@@ -1,5 +1,11 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql';
-import { GraphQLISODateTime } from '@nestjs/graphql';
+import {
+  Field,
+  Float,
+  GraphQLISODateTime,
+  ID,
+  Int,
+  ObjectType,
+} from '@nestjs/graphql';
 import {
   FacingDirection,
   PropertyStatus,
@@ -8,45 +14,106 @@ import {
   VerificationStatus,
 } from '@repo/db';
 
-/**
- * GraphQL `@ObjectType` that doubles as the REST response shape.
- *
- * We deliberately map Prisma rows through `PropertiesService.mapToResponse()`
- * (Decimal -> number) so we never leak the raw Prisma row shape to clients and
- * so GraphQL `Float`/enum types serialize correctly.
- *
- * Note: this intentionally does NOT `implements Partial<PrismaProperty>` — the
- * response shape differs from the Prisma row (Decimal -> number), so a strict
- * structural match would fight us. The field names are kept in sync by hand.
- */
+@ObjectType()
+export class PropertyLocation {
+  @Field(() => String)
+  province!: string;
+
+  @Field(() => String)
+  district!: string;
+
+  @Field(() => String)
+  municipality!: string;
+
+  @Field(() => Int)
+  wardNumber!: number;
+
+  @Field(() => String)
+  areaName!: string;
+
+  @Field(() => String, { nullable: true })
+  addressText?: string | null;
+
+  @Field(() => Float, { nullable: true })
+  latitude?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  longitude?: number | null;
+}
+
+@ObjectType()
+export class LandAreaDetails {
+  @Field(() => Int)
+  ropani!: number;
+
+  @Field(() => Int)
+  aana!: number;
+
+  @Field(() => Float)
+  paisa!: number;
+
+  @Field(() => Float)
+  daam!: number;
+
+  @Field(() => Int, { nullable: true })
+  bigha?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  katha?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  dhur?: number | null;
+
+  @Field(() => Float)
+  totalSqFt!: number;
+
+  @Field(() => Float)
+  totalSqMeters!: number;
+}
+
+@ObjectType()
+export class PropertyMedia {
+  @Field(() => String)
+  url!: string;
+
+  @Field(() => String, { nullable: true })
+  altText?: string | null;
+
+  @Field(() => Int)
+  sortOrder!: number;
+
+  @Field(() => Boolean)
+  isCover!: boolean;
+}
+
 @ObjectType()
 export class Property {
   @Field(() => ID)
-  id: string;
-
-    @Field(() => String)
-  listingCode: string;
+  id!: string;
 
   @Field(() => String)
-  slug: string;
+  listingCode!: string;
 
   @Field(() => String)
-  title: string;
+  slug!: string;
+
+  @Field(() => String)
+  title!: string;
 
   @Field(() => String, { nullable: true })
   description?: string | null;
 
   @Field(() => PropertyType)
-  propertyType: PropertyType;
+  propertyType!: PropertyType;
 
   @Field(() => PropertyStatus)
-  status: PropertyStatus;
+  status!: PropertyStatus;
 
   @Field(() => VerificationStatus)
-  verificationLevel: VerificationStatus;
+  verificationLevel!: VerificationStatus;
 
   @Field(() => Number)
-  askingPrice: number;
+  askingPrice!: number;
 
   @Field(() => Number, { nullable: true })
   pricePerAana?: number | null;
@@ -60,18 +127,27 @@ export class Property {
   @Field(() => FacingDirection, { nullable: true })
   facing?: FacingDirection | null;
 
-    @Field(() => Boolean)
-  isCornerPlot: boolean;
+  @Field(() => Boolean)
+  isCornerPlot!: boolean;
 
   @Field(() => String)
-  ownerId: string;
+  ownerId!: string;
 
   @Field(() => String, { nullable: true })
   agentId?: string | null;
 
-  @Field(() => GraphQLISODateTime)
-  createdAt: Date;
+  @Field(() => PropertyLocation, { nullable: true })
+  location?: PropertyLocation | null;
+
+  @Field(() => LandAreaDetails, { nullable: true })
+  landArea?: LandAreaDetails | null;
+
+  @Field(() => [PropertyMedia])
+  media!: PropertyMedia[];
 
   @Field(() => GraphQLISODateTime)
-  updatedAt: Date;
+  createdAt!: Date;
+
+  @Field(() => GraphQLISODateTime)
+  updatedAt!: Date;
 }

@@ -1,18 +1,9 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Building2, Eye, EyeOff, Loader2, Lock, Mail, User } from "@/index";
+import { Button, Checkbox, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Input, Label } from "@repo/ui";
 import { authClient, signIn, signUp } from "@repo/auth/client";
-// import { useAuthModalStore } from "../../store/auth-modal";
+import { Building2, Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { useAuthModalStore } from "store/auth-modal";
@@ -25,6 +16,7 @@ interface SignInModalProps {
 
 const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
   const { isOpen, open: openModal, close: closeModal } = useAuthModalStore();
+  const router = useRouter();
   const [mode, setMode] = useState<"signin" | "signup">("signin");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -47,6 +39,14 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
     if (defaultOpen) openModal();
   }, [defaultOpen, openModal]);
 
+  // Close the modal and land the user back on the page they were trying to
+  // visit before being bounced to sign-in (captured via `?redirect=`).
+  const completeAuth = () => {
+    const redirectTo = useAuthModalStore.getState().redirect;
+    closeModal(); // also clears the pending redirect
+    if (redirectTo) router.push(redirectTo);
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setError(null);
     setFormData((prev) => ({
@@ -59,7 +59,13 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
     setIsLoading(true);
     setError(null);
     try {
-      await signIn.social({ provider: "google" });
+      // Google sign-in is a full-page OAuth flow, so the pending redirect is
+      // carried through as the post-login callback instead of client state.
+      const redirectTo = useAuthModalStore.getState().redirect;
+      await signIn.social({
+        provider: "google",
+        ...(redirectTo ? { callbackURL: redirectTo } : {}),
+      });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google sign-in failed");
     } finally {
@@ -115,8 +121,9 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
           setError(signInError.message || "Sign in failed");
           return;
         }
-        // On successful sign in, close the modal
-        closeModal();
+        // On successful sign in, close the modal and return the user to the
+        // page they originally tried to visit (if any).
+        completeAuth();
       }
     } catch (err) {
       setError(
@@ -172,7 +179,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               });
               if (!retryError) {
                 setShowOtpModal(false);
-                closeModal();
+                completeAuth();
               } else {
                 // If re-sign-in fails for some reason, go back to sign-in form
                 setShowOtpModal(false);
@@ -321,10 +328,12 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                     onChange={handleChange}
                     className="pl-10 pr-10 h-11 rounded-xl bg-muted/30 focus-visible:ring-1 focus-visible:border"
                   />
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors p-1 cursor-pointer"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
@@ -334,22 +343,20 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                     ) : (
                       <Eye className="h-4 w-4" />
                     )}
-                  </button>
+                  </Button>
                 </div>
               </div>
 
               {/* Remember me — only for signin */}
               {mode === "signin" && (
                 <div className="flex items-center justify-between pt-1">
-                  <label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer select-none">
-                    <input
-                      type="checkbox"
+                  <Label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer select-none">
+                    <Checkbox
                       checked={rememberMe}
-                      onChange={(e) => setRememberMe(e.target.checked)}
-                      className="h-4 w-4 rounded border-input text-primary focus:ring-primary"
+                      onCheckedChange={(v) => setRememberMe(!!v)}
                     />
                     Remember me on this device
-                  </label>
+                  </Label>
                 </div>
               )}
 
@@ -373,30 +380,32 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               {mode === "signin" ? (
                 <p>
                   Don&apos;t have an account?{" "}
-                  <button
+                  <Button
                     type="button"
+                    variant="link"
+                    className="px-0 font-semibold text-primary hover:underline cursor-pointer"
                     onClick={() => {
                       setMode("signup");
                       setError(null);
                     }}
-                    className="font-semibold text-primary hover:underline transition-all cursor-pointer"
                   >
                     Sign up
-                  </button>
+                  </Button>
                 </p>
               ) : (
                 <p>
                   Already have an account?{" "}
-                  <button
+                  <Button
                     type="button"
+                    variant="link"
+                    className="px-0 font-semibold text-primary hover:underline cursor-pointer"
                     onClick={() => {
                       setMode("signin");
                       setError(null);
                     }}
-                    className="font-semibold text-primary hover:underline transition-all cursor-pointer"
                   >
                     Sign in
-                  </button>
+                  </Button>
                 </p>
               )}
             </div>

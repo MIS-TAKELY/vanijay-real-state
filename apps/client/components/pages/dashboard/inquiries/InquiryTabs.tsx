@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@repo/ui";
+import { ToggleGroup, ToggleGroupItem } from "@repo/ui";
 import { INQUIRY_TABS, type InquiryTab } from "./constants";
 
 interface InquiryTabsProps {
@@ -15,34 +15,36 @@ interface InquiryTabsProps {
  */
 export function InquiryTabs({ active, counts, onChange }: InquiryTabsProps) {
   return (
-    <div className="flex gap-xs mb-md">
+    <ToggleGroup
+      type="single"
+      value={active}
+      onValueChange={(v) => {
+        if (v) onChange(v as InquiryTab);
+      }}
+      aria-label="Inquiry view"
+      variant="outline"
+      className="flex gap-xs mb-md justify-start"
+    >
       {INQUIRY_TABS.map((tab) => {
-        const isActive = active === tab.key;
         const count = counts[tab.key] ?? 0;
         return (
-          <button
+          <ToggleGroupItem
             key={tab.key}
-            type="button"
-            onClick={() => onChange(tab.key)}
-            className={cn(
-              "inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium transition-colors cursor-pointer",
-              isActive
-                ? "bg-primary text-on-primary"
-                : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface",
-            )}
+            value={tab.key}
+            aria-label={tab.label}
+            className="inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-sm font-medium data-[state=on]:bg-primary data-[state=on]:text-on-primary data-[state=off]:bg-surface-container data-[state=off]:text-on-surface-variant data-[state=off]:hover:bg-surface-container-high data-[state=off]:hover:text-on-surface"
           >
             {tab.label}
             <span
-              className={cn(
-                "mono-stat text-[12px] font-bold leading-none",
-                isActive ? "text-on-primary/80" : "text-on-surface-variant",
-              )}
+              className={`mono-stat text-[12px] font-bold leading-none ${
+                active === tab.key ? "text-on-primary/80" : "text-on-surface-variant"
+              }`}
             >
               {count}
             </span>
-          </button>
+          </ToggleGroupItem>
         );
       })}
-    </div>
+    </ToggleGroup>
   );
 }

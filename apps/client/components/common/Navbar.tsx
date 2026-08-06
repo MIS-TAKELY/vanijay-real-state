@@ -1,20 +1,18 @@
 "use client";
 
 import { signOut, useSession } from "@repo/auth/client";
-import { Button, Icon } from "@repo/ui";
+import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, Icon } from "@repo/ui";
 import SignIn from "components/modals/SignIn";
 import { navLinks } from "constants/varibles-constants";
-import { LogOut, User } from "lucide-react";
+import { LogOut, User, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useAuthModalStore } from "store/auth-modal";
 
 export function Navbar() {
   const { data: session, isPending } = useSession();
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
   const pathname = usePathname();
   const { open: openAuth } = useAuthModalStore();
 
@@ -27,24 +25,9 @@ export function Navbar() {
   const user = session?.user;
   const isLoggedIn = !!user;
 
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target as Node)
-      ) {
-        setDropdownOpen(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
-
   // Close menus on route change
   useEffect(() => {
     setMobileOpen(false);
-    setDropdownOpen(false);
   }, [pathname]);
 
   // Lock body scroll when mobile menu is open
@@ -56,7 +39,6 @@ export function Navbar() {
   }, [mobileOpen]);
 
   const handleLogout = async () => {
-    setDropdownOpen(false);
     setMobileOpen(false);
     await signOut();
   };
@@ -117,7 +99,7 @@ export function Navbar() {
             {isLoggedIn ? (
               <Button asChild variant="default" size="sm">
                 <Link
-                  href="/dashboard"
+                  href="/my-listings/new"
                   className="inline-flex items-center gap-1.5"
                 >
                   List a Property
@@ -137,92 +119,76 @@ export function Navbar() {
           </div>
 
           {/* Auth area */}
-          <div className="relative" ref={dropdownRef}>
+          <div className="relative">
             {!hasLoadedOnce ? (
               <div className="h-9 w-9 animate-pulse rounded-full bg-outline-variant" />
             ) : isLoggedIn ? (
-              <>
-                <button
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
-                  className="flex items-center gap-2 rounded-full bg-primary-container/15 hover:bg-primary-container/25 py-1.5 pl-1.5 pr-2 sm:pr-3 text-sm font-medium text-primary transition-all cursor-pointer"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
-                    {initials}
-                  </span>
-                  <span className="hidden sm:inline max-w-[100px] truncate">
-                    {user?.name}
-                  </span>
-                  <svg
-                    className={`h-3.5 w-3.5 transition-transform ${dropdownOpen ? "rotate-180" : ""}`}
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth={2}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    className="flex items-center gap-2 rounded-full bg-primary-container/15 hover:bg-primary-container/25 py-1.5 pl-1.5 pr-2 sm:pr-3 text-sm font-medium text-primary transition-all h-auto cursor-pointer"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M19 9l-7 7-7-7"
-                    />
-                  </svg>
-                </button>
-
-                {/* Dropdown */}
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-56 origin-top-right rounded-xl border border-outline-variant bg-surface shadow-lg ring-1 ring-black/5 focus:outline-none">
-                    {/* User info */}
-                    <div className="px-4 py-3 border-b border-outline-variant">
-                      <p className="text-sm font-medium text-on-surface truncate">
-                        {user?.name}
-                      </p>
-                      <p className="text-xs text-on-surface-variant truncate">
-                        {user?.email}
-                      </p>
-                    </div>
-
-                    {/* Menu items */}
-                    <div className="py-1">
-                      <Link
-                        href="/dashboard"
-                        onClick={() => setDropdownOpen(false)}
-                        className="flex items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container-high transition-colors"
-                      >
-                        <User className="h-4 w-4 text-on-surface-variant" />
-                        Dashboard
-                      </Link>
-                      <button
-                        onClick={handleLogout}
-                        className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
-                      >
-                        <LogOut className="h-4 w-4 text-on-surface-variant" />
-                        Sign Out
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </>
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
+                      {initials}
+                    </span>
+                    <span className="hidden sm:inline max-w-[100px] truncate">
+                      {user?.name}
+                    </span>
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" className="w-56">
+                  <DropdownMenuLabel className="font-normal">
+                    <p className="text-sm font-medium text-on-surface truncate">
+                      {user?.name}
+                    </p>
+                    <p className="text-xs text-on-surface-variant truncate">
+                      {user?.email}
+                    </p>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem asChild>
+                    <Link href="/dashboard" className="flex items-center gap-3">
+                      <User className="h-4 w-4 text-on-surface-variant" />
+                      Dashboard
+                    </Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onSelect={handleLogout}
+                    variant="destructive"
+                    className="flex items-center gap-3"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             ) : (
-              <button
+              <Button
+                variant="ghost"
                 onClick={() => openAuth()}
-                className="hidden sm:inline-flex h-9 items-center rounded-md px-4 text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors cursor-pointer"
+                className="hidden sm:inline-flex h-9 items-center rounded-md px-4 text-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container"
               >
                 Sign in
-              </button>
+              </Button>
             )}
           </div>
 
           {/* Mobile hamburger */}
-          <button
+          <Button
+            variant="ghost"
+            size="icon"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
             aria-expanded={mobileOpen}
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
           >
             <Icon
               name={mobileOpen ? "close" : "menu"}
               className="text-[26px]"
             />
-          </button>
+          </Button>
         </div>
       </nav>
 
@@ -252,16 +218,17 @@ export function Navbar() {
                   >
                     Dashboard
                   </Link>
-                  <button
+                  <Button
+                    variant="ghost"
                     onClick={handleLogout}
-                    className="px-3 py-3 rounded-lg text-left text-base font-medium text-error hover:bg-surface-container transition-colors cursor-pointer"
+                    className="justify-start px-3 py-3 rounded-lg text-left text-base font-medium text-error hover:bg-surface-container cursor-pointer h-auto"
                   >
                     Sign Out
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <>
-                  <button
+                  <Button
                     onClick={() => {
                       setMobileOpen(false);
                       openAuth();
@@ -269,16 +236,17 @@ export function Navbar() {
                     className="h-11 rounded-lg bg-primary text-on-primary font-semibold cursor-pointer"
                   >
                     List a Property
-                  </button>
-                  <button
+                  </Button>
+                  <Button
+                    variant="outline"
                     onClick={() => {
                       setMobileOpen(false);
                       openAuth();
                     }}
-                    className="h-11 rounded-lg border border-outline-variant text-on-surface font-semibold cursor-pointer"
+                    className="h-11 rounded-lg border-outline-variant text-on-surface font-semibold cursor-pointer"
                   >
                     Sign in
-                  </button>
+                  </Button>
                 </>
               )}
             </div>

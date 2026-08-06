@@ -1,11 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import {
-  InputOTP,
-  InputOTPGroup,
-  InputOTPSlot,
-} from "@/components/ui/input-otp";
+import { Button, InputOTP, InputOTPGroup, InputOTPSlot } from "@repo/ui";
 import { authClient } from "@repo/auth/client";
 import { Loader2, Shield } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -299,16 +294,13 @@ export default function VerifyEmailOtp({
         {/* Timer + Resend */}
         <div className="flex items-center justify-between border-t border-border/50 pt-4">
           <CountdownRing secondsLeft={secondsLeft} total={COUNTDOWN_SECONDS} />
-          <button
+          <Button
             type="button"
             id="resend-otp-btn"
+            variant="ghost"
             onClick={handleResend}
             disabled={secondsLeft > 0 || isResending}
-            className={`flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase transition-all ${
-              secondsLeft > 0 || isResending
-                ? "cursor-not-allowed text-muted-foreground/30"
-                : "cursor-pointer text-primary hover:text-primary/80 active:text-primary/60"
-            }`}
+            className="group flex items-center gap-1.5 text-xs font-bold tracking-wider uppercase text-primary hover:bg-transparent hover:text-primary/80 active:text-primary/60 disabled:cursor-not-allowed disabled:opacity-40"
           >
             {isResending ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -329,15 +321,16 @@ export default function VerifyEmailOtp({
                 Resend Code
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Back */}
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={onCancel}
-        className="group flex items-center gap-1.5 cursor-pointer text-sm font-medium text-muted-foreground transition-all hover:text-foreground"
+        className="group flex items-center gap-1.5 cursor-pointer text-sm font-medium text-muted-foreground hover:bg-transparent hover:text-foreground"
       >
         <svg
           className="h-3.5 w-3.5 transition-transform group-hover:-translate-x-0.5"
@@ -351,7 +344,7 @@ export default function VerifyEmailOtp({
           />
         </svg>
         Back to sign in
-      </button>
+      </Button>
 
       <style jsx>{`
         @keyframes fadeIn {

@@ -1,7 +1,7 @@
 import { PropertyFeed } from "components/pages/listings/PropertyFeed";
 import { ResultsHeader } from "components/pages/listings/ResultsHeader";
 import { SearchFilters } from "components/pages/listings/SearchFilters";
-import { PAGE_SIZE, fetchFeedPage, type FeedPage } from "lib/api";
+import { PAGE_SIZE, fetchFeedPageGraphql, type FeedPage } from "lib/api";
 import type { Metadata } from "next";
 
 const PAGE_URL = "https://lekhaprati.com/listings";
@@ -38,10 +38,6 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-// Breadcrumb structured data (static, server-rendered so JSON-LD is in the
-// initial HTML). The per-listing ItemList JSON-LD was removed with the mock
-// data — to emit a real ItemList, generate it server-side from the feed (which
-// requires making /properties/feed publicly readable, or server-side auth).
 const breadcrumbSchema = {
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
@@ -56,29 +52,14 @@ const breadcrumbSchema = {
   ],
 };
 
-/**
- * Listings page (Server Component, SSR).
- *
- * The first feed page is fetched on the server and passed to `<PropertyFeed>`
- * as initial data, so the first paint shows real listings with no client-side
- * loading state (better SEO / LCP). "Load more" pagination stays client-side
- * (cursor/keyset).
- *
- * The route is dynamic because the feed is currently auth-scoped —
- * `fetchFeedPageServer` forwards the incoming request cookies so SSR works for
- * logged-in users. If `/properties/feed` is made public, drop the cookie
- * forwarding and switch the fetch to `next: { revalidate: 60 }` to enable ISR
- * (static + time-based revalidation).
- */
 export default async function DiscoverPage() {
   let initial: FeedPage = { items: [], nextCursor: null, hasMore: false };
   let initialError: string | null = null;
 
   try {
-    initial = await fetchFeedPage({ first: PAGE_SIZE });
+    initial = await fetchFeedPageGraphql({ first: PAGE_SIZE });
   } catch (e) {
-    initialError =
-      e instanceof Error ? e.message : "Failed to load listings";
+    initialError = e instanceof Error ? e.message : "Failed to load listings";
   }
 
   return (
@@ -92,7 +73,6 @@ export default async function DiscoverPage() {
 
         <ResultsHeader />
 
-        {/* First page server-rendered (SSR); "load more" is client-side. */}
         <PropertyFeed
           initialItems={initial.items}
           initialNextCursor={initial.nextCursor}

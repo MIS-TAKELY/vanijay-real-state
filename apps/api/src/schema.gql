@@ -2,6 +2,36 @@
 # THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
 # ------------------------------------------------------
 
+type PropertyLocation {
+  province: String!
+  district: String!
+  municipality: String!
+  wardNumber: Int!
+  areaName: String!
+  addressText: String
+  latitude: Float
+  longitude: Float
+}
+
+type LandAreaDetails {
+  ropani: Int!
+  aana: Int!
+  paisa: Float!
+  daam: Float!
+  bigha: Int
+  katha: Int
+  dhur: Float
+  totalSqFt: Float!
+  totalSqMeters: Float!
+}
+
+type PropertyMedia {
+  url: String!
+  altText: String
+  sortOrder: Int!
+  isCover: Boolean!
+}
+
 type Property {
   id: ID!
   listingCode: String!
@@ -19,6 +49,9 @@ type Property {
   isCornerPlot: Boolean!
   ownerId: String!
   agentId: String
+  location: PropertyLocation
+  landArea: LandAreaDetails
+  media: [PropertyMedia!]!
   createdAt: DateTime!
   updatedAt: DateTime!
 }
@@ -81,7 +114,8 @@ type PropertyPage {
 
 type Query {
   propertiesFeed(first: Int = 20, after: String): PropertyPage!
-  property(id: ID!): Property!
+  property(idOrSlug: ID!): Property!
+  myProperties: [Property!]!
 }
 
 type Mutation {
@@ -104,6 +138,7 @@ input CreatePropertyInput {
   landArea: LandAreaDetailsInput!
   location: PropertyLocationInput!
   cadastralRecord: CadastralRecordInput
+  media: [PropertyMediaInput!]
 }
 
 input LandAreaDetailsInput {
@@ -136,6 +171,20 @@ input CadastralRecordInput {
   cadastralMapUrl: String
 }
 
+input PropertyMediaInput {
+  type: MediaType
+  url: String!
+  altText: String
+  sortOrder: Float
+  isCover: Boolean
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO_WALKTHROUGH
+  CADASTRAL_MAP
+}
+
 input UpdatePropertyInput {
   title: String
   description: String
@@ -150,5 +199,6 @@ input UpdatePropertyInput {
   landArea: LandAreaDetailsInput
   location: PropertyLocationInput
   cadastralRecord: CadastralRecordInput
+  media: [PropertyMediaInput!]
   id: ID!
 }

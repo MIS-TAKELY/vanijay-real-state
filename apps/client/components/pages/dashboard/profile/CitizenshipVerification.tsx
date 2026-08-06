@@ -1,4 +1,4 @@
-import { Icon } from "@repo/ui";
+import { Button, Icon, Input, Label } from "@repo/ui";
 import type { ProfileData } from "./constants";
 
 interface CitizenshipVerificationProps {
@@ -60,25 +60,21 @@ export function CitizenshipVerification({
       <div className="grid grid-cols-1 gap-sm sm:grid-cols-2">
         {/* Citizenship no. (masked) */}
         <div className="flex flex-col gap-xs">
-          <label className="font-label-sm text-label-sm font-semibold text-on-surface">
-            Citizenship no.
-          </label>
-          <input
+          <Label>Citizenship no.</Label>
+          <Input
             type="text"
             defaultValue={profile.citizenshipNo}
-            className="mono-stat h-11 rounded-md border border-outline bg-surface px-3 text-sm text-on-surface outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+            className="mono-stat h-11"
           />
         </div>
 
         {/* Issue date */}
         <div className="flex flex-col gap-xs">
-          <label className="font-label-sm text-label-sm font-semibold text-on-surface">
-            Issue date
-          </label>
-          <input
+          <Label>Issue date</Label>
+          <Input
             type="date"
             defaultValue={profile.citizenshipIssueDate}
-            className="mono-stat h-11 rounded-md border border-outline bg-surface px-3 text-sm text-on-surface outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-colors"
+            className="mono-stat h-11"
           />
         </div>
       </div>
@@ -86,15 +82,16 @@ export function CitizenshipVerification({
       {/* Front/back uploads */}
       <div className="mt-sm grid grid-cols-1 gap-sm sm:grid-cols-2">
         {["Front side", "Back side"].map((side) => (
-          <button
+          <Button
             key={side}
             type="button"
-            className="flex flex-col items-center justify-center gap-xs rounded-xl border border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-primary hover:text-primary transition-colors cursor-pointer"
+            variant="outline"
+            className="flex flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer h-auto"
           >
             <Icon name="upload_file" className="text-[32px]" />
             <span className="text-label-sm font-medium">{side}</span>
             <span className="text-[11px]">PNG / JPG, max 10MB</span>
-          </button>
+          </Button>
         ))}
       </div>
     </div>

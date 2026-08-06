@@ -11,9 +11,11 @@ import { graphqlValidationRules } from './common/graphql/graphql-validation';
 import './common/graphql/register-enums';
 import { HealthModule } from './modules/health/health.module';
 import { PrismaModule } from './modules/prisma/prisma.module';
+import { CloudinaryModule } from './modules/cloudinary/cloudinary.module';
 import { PropertiesModule } from './modules/rest/properties/properties.module';
 import { AuthModule } from './modules/rest/auth/auth.module';
 import { SellerModule } from './modules/rest/seller/seller.module';
+import { UploadsModule } from './modules/rest/uploads/uploads.module';
 
 @Module({
   imports: [
@@ -30,6 +32,7 @@ import { SellerModule } from './modules/rest/seller/seller.module';
     CommonModule,
     PrismaModule,
     HealthModule,
+    CloudinaryModule,
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: 'src/schema.gql',
@@ -40,6 +43,7 @@ import { SellerModule } from './modules/rest/seller/seller.module';
     AuthModule,
     PropertiesModule,
     SellerModule,
+    UploadsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

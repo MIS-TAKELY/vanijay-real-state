@@ -1,4 +1,4 @@
-import { Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
 import type { ProfileData } from "./constants";
 
 interface IdentityCardProps {
@@ -35,13 +35,14 @@ export function IdentityCard({ profile }: IdentityCardProps) {
                 <span className="mono-stat text-2xl font-bold">{initials}</span>
               )}
             </div>
-            <button
+            <Button
               type="button"
+              size="icon"
               aria-label="Upload avatar"
-              className="absolute -bottom-1 -right-1 flex h-7 w-7 items-center justify-center rounded-full bg-primary text-on-primary shadow-sm hover:bg-primary/90 transition-colors cursor-pointer"
+              className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-primary text-on-primary shadow-sm hover:bg-primary/90"
             >
               <Icon name="photo_camera" className="text-data-table" />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -71,13 +72,14 @@ export function IdentityCard({ profile }: IdentityCardProps) {
                 Verified
               </span>
             ) : (
-              <button
+              <Button
                 type="button"
-                className="inline-flex items-center gap-0.5 rounded-md border border-outline-variant px-2 py-0.5 text-[11px] font-medium text-on-surface hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                variant="outline"
+                className="inline-flex items-center gap-0.5 rounded-md border-outline-variant px-2 py-0.5 text-[11px] font-medium text-on-surface hover:border-primary hover:text-primary h-auto"
               >
                 <Icon name="phone" className="text-label-sm" />
                 Verify
-              </button>
+              </Button>
             )}
           </div>
         </div>

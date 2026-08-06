@@ -13,9 +13,11 @@ import {
 import { Type } from 'class-transformer';
 import {
   FacingDirection,
+  MediaType,
   PropertyType,
   RoadType,
 } from '@repo/db';
+
 
 @InputType()
 class LandAreaDetailsInput {
@@ -127,6 +129,34 @@ class CadastralRecordInput {
 }
 
 @InputType()
+class PropertyMediaInput {
+  @Field(() => MediaType, { nullable: true })
+  @IsEnum(MediaType)
+  @IsOptional()
+  type?: MediaType;
+
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
+  url!: string;
+
+  @Field(() => String, { nullable: true })
+  @IsString()
+  @IsOptional()
+  altText?: string;
+
+  @Field(() => Number, { nullable: true })
+  @IsNumber()
+  @IsOptional()
+  sortOrder?: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isCover?: boolean;
+}
+
+@InputType()
 export class CreatePropertyInput {
   @Field(() => String)
   @IsString()
@@ -195,4 +225,11 @@ export class CreatePropertyInput {
   @Type(() => CadastralRecordInput)
   @IsOptional()
   cadastralRecord?: CadastralRecordInput;
+
+  /** Gallery & video walkthrough assets uploaded to Cloudinary beforehand. */
+  @Field(() => [PropertyMediaInput], { nullable: true })
+  @ValidateNested({ each: true })
+  @Type(() => PropertyMediaInput)
+  @IsOptional()
+  media?: PropertyMediaInput[];
 }

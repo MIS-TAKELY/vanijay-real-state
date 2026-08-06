@@ -1,8 +1,9 @@
 "use client";
 
+import { Button } from "@repo/ui";
 import {
   PAGE_SIZE,
-  fetchFeedPage,
+  fetchFeedPageGraphql,
   toCardProps,
   type ApiProperty,
 } from "lib/api";
@@ -47,7 +48,7 @@ export function PropertyFeed({
     setLoading(true);
     setError(null);
     try {
-      const page = await fetchFeedPage({ first: PAGE_SIZE });
+      const page = await fetchFeedPageGraphql({ first: PAGE_SIZE });
       setItems(page.items);
       setNextCursor(page.nextCursor);
       setHasMore(page.hasMore);
@@ -64,7 +65,7 @@ export function PropertyFeed({
     setLoading(true);
     setError(null);
     try {
-      const page = await fetchFeedPage({
+      const page = await fetchFeedPageGraphql({
         first: PAGE_SIZE,
         after: nextCursor,
       });
@@ -83,13 +84,13 @@ export function PropertyFeed({
     return (
       <section className="mx-auto max-w-container-max px-gutter py-xl text-center">
         <p className="mb-sm text-sm text-on-surface-variant">{error}</p>
-        <button
-          type="button"
+        <Button
+          variant="outline"
           onClick={() => void reloadFirst()}
-          className="inline-flex cursor-pointer items-center justify-center rounded-md border border-outline-variant px-md py-2 text-sm font-semibold text-on-surface transition-colors hover:border-primary hover:text-primary"
+          className="rounded-md border-outline-variant px-md py-2 text-sm font-semibold text-on-surface hover:border-primary hover:text-primary"
         >
           Try again
-        </button>
+        </Button>
       </section>
     );
   }

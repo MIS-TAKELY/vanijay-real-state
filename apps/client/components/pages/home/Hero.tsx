@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Icon, Stat } from "@repo/ui";
+import { Button, Icon, Input, Stat, ToggleGroup, ToggleGroupItem } from "@repo/ui";
 import { stats } from "constants/varibles-constants";
 import { useRouter } from "next/navigation";
 import React, { useState } from "react";
@@ -67,22 +67,27 @@ export function Hero() {
               style={{ animationDelay: "240ms" }}
             >
               {/* Property type tabs */}
-              <div className="flex gap-xs p-xs">
+              <ToggleGroup
+                type="single"
+                value={activeType}
+                onValueChange={(v) => {
+                  if (v) setActiveType(v as (typeof propertyTypes)[number]);
+                }}
+                aria-label="Property type"
+                variant="outline"
+                className="flex gap-xs p-xs"
+              >
                 {propertyTypes.map((type) => (
-                  <button
-                    type="button"
+                  <ToggleGroupItem
                     key={type}
-                    onClick={() => setActiveType(type)}
-                    className={`flex-1 px-md py-xs font-label-sm text-label-sm rounded-lg transition-all cursor-pointer ${
-                      activeType === type
-                        ? "bg-primary text-on-primary font-semibold shadow-sm"
-                        : "text-on-surface-variant hover:bg-surface-container"
-                    }`}
+                    value={type}
+                    aria-label={type}
+                    className="flex-1 px-md py-xs font-label-sm text-label-sm rounded-lg data-[state=on]:bg-primary data-[state=on]:text-on-primary data-[state=on]:font-semibold data-[state=on]:shadow-sm data-[state=off]:text-on-surface-variant data-[state=off]:hover:bg-surface-container"
                   >
                     {type}
-                  </button>
+                  </ToggleGroupItem>
                 ))}
-              </div>
+              </ToggleGroup>
 
               {/* Input + button */}
               <div className="flex flex-col sm:flex-row gap-xs items-stretch sm:items-center border-t border-outline-variant pt-sm">
@@ -91,11 +96,11 @@ export function Hero() {
                     name="search"
                     className="text-outline mr-sm text-[22px]"
                   />
-                  <input
+                  <Input
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     aria-label="Search by district, municipality, or plot ID"
-                    className="w-full bg-transparent border-none focus:ring-0 focus:outline-none text-body-md font-body-md py-md text-on-surface placeholder:text-on-surface-variant"
+                    className="w-full border-none bg-transparent text-body-md font-body-md py-md text-on-surface placeholder:text-on-surface-variant shadow-none focus-visible:ring-0"
                     placeholder="Search by district, municipality, or plot ID..."
                     type="text"
                   />

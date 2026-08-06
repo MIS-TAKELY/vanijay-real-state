@@ -1,3 +1,33 @@
+export interface ApiPropertyLocation {
+  province: string;
+  district: string;
+  municipality: string;
+  wardNumber: number;
+  areaName: string;
+  addressText?: string | null;
+  latitude?: number | null;
+  longitude?: number | null;
+}
+
+export interface ApiLandArea {
+  ropani: number;
+  aana: number;
+  paisa: number;
+  daam: number;
+  bigha?: number | null;
+  katha?: number | null;
+  dhur?: number | null;
+  totalSqFt: number;
+  totalSqMeters: number;
+}
+
+export interface ApiPropertyMedia {
+  url: string;
+  altText?: string | null;
+  sortOrder: number;
+  isCover: boolean;
+}
+
 export interface ApiProperty {
   id: string;
   listingCode: string;
@@ -15,6 +45,9 @@ export interface ApiProperty {
   isCornerPlot: boolean;
   ownerId: string;
   agentId?: string | null;
+  location?: ApiPropertyLocation | null;
+  landArea?: ApiLandArea | null;
+  media?: ApiPropertyMedia[];
   createdAt: string;
   updatedAt: string;
 }
@@ -25,6 +58,54 @@ export interface FeedPage {
   hasMore: boolean;
 }
 
+export interface PropertyMediaPayload {
+  type?: string; // MediaType enum (IMAGE | VIDEO_WALKTHROUGH | CADASTRAL_MAP)
+  url: string;
+  altText?: string;
+  sortOrder?: number;
+  isCover?: boolean;
+}
+
+/**
+ * POST /api/v1/properties body. Mirrors the API's `CreatePropertyInput` DTO.
+ * Enum fields stay `string` so the client doesn't depend on Prisma — the API
+ * validates (`@IsEnum`) and returns 400 on bad values.
+ */
+export interface CreatePropertyPayload {
+  title: string;
+  description?: string;
+  propertyType: string; // PropertyType enum
+  askingPrice: number;
+  pricePerAana?: number;
+  roadAccessWidthFt?: number;
+  roadType?: string; // RoadType enum
+  facing?: string; // FacingDirection enum
+  isCornerPlot?: boolean;
+  landArea: {
+    ropani: number;
+    aana: number;
+    paisa?: number;
+    daam?: number;
+    bigha?: number;
+    katha?: number;
+    dhur?: number;
+    totalSqFt: number;
+    totalSqMeters: number;
+  };
+  location: {
+    province: string;
+    district: string;
+    municipality: string;
+    wardNumber: number;
+    areaName: string;
+    addressText?: string;
+    latitude?: number;
+    longitude?: number;
+  };
+  /** Uploaded gallery + video assets (Cloudinary URLs). */
+  media?: PropertyMediaPayload[];
+}
+
 export interface CardProperty {
   id: string;
   listingCode?: string;
@@ -32,6 +113,7 @@ export interface CardProperty {
   price: string;
   location: string;
   gradient: string;
+  imageUrl?: string;
   meta: string[];
 }
 
@@ -78,8 +160,35 @@ export function labelEnum(
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+export function formatLocation(loc?: ApiPropertyLocation | null): string {
+  if (!loc) return "Location TBD";
+  const place = loc.areaName || loc.municipality || loc.district;
+  return loc.district && loc.district !== place
+    ? `${place}, ${loc.district}`
+    : place;
+}
+
+export function formatLandArea(a?: ApiLandArea | null): string | null {
+  if (!a) return null;
+  if (a.bigha || a.katha || a.dhur) {
+    const parts: string[] = [];
+    if (a.bigha) parts.push(`${a.bigha} Bigha`);
+    if (a.katha) parts.push(`${a.katha} Katha`);
+    if (a.dhur) parts.push(`${a.dhur} Dhur`);
+    return parts.join(" ");
+  }
+  const parts: string[] = [];
+  if (a.ropani) parts.push(`${a.ropani} Ropani`);
+  if (a.aana) parts.push(`${a.aana} Aana`);
+  if (a.paisa) parts.push(`${a.paisa} Paisa`);
+  if (a.daam) parts.push(`${a.daam} Daam`);
+  return parts.length > 0 ? parts.join(" ") : null;
+}
+
 export function toCardProps(p: ApiProperty): CardProperty {
   const meta: string[] = [];
+  const area = formatLandArea(p.landArea);
+  if (area) meta.push(area);
   if (p.roadAccessWidthFt || p.roadType) {
     const parts: string[] = [];
     if (p.roadAccessWidthFt) parts.push(`${p.roadAccessWidthFt}ft`);
@@ -100,8 +209,9 @@ export function toCardProps(p: ApiProperty): CardProperty {
     listingCode: p.listingCode,
     title: p.title,
     price: formatNPR(p.askingPrice),
-    location: labelEnum(p.propertyType, TYPE_LABELS),
+    location: formatLocation(p.location),
     gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
+    imageUrl: p.media?.find((m) => m.isCover)?.url ?? p.media?.[0]?.url,
     meta,
   };
 }

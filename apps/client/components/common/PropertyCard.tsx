@@ -1,4 +1,4 @@
-import { Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
 import Link from "next/link";
 
 interface PropertyCardProps {
@@ -9,6 +9,7 @@ interface PropertyCardProps {
     price: string;
     location: string;
     gradient: string;
+    imageUrl?: string;
     meta: string[];
   };
 }
@@ -21,10 +22,18 @@ export function PropertyCard({ property }: PropertyCardProps) {
         className="relative h-48 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
         aria-label={`${property.title} — view details`}
       >
-        <div
-          className={`h-full w-full bg-gradient-to-br ${property.gradient} transition-transform duration-500 group-hover:scale-105`}
-          aria-hidden
-        />
+        {property.imageUrl ? (
+          <img
+            src={property.imageUrl}
+            alt={property.title}
+            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+          />
+        ) : (
+          <div
+            className={`h-full w-full bg-gradient-to-br ${property.gradient} transition-transform duration-500 group-hover:scale-105`}
+            aria-hidden
+          />
+        )}
         <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-surface/95 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.6px] text-tertiary shadow-sm">
           <Icon name="verified" filled className="text-[12px]" />
           Verified Archive
@@ -62,20 +71,23 @@ export function PropertyCard({ property }: PropertyCardProps) {
         </div>
 
         <div className="mt-auto flex gap-2">
-          <button
+          <Button
             type="button"
-            className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md border border-outline-variant py-2.5 text-label-sm font-semibold text-on-surface transition-colors hover:border-primary hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+            variant="outline"
+            className="flex-1 rounded-md border-outline-variant py-2.5 text-label-sm font-semibold text-on-surface hover:border-primary hover:text-primary"
           >
             <Icon name="add_shopping_cart" className="text-data-table" />
             Add to Cart
-          </button>
-          <Link
-            href={`/listings/${property.id}`}
-            className="inline-flex flex-1 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-primary py-2.5 text-label-sm font-semibold text-on-primary transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          </Button>
+          <Button
+            asChild
+            className="flex-1 rounded-md py-2.5 text-label-sm font-semibold"
           >
-            View Details
-            <Icon name="arrow_forward" className="text-data-table" />
-          </Link>
+            <Link href={`/listings/${property.id}`}>
+              View Details
+              <Icon name="arrow_forward" className="text-data-table" />
+            </Link>
+          </Button>
         </div>
       </div>
     </article>
