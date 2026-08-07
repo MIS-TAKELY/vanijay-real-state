@@ -32,7 +32,6 @@ export const API_ENDPOINTS = {
   },
 } as const;
 
-/** Code-first GraphQL endpoint (Apollo Server) — see apps/api/src/app.module.ts. */
 export const GRAPHQL_ENDPOINT = `/api/${API_VERSION}/vanijay-real-state`;
 
 export type ApiDomain = keyof typeof API_ENDPOINTS;

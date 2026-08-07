@@ -18,7 +18,6 @@ import {
 } from './multer.config';
 import { UploadFolder, UploadsService } from './uploads.service';
 
-/** Uploaded assets are grouped into a Cloudinary folder/keyword. */
 const VALID_FOLDERS: UploadFolder[] = [
   'properties',
   'profiles',
@@ -41,12 +40,6 @@ function resolveFolder(value?: string): UploadFolder {
 export class UploadsController {
   constructor(private readonly uploads: UploadsService) {}
 
-  /**
-   * POST /api/v1/uploads?folder=properties
-   *
-   * multipart/form-data with field name `file`. Uploads a single asset to
-   * Cloudinary and returns its normalized metadata (url, publicId, ...).
-   */
   @Post()
   @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('file', createMulterOptions()))
@@ -60,12 +53,6 @@ export class UploadsController {
     return this.uploads.uploadFile(file, resolveFolder(folder));
   }
 
-  /**
-   * POST /api/v1/uploads/multiple?folder=properties
-   *
-   * multipart/form-data with field name `files` (up to 20). Uploads several
-   * assets in one request and returns an array of normalized results.
-   */
   @Post('multiple')
   @UseGuards(AuthGuard)
   @UseInterceptors(FilesInterceptor('files', 20, createMulterOptions()))
@@ -81,11 +68,6 @@ export class UploadsController {
     return this.uploads.uploadFiles(files, resolveFolder(folder));
   }
 
-  /**
-   * DELETE /api/v1/uploads/:publicId
-   *
-   * Permanently removes an asset from Cloudinary by its public id.
-   */
   @Delete(':publicId')
   @UseGuards(AuthGuard)
   remove(@Param('publicId') publicId: string) {

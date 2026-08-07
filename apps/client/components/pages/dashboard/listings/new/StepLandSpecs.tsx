@@ -13,21 +13,41 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/ui";
+import { formatNPR } from "lib/api/services/properties/types";
+import { useMemo } from "react";
 import {
   BIGHA_PARTS,
   FACING_DIRECTIONS,
+  PRICE_UNIT_DEFAULT,
+  PRICE_UNITS,
   ROAD_TYPES,
   ROPANI_PARTS,
   UNIT_SYSTEMS,
   type UnitSystem,
 } from "./constants";
-import { totalSqFt } from "./draft";
+import { pricePerUnit, totalSqFt } from "./draft";
 import { FieldError, type StepProps } from "./types";
 
 export function StepLandSpecs({ draft, update, errors }: StepProps) {
   const parts = draft.unitSystem === "ROPANI" ? ROPANI_PARTS : BIGHA_PARTS;
   const sqft = totalSqFt(draft);
   const sqm = Math.round(sqft * 0.092903);
+
+  // Land unit the asking price is shown "per" (defaults per unit system).
+  const unitKey = useMemo(
+    () => draft.priceUnit || PRICE_UNIT_DEFAULT[draft.unitSystem],
+    [draft.priceUnit, draft.unitSystem],
+  );
+  const hasArea = sqft > 0;
+  const perUnit = useMemo(() => pricePerUnit(draft, unitKey), [draft, unitKey]);
+  const rateLabel = useMemo(() => {
+    const rates: Record<string, string> = {};
+    for (const u of PRICE_UNITS) {
+      const rate = pricePerUnit(draft, u.key);
+      rates[u.key] = rate != null ? formatNPR(rate) : "—";
+    }
+    return rates;
+  }, [draft]);
 
   return (
     <div className="flex flex-col gap-md">
@@ -160,6 +180,56 @@ export function StepLandSpecs({ draft, update, errors }: StepProps) {
         />
         Corner plot
       </Label>
+
+      {/* Asking price — last field so the land area above is already entered
+          when the per-unit rates are computed below. */}
+      <div className="flex flex-col gap-xs border-t border-outline-variant pt-md">
+        <Label htmlFor="w-price">Asking price (NPR)</Label>
+        <Input
+          id="w-price"
+          type="text"
+          inputMode="numeric"
+          value={draft.askingPrice}
+          onChange={(e) =>
+            update({ askingPrice: e.target.value.replace(/[^0-9,]/g, "") })
+          }
+          placeholder="2,45,00,000"
+          aria-invalid={!!errors.askingPrice}
+          className={cn("mono-stat h-11", errors.askingPrice && "border-error")}
+        />
+
+        {/* Land-unit dropdown — every option shows the unit and its implied rate */}
+        <div className="flex flex-col gap-xs">
+          <Label htmlFor="w-price-unit">Price per unit</Label>
+          <Select
+            value={unitKey}
+            onValueChange={(v) => update({ priceUnit: v })}
+          >
+            <SelectTrigger id="w-price-unit" className="h-11 w-full">
+              <SelectValue placeholder="Select a land unit" />
+            </SelectTrigger>
+            <SelectContent>
+              {PRICE_UNITS.map((u) => (
+                <SelectItem key={u.key} value={u.key}>
+                  <span className="flex-1">{u.label}</span>
+                  <span className="mono-stat text-[12px] tabular-nums text-on-surface-variant">
+                    {rateLabel[u.key]}
+                  </span>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+          {perUnit == null && (
+            <p className="text-[11px] leading-4 text-on-surface-variant">
+              {hasArea
+                ? "Enter the asking price above to see per-unit rates."
+                : "Enter the land area above to see per-unit rates."}
+            </p>
+          )}
+        </div>
+
+        <FieldError message={errors.askingPrice} />
+      </div>
     </div>
   );
 }

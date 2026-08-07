@@ -26,7 +26,7 @@ export function FrequencyToggle({ value, onChange }: FrequencyToggleProps) {
       }}
       variant="outline"
       aria-label="Alert frequency"
-      className="rounded-full border border-outline-variant bg-surface p-0.5"
+      className="bg-surface p-0.5"
     >
       {FREQUENCY_OPTIONS.map((opt) => (
         <ToggleGroupItem

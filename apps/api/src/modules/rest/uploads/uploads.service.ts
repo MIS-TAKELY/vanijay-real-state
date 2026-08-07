@@ -3,7 +3,6 @@ import { CloudinaryService } from '../../cloudinary/cloudinary.service';
 import { CloudinaryUploadResult } from '../../cloudinary/cloudinary.types';
 import { UploadedFile } from './multer.config';
 
-/** Group assets by a logical domain, e.g. "properties", "profiles", "documents". */
 export type UploadFolder =
   | 'properties'
   | 'profiles'
@@ -15,7 +14,6 @@ export type UploadFolder =
 export class UploadsService {
   constructor(private readonly cloudinary: CloudinaryService) {}
 
-  /** Upload a single file into the given folder. */
   uploadFile(
     file: UploadedFile,
     folder: UploadFolder = 'misc',
@@ -26,7 +24,6 @@ export class UploadsService {
     });
   }
 
-  /** Upload several files into the given folder, preserving original names. */
   async uploadFiles(
     files: UploadedFile[],
     folder: UploadFolder = 'misc',
@@ -35,12 +32,10 @@ export class UploadsService {
     return this.cloudinary.uploadMany(files, { folder });
   }
 
-  /** Delete a single asset by its Cloudinary public id. */
   deleteFile(publicId: string): Promise<{ result: string }> {
     return this.cloudinary.delete(publicId);
   }
 
-  /** Delete several assets by their Cloudinary public ids. */
   deleteFiles(publicIds: string[]): Promise<{ deleted: string[] }> {
     return this.cloudinary.deleteMany(publicIds);
   }

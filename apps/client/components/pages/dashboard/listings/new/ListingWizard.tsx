@@ -34,7 +34,6 @@ export function ListingWizard() {
 
   const update = (patch: Partial<ListingDraft>) => {
     setDraft((prev) => ({ ...prev, ...patch }));
-    // Clear errors for the fields the user just edited.
     setErrors((prev) => {
       const next = { ...prev };
       for (const key of Object.keys(patch)) {
@@ -86,7 +85,6 @@ export function ListingWizard() {
     }
   };
 
-  /* ----------------------------- success state ----------------------------- */
   if (created) {
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
@@ -129,7 +127,6 @@ export function ListingWizard() {
     );
   }
 
-  /* ------------------------------ wizard frame ----------------------------- */
   const stepProps = { draft, update, errors };
   const renderStep = () => {
     switch (step) {

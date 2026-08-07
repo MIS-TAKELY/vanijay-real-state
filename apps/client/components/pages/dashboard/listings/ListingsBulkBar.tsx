@@ -9,7 +9,6 @@ interface ListingsBulkBarProps {
   onClear: () => void;
 }
 
-
 export function ListingsBulkBar({
   selectedCount,
   onArchive,
@@ -21,10 +20,10 @@ export function ListingsBulkBar({
   return (
     <div className="flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between rounded-xl border border-primary/30 bg-secondary-container/60 px-md py-sm mb-md">
       <div className="flex items-center gap-sm">
-        <span className="mono-stat inline-flex items-center justify-center rounded-full bg-primary px-2 py-0.5 text-[12px] font-bold text-on-primary leading-none">
+        <span className="mono-stat inline-flex items-center justify-center rounded-full bg-primary px-2 py-1.5 text-[12px] font-bold text-on-primary leading-none">
           {selectedCount}
         </span>
-        <span className="text-sm font-medium text-on-surface">
+        <span className="text-sm font-medium text-on-surface ">
           {selectedCount === 1 ? "listing selected" : "listings selected"}
         </span>
       </div>

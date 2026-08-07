@@ -127,10 +127,7 @@ export function fetchPropertyByGraphql(idOrSlug: string): Promise<ApiProperty> {
   }).then((data) => data.property);
 }
 
-/**
- * GraphQL-backed fetch of the signed-in user's OWN properties (all statuses).
- * Auth-scoped on the API — the session cookie is forwarded automatically.
- */
+
 export function fetchMyListingsGraphql(): Promise<ApiProperty[]> {
   return gqlRequest<{ myProperties: ApiProperty[] }>(MY_PROPERTIES_QUERY).then(
     (data) => data.myProperties,

@@ -70,6 +70,39 @@ export const UNIT_SYSTEMS: { key: UnitSystem; label: string }[] = [
   { key: "BIGHA", label: "Bigha / Katha" },
 ];
 
+/* ------------------------------ price per unit ------------------------ */
+
+export interface PriceUnit {
+  key: string;
+  label: string;
+  /** Total area (sq ft) of a single unit — drives price-per-unit math. */
+  sqFt: number;
+}
+
+/**
+ * Every land unit the asking price can be broken down into. The sq ft factors
+ * mirror the conversion constants used in draft.ts (1 aana = 342.25 sq ft,
+ * 1 katha = 364.5 sq ft), so the implied per-unit rate always agrees with the
+ * total area computed on the Land & Specs step.
+ */
+export const PRICE_UNITS: PriceUnit[] = [
+  { key: "ropani", label: "Ropani", sqFt: 342.25 * 16 },
+  { key: "aana", label: "Aana", sqFt: 342.25 },
+  { key: "paisa", label: "Paisa", sqFt: 342.25 / 4 },
+  { key: "daam", label: "Daam", sqFt: 342.25 / 16 },
+  { key: "bigha", label: "Bigha", sqFt: 364.5 * 20 },
+  { key: "katha", label: "Katha", sqFt: 364.5 },
+  { key: "dhur", label: "Dhur", sqFt: 364.5 / 20 },
+  { key: "sqft", label: "Sq. ft", sqFt: 1 },
+  { key: "sqm", label: "Sq. m", sqFt: 1 / 0.092903 },
+];
+
+/** Default "price per" unit for each unit system (the common market rate). */
+export const PRICE_UNIT_DEFAULT: Record<UnitSystem, string> = {
+  ROPANI: "aana",
+  BIGHA: "katha",
+};
+
 /* ------------------------------- road / facing ------------------------- */
 
 /**

@@ -1,6 +1,14 @@
 "use client";
 
-import { cn, Icon, Input, Label, Textarea, ToggleGroup, ToggleGroupItem } from "@repo/ui";
+import {
+  cn,
+  Icon,
+  Input,
+  Label,
+  Textarea,
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@repo/ui";
 import { PROPERTY_TYPES } from "./constants";
 import { DESC_MAX, TITLE_MAX } from "./draft";
 import { FieldError, type StepProps } from "./types";
@@ -20,7 +28,7 @@ export function StepBasics({ draft, update, errors }: StepProps) {
             onChange={(e) => update({ title: e.target.value })}
             placeholder="e.g. Bhaisepati Residential Land"
             aria-invalid={!!errors.title}
-            className={cn("h-11 pr-14", errors.title && "border-error")}
+            className={cn("h-11 pr-14 ", errors.title && "border-error")}
           />
           <span className="mono-stat absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-on-surface-variant">
             {draft.title.length}/{TITLE_MAX}
@@ -64,7 +72,9 @@ export function StepBasics({ draft, update, errors }: StepProps) {
               <span className="text-sm font-medium text-on-surface">
                 {pt.label}
               </span>
-              <span className="text-[11px] text-on-surface-variant">{pt.desc}</span>
+              <span className="text-[11px] text-on-surface-variant">
+                {pt.desc}
+              </span>
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
@@ -89,24 +99,6 @@ export function StepBasics({ draft, update, errors }: StepProps) {
             {draft.description.length}/{DESC_MAX}
           </span>
         </div>
-      </div>
-
-      {/* Asking price */}
-      <div className="flex flex-col gap-xs">
-        <Label htmlFor="w-price">Asking price (NPR)</Label>
-        <Input
-          id="w-price"
-          type="text"
-          inputMode="numeric"
-          value={draft.askingPrice}
-          onChange={(e) =>
-            update({ askingPrice: e.target.value.replace(/[^0-9,]/g, "") })
-          }
-          placeholder="2,45,00,000"
-          aria-invalid={!!errors.askingPrice}
-          className={cn("mono-stat h-11 sm:max-w-xs", errors.askingPrice && "border-error")}
-        />
-        <FieldError message={errors.askingPrice} />
       </div>
     </div>
   );

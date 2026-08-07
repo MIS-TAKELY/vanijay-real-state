@@ -1,6 +1,15 @@
 "use client";
 
-import { Checkbox, cn } from "@repo/ui";
+import {
+  Checkbox,
+  cn,
+  Table,
+  TableBody,
+  TableHeader,
+  TableHead,
+  TableRow,
+} from "@repo/ui";
+import { LISTING_TABLE_COLUMNS } from "./constants";
 import type { MyListing } from "./constants";
 import { ListingRow } from "./ListingRow";
 
@@ -11,16 +20,8 @@ interface ListingsTableProps {
   onToggleAll: () => void;
 }
 
-const COLUMN_HEADERS = [
-  "Listing",
-  "Type",
-  "Status",
-  "Verified",
-  "Asking Price",
-  "Views",
-  "Inquiries",
-  "Updated",
-] as const;
+const HEADER_CELL_CLASS =
+  "px-sm py-2.5 font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant rounded-md";
 
 export function ListingsTable({
   listings,
@@ -28,44 +29,38 @@ export function ListingsTable({
   onToggleRow,
   onToggleAll,
 }: ListingsTableProps) {
-  const allSelected = listings.length > 0 && listings.every((l) => selectedIds.has(l.id));
+  const allSelected =
+    listings.length > 0 && listings.every((l) => selectedIds.has(l.id));
   const someSelected = listings.some((l) => selectedIds.has(l.id));
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-outline-variant bg-surface">
-      <div className="min-w-[920px]">
-        {/* Header */}
-        <div className="grid grid-cols-[auto_56px_minmax(180px,2fr)_1fr_1fr_auto_1fr_1fr_1fr_1fr_auto] items-center gap-sm border-b border-outline-variant bg-surface-container-low px-sm py-2.5">
-          <Checkbox
-            aria-label="Select all listings"
-            checked={someSelected && !allSelected ? "indeterminate" : allSelected}
-            onCheckedChange={() => onToggleAll()}
-            className="cursor-pointer"
-          />
-          <span />
-          {COLUMN_HEADERS.map((h, i) => (
-            <span
-              key={h}
-              className={cn(
-                "font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant",
-                // hide responsive columns to match row visibility
-                i === 0 && "",
-                h === "Type" && "hidden lg:block",
-                h === "Status" && "hidden md:block",
-                h === "Verified" && "hidden lg:block",
-                h === "Views" && "hidden sm:block",
-                h === "Inquiries" && "hidden sm:block",
-                h === "Updated" && "hidden md:block",
-              )}
-            >
-              {h}
-            </span>
-          ))}
-          <span />
-        </div>
-
-        {/* Rows */}
-        <div>
+    <div className="rounded-b-md border border-outline-variant bg-surface">
+      <Table className="min-w-[920px]">
+        <TableHeader>
+          <TableRow className="bg-surface-container-low">
+            <TableHead className={cn(HEADER_CELL_CLASS, "w-10")}>
+              <Checkbox
+                aria-label="Select all listings"
+                checked={someSelected && !allSelected ? "indeterminate" : allSelected}
+                onCheckedChange={() => onToggleAll()}
+                className="cursor-pointer"
+              />
+            </TableHead>
+            {/* Cover thumb spacer */}
+            <TableHead className={cn(HEADER_CELL_CLASS, "w-14")} aria-hidden />
+            {LISTING_TABLE_COLUMNS.map((col) => (
+              <TableHead
+                key={col.key}
+                className={cn(HEADER_CELL_CLASS, col.cellClassName)}
+              >
+                {col.label}
+              </TableHead>
+            ))}
+            {/* Row menu spacer */}
+            <TableHead className={cn(HEADER_CELL_CLASS, "w-10")} aria-hidden />
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {listings.map((listing) => (
             <ListingRow
               key={listing.id}
@@ -74,8 +69,8 @@ export function ListingsTable({
               onToggle={onToggleRow}
             />
           ))}
-        </div>
-      </div>
+        </TableBody>
+      </Table>
     </div>
   );
 }

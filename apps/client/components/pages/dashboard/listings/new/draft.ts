@@ -1,28 +1,10 @@
-/**
- * Single source of truth for the New Listing wizard state.
- *
- * The wizard collects display-friendly values (comma-grouped prices, "Ward 6",
- * human road/facing labels). `buildCreatePayload()` converts that draft into
- * the exact shape the API's `CreatePropertyInput` DTO validates, including
- * mapping UI labels to Prisma enum values (`NORTH_EAST`, `PITCHED`, …).
- *
- * Conversion factors match the ones historically used in StepLandSpecs:
- *   Ropani system:  1 ropani = 16 aana = 64 paisa = 256 daam; 1 aana = 342.25 sq ft
- *   Bigha system:   1 bigha = 20 katha = 400 dhur;            1 katha = 364.5 sq ft
- */
-
 import type { CreatePropertyPayload } from "lib/api/services/properties/types";
-import type { UnitSystem } from "./constants";
+import { PRICE_UNITS, type UnitSystem } from "./constants";
 
 export type { CreatePropertyPayload };
 
-/**
- * One uploaded media asset kept on the client draft. `url` is the Cloudinary
- * URL returned by the uploads API; previews are derived from it in the UI.
- */
 export interface DraftMedia {
   url: string;
-  /** Cloudinary public id, kept so the asset can be deleted if removed. */
   publicId?: string;
   type?: string; // MediaType enum (IMAGE | VIDEO_WALKTHROUGH | CADASTRAL_MAP)
   altText?: string;
@@ -34,6 +16,7 @@ export interface ListingDraft {
   propertyType: string; // PropertyType enum value (e.g. RESIDENTIAL_LAND)
   description: string;
   askingPrice: string; // user-typed, may contain commas/spaces
+  priceUnit: string;
 
   /* location */
   province: string;
@@ -54,9 +37,7 @@ export interface ListingDraft {
   isCornerPlot: boolean;
 
   /* media & documents */
-  /** Uploaded photo gallery (Cloudinary), first item is the cover. */
   media: DraftMedia[];
-  /** Optional video-walkthrough URL (YouTube, etc.). */
   videoUrl: string;
 }
 
@@ -65,6 +46,7 @@ export const INITIAL_DRAFT: ListingDraft = {
   propertyType: "RESIDENTIAL_LAND",
   description: "",
   askingPrice: "",
+  priceUnit: "",
   province: "",
   district: "",
   municipality: "",
@@ -85,16 +67,9 @@ export const INITIAL_DRAFT: ListingDraft = {
 
 export type DraftErrors = Partial<Record<string, string>>;
 
-/* ------------------------- validation limits ------------------------- */
-// Kept in sync with the API's CreatePropertyInput DTO
-// (apps/api/src/modules/rest/properties/dto/create-property.input.ts) so the
-// wizard never submits values the server would reject with a 400.
 export const TITLE_MIN = 5;
-/** Stricter than the API's 200 — short titles scan better in the feed. */
 export const TITLE_MAX = 80;
-/** Matches the DTO's @MaxLength(5000) on description. */
 export const DESC_MAX = 5000;
-/** Sanity cap for the optional road-access width. */
 export const ROAD_WIDTH_MAX_FT = 200;
 
 const num = (s: string | undefined): number => {
@@ -102,7 +77,6 @@ const num = (s: string | undefined): number => {
   return Number.isFinite(n) ? n : 0;
 };
 
-/** Total land area in sq ft from the active unit system. */
 export function totalSqFt(draft: ListingDraft): number {
   const u = draft.units;
   if (draft.unitSystem === "ROPANI") {
@@ -118,7 +92,21 @@ export function askingPriceNumber(draft: ListingDraft): number {
   return num(draft.askingPrice);
 }
 
-/** Human land-area summary for previews, e.g. "4 Aana" or "1 Kattha 5 Dhur". */
+export function pricePerUnit(
+  draft: ListingDraft,
+  unitKey: string,
+): number | null {
+  const sqft = totalSqFt(draft);
+  const price = askingPriceNumber(draft);
+
+  if (sqft <= 0 || price <= 0) return null;
+  const unit = PRICE_UNITS.find((u) => u.key === unitKey);
+  if (!unit || unit.sqFt <= 0) return null;
+  const totalUnits = sqft / unit.sqFt;
+  if (totalUnits <= 0) return null;
+  return Math.round(price / totalUnits);
+}
+
 export function formatLandAreaLabel(draft: ListingDraft): string | null {
   const u = draft.units;
   if (draft.unitSystem === "ROPANI") {
@@ -136,7 +124,6 @@ export function formatLandAreaLabel(draft: ListingDraft): string | null {
   return parts.length > 0 ? parts.join(" ") : null;
 }
 
-/** Per-step field validation. Returns {} when the step is complete. */
 export function validateStep(step: number, draft: ListingDraft): DraftErrors {
   const errors: DraftErrors = {};
 
@@ -149,8 +136,6 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
     if (!draft.propertyType) errors.propertyType = "Pick a property type.";
     if (draft.description.trim().length > DESC_MAX)
       errors.description = `Keep the description under ${DESC_MAX.toLocaleString()} characters.`;
-    if (askingPriceNumber(draft) <= 0)
-      errors.askingPrice = "Enter the asking price in NPR.";
   }
 
   if (step === 1) {
@@ -188,12 +173,13 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
       (roadWidth <= 0 || roadWidth > ROAD_WIDTH_MAX_FT)
     )
       errors.roadWidthFt = `Road width must be between 1 and ${ROAD_WIDTH_MAX_FT} ft.`;
+
+    if (askingPriceNumber(draft) <= 0)
+      errors.askingPrice = "Enter the asking price in NPR.";
   }
 
   return errors;
-}
-
-/** Every step-pair that must validate before the listing can be submitted. */
+} 
 export function validateAll(draft: ListingDraft): {
   errors: DraftErrors;
   firstInvalidStep: number | null;
@@ -207,10 +193,6 @@ export function validateAll(draft: ListingDraft): {
   return { errors: {}, firstInvalidStep: null };
 }
 
-/**
- * The POST /api/v1/properties body. Kept structural (strings for enums) so
- * the client package stays free of Prisma imports; the API validates them.
- */
 export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
   const askingPrice = askingPriceNumber(draft);
   const sqft = totalSqFt(draft);
@@ -273,7 +255,9 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
     propertyType: draft.propertyType,
     askingPrice,
     ...(pricePerAana && { pricePerAana }),
-    ...(num(draft.roadWidthFt) > 0 && { roadAccessWidthFt: num(draft.roadWidthFt) }),
+    ...(num(draft.roadWidthFt) > 0 && {
+      roadAccessWidthFt: num(draft.roadWidthFt),
+    }),
     ...(draft.roadType && { roadType: draft.roadType }),
     ...(draft.facing && { facing: draft.facing }),
     isCornerPlot: draft.isCornerPlot,

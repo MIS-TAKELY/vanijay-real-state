@@ -70,6 +70,33 @@ export const LISTING_FILTER_TABS: FilterTab[] = [
 ];
 
 /* ------------------------------------------------------------------ */
+/* Listings table columns (§5.2)                                       */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Single source of truth for the table column set. The responsive class is
+ * applied to BOTH the header `<th>` and the matching row `<td>`, so header
+ * and body visibility can never drift apart.
+ */
+export interface ListingTableColumn {
+  key: string;
+  label: string;
+  /** Visibility class shared by the header cell and the row cell. */
+  cellClassName?: string;
+}
+
+export const LISTING_TABLE_COLUMNS: ListingTableColumn[] = [
+  { key: "listing", label: "Listing" },
+  { key: "type", label: "Type", cellClassName: "hidden lg:table-cell" },
+  { key: "status", label: "Status", cellClassName: "hidden md:table-cell" },
+  { key: "verified", label: "Verified", cellClassName: "hidden lg:table-cell" },
+  { key: "price", label: "Asking Price" },
+  { key: "views", label: "Views", cellClassName: "hidden sm:table-cell" },
+  { key: "inquiries", label: "Inquiries", cellClassName: "hidden sm:table-cell" },
+  { key: "updated", label: "Updated", cellClassName: "hidden md:table-cell" },
+];
+
+/* ------------------------------------------------------------------ */
 /* Status chip styles (colors per §1.2 semantics)                      */
 /* ------------------------------------------------------------------ */
 

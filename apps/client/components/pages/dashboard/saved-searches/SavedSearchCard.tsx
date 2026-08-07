@@ -13,7 +13,6 @@ export function SavedSearchCard({ search }: SavedSearchCardProps) {
 
   return (
     <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant bg-surface p-md transition-[transform,box-shadow,border-color] duration-300 hover:border-primary/40 hover:shadow-lg">
-      {/* Header row: label + new-matches badge + menu */}
       <div className="flex items-start justify-between gap-sm">
         <div className="flex min-w-0 items-start gap-1.5">
           {hasNew ? (

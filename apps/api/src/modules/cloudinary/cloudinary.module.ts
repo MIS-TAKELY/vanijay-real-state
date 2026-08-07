@@ -4,15 +4,6 @@ import { v2 as cloudinary } from 'cloudinary';
 import { CLOUDINARY } from './cloudinary.constants';
 import { CloudinaryService } from './cloudinary.service';
 
-/**
- * Imported once in {@link AppModule}. Being @Global, any module can inject
- * `CloudinaryService` without importing `CloudinaryModule` again.
- *
- * Configuration is read from the environment:
- * - `CLOUDINARY_CLOUD_NAME`
- * - `CLOUDINARY_API_KEY`
- * - `CLOUDINARY_API_SECRET`
- */
 @Global()
 @Module({
   providers: [

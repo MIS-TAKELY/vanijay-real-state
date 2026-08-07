@@ -20,7 +20,6 @@ import { ListingsFilterTabs } from "./ListingsFilterTabs";
 import { ListingsTable } from "./ListingsTable";
 import Link from "next/link";
 
-/** Compact relative timestamp for the "Updated" column, e.g. "2h ago". */
 function formatRelativeTime(iso: string): string {
   const then = new Date(iso).getTime();
   if (Number.isNaN(then)) return "—";
@@ -36,7 +35,6 @@ function formatRelativeTime(iso: string): string {
   return `${Math.floor(months / 12)}y ago`;
 }
 
-/** Map an API property onto the dashboard's display row shape. */
 function toMyListing(p: ApiProperty): MyListing {
   return {
     id: p.id,
@@ -48,7 +46,6 @@ function toMyListing(p: ApiProperty): MyListing {
     verificationLevel: p.verificationLevel,
     askingPrice: p.askingPrice,
     gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
-    // Views/inquiries aren't persisted by the API yet — show 0 until they are.
     views: 0,
     inquiries: 0,
     updatedAt: formatRelativeTime(p.updatedAt),
@@ -129,11 +126,9 @@ export function MyListings() {
     });
 
   const clearSelection = () => setSelectedIds(new Set());
-  // Placeholder handlers — wire to mutations when the API is ready.
   const handleArchive = () => clearSelection();
   const handleReverify = () => clearSelection();
 
-  /* ----------------------------- loading ----------------------------- */
   if (loading && listings.length === 0) {
     return (
       <div className="flex flex-col gap-md">
@@ -147,7 +142,6 @@ export function MyListings() {
     );
   }
 
-  /* ------------------------------ error ------------------------------ */
   if (error && listings.length === 0) {
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
@@ -163,7 +157,6 @@ export function MyListings() {
     );
   }
 
-  /* --------------------------- empty state --------------------------- */
   if (listings.length === 0) {
     return (
       <EmptyState

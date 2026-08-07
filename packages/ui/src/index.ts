@@ -248,3 +248,12 @@ export type {
   GeocodeResult,
   LocationSearchProps,
 } from "./components/LocationSearch";
+
+// reverseGeocode is SSR-safe (a pure fetch — no leaflet import) like
+// LocationSearch, so it also lives in the main barrel.
+export { reverseGeocode } from "./components/reverseGeocode";
+export type {
+  ReverseGeocodeAddress,
+  ReverseGeocodeOptions,
+  ReverseGeocodeResult,
+} from "./components/reverseGeocode";

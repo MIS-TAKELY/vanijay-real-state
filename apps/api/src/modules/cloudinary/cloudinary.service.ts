@@ -16,29 +16,12 @@ import {
   CloudinaryUploadResult,
 } from './cloudinary.types';
 
-/**
- * Thin, reusable wrapper around the Cloudinary SDK.
- *
- * Register {@link CloudinaryModule} once (it is @Global) and inject this
- * service anywhere — controllers, services, resolvers — to upload or delete
- * assets without re-declaring the SDK or its configuration.
- */
 @Injectable()
 export class CloudinaryService {
   private readonly logger = new Logger(CloudinaryService.name);
 
   constructor(@Inject(CLOUDINARY) private readonly client: typeof cloudinary) {}
 
-  /**
-   * Upload a single in-memory file (already validated by multer).
-   *
-   * ```ts
-   * const res = await this.cloudinary.uploadBuffer(file.buffer, {
-   *   folder: 'properties',
-   *   tags: 'listing-asset',
-   * });
-   * ```
-   */
   uploadBuffer(
     buffer: Buffer,
     options: CloudinaryUploadOptions = {},
@@ -91,11 +74,6 @@ export class CloudinaryService {
     });
   }
 
-  /**
-   * Upload several files, returning an array of results sourced via
-   * {@link uploadBuffer}. Failures reject the whole batch so callers never get
-   * a partially uploaded set without noticing.
-   */
   async uploadMany(
     files: { buffer: Buffer; originalname?: string }[],
     options: CloudinaryUploadOptions = {},
@@ -110,14 +88,6 @@ export class CloudinaryService {
     );
   }
 
-  /**
-   * Delete a single resource (permanent by default).
-   *
-   * @param publicId Asset public id, e.g. the value returned by
-   * {@link CloudinaryUploadResult.publicId}.
-   * @param resourceType Cloudinary resource type used for deletion
-   * (`image` | `raw` | `video`). Defaults to `image`; pass `raw` for PDFs/docs.
-   */
   async delete(
     publicId: string,
     resourceType: 'image' | 'raw' | 'video' = 'image',
@@ -135,9 +105,7 @@ export class CloudinaryService {
     return { result: resource ? 'not found' : 'ok' };
   }
 
-  /**
-   * Delete multiple resources in one upstream call.
-   */
+
   async deleteMany(
     publicIds: string[],
     resourceType: 'image' | 'raw' | 'video' = 'image',
@@ -153,10 +121,7 @@ export class CloudinaryService {
     return { deleted: uniqueIds };
   }
 
-  /**
-   * Look up an existing resource by public id. Useful to verify ownership or
-   * existence before linking an asset to a record.
-   */
+
   async findResource(publicId: string): Promise<CloudinaryUploadResult | null> {
     try {
       const raw: unknown = await this.client.api.resource(publicId, {
@@ -170,7 +135,6 @@ export class CloudinaryService {
     }
   }
 
-  /** Map a native Cloudinary response into our normalized result. */
   private toResult(result: UploadApiResponse): CloudinaryUploadResult {
     return {
       publicId: result.public_id,
