@@ -1,4 +1,52 @@
+# =============================================================================
+# Dockploy / Docker Compose deployment for Lekhaprati (real-state)
+#
+# Each app gets its own domain via Traefik Docker labels. Dockploy's Traefik
+# reads these labels from containers attached to the `dokploy-network`.
+#
+# Before deploying:
+#   1. Point your DNS records (A/CNAME) at this server for each domain:
+#        realstate-api.vanijay.com  → API   (port 80/443 via Traefik)
+#        realstate.vanijay.com      → Client (port 80/443 via Traefik)
+#        admin.vanijay.com          → Admin  (port 80/443 via Traefik)
+#   2. Paste your production values into the .env file managed by Dockploy.
+#   3. Make sure the dokploy-network exists (Dockploy creates it automatically).
+# =============================================================================
 services:
+  # ─── PostgreSQL ───────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: real-state
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  # ─── Database Migrations (one-shot, runs before the API starts) ───────────
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/api/Dockerfile
+      target: migrator
+    restart: "no"
+    environment:
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/real-state
+    networks:
+      - internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # ─── NestJS / GraphQL API ─────────────────────────────────────────────────
   api:
     build:
       context: .
@@ -8,7 +56,8 @@ services:
       - NODE_ENV=production
       - PORT=8000
       - CLIENT_URL=${CLIENT_URL}
-      - DATABASE_URL=${DATABASE_URL}
+      - ADMIN_URL=${ADMIN_URL}
+      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/real-state
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - BETTER_AUTH_URL=${BETTER_AUTH_URL}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -22,10 +71,29 @@ services:
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
       - WHATSAPP_API_URL=${WHATSAPP_API_URL}
+    labels:
+      # HTTP → HTTPS redirect + HTTPS routing for the API domain
+      - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network"
+      - "traefik.http.middlewares.realstate-redirect-to-https.redirectscheme.scheme=https"
+      - "traefik.http.routers.api.entrypoints=web"
+      - "traefik.http.routers.api.rule=Host(`${API_DOMAIN}`)"
+      - "traefik.http.routers.api.middlewares=realstate-redirect-to-https"
+      - "traefik.http.routers.api-secure.entrypoints=websecure"
+      - "traefik.http.routers.api-secure.rule=Host(`${API_DOMAIN}`)"
+      - "traefik.http.routers.api-secure.tls=true"
+      - "traefik.http.routers.api-secure.tls.certresolver=le"
+      - "traefik.http.services.api.loadbalancer.server.port=8000"
     networks:
       - dokploy-network
       - internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
 
+  # ─── Next.js Public Marketplace (client) ────────────────────────────────
   client:
     build:
       context: .
@@ -35,12 +103,26 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      # Internal Docker address for /api/auth/* rewrites in next.config.js
+      - AUTH_API_URL=http://api:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network"
+      - "traefik.http.routers.client.entrypoints=web"
+      - "traefik.http.routers.client.rule=Host(`${CLIENT_DOMAIN}`)"
+      - "traefik.http.routers.client.middlewares=realstate-redirect-to-https"
+      - "traefik.http.routers.client-secure.entrypoints=websecure"
+      - "traefik.http.routers.client-secure.rule=Host(`${CLIENT_DOMAIN}`)"
+      - "traefik.http.routers.client-secure.tls=true"
+      - "traefik.http.routers.client-secure.tls.certresolver=le"
+      - "traefik.http.services.client.loadbalancer.server.port=3000"
     networks:
       - dokploy-network
       - internal
     depends_on:
       - api
 
+  # ─── Next.js Admin Console ──────────────────────────────────────────────
   admin:
     build:
       context: .
@@ -50,6 +132,19 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      # Internal Docker address for /api/auth/* rewrites in next.config.js
+      - AUTH_API_URL=http://api:8000
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=dokploy-network"
+      - "traefik.http.routers.admin.entrypoints=web"
+      - "traefik.http.routers.admin.rule=Host(`${ADMIN_DOMAIN}`)"
+      - "traefik.http.routers.admin.middlewares=realstate-redirect-to-https"
+      - "traefik.http.routers.admin-secure.entrypoints=websecure"
+      - "traefik.http.routers.admin-secure.rule=Host(`${ADMIN_DOMAIN}`)"
+      - "traefik.http.routers.admin-secure.tls=true"
+      - "traefik.http.routers.admin-secure.tls.certresolver=le"
+      - "traefik.http.services.admin.loadbalancer.server.port=3000"
     networks:
       - dokploy-network
       - internal
@@ -61,3 +156,6 @@ networks:
     external: true
   internal:
     driver: bridge
+
+volumes:
+  postgres-data:

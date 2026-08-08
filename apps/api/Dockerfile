@@ -33,3 +33,19 @@ COPY --from=builder /app/standalone ./
 COPY --from=builder /app/apps/api/dist ./dist
 EXPOSE 8000
 CMD ["node", "dist/main.js"]
+
+# ─── Migrator stage ───────────────────────────────────────────────────────────
+# Used by the `migrate` service in docker-compose.yml to run
+# `prisma migrate deploy` against PostgreSQL before the API starts.
+FROM base AS migrator
+WORKDIR /app
+# Install the Prisma CLI (the @repo/db devDependency is NOT in the runner stage,
+# so we need prisma available globally here for `migrate deploy`)
+RUN npm install -g prisma
+# Copy the Prisma schema, migrations, and CLI config from the builder
+COPY --from=builder /app/packages/db/prisma ./prisma
+COPY --from=builder /app/packages/db/prisma.config.ts ./
+# prisma.config.ts does `import "dotenv/config"`; make sure dotenv resolves
+RUN npm install dotenv
+# DATABASE_URL is injected from the runtime environment (docker-compose)
+CMD ["prisma", "migrate", "deploy"]

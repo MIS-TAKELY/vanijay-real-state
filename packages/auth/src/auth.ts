@@ -63,7 +63,7 @@ export const auth = betterAuth({
       expiresIn: 300,
     }),
     phoneNumber({
-      async sendOTP({ phoneNumber, code }) {  
+      async sendOTP({ phoneNumber, code }) {
         await sendWhatsAppMessage(
           phoneNumber,
           `Your Lekhaprati code is: ${code}`,
@@ -82,7 +82,10 @@ export const auth = betterAuth({
     },
   },
 
-  trustedOrigins: [process.env.CLIENT_URL ?? "http://localhost:3000"],
+  trustedOrigins: [
+    process.env.CLIENT_URL ?? "http://localhost:3000",
+    ...(process.env.ADMIN_URL ? [process.env.ADMIN_URL] : []),
+  ],
 });
 
 export type Auth = typeof auth;

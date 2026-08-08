@@ -7,3 +7,9 @@ build
 .gitignore
 README.md
 *.log
+
+# Environment files — keep secrets out of the Docker image
+.env
+**/.env
+**/.env.local
+**/.env.production.local
