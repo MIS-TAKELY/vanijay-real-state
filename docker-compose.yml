@@ -6,6 +6,7 @@ services:
     restart: unless-stopped
     environment:
       - NODE_ENV=production
+      - PORT=8000
       - CLIENT_URL=${CLIENT_URL}
     networks:
       - dokploy-network
