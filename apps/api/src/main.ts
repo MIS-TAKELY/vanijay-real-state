@@ -7,7 +7,6 @@ import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 
-
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     bodyParser: false,
@@ -16,7 +15,10 @@ async function bootstrap() {
   app.useLogger(app.get(Logger));
 
   app.enableCors({
-    origin: process.env.CLIENT_URL ?? 'http://localhost:3000',
+    origin:
+      process.env.CLIENT_URL ||
+      'https://realstate.vanijay.com' ||
+      'http://localhost:3000',
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
