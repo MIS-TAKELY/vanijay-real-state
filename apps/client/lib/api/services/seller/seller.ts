@@ -12,3 +12,13 @@ export function registerSeller(dto: RegisterSellerInput): Promise<unknown> {
     body: dto,
   });
 }
+
+/** True if the phone number is already registered to any account. */
+export function checkPhoneRegistered(
+  phoneNumber: string,
+): Promise<{ registered: boolean }> {
+  return apiFetch(API_ENDPOINTS.seller.checkPhone, {
+    method: "GET",
+    query: { phoneNumber },
+  });
+}

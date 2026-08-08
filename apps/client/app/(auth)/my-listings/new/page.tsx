@@ -1,6 +1,7 @@
 import { Button, Icon } from "@repo/ui";
 import { DashboardHeader } from "components/pages/dashboard";
 import { ListingWizard } from "components/pages/dashboard/listings/new";
+import { ListingsGate } from "components/pages/dashboard/listings/ListingsGate";
 
 export default function NewListingPage() {
   return (
@@ -18,7 +19,9 @@ export default function NewListingPage() {
         }
       />
 
-      <ListingWizard />
+      <ListingsGate>
+        <ListingWizard />
+      </ListingsGate>
     </div>
   );
 }

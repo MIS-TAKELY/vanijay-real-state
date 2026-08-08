@@ -5,6 +5,13 @@ import { RegisterSellerDto } from './dto/register-seller.dto';
 @Injectable()
 export class SellerService {
   constructor(private readonly prisma: PrismaClient) {}
+  async isPhoneRegistered(phoneNumber: string): Promise<{ registered: boolean }> {
+    const count = await this.prisma.user.count({
+      where: { phoneNumber },
+    });
+    return { registered: count > 0 };
+  }
+
   async completeSellerRegistration(userId: string, dto: RegisterSellerDto) {
     const user = await this.prisma.user.findUnique({ where: { id: userId } });
 
@@ -16,7 +23,7 @@ export class SellerService {
       this.prisma.user.update({
         where: { id: userId },
         data: {
-          role: ['SELLER'],
+          role: ['BUYER', 'SELLER'],
           agreedToTerms: dto.agreedToTerms,
         },
       }),

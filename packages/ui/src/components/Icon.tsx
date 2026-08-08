@@ -94,7 +94,7 @@ const iconVariants = cva("", {
     size: {
       sm: "text-data-table",
       md: "text-[24px]",
-      lg: "text-[32px]",
+      lg: "text-data-price",
       xl: "text-[40px]",
     },
   },
@@ -108,7 +108,6 @@ interface IconProps
   name: string;
   filled?: boolean;
 }
-
 
 const ICON_MAP: Record<string, LucideIcon> = {
   add: Plus,

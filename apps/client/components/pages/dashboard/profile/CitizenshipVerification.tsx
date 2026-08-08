@@ -5,7 +5,6 @@ interface CitizenshipVerificationProps {
   profile: ProfileData;
 }
 
-
 export function CitizenshipVerification({
   profile,
 }: CitizenshipVerificationProps) {
@@ -88,7 +87,7 @@ export function CitizenshipVerification({
             variant="outline"
             className="flex flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer h-auto"
           >
-            <Icon name="upload_file" className="text-[32px]" />
+            <Icon name="upload_file" className="text-data-price" />
             <span className="text-label-sm font-medium">{side}</span>
             <span className="text-[11px]">PNG / JPG, max 10MB</span>
           </Button>

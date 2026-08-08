@@ -1,8 +1,27 @@
 "use client";
 
-import { Button, Checkbox, Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger, Input, Label } from "@repo/ui";
+import {
+  Button,
+  Checkbox,
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Input,
+  Label,
+} from "@repo/ui";
 import { authClient, signIn, signUp } from "@repo/auth/client";
-import { Building2, Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
+import {
+  Building2,
+  Eye,
+  EyeOff,
+  Loader2,
+  Lock,
+  Mail,
+  User,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -14,6 +33,19 @@ interface SignInModalProps {
   defaultOpen?: boolean;
 }
 
+/* ------------------------------------------------------------------ */
+/* Shared class tokens (kept in one place for consistency)             */
+/* ------------------------------------------------------------------ */
+const fieldLabel =
+  "text-xs font-semibold text-foreground uppercase tracking-wider";
+const fieldInput =
+  "pl-10 h-11 rounded-xl bg-muted/30 focus-visible:ring-2 focus-visible:ring-primary/30 focus-visible:border-primary transition-all duration-200";
+const fieldIcon =
+  "pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground";
+
+/* ------------------------------------------------------------------ */
+/* Sign In / Sign Up modal                                             */
+/* ------------------------------------------------------------------ */
 const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
   const { isOpen, open: openModal, close: closeModal } = useAuthModalStore();
   const router = useRouter();
@@ -211,9 +243,13 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               </DialogDescription>
             </DialogHeader>
 
-            {/* Error Message */}
+            {/* Error Message — announced to screen readers */}
             {error && (
-              <div className="rounded-xl bg-destructive/10 border border-destructive/30 px-4 py-3 text-sm text-destructive">
+              <div
+                role="alert"
+                aria-live="assertive"
+                className="rounded-xl bg-destructive/10 border border-destructive/30 px-4 py-3 text-sm text-destructive"
+              >
                 {error}
               </div>
             )}
@@ -225,9 +261,13 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                 variant="ghost"
                 disabled={isLoading}
                 onClick={handleGoogleSignIn}
-                className="relative h-11 w-full flex items-center justify-center gap-3 rounded-xl border bg-background font-medium hover:bg-accent hover:text-accent-foreground transition-all shadow-xs cursor-pointer"
+                className="relative h-11 w-full flex items-center justify-center gap-3 rounded-xl border bg-background font-medium hover:bg-accent hover:text-accent-foreground transition-all duration-200 shadow-xs cursor-pointer"
               >
-                <svg className="h-5 w-5 shrink-0" viewBox="0 0 24 24">
+                <svg
+                  className="h-5 w-5 shrink-0"
+                  viewBox="0 0 24 24"
+                  aria-hidden="true"
+                >
                   <path
                     fill="#4285F4"
                     d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -249,7 +289,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               </Button>
 
               {/* Divider */}
-              <div className="relative flex items-center justify-center my-1">
+              <div className="relative flex items-center justify-center my-1" role="separator" aria-orientation="horizontal">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-border" />
                 </div>
@@ -260,23 +300,30 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
             </div>
 
             {/* Email & Password Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form
+              onSubmit={handleSubmit}
+              noValidate
+              aria-busy={isLoading}
+              className="space-y-4"
+            >
               {/* Name field — only for signup */}
               {mode === "signup" && (
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                  <label htmlFor="signup-name" className={fieldLabel}>
                     Full Name
                   </label>
                   <div className="relative">
-                    <User className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                    <User aria-hidden="true" className={fieldIcon} />
                     <Input
+                      id="signup-name"
                       type="text"
                       name="name"
                       placeholder="John Doe"
+                      autoComplete="name"
                       required
                       value={formData.name}
                       onChange={handleChange}
-                      className="pl-10 h-11 rounded-xl bg-muted/30 focus-visible:ring-1 focus-visible:border"
+                      className={fieldInput}
                     />
                   </div>
                 </div>
@@ -284,19 +331,22 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
 
               {/* Email field */}
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                <label htmlFor="auth-email" className={fieldLabel}>
                   Email Address
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Mail aria-hidden="true" className={fieldIcon} />
                   <Input
+                    id="auth-email"
                     type="email"
                     name="email"
                     placeholder="name@example.com"
+                    autoComplete="email"
                     required
                     value={formData.email}
                     onChange={handleChange}
-                    className="pl-10 h-11 rounded-xl bg-muted/30 focus-visible:ring-1 focus-visible:border"
+                    aria-invalid={error ? "true" : undefined}
+                    className={fieldInput}
                   />
                 </div>
               </div>
@@ -304,13 +354,13 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               {/* Password field */}
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
-                  <label className="text-xs font-semibold text-foreground uppercase tracking-wider">
+                  <label htmlFor="auth-password" className={fieldLabel}>
                     Password
                   </label>
                   {mode === "signin" && (
                     <button
                       type="button"
-                      className="text-xs text-primary font-medium hover:underline transition-all cursor-pointer"
+                      className="text-xs text-primary font-medium hover:underline transition-all duration-200 cursor-pointer"
                       onClick={() => console.log("Forgot password clicked")}
                     >
                       Forgot password?
@@ -318,25 +368,29 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                   )}
                 </div>
                 <div className="relative">
-                  <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <Lock aria-hidden="true" className={fieldIcon} />
                   <Input
+                    id="auth-password"
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="••••••••"
+                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
                     required
                     value={formData.password}
                     onChange={handleChange}
-                    className="pl-10 pr-10 h-11 rounded-xl bg-muted/30 focus-visible:ring-1 focus-visible:border"
+                    aria-invalid={error ? "true" : undefined}
+                    className={fieldInput}
                   />
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
-                    onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors cursor-pointer"
+                    onClick={() => setShowPassword((s) => !s)}
                     aria-label={
                       showPassword ? "Hide password" : "Show password"
                     }
+                    aria-pressed={showPassword}
+                    className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground hover:bg-transparent transition-colors duration-200 cursor-pointer"
                   >
                     {showPassword ? (
                       <EyeOff className="h-4 w-4" />
@@ -350,8 +404,12 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               {/* Remember me — only for signin */}
               {mode === "signin" && (
                 <div className="flex items-center justify-between pt-1">
-                  <Label className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer select-none">
+                  <Label
+                    htmlFor="remember-me"
+                    className="flex items-center gap-2 text-sm text-muted-foreground cursor-pointer select-none transition-colors duration-200 hover:text-foreground"
+                  >
                     <Checkbox
+                      id="remember-me"
                       checked={rememberMe}
                       onCheckedChange={(v) => setRememberMe(!!v)}
                     />
@@ -363,10 +421,13 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="w-full h-11 rounded-xl font-semibold transition-all shadow-md mt-2 cursor-pointer"
+                className="w-full h-11 rounded-xl font-semibold transition-all duration-200 shadow-md mt-2 cursor-pointer"
               >
                 {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
+                  <span className="flex items-center gap-2">
+                    <Loader2 className="h-5 w-5 animate-spin" />
+                    {mode === "signin" ? "Signing in…" : "Creating account…"}
+                  </span>
                 ) : mode === "signin" ? (
                   "Sign In"
                 ) : (
@@ -383,7 +444,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                   <Button
                     type="button"
                     variant="link"
-                    className="px-0 font-semibold text-primary hover:underline cursor-pointer"
+                    className="px-0 font-semibold text-primary hover:underline transition-colors duration-200 cursor-pointer"
                     onClick={() => {
                       setMode("signup");
                       setError(null);
@@ -398,7 +459,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                   <Button
                     type="button"
                     variant="link"
-                    className="px-0 font-semibold text-primary hover:underline cursor-pointer"
+                    className="px-0 font-semibold text-primary hover:underline transition-colors duration-200 cursor-pointer"
                     onClick={() => {
                       setMode("signin");
                       setError(null);
@@ -415,5 +476,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
     </Dialog>
   );
 };
+
+SignIn.displayName = "SignIn";
 
 export default SignIn;

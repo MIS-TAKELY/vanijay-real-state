@@ -1,7 +1,5 @@
-import React from "react";
 import { Icon } from "@repo/ui";
 import { steps } from "constants/varibles-constants";
-
 
 export function VerificationSteps() {
   return (
@@ -17,9 +15,15 @@ export function VerificationSteps() {
       </div>
       <div className="max-w-container-max mx-auto px-gutter grid grid-cols-1 md:grid-cols-3 gap-lg relative">
         {/* Connecting line on desktop */}
-        <div className="hidden md:block absolute top-8 left-[16.66%] right-[16.66%] h-px bg-outline-variant" aria-hidden="true" />
+        <div
+          className="hidden md:block absolute top-8 left-[16.66%] right-[16.66%] h-px bg-outline-variant"
+          aria-hidden="true"
+        />
         {steps.map((step, i) => (
-          <div key={i} className="flex flex-col items-center text-center relative">
+          <div
+            key={i}
+            className="flex flex-col items-center text-center relative"
+          >
             <div
               className={`relative w-16 h-16 flex items-center justify-center rounded-2xl border-2 mb-md ${
                 step.icon
@@ -28,7 +32,7 @@ export function VerificationSteps() {
               }`}
             >
               {step.icon ? (
-                <Icon name={step.icon} className="text-[32px]" filled />
+                <Icon name={step.icon} className="text-data-price" filled />
               ) : (
                 <span className="mono-stat text-2xl font-bold leading-none">
                   {step.number}

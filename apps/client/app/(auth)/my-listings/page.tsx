@@ -2,6 +2,7 @@ import { Button, Icon } from "@repo/ui";
 import Link from "next/link";
 import { DashboardHeader } from "components/pages/dashboard";
 import { MyListings } from "components/pages/dashboard/listings";
+import { ListingsGate } from "components/pages/dashboard/listings/ListingsGate";
 
 export default function MyListingsPage() {
   return (
@@ -19,7 +20,9 @@ export default function MyListingsPage() {
         }
       />
 
-      <MyListings />
+      <ListingsGate>
+        <MyListings />
+      </ListingsGate>
     </div>
   );
 }

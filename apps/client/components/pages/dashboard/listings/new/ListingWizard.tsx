@@ -89,7 +89,7 @@ export function ListingWizard() {
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary">
-          <Icon name="check_circle" className="text-[32px]" />
+          <Icon name="check_circle" className="text-data-price" />
         </span>
         <h2 className="font-headline-md text-xl font-semibold text-on-surface">
           {created.title}

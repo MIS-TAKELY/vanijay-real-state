@@ -8,7 +8,7 @@ export function RemoteWindow() {
           <p className="font-label-sm text-[11px] font-bold uppercase tracking-[0.8px] text-on-surface-variant mb-xs">
             Step 03 — Remote Verification
           </p>
-          <h2 className="font-headline-md text-[32px] font-semibold leading-tight tracking-[-0.4px] text-primary mb-sm">
+          <h2 className="font-headline-md text-data-price font-semibold leading-tight tracking-[-0.4px] text-primary mb-sm">
             Your Remote Window to Nepal
           </h2>
           <p className="mb-lg max-w-[440px] font-body-lg text-body-lg text-on-surface-variant leading-relaxed">
