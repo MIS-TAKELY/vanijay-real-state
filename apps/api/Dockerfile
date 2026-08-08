@@ -6,8 +6,8 @@ FROM base AS builder
 COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* turbo.json ./
 COPY apps/api ./apps/api
 COPY packages ./packages
-RUN npm install -g turbo
-RUN npm ci
+RUN npm install -g turbo pnpm
+RUN pnpm install --frozen-lockfile
 RUN turbo build --filter=api
 
 FROM base AS runner

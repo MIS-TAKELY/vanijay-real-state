@@ -11,10 +11,10 @@ services:
       - dokploy-network
       - internal
 
-  web:
+  client:
     build:
       context: .
-      dockerfile: apps/web/Dockerfile
+      dockerfile: apps/client/Dockerfile
     restart: unless-stopped
     environment:
       - NODE_ENV=production

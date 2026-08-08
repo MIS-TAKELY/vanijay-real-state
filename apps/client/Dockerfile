@@ -4,17 +4,17 @@ RUN apk add --no-cache libc6-compat
 
 FROM base AS builder
 COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* turbo.json ./
-COPY apps/web ./apps/web
+COPY apps/client ./apps/client
 COPY packages ./packages
-RUN npm install -g turbo
-RUN npm ci
-RUN turbo build --filter=web
+RUN npm install -g turbo pnpm
+RUN pnpm install --frozen-lockfile
+RUN turbo build --filter=client
 
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=builder /app/apps/web/public ./public
-COPY --from=builder /app/apps/web/.next/standalone ./
-COPY --from=builder /app/apps/web/.next/static ./.next/static
+COPY --from=builder /app/apps/client/public ./apps/client/public
+COPY --from=builder /app/apps/client/.next/standalone ./
+COPY --from=builder /app/apps/client/.next/static ./apps/client/.next/static
 EXPOSE 3000
-CMD ["node", "server.js"]
+CMD ["node", "apps/client/server.js"]
