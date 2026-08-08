@@ -15,10 +15,11 @@ const nextConfig = {
   },
 
   async rewrites() {
+    const apiUrl = process.env.AUTH_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
     return [
       {
         source: "/api/auth/:path*",
-        destination: `${process.env.AUTH_API_URL}/api/auth/:path*`,
+        destination: `${apiUrl}/api/auth/:path*`,
       },
     ];
   },
