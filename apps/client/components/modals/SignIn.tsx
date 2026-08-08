@@ -32,10 +32,6 @@ interface SignInModalProps {
   trigger?: React.ReactNode;
   defaultOpen?: boolean;
 }
-
-/* ------------------------------------------------------------------ */
-/* Shared class tokens (kept in one place for consistency)             */
-/* ------------------------------------------------------------------ */
 const fieldLabel =
   "text-xs font-semibold text-foreground uppercase tracking-wider";
 const fieldInput =
@@ -43,9 +39,6 @@ const fieldInput =
 const fieldIcon =
   "pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground";
 
-/* ------------------------------------------------------------------ */
-/* Sign In / Sign Up modal                                             */
-/* ------------------------------------------------------------------ */
 const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
   const { isOpen, open: openModal, close: closeModal } = useAuthModalStore();
   const router = useRouter();
@@ -71,11 +64,9 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
     if (defaultOpen) openModal();
   }, [defaultOpen, openModal]);
 
-  // Close the modal and land the user back on the page they were trying to
-  // visit before being bounced to sign-in (captured via `?redirect=`).
   const completeAuth = () => {
     const redirectTo = useAuthModalStore.getState().redirect;
-    closeModal(); // also clears the pending redirect
+    closeModal(); 
     if (redirectTo) router.push(redirectTo);
   };
 
@@ -91,8 +82,6 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
     setIsLoading(true);
     setError(null);
     try {
-      // Google sign-in is a full-page OAuth flow, so the pending redirect is
-      // carried through as the post-login callback instead of client state.
       const redirectTo = useAuthModalStore.getState().redirect;
       await signIn.social({
         provider: "google",
@@ -144,7 +133,6 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                 type: "email-verification",
               });
             } catch {
-              // OTP request failed — surface the original error
             }
             setOtpEmail(formData.email);
             setShowOtpModal(true);
@@ -153,8 +141,6 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
           setError(signInError.message || "Sign in failed");
           return;
         }
-        // On successful sign in, close the modal and return the user to the
-        // page they originally tried to visit (if any).
         completeAuth();
       }
     } catch (err) {

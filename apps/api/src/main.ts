@@ -7,10 +7,6 @@ import helmet from 'helmet';
 import { Logger } from 'nestjs-pino';
 import { AppModule } from './app.module';
 
-// Note: the global ValidationPipe and GlobalExceptionFilter are registered
-// through APP_PIPE / APP_FILTER in CommonModule (Nest DI context), so they also
-// apply to the testing module automatically. Do not re-add useGlobalPipes here
-// (it would duplicate validation and bypass DI in tests).
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {

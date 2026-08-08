@@ -3,6 +3,9 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
 FROM base AS builder
+# Accept build-time env var — Next.js bakes NEXT_PUBLIC_* at build time
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 COPY package.json package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
 COPY apps/admin ./apps/admin
 COPY packages ./packages
