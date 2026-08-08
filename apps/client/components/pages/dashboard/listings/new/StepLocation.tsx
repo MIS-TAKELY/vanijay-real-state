@@ -27,6 +27,7 @@ import type {
   ReverseGeocodeAddress,
   ReverseGeocodeResult,
 } from "@repo/ui";
+import type { LatLng } from "@repo/ui/map";
 
 const MapPicker = dynamic(
   () => import("@repo/ui/map").then((m) => m.MapPicker),
@@ -72,7 +73,7 @@ export function StepLocation({ draft, update, errors }: StepProps) {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleMapSelect = useCallback(
-    (lat: number, lng: number) => {
+    ([lat, lng]: LatLng) => {
       // Keep the pin snappy — update coordinates right away.
       update({ latitude: lat, longitude: lng });
 
