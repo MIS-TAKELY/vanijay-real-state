@@ -3,9 +3,9 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat
 
 FROM base AS builder
-COPY package.json package-lock.json* pnpm-lock.yaml* yarn.lock* turbo.json ./
+COPY package.json package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
 COPY apps/client ./apps/client
-COPY packages ./packages
+COPY packages ./packages 
 RUN npm install -g turbo pnpm
 RUN pnpm install --frozen-lockfile
 RUN turbo build --filter=client
