@@ -15,7 +15,9 @@ const nextConfig = {
   },
 
   async rewrites() {
-    const apiUrl = process.env.AUTH_API_URL || process.env.NEXT_PUBLIC_API_URL || "http://localhost:3001";
+    // AUTH_API_URL → local dev override (e.g. http://localhost:8000)
+    // falls back to internal Docker service name in production
+    const apiUrl = process.env.AUTH_API_URL || "http://api:8000";
     return [
       {
         source: "/api/auth/:path*",
