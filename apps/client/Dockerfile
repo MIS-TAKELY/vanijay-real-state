@@ -6,7 +6,7 @@ FROM base AS builder
 # Accept build-time env vars — Next.js bakes NEXT_PUBLIC_* at build time,
 # and next.config.js reads AUTH_API_URL for /api/auth/* rewrites at build time.
 ARG NEXT_PUBLIC_API_URL=https://realstate-api.vanijay.com
-ARG AUTH_API_URL=https://realstate-api.vanijay.com
+ARG AUTH_API_URL=http://api:5000
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV AUTH_API_URL=$AUTH_API_URL
 COPY package.json package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
