@@ -74,7 +74,7 @@ services:
       context: .
       dockerfile: apps/client/Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://realstate-api.vanijay.com}
         # Internal Docker address for /api/auth/* rewrites in next.config.js
         # (baked at build time by the client Dockerfile)
         - AUTH_API_URL=${AUTH_API_URL:-http://api:5000}
@@ -105,7 +105,7 @@ services:
       context: .
       dockerfile: apps/admin/Dockerfile
       args:
-        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-https://realstate-api.vanijay.com}
         # Internal Docker address for /api/auth/* rewrites in next.config.js
         # (baked at build time by the admin Dockerfile)
         - AUTH_API_URL=${AUTH_API_URL:-http://api:5000}
