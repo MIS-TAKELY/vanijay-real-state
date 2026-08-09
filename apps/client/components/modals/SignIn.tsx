@@ -121,7 +121,6 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
         });
         if (signInError) {
           const msg = (signInError.message ?? "").toLowerCase();
-          console.log("better auth msg-->", msg);
           if (
             (msg.includes("email") && msg.includes("verified")) ||
             msg === "email not verified"

@@ -10,6 +10,18 @@ import { sendWhatsAppMessage } from "./utils/send-watsapp";
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET!,
 
+  // The browser talks to the API on realstate-api.vanijay.com while the
+  // dashboard session check (Next middleware) runs on realstate.vanijay.com.
+  // Without this, the session cookie is host-only on the API subdomain and the
+  // middleware can't see it → login works but /dashboard bounces back to
+  // sign-in. Cross-subdomain cookies set Domain=.vanijay.com so the session is
+  // shared across client / admin / api subdomains.
+  advanced: {
+    crossSubDomainCookies: {
+      enabled: true,
+    },
+  },
+
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
