@@ -5,7 +5,7 @@ monorepo on a Dockploy server so that every app gets its own custom domain:
 
 | App   | Domain (edit to match yours)       | Container Port |
 |-------|------------------------------------|----------------|
-| API   | `realstate-api.vanijay.com`        | 8000           |
+| API   | `realstate-api.vanijay.com`        | 5000           |
 | Client| `realstate.vanijay.com`            | 3000           |
 | Admin | `admin.vanijay.com`                | 3000           |
 
@@ -102,7 +102,7 @@ which is Dockploy's default Let's Encrypt resolver.
 ## 4. How Each App Gets Its Own Domain (Traefik Labels)
 
 Each service in `docker-compose.yml` has a block of Traefik labels.  Here's
-what they do for the **API** (port 8000):
+what they do for the **API** (port 5000):
 
 
 ```yaml
@@ -117,7 +117,7 @@ labels:
   - "traefik.http.routers.api-secure.rule=Host(`realstate-api.vanijay.com`)"
   - "traefik.http.routers.api-secure.tls=true"
   - "traefik.http.routers.api-secure.tls.certresolver=le"    # Let's Encrypt
-  - "traefik.http.services.api.loadbalancer.server.port=8000"
+  - "traefik.http.services.api.loadbalancer.server.port=5000"
 ```
 
 The same three-router pattern repeats for `client` (port 3000, domain
@@ -150,7 +150,7 @@ The compose defines two Docker networks:
 | `internal`          | bridge   | Private network for inter-service communication (client/admin → API auth rewrites). |
 
 The `next.config.js` rewrites in `client` and `admin` point to
-`AUTH_API_URL` (set to `http://api:8000` in the compose environment).  This is
+`AUTH_API_URL` (set to `http://api:5000` in the compose environment).  This is
 the **internal** Docker service name, so auth requests (`/api/auth/*`) travel
 over the private `internal` network — no public internet hop.
 
@@ -288,11 +288,11 @@ You should get `200 OK` and, for HTTPS URLs, valid TLS certificates
           │                  │        │         │                  │
           ▼                  ▼        │         ▼                  ▼
    ┌────────────┐    ┌────────────┐   │   ┌────────────┐    ┌────────────────┐
-   │  api:8000  │    │client:3000 │   │   │admin:3000 │    │  PostgreSQL    │
+   │  api:5000  │    │client:3000 │   │   │admin:3000 │    │  PostgreSQL    │
    │  (NestJS)  │◄───┤(Next.js)  │   │   │(Next.js)  │◄───┤ (external — via │
    └────────────┘    └────────────┘   │   └───────────┘    │  DATABASE_URL)  │
           │               │           │         │               └────────────────┘
-          │  http://api:8000 ─────────┴─────────┘  (internal DNS)
+          │  http://api:5000 ─────────┴─────────┘  (internal DNS)
           │  (auth + API rewrites)
           │
           └───────────── internal network ─────────────┘

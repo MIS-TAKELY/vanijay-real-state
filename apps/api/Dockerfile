@@ -54,5 +54,12 @@ ENV NODE_ENV=production
 COPY --from=builder /app/standalone ./
 # Overwrite with compiled NestJS output
 COPY --from=builder /app/apps/api/dist ./dist
-EXPOSE 8000
+# pnpm deploy only hoists DIRECT deps of `api` to the top level of
+# node_modules. @prisma/client is a transitive dep (via @repo/db), so no
+# top-level link is created — but the generated client (.prisma/client)
+# resolves "@prisma/client/runtime/client.js" from /app/node_modules. Without
+# this link the API crashes at boot with:
+#   Cannot find module '@prisma/client/runtime/client.js'
+RUN ln -s "$(ls -d /app/node_modules/.pnpm/@prisma+client@*/node_modules/@prisma/client | head -1)" /app/node_modules/@prisma/client
+EXPOSE 5000
 CMD ["node", "dist/main.js"]

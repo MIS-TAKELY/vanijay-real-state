@@ -22,7 +22,9 @@ async function bootstrap() {
     [
       process.env.CLIENT_URL ?? 'https://realstate.vanijay.com',
       process.env.ADMIN_URL,
-    ].filter(Boolean);
+    ]
+      .map((o) => o?.trim()) // trim in case env values have stray spaces
+      .filter(Boolean);
 
   app.enableCors({
     origin: corsOrigins,
@@ -40,6 +42,6 @@ async function bootstrap() {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  await app.listen(process.env.PORT ?? 5001);
+  await app.listen(process.env.PORT ?? 5000);
 }
 bootstrap();
