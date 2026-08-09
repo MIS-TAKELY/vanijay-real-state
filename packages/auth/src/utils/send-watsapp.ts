@@ -1,23 +1,6 @@
-// WhatsApp gateway client for Lekhaprati (real-state).
-//
-// Sends OTP / notification messages through the shared Vanijay WhatsApp
-// gateway (whatsapp-web.js + Puppeteer, hosted at my-whatsapp.vanijay.com).
-//
-// This mirrors the resilience logic already used by the Vanijay buyer &
-// seller apps so transient gateway quirks do not surface as failures to the
-// end user:
-//   1. The gateway URL is read from WHATSAPP_API_URL (with a fallback to the
-//      historical hardcoded host) instead of being hardcoded.
-//   2. HTTP 503 ("Session not ready") is retried with a backoff — the
-//      whatsapp-web.js session can take a few seconds to (re)initialize.
-//   3. Network errors (TypeError from fetch) are retried with a backoff.
-//   4. A known post-send crash in the gateway —
-//      "Cannot read properties of undefined (reading 'id')" — happens AFTER
-//      client.sendMessage() has already delivered the message, while the
-//      gateway is building its success JSON. We treat that specific 500 as a
-//      success so the user is not told the OTP failed when it actually arrived.
 
-const MAX_RETRIES = 2; // -> up to 3 total attempts
+
+const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 5000;
 
 const FALLBACK_GATEWAY_URL = "https://my-whatsapp.vanijay.com/send-message";

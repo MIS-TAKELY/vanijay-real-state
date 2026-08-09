@@ -4,60 +4,40 @@
 # Each app gets its own domain via Traefik Docker labels. Dockploy's Traefik
 # reads these labels from containers attached to the `dokploy-network`.
 #
+# NOTE: PostgreSQL is NOT part of this compose. Use an existing database
+# (e.g. a Dockploy-managed Database app, or any hosted Postgres) and set the
+# DATABASE_URL env var in Dockploy's Environment tab.
+#
 # Before deploying:
 #   1. Point your DNS records (A/CNAME) at this server for each domain:
 #        realstate-api.vanijay.com  → API   (port 80/443 via Traefik)
 #        realstate.vanijay.com      → Client (port 80/443 via Traefik)
 #        admin.vanijay.com          → Admin  (port 80/443 via Traefik)
-#   2. Paste your production values into the .env file managed by Dockploy.
+#   2. In Dockploy's Environment tab set at minimum:
+#        DATABASE_URL=postgresql://<user>:<password>@<db-host>:5432/<db>
+#        CLIENT_URL, ADMIN_URL, BETTER_AUTH_URL, BETTER_AUTH_SECRET, ...
 #   3. Make sure the dokploy-network exists (Dockploy creates it automatically).
 # =============================================================================
 services:
-  # ─── PostgreSQL ───────────────────────────────────────────────────────────
-  postgres:
-    image: postgres:16-alpine
-    restart: unless-stopped
-    environment:
-      POSTGRES_DB: real-state
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      - internal
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 10
-
-  # ─── Database Migrations (one-shot, runs before the API starts) ───────────
-  migrate:
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
-      target: migrator
-    restart: "no"
-    environment:
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/real-state
-    networks:
-      - internal
-    depends_on:
-      postgres:
-        condition: service_healthy
-
   # ─── NestJS / GraphQL API ─────────────────────────────────────────────────
   api:
     build:
       context: .
       dockerfile: apps/api/Dockerfile
+      # Build the `runner` stage explicitly so this NEVER depends on stage
+      # order. (The Dockerfile also keeps `runner` last, but being explicit
+      # here protects against future reordering.)
+      target: runner
     restart: unless-stopped
     environment:
       - NODE_ENV=production
       - PORT=8000
       - CLIENT_URL=${CLIENT_URL}
       - ADMIN_URL=${ADMIN_URL}
-      - DATABASE_URL=postgresql://postgres:${POSTGRES_PASSWORD}@postgres:5432/real-state
+      # Point at your existing database. Inside Dockploy's network prefer the
+      # internal Docker DNS name of the DB app, e.g.:
+      #   postgresql://<user>:<password>@<db-app-name>:5432/postgres
+      - DATABASE_URL=${DATABASE_URL}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET}
       - BETTER_AUTH_URL=${BETTER_AUTH_URL}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
@@ -87,11 +67,6 @@ services:
     networks:
       - dokploy-network
       - internal
-    depends_on:
-      postgres:
-        condition: service_healthy
-      migrate:
-        condition: service_completed_successfully
 
   # ─── Next.js Public Marketplace (client) ────────────────────────────────
   client:
@@ -100,11 +75,13 @@ services:
       dockerfile: apps/client/Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        # Internal Docker address for /api/auth/* rewrites in next.config.js
+        # (baked at build time by the client Dockerfile)
+        - AUTH_API_URL=${AUTH_API_URL:-http://api:8000}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      # Internal Docker address for /api/auth/* rewrites in next.config.js
-      - AUTH_API_URL=http://api:8000
+      - AUTH_API_URL=${AUTH_API_URL:-http://api:8000}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=dokploy-network"
@@ -129,11 +106,13 @@ services:
       dockerfile: apps/admin/Dockerfile
       args:
         - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+        # Internal Docker address for /api/auth/* rewrites in next.config.js
+        # (baked at build time by the admin Dockerfile)
+        - AUTH_API_URL=${AUTH_API_URL:-http://api:8000}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
-      # Internal Docker address for /api/auth/* rewrites in next.config.js
-      - AUTH_API_URL=http://api:8000
+      - AUTH_API_URL=${AUTH_API_URL:-http://api:8000}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=dokploy-network"
@@ -156,6 +135,3 @@ networks:
     external: true
   internal:
     driver: bridge
-
-volumes:
-  postgres-data:

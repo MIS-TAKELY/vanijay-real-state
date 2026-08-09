@@ -56,7 +56,7 @@ interpolated into `docker-compose.yml` via `${VAR}`.
 
 | Variable              | Example value                                      | Notes |
 |-----------------------|----------------------------------------------------|-------|
-| `POSTGRES_PASSWORD`   | `change-me-to-something-secure`                    | Password for the `postgres` container |
+| `DATABASE_URL`        | `postgresql://user:pass@db-host:5432/postgres`      | **Required.** Connection string to an existing database (see below) |
 | `API_DOMAIN`          | `realstate-api.your-domain.com`                    | Hostname Traefik routes to the API |
 | `CLIENT_DOMAIN`       | `realstate.your-domain.com`                        | Hostname Traefik routes to the client |
 | `ADMIN_DOMAIN`        | `admin.your-domain.com`                            | Hostname Traefik routes to the admin |
@@ -68,9 +68,14 @@ interpolated into `docker-compose.yml` via `${VAR}`.
 | `GOOGLE_CLIENT_ID`    | *(from Google Cloud Console)*                      | OAuth |
 | `GOOGLE_CLIENT_SECRET`| *(from Google Cloud Console)*                      | OAuth |
 
-> **Important**: The `POSTGRES_PASSWORD` must be consistent — it's used by the
-> `postgres` container AND interpolated into `DATABASE_URL` for the API and
-> migrate containers.
+> **PostgreSQL is external to this compose.** Use an existing database — for
+> example a **Dockploy-managed Database** (Databases tab) or any hosted
+> Postgres — and set its connection string as `DATABASE_URL`. Inside
+> Dockploy's network prefer the database's **internal Docker DNS name** over
+> the host IP, e.g.
+> `postgresql://user:pass@<db-app-name>:5432/postgres`.
+> The host-published URL (`postgresql://user:pass@<server-ip>:<port>/postgres`)
+> is only needed from outside the server (local dev, DB tools).
 
 ---
 
@@ -141,8 +146,8 @@ The compose defines two Docker networks:
 
 | Network             | Type     | Purpose |
 |---------------------|----------|---------|
-| `dokploy-network`   | external | Shared with Dockploy's Traefik.  All public-facing services attach to it so Traefik can route domains. |
-| `internal`          | bridge   | Private network for inter-service communication (API → PostgreSQL, client → API auth rewrites). |
+| `dokploy-network`   | external | Shared with Dockploy's Traefik AND the Dockploy-managed database.  All public-facing services attach to it so Traefik can route domains, and the API reaches the database through it. |
+| `internal`          | bridge   | Private network for inter-service communication (client/admin → API auth rewrites). |
 
 The `next.config.js` rewrites in `client` and `admin` point to
 `AUTH_API_URL` (set to `http://api:8000` in the compose environment).  This is
@@ -163,16 +168,36 @@ API calls (GraphQL, REST, session checks) over the public internet via Traefik.
 2. Click **Deploy**.
 3. Dockploy will:
    - Read your repository and the `.env` file from step 2.
-   - Build Docker images for `postgres`, `migrate`, `api`, `client`, `admin`.
-   - Start **postgres** first (with a health check).
-   - Run **migrate** (executes `prisma migrate deploy` — applies all pending
-     database migrations, then exits).
-   - Start **api** only after the database is healthy AND migrations succeeded
-     (`depends_on` with `condition: service_completed_successfully`).
-   - Start **client** and **admin**.
+   - Build Docker images for `api`, `client`, `admin` (the `api` build uses
+     the `runner` target of `apps/api/Dockerfile` — never the `migrator` stage).
+   - Start **api**, then **client** and **admin**.
    - Register all Traefik labels so the three domains are routed correctly.
+
+   > The compose no longer ships a `postgres` or `migrate` service — the
+   > database is external (see step 2) and migrations are applied separately
+   > (see below).
 4. Watch the **Deployments** tab for real-time build logs.  If any step fails,
    the error will be visible there.
+
+---
+
+### Applying schema migrations
+
+Since there is no `migrate` service anymore, apply migrations against your
+`DATABASE_URL` manually when the schema changes:
+
+```bash
+# From the repo root, with DATABASE_URL exported (or set in .env)
+export DATABASE_URL=postgresql://user:pass@db-host:5432/postgres
+pnpm --filter @repo/db exec prisma migrate deploy
+```
+
+Or build the `migrator` target of `apps/api/Dockerfile` and run it once:
+
+```bash
+docker build --target migrator -t lekha-migrator .
+docker run --rm -e DATABASE_URL=$DATABASE_URL lekha-migrator
+```
 
 ---
 
@@ -207,7 +232,7 @@ You should get `200 OK` and, for HTTPS URLs, valid TLS certificates
 
 | Variable             | Used by (compose service)    | Purpose |
 |----------------------|------------------------------|---------|
-| `POSTGRES_PASSWORD`  | `postgres`, `api`, `migrate` | DB password |
+| `DATABASE_URL`       | `api`                        | Connection string to the existing database (required) |
 | `CLIENT_URL`         | `api`                        | CORS origin + Better Auth trustedOrigins |
 | `ADMIN_URL`          | `api`                        | CORS origin + Better Auth trustedOrigins |
 | `BETTER_AUTH_URL`    | `api`                        | Public API URL for cookies & redirects |
@@ -229,10 +254,12 @@ You should get `200 OK` and, for HTTPS URLs, valid TLS certificates
 
 | Symptom | Likely Cause | Fix |
 |---|---|---|
-| `connection refused` on postgres | Postgres not ready | The `migrate` service waits for the healthcheck; check `docker-compose logs postgres` |
+| API crash-loops with `Cannot find module 'prisma/config'` | API image built from the wrong Dockerfile stage | The `api` build must use `target: runner` in Dockploy; `migrator` must never be the last stage |
+| `connection refused` / `role does not exist` on the database | Wrong `DATABASE_URL` | Set `DATABASE_URL` to the real DB (user/db may differ from the compose defaults) and redeploy |
 | 403/401 from API on admin domain | `ADMIN_URL` missing from CORS | Add `ADMIN_URL=https://admin.vanijay.com` to `.env`, redeploy |
 | Blank page on client/admin | `NEXT_PUBLIC_API_URL` not set at build time | Ensure the build arg is set in `.env` |
-| Auth cookies not persisting | `BETTER_AUTH_URL` set to wrong domain | Must be the **public** API URL |
+| Auth cookies not persisting | `BETTER_AUTH_URL` set to wrong domain | Must be the **public** API URL (`https://realstate-api.your-domain.com`) |
+| `/api/auth/*` returns 500 | `AUTH_API_URL` doesn't resolve | Set the `AUTH_API_URL` build arg to the API's internal Docker DNS name or its public URL |
 | HTTPS not working | Certificate not issued or port 443 blocked | Check **Certificates** tab; ensure ports 80 & 443 are open |
 | 404 from Traefik | Domain doesn't match any `Host()` rule | Verify `API_DOMAIN`, `CLIENT_DOMAIN`, `ADMIN_DOMAIN` in `.env` |
 | Migrations failed | Schema drift or dirty migration history | Run `prisma migrate resolve` manually inside the `migrate` container |
@@ -260,25 +287,23 @@ You should get `200 OK` and, for HTTPS URLs, valid TLS certificates
           ┌──────────────────┼────────┬─────────┼──────────────────┐
           │                  │        │         │                  │
           ▼                  ▼        │         ▼                  ▼
-   ┌────────────┐    ┌────────────┐   │   ┌────────────┐    ┌───────────┐
-   │  api:8000  │    │client:3000 │   │   │admin:3000 │    │postgres:5432│
-   │  (NestJS)  │◄───┤(Next.js)  │   │   │(Next.js)  │◄───┤(PostgreSQL)│
-   └────────────┘    └────────────┘   │   └───────────┘    └───────────┘
-          │               │           │         │               │
+   ┌────────────┐    ┌────────────┐   │   ┌────────────┐    ┌────────────────┐
+   │  api:8000  │    │client:3000 │   │   │admin:3000 │    │  PostgreSQL    │
+   │  (NestJS)  │◄───┤(Next.js)  │   │   │(Next.js)  │◄───┤ (external — via │
+   └────────────┘    └────────────┘   │   └───────────┘    │  DATABASE_URL)  │
+          │               │           │         │               └────────────────┘
           │  http://api:8000 ─────────┴─────────┘  (internal DNS)
           │  (auth + API rewrites)
           │
           └───────────── internal network ─────────────┘
-                (shared with dokploy-network for Traefik)
+                (shared with dokploy-network for Traefik + DB)
 ```
 
 ### Service dependency graph
 
 ```
-postgres (healthcheck)  ──►  migrate (prisma migrate deploy, exits)
-                                  │
-                               api (NestJS, port 8000)
-                              ↗        ↖
-                         client         admin
-                       (port 3000)    (port 3000)
+PostgreSQL (external — Dockploy Database / hosted)  ◄──  api (NestJS, port 8000)
+                                                              ↗        ↖
+                                                         client         admin
+                                                       (port 3000)    (port 3000)
 ```

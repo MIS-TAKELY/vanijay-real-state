@@ -24,6 +24,29 @@ RUN pnpm --filter api deploy --prod /app/standalone
 RUN find /app -path "*/.prisma/client" -not -path "*/standalone/*" -type d | head -1 | \
     xargs -I{} sh -c 'mkdir -p /app/standalone/node_modules/.prisma && cp -r {} /app/standalone/node_modules/.prisma/'
 
+# ─── Migrator stage ───────────────────────────────────────────────────────────
+# ⚠️ STAGE ORDER MATTERS. This stage must stay BEFORE `runner`: Docker builds
+# the LAST stage by default when no --target is given, and Dockploy builds
+# compose services without an explicit target. If `migrator` were last, the
+# `api` service image would be the migrator (prisma migrate deploy) and the
+# API would crash-loop on startup. `runner` must remain the final stage.
+FROM base AS migrator
+WORKDIR /app
+# Install Prisma LOCALLY (not globally): prisma.config.ts does
+# `import { defineConfig } from "prisma/config"`, and Node resolves modules
+# relative to the config file (/app). A global `npm install -g prisma` is never
+# found from /app, which caused "Cannot find module 'prisma/config'".
+RUN npm install prisma@^7.9.0 dotenv
+# Copy the Prisma schema, migrations, and CLI config from the builder
+COPY --from=builder /app/packages/db/prisma ./prisma
+COPY --from=builder /app/packages/db/prisma.config.ts ./
+# Local installs put the CLI in /app/node_modules/.bin, which is NOT on the
+# default PATH — add it so the exec-form CMD below can find `prisma`.
+ENV PATH="/app/node_modules/.bin:${PATH}"
+# DATABASE_URL is injected from the runtime environment (docker-compose)
+CMD ["prisma", "migrate", "deploy"]
+
+# ─── Runner stage (FINAL stage — this is what the `api` service runs) ────────
 FROM base AS runner
 WORKDIR /app
 ENV NODE_ENV=production
@@ -33,19 +56,3 @@ COPY --from=builder /app/standalone ./
 COPY --from=builder /app/apps/api/dist ./dist
 EXPOSE 8000
 CMD ["node", "dist/main.js"]
-
-# ─── Migrator stage ───────────────────────────────────────────────────────────
-# Used by the `migrate` service in docker-compose.yml to run
-# `prisma migrate deploy` against PostgreSQL before the API starts.
-FROM base AS migrator
-WORKDIR /app
-# Install the Prisma CLI (the @repo/db devDependency is NOT in the runner stage,
-# so we need prisma available globally here for `migrate deploy`)
-RUN npm install -g prisma
-# Copy the Prisma schema, migrations, and CLI config from the builder
-COPY --from=builder /app/packages/db/prisma ./prisma
-COPY --from=builder /app/packages/db/prisma.config.ts ./
-# prisma.config.ts does `import "dotenv/config"`; make sure dotenv resolves
-RUN npm install dotenv
-# DATABASE_URL is injected from the runtime environment (docker-compose)
-CMD ["prisma", "migrate", "deploy"]
