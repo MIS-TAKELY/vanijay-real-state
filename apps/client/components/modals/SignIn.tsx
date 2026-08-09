@@ -1,5 +1,6 @@
 "use client";
 
+import { authClient, signIn, signUp } from "@repo/auth/client";
 import {
   Button,
   Checkbox,
@@ -12,7 +13,6 @@ import {
   Input,
   Label,
 } from "@repo/ui";
-import { authClient, signIn, signUp } from "@repo/auth/client";
 import {
   Building2,
   Eye,
@@ -66,7 +66,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
 
   const completeAuth = () => {
     const redirectTo = useAuthModalStore.getState().redirect;
-    closeModal(); 
+    closeModal();
     if (redirectTo) router.push(redirectTo);
   };
 
@@ -83,9 +83,14 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
     setError(null);
     try {
       const redirectTo = useAuthModalStore.getState().redirect;
+      const targetPath = redirectTo || "/dashboard";
+      const callbackURL = new URL(
+        targetPath,
+        window.location.origin,
+      ).toString();
       await signIn.social({
         provider: "google",
-        ...(redirectTo ? { callbackURL: redirectTo } : {}),
+        callbackURL,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google sign-in failed");
@@ -131,8 +136,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                 email: formData.email,
                 type: "email-verification",
               });
-            } catch {
-            }
+            } catch {}
             setOtpEmail(formData.email);
             setShowOtpModal(true);
             return;
@@ -274,7 +278,11 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
               </Button>
 
               {/* Divider */}
-              <div className="relative flex items-center justify-center my-1" role="separator" aria-orientation="horizontal">
+              <div
+                className="relative flex items-center justify-center my-1"
+                role="separator"
+                aria-orientation="horizontal"
+              >
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t border-border" />
                 </div>
@@ -359,7 +367,9 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
                     type={showPassword ? "text" : "password"}
                     name="password"
                     placeholder="••••••••"
-                    autoComplete={mode === "signin" ? "current-password" : "new-password"}
+                    autoComplete={
+                      mode === "signin" ? "current-password" : "new-password"
+                    }
                     required
                     value={formData.password}
                     onChange={handleChange}
