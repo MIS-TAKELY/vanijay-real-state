@@ -14,6 +14,10 @@
     "./map": {
       "types": "./src/components/MapPicker.tsx",
       "default": "./src/components/MapPicker.tsx"
+    },
+    "./gmap": {
+      "types": "./src/components/GoogleMapPicker.tsx",
+      "default": "./src/components/GoogleMapPicker.tsx"
     }
   },
   "scripts": {

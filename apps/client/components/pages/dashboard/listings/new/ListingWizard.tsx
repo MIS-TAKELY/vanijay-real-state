@@ -5,7 +5,7 @@ import { ApiError } from "lib/api/core/client";
 import { createProperty } from "lib/api/services/properties";
 import type { ApiProperty } from "lib/api/services/properties/types";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { WIZARD_STEPS } from "./constants";
 import {
   buildCreatePayload,
@@ -32,7 +32,7 @@ export function ListingWizard() {
 
   const isLast = step === WIZARD_STEPS.length - 1;
 
-  const update = (patch: Partial<ListingDraft>) => {
+  const update = useCallback((patch: Partial<ListingDraft>) => {
     setDraft((prev) => ({ ...prev, ...patch }));
     setErrors((prev) => {
       const next = { ...prev };
@@ -41,7 +41,7 @@ export function ListingWizard() {
       }
       return next;
     });
-  };
+  }, []);
 
   const goNext = () => {
     const stepErrors = validateStep(step, draft);

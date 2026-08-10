@@ -261,3 +261,10 @@ export type {
   ReverseGeocodeOptions,
   ReverseGeocodeResult,
 } from "./components/reverseGeocode";
+
+// Google Geocoding reverse-geocoder — also a pure fetch, same shape.
+export { reverseGeocodeGoogle } from "./components/googleReverseGeocode";
+export type { GoogleReverseGeocodeOptions } from "./components/googleReverseGeocode";
+
+// GoogleMapPicker (browser-only) is exported from the `@repo/ui/gmap`
+// subpath to keep Google Maps out of the SSR main barrel.

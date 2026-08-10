@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@repo/db';
 import { PropertiesService } from '../properties/properties.service';
 
@@ -21,7 +21,7 @@ export interface TrendingPropertiesResponse {
 
 @Injectable()
 export class AnalyticsService {
-    constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaClient) {}
 
   async getTrendingProperties(
     limit: number = 10,
@@ -92,9 +92,16 @@ export class AnalyticsService {
 
   async trackView(
     propertyId: string,
-    data: { userId?: string; ipHash?: string; userAgent?: string; referrer?: string },
+    data: {
+      userId?: string;
+      ipHash?: string;
+      userAgent?: string;
+      referrer?: string;
+    },
   ): Promise<void> {
-    await this.prisma.propertyViewEvent.create({ data: { propertyId, ...data } });
+    await this.prisma.propertyViewEvent.create({
+      data: { propertyId, ...data },
+    });
     await this.incrementAnalytics(propertyId, {
       viewCount: 1,
       viewsLast24h: 1,
@@ -103,13 +110,23 @@ export class AnalyticsService {
     });
   }
 
-  async trackSearch(propertyId: string, data: { userId?: string; searchQuery?: string; filters?: any }): Promise<void> {
-    await this.prisma.propertySearchEvent.create({ data: { propertyId, ...data } });
+  async trackSearch(
+    propertyId: string,
+    data: { userId?: string; searchQuery?: string; filters?: any },
+  ): Promise<void> {
+    await this.prisma.propertySearchEvent.create({
+      data: { propertyId, ...data },
+    });
     await this.incrementAnalytics(propertyId, { searchCount: 1 });
   }
 
-  async trackShare(propertyId: string, data: { userId?: string; platform: string }): Promise<void> {
-    await this.prisma.propertyShareEvent.create({ data: { propertyId, ...data } });
+  async trackShare(
+    propertyId: string,
+    data: { userId?: string; platform: string },
+  ): Promise<void> {
+    await this.prisma.propertyShareEvent.create({
+      data: { propertyId, ...data },
+    });
     await this.incrementAnalytics(propertyId, { shareCount: 1 });
   }
 
@@ -145,9 +162,16 @@ export class AnalyticsService {
 
   async trackPhoneClick(
     propertyId: string,
-    data: { userId?: string; ipHash?: string; userAgent?: string; referrer?: string },
+    data: {
+      userId?: string;
+      ipHash?: string;
+      userAgent?: string;
+      referrer?: string;
+    },
   ): Promise<void> {
-    await this.prisma.propertyPhoneClickEvent.create({ data: { propertyId, ...data } });
+    await this.prisma.propertyPhoneClickEvent.create({
+      data: { propertyId, ...data },
+    });
     await this.incrementAnalytics(propertyId, {
       phoneClickCount: 1,
       phoneClicksLast24h: 1,
@@ -186,8 +210,16 @@ export class AnalyticsService {
     if (!property) return null;
 
     const contact = property.agent?.phoneNumber
-      ? { name: property.agent.name, phoneNumber: property.agent.phoneNumber, via: 'AGENT' as const }
-      : { name: property.owner?.name ?? null, phoneNumber: property.owner?.phoneNumber ?? null, via: 'OWNER' as const };
+      ? {
+          name: property.agent.name,
+          phoneNumber: property.agent.phoneNumber,
+          via: 'AGENT' as const,
+        }
+      : {
+          name: property.owner?.name ?? null,
+          phoneNumber: property.owner?.phoneNumber ?? null,
+          via: 'OWNER' as const,
+        };
 
     return contact.phoneNumber ? contact : null;
   }
@@ -390,18 +422,42 @@ export class AnalyticsService {
     for (const property of properties) {
       const [v24, v7, v30, f24, f7, f30, c24, c7, c30, p24, p7, p30] =
         await Promise.all([
-          this.prisma.propertyViewEvent.count({ where: { propertyId: property.id, viewedAt: { gte: day24h } } }),
-          this.prisma.propertyViewEvent.count({ where: { propertyId: property.id, viewedAt: { gte: day7 } } }),
-          this.prisma.propertyViewEvent.count({ where: { propertyId: property.id, viewedAt: { gte: day30 } } }),
-          this.prisma.favorite.count({ where: { propertyId: property.id, createdAt: { gte: day24h } } }),
-          this.prisma.favorite.count({ where: { propertyId: property.id, createdAt: { gte: day7 } } }),
-          this.prisma.favorite.count({ where: { propertyId: property.id, createdAt: { gte: day30 } } }),
-          this.prisma.cartItem.count({ where: { propertyId: property.id, createdAt: { gte: day24h } } }),
-          this.prisma.cartItem.count({ where: { propertyId: property.id, createdAt: { gte: day7 } } }),
-          this.prisma.cartItem.count({ where: { propertyId: property.id, createdAt: { gte: day30 } } }),
-          this.prisma.propertyPhoneClickEvent.count({ where: { propertyId: property.id, clickedAt: { gte: day24h } } }),
-          this.prisma.propertyPhoneClickEvent.count({ where: { propertyId: property.id, clickedAt: { gte: day7 } } }),
-          this.prisma.propertyPhoneClickEvent.count({ where: { propertyId: property.id, clickedAt: { gte: day30 } } }),
+          this.prisma.propertyViewEvent.count({
+            where: { propertyId: property.id, viewedAt: { gte: day24h } },
+          }),
+          this.prisma.propertyViewEvent.count({
+            where: { propertyId: property.id, viewedAt: { gte: day7 } },
+          }),
+          this.prisma.propertyViewEvent.count({
+            where: { propertyId: property.id, viewedAt: { gte: day30 } },
+          }),
+          this.prisma.favorite.count({
+            where: { propertyId: property.id, createdAt: { gte: day24h } },
+          }),
+          this.prisma.favorite.count({
+            where: { propertyId: property.id, createdAt: { gte: day7 } },
+          }),
+          this.prisma.favorite.count({
+            where: { propertyId: property.id, createdAt: { gte: day30 } },
+          }),
+          this.prisma.cartItem.count({
+            where: { propertyId: property.id, createdAt: { gte: day24h } },
+          }),
+          this.prisma.cartItem.count({
+            where: { propertyId: property.id, createdAt: { gte: day7 } },
+          }),
+          this.prisma.cartItem.count({
+            where: { propertyId: property.id, createdAt: { gte: day30 } },
+          }),
+          this.prisma.propertyPhoneClickEvent.count({
+            where: { propertyId: property.id, clickedAt: { gte: day24h } },
+          }),
+          this.prisma.propertyPhoneClickEvent.count({
+            where: { propertyId: property.id, clickedAt: { gte: day7 } },
+          }),
+          this.prisma.propertyPhoneClickEvent.count({
+            where: { propertyId: property.id, clickedAt: { gte: day30 } },
+          }),
         ]);
 
       const viewScore = v24 * 1.0 + v7 * 0.5 + v30 * 0.1;
@@ -413,24 +469,46 @@ export class AnalyticsService {
       const searchScore = (a?.searchCount || 0) * 0.5;
       const shareScore = (a?.shareCount || 0) * 3;
       const score =
-        viewScore + favScore + cartScore + phoneClickScore + inquiryScore + searchScore + shareScore;
+        viewScore +
+        favScore +
+        cartScore +
+        phoneClickScore +
+        inquiryScore +
+        searchScore +
+        shareScore;
 
       await this.prisma.propertyAnalytics.upsert({
         where: { propertyId: property.id },
         create: {
           propertyId: property.id,
-          viewsLast24h: v24, viewsLast7d: v7, viewsLast30d: v30,
-          favoritesLast24h: f24, favoritesLast7d: f7, favoritesLast30d: f30,
-          cartAddsLast24h: c24, cartAddsLast7d: c7, cartAddsLast30d: c30,
-          phoneClicksLast24h: p24, phoneClicksLast7d: p7, phoneClicksLast30d: p30,
+          viewsLast24h: v24,
+          viewsLast7d: v7,
+          viewsLast30d: v30,
+          favoritesLast24h: f24,
+          favoritesLast7d: f7,
+          favoritesLast30d: f30,
+          cartAddsLast24h: c24,
+          cartAddsLast7d: c7,
+          cartAddsLast30d: c30,
+          phoneClicksLast24h: p24,
+          phoneClicksLast7d: p7,
+          phoneClicksLast30d: p30,
           trendingScore: score,
           lastCalculatedAt: now,
         },
         update: {
-          viewsLast24h: v24, viewsLast7d: v7, viewsLast30d: v30,
-          favoritesLast24h: f24, favoritesLast7d: f7, favoritesLast30d: f30,
-          cartAddsLast24h: c24, cartAddsLast7d: c7, cartAddsLast30d: c30,
-          phoneClicksLast24h: p24, phoneClicksLast7d: p7, phoneClicksLast30d: p30,
+          viewsLast24h: v24,
+          viewsLast7d: v7,
+          viewsLast30d: v30,
+          favoritesLast24h: f24,
+          favoritesLast7d: f7,
+          favoritesLast30d: f30,
+          cartAddsLast24h: c24,
+          cartAddsLast7d: c7,
+          cartAddsLast30d: c30,
+          phoneClicksLast24h: p24,
+          phoneClicksLast7d: p7,
+          phoneClicksLast30d: p30,
           trendingScore: score,
           lastCalculatedAt: now,
         },
