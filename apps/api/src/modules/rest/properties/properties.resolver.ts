@@ -15,10 +15,6 @@ import { PropertiesService } from './properties.service';
 export class PropertiesResolver {
   constructor(private readonly properties: PropertiesService) {}
 
-  // Feed + single-property reads are PUBLIC — they mirror the unguarded REST
-  // `GET /api/v1/properties/feed` and `GET /api/v1/properties/:id`, so the
-  // anonymous `/listings` page can render through GraphQL too. Only writes are
-  // auth + role gated (see the mutations below).
   @Query(() => PropertyPage, { name: 'propertiesFeed' })
   findFeed(
     @Args('first', { type: () => Int, nullable: true, defaultValue: 20 })
@@ -33,8 +29,6 @@ export class PropertiesResolver {
     return this.properties.findOne(idOrSlug);
   }
 
-  // Authenticated, role-gated: returns the caller's own properties across all
-  // statuses (drafts, under-verification, live, …) for the "My Listings" page.
   @Query(() => [Property], { name: 'myProperties' })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'ADMIN')

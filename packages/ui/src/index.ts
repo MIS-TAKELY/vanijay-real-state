@@ -189,6 +189,10 @@ export { Slider } from "./components/ui/slider";
 
 export { Toaster } from "./components/ui/sonner";
 
+// Re-exported so apps can fire toasts without depending on `sonner` directly
+// (the package lives in @repo/ui's dependency tree).
+export { toast } from "sonner";
+
 export { Switch } from "./components/ui/switch";
 
 export {

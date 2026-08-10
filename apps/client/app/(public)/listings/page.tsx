@@ -1,8 +1,10 @@
 import { PropertyFeed } from "components/pages/listings/PropertyFeed";
 import { ResultsHeader } from "components/pages/listings/ResultsHeader";
 import { SearchFilters } from "components/pages/listings/SearchFilters";
+import { ListingsMarketplace } from "components/pages/listings/ListingsMarketplace";
 import { PAGE_SIZE, fetchFeedPageGraphql, type FeedPage } from "lib/api";
 import type { Metadata } from "next";
+import { CallToActionBanner, CategoryStrip, FeaturedListings, HeroBannerCarousel, RecentlyViewed } from "components/pages/home";
 
 const PAGE_URL = "https://lekhaprati.com/listings";
 
@@ -69,9 +71,14 @@ export default async function DiscoverPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <main>
+
+        <HeroBannerCarousel />
+
+         <CategoryStrip />
+        
         <SearchFilters />
 
-        <ResultsHeader />
+        {/* <ResultsHeader /> */}
 
         <PropertyFeed
           initialItems={initial.items}
@@ -79,7 +86,13 @@ export default async function DiscoverPage() {
           initialHasMore={initial.hasMore}
           initialError={initialError}
         />
+
+        <ListingsMarketplace />
+        <RecentlyViewed />
+         <FeaturedListings />
+         <CallToActionBanner />
       </main>
     </>
   );
 }
+

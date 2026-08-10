@@ -178,10 +178,15 @@ model User {
     documents           UserDocument[]
     savedSearches       SavedSearch[]
     favorites           Favorite[]
+    cartItems           CartItem[]
     notifications       Notification[]
     questions           Question[]             @relation("QuestionAuthor")
     answers             Answer[]               @relation("AnswerAuthor")
     officerAppointments OfficerAppointment[]   @relation("RequestingUser")
+    viewEvents          PropertyViewEvent[]
+    searchEvents        PropertySearchEvent[]
+    shareEvents         PropertyShareEvent[]
+    phoneClickEvents    PropertyPhoneClickEvent[]
 
     @@index([phoneNumber])
     @@index([role])
@@ -338,6 +343,7 @@ model Property {
     roadType          RoadType?
     facing            FacingDirection?
     isCornerPlot      Boolean          @default(false)
+    isFeatured        Boolean          @default(false)
 
     // Ownership & Agency Relationships
     ownerId String
@@ -357,6 +363,13 @@ model Property {
     saleRecord          PropertySaleRecord?
     officerAppointments OfficerAppointment[]
     questions           Question[]             @relation("PropertyQuestions")
+    favorites           Favorite[]
+    cartItems           CartItem[]
+    analytics           PropertyAnalytics?
+    viewEvents          PropertyViewEvent[]
+    searchEvents        PropertySearchEvent[]
+    shareEvents         PropertyShareEvent[]
+    phoneClickEvents    PropertyPhoneClickEvent[]
 
     createdAt   DateTime  @default(now())
     updatedAt   DateTime  @updatedAt
@@ -532,13 +545,30 @@ model SavedSearch {
 }
 
 model Favorite {
-    id         String @id @default(cuid())
+    id         String   @id @default(cuid())
     userId     String
-    user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
     propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
 
     notifyOnPriceChange Boolean  @default(true)
     createdAt           DateTime @default(now())
+
+    @@unique([userId, propertyId])
+    @@index([propertyId])
+}
+
+// A saved listing in the buyer's "cart" (shortlist) — one row per user/property.
+model CartItem {
+    id         String   @id @default(cuid())
+    userId     String
+    user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    quantity  Int      @default(1)
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
 
     @@unique([userId, propertyId])
     @@index([propertyId])
@@ -673,4 +703,109 @@ model Answer {
     createdAt DateTime @default(now())
 
     @@index([questionId])
+}
+
+// ==========================================
+// PROPERTY ANALYTICS & TRENDING
+// ==========================================
+
+model PropertyAnalytics {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+    // Engagement metrics
+    viewCount     Int @default(0)
+    favoriteCount Int @default(0)
+    cartAddCount  Int @default(0)
+    inquiryCount  Int @default(0)
+    searchCount   Int @default(0)
+    shareCount    Int @default(0)
+    phoneClickCount Int @default(0)
+
+    // Calculated trending score (updated periodically)
+    trendingScore Float @default(0)
+
+    // Time-based metrics for weighted scoring
+    viewsLast24h Int @default(0)
+    viewsLast7d  Int @default(0)
+    viewsLast30d Int @default(0)
+
+    favoritesLast24h Int @default(0)
+    favoritesLast7d  Int @default(0)
+    favoritesLast30d Int @default(0)
+
+    cartAddsLast24h Int @default(0)
+    cartAddsLast7d  Int @default(0)
+    cartAddsLast30d Int @default(0)
+
+    phoneClicksLast24h Int @default(0)
+    phoneClicksLast7d  Int @default(0)
+    phoneClicksLast30d Int @default(0)
+
+    lastCalculatedAt DateTime @default(now())
+    createdAt        DateTime @default(now())
+    updatedAt        DateTime @updatedAt
+
+    @@unique([propertyId])
+    @@index([trendingScore(sort: Desc)])
+    @@index([propertyId, updatedAt])
+}
+
+// Tracking individual events for detailed analytics
+model PropertyViewEvent {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+    userId     String?
+    user       User?    @relation(fields: [userId], references: [id])
+    ipHash     String?
+    userAgent  String?
+    referrer   String?
+    viewedAt   DateTime @default(now())
+
+    @@index([propertyId, viewedAt])
+    @@index([userId, viewedAt])
+}
+
+model PropertySearchEvent {
+    id          String    @id @default(cuid())
+    propertyId  String?
+    property    Property? @relation(fields: [propertyId], references: [id])
+    userId      String?
+    user        User?     @relation(fields: [userId], references: [id])
+    searchQuery String?
+    filters     Json?
+    searchedAt  DateTime  @default(now())
+
+    @@index([propertyId, searchedAt])
+    @@index([userId, searchedAt])
+}
+
+model PropertyShareEvent {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+    userId     String?
+    user       User?    @relation(fields: [userId], references: [id])
+    platform   String // "facebook", "twitter", "whatsapp", "copy_link", "email"
+    sharedAt   DateTime @default(now())
+
+    @@index([propertyId, sharedAt])
+    @@index([userId, sharedAt])
+}
+
+model PropertyPhoneClickEvent {
+    id         String   @id @default(cuid())
+    propertyId String
+    property   Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+    userId     String?
+    user       User?    @relation(fields: [userId], references: [id])
+    ipHash     String?
+    userAgent  String?
+    referrer   String?
+    clickedAt  DateTime @default(now())
+
+    @@index([propertyId, clickedAt])
+    @@index([userId, clickedAt])
 }

@@ -65,7 +65,7 @@ export class PropertiesService {
     };
   }
 
-  async findOne(idOrSlug: string) {
+  async findOne(idOrSlug: string): Promise<Property> {
     const row = await this.prisma.property.findFirst({
       where: {
         status: 'LIVE',
@@ -77,10 +77,15 @@ export class PropertiesService {
     return PropertiesService.mapToResponse(row);
   }
 
-  /**
-   * A user's own properties across ALL statuses (drafts, under-verification,
-   * live, sold, archived, rejected) — powers the "My Listings" dashboard.
-   */
+  async findByIds(ids: string[]): Promise<Property[]> {
+    if (ids.length === 0) return [];
+    const rows = await this.prisma.property.findMany({
+      where: { id: { in: ids } },
+      include: PROPERTY_SUMMARY_INCLUDE,
+    });
+    return rows.map(PropertiesService.mapToResponse);
+  }
+
   async findByOwner(ownerId: string): Promise<Property[]> {
     const rows = await this.prisma.property.findMany({
       where: { ownerId },
@@ -182,7 +187,7 @@ export class PropertiesService {
     return typeof value === 'number' ? value : Number(value.toString());
   }
 
-  private static mapToResponse(row: any): Property {
+  static mapToResponse(row: any): Property {
     return {
       id: row.id,
       listingCode: row.listingCode,
@@ -198,6 +203,7 @@ export class PropertiesService {
       roadType: row.roadType ?? undefined,
       facing: row.facing ?? undefined,
       isCornerPlot: row.isCornerPlot,
+      isFeatured: row.isFeatured,
       ownerId: row.ownerId,
       agentId: row.agentId ?? undefined,
       location: row.location ?? undefined,

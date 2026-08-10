@@ -46,6 +46,7 @@ const PROPERTY_FRAGMENT = `
     roadType
     facing
     isCornerPlot
+    isFeatured
     ownerId
     agentId
     createdAt

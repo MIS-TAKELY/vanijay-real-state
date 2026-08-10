@@ -43,6 +43,7 @@ export interface ApiProperty {
   roadType?: string | null;
   facing?: string | null;
   isCornerPlot: boolean;
+  isFeatured: boolean;
   ownerId: string;
   agentId?: string | null;
   location?: ApiPropertyLocation | null;
@@ -107,7 +108,10 @@ export interface CreatePropertyPayload {
 }
 
 export interface CardProperty {
+  /** Slug — used for the detail-page URL. */
   id: string;
+  /** Real DB id — required for favorites/cart API calls. */
+  propertyId?: string;
   listingCode?: string;
   title: string;
   price: string;
@@ -206,6 +210,7 @@ export function toCardProps(p: ApiProperty): CardProperty {
 
   return {
     id: p.slug,
+    propertyId: p.id,
     listingCode: p.listingCode,
     title: p.title,
     price: formatNPR(p.askingPrice),

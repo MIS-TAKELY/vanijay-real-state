@@ -1,9 +1,13 @@
 import { Button, Icon } from "@repo/ui";
 import Link from "next/link";
+import { AddToCartButton } from "./AddToCartButton";
+import { SaveToFavoritesButton } from "./SaveToFavoritesButton";
 
 interface PropertyCardProps {
   property: {
     id: string;
+    /** Real DB id — used by favorites/cart actions. */
+    propertyId?: string;
     listingCode?: string;
     title: string;
     price: string;
@@ -16,10 +20,11 @@ interface PropertyCardProps {
 
 export function PropertyCard({ property }: PropertyCardProps) {
   return (
-    <article className="group flex flex-col overflow-hidden rounded-2xl border border-outline-variant bg-surface transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg">
+    <article className="group flex flex-col overflow-hidden rounded-xl border border-outline-variant bg-surface transition-all duration-200 hover:-translate-y-0.5 hover:border-primary/30 hover:shadow-md">
+      {/* Image Section */}
       <Link
-        href={`/listings/${property.id}`}
-        className="relative h-48 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+        href={`/listing/${property.id}`}
+        className="relative h-44 overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
         aria-label={`${property.title} — view details`}
       >
         {property.imageUrl ? (
@@ -34,60 +39,71 @@ export function PropertyCard({ property }: PropertyCardProps) {
             aria-hidden
           />
         )}
-        <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-surface/95 px-2 py-1 text-[10px] font-bold uppercase tracking-[0.6px] text-tertiary shadow-sm">
-          <Icon name="verified" filled className="text-[12px]" />
-          Verified Archive
+        
+        <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded-md bg-surface/90 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-tertiary">
+          <Icon name="verified" filled className="text-[11px]" />
+          Verified
         </span>
       </Link>
 
       {/* Body */}
-      <div className="flex flex-1 flex-col p-md">
-        <h3 className="mb-xs font-headline-md text-lg font-medium leading-6 text-on-surface">
+      <div className="flex flex-1 flex-col p-4">
+        {/* Location */}
+        <div className="mb-2 flex items-center gap-1 text-[11px] font-medium text-secondary">
+          <Icon name="location_on" className="text-[13px]" />
+          <span className="truncate">{property.location}</span>
+        </div>
+
+        {/* Title */}
+        <h3 className="mb-2 font-headline-md text-base font-semibold leading-snug text-on-surface line-clamp-2">
           <Link
-            href={`/listings/${property.id}`}
+            href={`/listing/${property.id}`}
             className="transition-colors hover:text-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 rounded"
           >
             {property.title}
           </Link>
         </h3>
 
-        <span className="mb-sm inline-block w-fit rounded bg-surface-container px-2 py-0.5 text-[11px] font-medium text-on-surface-variant">
-          ID: {property.listingCode ?? property.id}
-        </span>
-
-        <p className="mb-0.5 mono-stat text-lg font-semibold text-primary">
+        {/* Price */}
+        <p className="mb-3 mono-stat text-xl font-bold text-primary tracking-tight">
           {property.price}
         </p>
-        <p className="mb-md text-sm text-on-surface-variant">
-          {property.location}
-        </p>
 
-        <div className="mb-md space-y-1 border-t border-outline-variant pt-sm text-sm text-on-surface-variant">
-          {property.meta.map((m) => (
-            <p key={m} className="flex items-center gap-1.5">
-              <span className="text-on-surface-variant">&middot;</span> {m}
-            </p>
-          ))}
-        </div>
+        {/* Meta Information */}
+        {property.meta.length > 0 && (
+          <div className="mb-3 space-y-1 text-xs text-on-surface-variant">
+            {property.meta.slice(0, 3).map((m) => (
+              <p key={m} className="flex items-start gap-1.5">
+                <span className="mt-1.5 h-1 w-1 shrink-0 rounded-full bg-on-surface-variant/40" />
+                <span className="line-clamp-1">{m}</span>
+              </p>
+            ))}
+          </div>
+        )}
 
-        <div className="mt-auto flex gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            className="flex-1 rounded-md border-outline-variant py-2.5 text-label-sm font-semibold text-on-surface hover:border-primary hover:text-primary"
-          >
-            <Icon name="add_shopping_cart" className="text-data-table" />
-            Add to Cart
-          </Button>
-          <Button
-            asChild
-            className="flex-1 rounded-md py-2.5 text-label-sm font-semibold"
-          >
-            <Link href={`/listings/${property.id}`}>
-              View Details
-              <Icon name="arrow_forward" className="text-data-table" />
-            </Link>
-          </Button>
+        {/* Actions */}
+        <div className="mt-auto flex flex-col gap-2">
+          <div className="flex gap-2">
+            <AddToCartButton
+              propertyId={property.propertyId ?? property.id}
+              title={property.title}
+              className="flex-1 rounded-md border-outline-variant py-2 text-label-sm font-semibold text-on-surface hover:border-primary hover:text-primary"
+            />
+            <Button
+              asChild
+              className="flex-1 rounded-md bg-primary py-2 text-label-sm font-semibold text-on-primary hover:bg-primary/90"
+            >
+              <Link href={`/listing/${property.id}`}>
+                View Details
+                <Icon name="arrow_forward" className="text-on-primary/80" />
+              </Link>
+            </Button>
+          </div>
+          <SaveToFavoritesButton
+            propertyId={property.propertyId ?? property.id}
+            variant="ghost"
+            className="w-full rounded-md py-1.5 text-label-sm font-medium text-on-surface-variant hover:text-on-surface"
+          />
         </div>
       </div>
     </article>

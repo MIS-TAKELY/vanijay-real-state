@@ -50,6 +50,11 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
         icon: "bookmark",
       },
       { label: "Favorites", href: "/favorites", icon: "favorite" },
+      {
+        label: "Saved Cart",
+        href: "/cart",
+        icon: "add_shopping_cart",
+      },
     ],
   },
   {

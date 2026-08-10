@@ -1,4 +1,6 @@
 import { Badge, Button, Icon } from "@repo/ui";
+import { AddToCartButton } from "components/common/AddToCartButton";
+import { SaveToFavoritesButton } from "components/common/SaveToFavoritesButton";
 import { ApiError } from "lib/api/core/client";
 import { fetchPropertyByGraphql } from "lib/api/services/properties";
 import {
@@ -256,16 +258,17 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 Request Site Visit
               </Link>
             </Button>
-            <Button
-              asChild
+            <AddToCartButton
+              propertyId={property.id}
+              title={property.title}
+              variant="outline"
+              className="mt-2 w-full rounded-md border-outline-variant font-semibold"
+            />
+            <SaveToFavoritesButton
+              propertyId={property.id}
               variant="ghost"
               className="mt-2 w-full rounded-md font-semibold"
-            >
-              <Link href="/?auth=signin">
-                <Icon name="favorite" className="text-[18px]" />
-                Save to Favorites
-              </Link>
-            </Button>
+            />
 
             {!verified && (
               <p className="mt-4 rounded-md bg-surface-container p-3 text-xs leading-5 text-on-surface-variant">

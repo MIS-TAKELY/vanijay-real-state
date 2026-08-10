@@ -559,6 +559,123 @@ export const milestones = [
   },
 ];
 
+
+
+export const heroSlides = [
+  {
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&h=900&fit=crop",
+    headline: "Find Your Dream Property",
+    subheadline: "Explore thousands of verified listings across the country. From luxury villas to cozy apartments, your perfect home awaits.",
+    ctaPrimary: "Explore Properties",
+    ctaSecondary: "List Your Property",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&h=900&fit=crop",
+    headline: "Luxury Living Redefined",
+    subheadline: "Discover premium properties in the most sought-after neighborhoods. Verified listings, transparent pricing, seamless experience.",
+    ctaPrimary: "Explore Properties",
+    ctaSecondary: "List Your Property",
+  },
+  {
+    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1600&h=900&fit=crop",
+    headline: "Smart Investments Start Here",
+    subheadline: "Access detailed market insights, virtual tours, and direct owner contacts. Make informed decisions with confidence.",
+    ctaPrimary: "Explore Properties",
+    ctaSecondary: "List Your Property",
+  },
+];
+
+export const categories = [
+  { name: "Apartments", image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=200&fit=crop" },
+  { name: "Villas", image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=200&h=200&fit=crop" },
+  { name: "Land", image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop" },
+  { name: "Commercial", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=200&fit=crop" },
+  { name: "Rentals", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop" },
+  { name: "Farm Houses", image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=200&h=200&fit=crop" },
+  { name: "Plots", image: "https://images.unsplash.com/photo-1449156493391-d2cfa28e468b?w=200&h=200&fit=crop" },
+  { name: "Offices", image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=200&h=200&fit=crop" },
+];
+
+
+export const trustValues = [
+  { icon: "verified", title: "Verified Listings", description: "Every property is manually verified for authenticity" },
+  { icon: "user", title: "Direct Owner Contact", description: "Connect directly with property owners, no middlemen" },
+  { icon: "video", title: "Virtual Tours Available", description: "Explore properties from the comfort of your home" },
+  { icon: "shield", title: "Secure Transactions", description: "End-to-end encrypted and legally compliant process" },
+];
+
+export interface ListingProperty {
+  id: string;
+  title: string;
+  location: string;
+  price: string;
+  image: string;
+  listingType: "For Sale" | "For Rent";
+  beds?: number;
+  baths?: number;
+  sqft?: string;
+  alt: string;
+  listedDays?: string;
+  highDemand?: boolean;
+}
+
+export const similarProperties: ListingProperty[] = [
+  { id: "sim-1", title: "Modern 3BHK Apartment", location: "Bandra West, Mumbai", price: "₹ 2.5 Cr", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=450&fit=crop", listingType: "For Sale", beds: 3, baths: 2, sqft: "1,800 sqft", alt: "Modern apartment in Bandra" },
+  { id: "sim-2", title: "Luxury Villa with Pool", location: "Juhu, Mumbai", price: "₹ 8.2 Cr", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=450&fit=crop", listingType: "For Sale", beds: 5, baths: 4, sqft: "4,500 sqft", alt: "Luxury villa with pool" },
+  { id: "sim-3", title: "Spacious 2BHK for Rent", location: "Andheri East, Mumbai", price: "₹ 45,000/mo", image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=450&fit=crop", listingType: "For Rent", beds: 2, baths: 2, sqft: "1,100 sqft", alt: "2BHK apartment in Andheri" },
+  { id: "sim-4", title: "Penthouse with City View", location: "Worli, Mumbai", price: "₹ 5.1 Cr", image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=450&fit=crop", listingType: "For Sale", beds: 4, baths: 3, sqft: "3,200 sqft", alt: "Penthouse in Worli" },
+  { id: "sim-5", title: "Cozy Studio Apartment", location: "Powai, Mumbai", price: "₹ 28,000/mo", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=450&fit=crop", listingType: "For Rent", beds: 1, baths: 1, sqft: "650 sqft", alt: "Studio apartment in Powai" },
+  { id: "sim-6", title: "Premium Office Space", location: "BKC, Mumbai", price: "₹ 1.8 Cr", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=450&fit=crop", listingType: "For Sale", beds: 0, baths: 2, sqft: "2,400 sqft", alt: "Office space in BKC" },
+];
+
+export const trendingProperties: ListingProperty[] = [
+  { id: "trend-1", title: "Waterfront Luxury Condo", location: "Marine Drive, Mumbai", price: "₹ 4.7 Cr", image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&h=450&fit=crop", listingType: "For Sale", beds: 3, baths: 3, sqft: "2,600 sqft", alt: "Waterfront condo", listedDays: "Listed 2 days ago", highDemand: true },
+  { id: "trend-2", title: "Gated Community Villa", location: "Thane West, Mumbai", price: "₹ 3.9 Cr", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&h=450&fit=crop", listingType: "For Sale", beds: 4, baths: 3, sqft: "3,100 sqft", alt: "Gated community villa", listedDays: "Listed 5 days ago", highDemand: true },
+  { id: "trend-3", title: "Commercial Shop Space", location: "Dadar East, Mumbai", price: "₹ 95 Lakh", image: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=600&h=450&fit=crop", listingType: "For Rent", beds: 0, baths: 1, sqft: "800 sqft", alt: "Commercial shop space", listedDays: "Listed 1 day ago", highDemand: true },
+  { id: "trend-4", title: "Hillside Bungalow", location: "Malabar Hill, Mumbai", price: "₹ 12 Cr", image: "https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=600&h=450&fit=crop", listingType: "For Sale", beds: 5, baths: 4, sqft: "5,500 sqft", alt: "Hillside bungalow", listedDays: "Listed 3 days ago", highDemand: true },
+  { id: "trend-5", title: "Fully Furnished 1BHK", location: "Ghatkopar West, Mumbai", price: "₹ 32,000/mo", image: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=600&h=450&fit=crop", listingType: "For Rent", beds: 1, baths: 1, sqft: "750 sqft", alt: "Furnished 1BHK", listedDays: "Listed 6 hours ago", highDemand: true },
+];
+
+export interface RecentlyViewedItem {
+  id: string;
+  title: string;
+  location: string;
+  price: string;
+  image: string;
+  alt: string;
+}
+
+export const recentlyViewed: RecentlyViewedItem[] = [
+  { id: "rec-1", title: "Splendid 3BHK in Lokhandwala", location: "Andheri West, Mumbai", price: "₹ 2.1 Cr", image: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=400&h=250&fit=crop", alt: "3BHK in Lokhandwala" },
+  { id: "rec-2", title: "Premium Plot in Kharghar", location: "Navi Mumbai", price: "₹ 85 Lakh", image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=400&h=250&fit=crop", alt: "Plot in Kharghar" },
+  { id: "rec-3", title: "Sea-Facing Apartment", location: "Juhu, Mumbai", price: "₹ 4.2 Cr", image: "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=400&h=250&fit=crop", alt: "Sea-facing apartment" },
+  { id: "rec-4", title: "Independent House in Virar", location: "Virar West, Mumbai", price: "₹ 72 Lakh", image: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=400&h=250&fit=crop", alt: "Independent house" },
+  { id: "rec-5", title: "Retail Space in Inorbit Mall", location: "Malad West, Mumbai", price: "₹ 1.2 Cr", image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400&h=250&fit=crop", alt: "Retail space in Malad" },
+  { id: "rec-6", title: "Chawl Renovation Ready Unit", location: "Dadar West, Mumbai", price: "₹ 48 Lakh", image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=400&h=250&fit=crop", alt: "Renovation ready unit" },
+];
+
+export interface FeaturedListing {
+  id: string;
+  title: string;
+  location: string;
+  description: string;
+  price: string;
+  image: string;
+  alt: string;
+  beds?: number;
+  baths?: number;
+  sqft?: string;
+  agentName: string;
+  agentAvatar: string;
+}
+
+export const featuredListings: FeaturedListing[] = [
+  { id: "feat-1", title: "Grand Presidential Suite", location: "Altamount Road, Mumbai", description: "A rare opportunity to own a piece of Mumbai's most prestigious address. This meticulously designed residence features Italian marble flooring, a private elevator, panoramic city views, and a rooftop infinity pool. Every detail speaks luxury.", price: "₹ 18.5 Cr", image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop", alt: "Presidential suite interior", beds: 5, baths: 6, sqft: "6,200 sqft", agentName: "Priya Kapoor", agentAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" },
+  { id: "feat-2", title: "Heritage Bungalow by the Sea", location: "Juhu Tara, Mumbai", description: "An iconic heritage bungalow blending Art Deco charm with contemporary luxury. Set on a sprawling plot with a private beach access, landscaped gardens, and a state-of-the-art home theater. Perfect for collectors and connoisseurs.", price: "₹ 22 Cr", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop", alt: "Heritage bungalow exterior", beds: 6, baths: 5, sqft: "7,800 sqft", agentName: "Rohan Mehta", agentAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" },
+  { id: "feat-3", title: "Sky Villa in Lower Parel", location: "Prestige Ozone, Mumbai", description: "Perched above the city skyline, this sky villa redefines urban living with its double-height living room, private terrace garden, and wraparound views of the Arabian Sea. Smart-home automation throughout.", price: "₹ 9.8 Cr", image: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&h=600&fit=crop", alt: "Sky villa living room", beds: 4, baths: 4, sqft: "4,100 sqft", agentName: "Ananya Iyer", agentAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face" },
+];
+
+
 export const about_stats = [
   { value: "74", label: "Districts Indexed" },
   { value: "12,000+", label: "Verified Listings" },

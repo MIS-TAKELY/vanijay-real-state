@@ -3,14 +3,15 @@ import {
   ActivityTicker,
   AskArchive,
   BrowseByIntent,
+  FeaturedListings,
   Hero,
   NRNConcierge,
   PropertyCarousel,
+  RecentlyViewed,
+  TrendingProperties,
   TrustStack,
   VerificationSteps,
 } from "../components/pages/home";
-
-// Dynamically import NepalMap with SSR disabled (Leaflet requires browser APIs)
 
 export default function HomePage() {
   return (
@@ -20,6 +21,9 @@ export default function HomePage() {
       <BrowseByIntent />
       <NepalmapWrapper />
       <PropertyCarousel />
+      <TrendingProperties />
+      <FeaturedListings />
+      <RecentlyViewed />
       <VerificationSteps />
       <ActivityTicker />
       <AskArchive />

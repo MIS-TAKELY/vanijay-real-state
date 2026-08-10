@@ -16,6 +16,9 @@ import { PropertiesModule } from './modules/rest/properties/properties.module';
 import { AuthModule } from './modules/rest/auth/auth.module';
 import { SellerModule } from './modules/rest/seller/seller.module';
 import { UploadsModule } from './modules/rest/uploads/uploads.module';
+import { FavoritesModule } from './modules/rest/favorites/favorites.module';
+import { CartModule } from './modules/rest/cart/cart.module';
+import { AnalyticsModule } from './modules/rest/analytics/analytics.module';
 
 @Module({
   imports: [
@@ -44,6 +47,9 @@ import { UploadsModule } from './modules/rest/uploads/uploads.module';
     PropertiesModule,
     SellerModule,
     UploadsModule,
+    FavoritesModule,
+    CartModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

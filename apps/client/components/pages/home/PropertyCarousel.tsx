@@ -1,54 +1,9 @@
-import { Badge, Button, Icon } from "@repo/ui";
+import { Button, Icon } from "@repo/ui";
 import { properties } from "constants/varibles-constants";
 import Link from "next/link";
+import { PropertyHorizontalCard } from "components/common/PropertyHorizontalCard";
 
-interface Property {
-  id: string;
-  location: string;
-  title: string;
-  plotId: string;
-  size: string;
-  price: string;
-  image: string;
-  alt: string;
-}
-
-function PropertyCard({ property }: { property: Property }) {
-  return (
-    <div className="min-w-[320px] max-w-[360px] flex-1 bg-surface border border-outline-variant rounded-2xl overflow-hidden cursor-pointer hover:shadow-xl hover:border-primary/50 transition-[transform,box-shadow,border-color] duration-300 relative hover:-translate-y-1 snap-start property-card">
-      <div className="relative h-48 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          alt={property.alt}
-          className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-          src={property.image}
-        />
-        <div className="absolute top-sm left-sm verification-stamp">
-          Verified
-        </div>
-      </div>
-      <div className="p-md">
-        <h4 className="font-label-sm text-label-sm text-on-surface-variant mb-xs uppercase tracking-wider">
-          {property.location}
-        </h4>
-        <p className="font-body-md font-semibold text-on-surface mb-xs">
-          {property.title}
-        </p>
-        <p className="font-body-md text-on-surface-variant text-sm mb-md mono-stat uppercase text-[11px]">
-          Plot ID: {property.plotId} • {property.size}
-        </p>
-        <div className="pt-md border-t border-outline-variant flex justify-between items-center">
-          <span className="mono-stat text-data-price text-primary tracking-tighter font-bold">
-            {property.price}
-          </span>
-          <Badge variant="secondary">LKP/VER-{property.plotId.slice(-2)}</Badge>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export function PropertyCarousel() {
+function PropertyCarousel() {
   return (
     <section className="py-xl relative z-10 overflow-hidden">
       <div className="max-w-container-max mx-auto px-gutter">
@@ -70,11 +25,7 @@ export function PropertyCarousel() {
               <Icon name="arrow_forward" className="text-data-table" />
             </Link>
             <div className="flex gap-sm">
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="Previous listings"
-              >
+              <Button variant="outline" size="icon" aria-label="Previous listings">
                 <Icon name="chevron_left" />
               </Button>
               <Button variant="outline" size="icon" aria-label="Next listings">
@@ -83,12 +34,28 @@ export function PropertyCarousel() {
             </div>
           </div>
         </div>
-        <div className="flex gap-md overflow-x-auto pb-lg no-scrollbar snap-x">
+        <div className="flex gap-md overflow-x-auto pb-lg pt-2 no-scrollbar snap-x">
           {properties.map((property) => (
-            <PropertyCard key={property.id} property={property} />
+            <PropertyHorizontalCard
+              key={property.id}
+              id={property.id}
+              title={property.title}
+              location={property.location}
+              price={property.price}
+              image={property.image}
+              listingType="For Sale"
+              beds={0}
+              baths={0}
+              sqft={property.size}
+              alt={property.alt}
+              href={`/listing/${property.id}`}
+              badge={`LKP/VER-${property.plotId.slice(-2)}`}
+            />
           ))}
         </div>
       </div>
     </section>
   );
 }
+
+export { PropertyCarousel };

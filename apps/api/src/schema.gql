@@ -47,6 +47,7 @@ type Property {
   roadType: RoadType
   facing: FacingDirection
   isCornerPlot: Boolean!
+  isFeatured: Boolean!
   ownerId: String!
   agentId: String
   location: PropertyLocation
@@ -112,10 +113,62 @@ type PropertyPage {
   hasMore: Boolean!
 }
 
+type TrendingProperty {
+  propertyId: ID!
+  title: String!
+  slug: String!
+  imageUrl: String
+  location: String!
+  askingPrice: Float!
+  trendingScore: Float!
+  viewCount: Int!
+  favoriteCount: Int!
+  cartAddCount: Int!
+}
+
+type TrendingPropertiesResponse {
+  items: [TrendingProperty!]!
+}
+
+type PropertyResponse {
+  id: ID!
+  listingCode: String!
+  slug: String!
+  title: String!
+  description: String
+  propertyType: String!
+  status: String!
+  verificationLevel: String!
+  askingPrice: Float!
+  pricePerAana: Float
+  roadAccessWidthFt: Float
+  roadType: String
+  facing: String
+  isCornerPlot: Boolean!
+  isFeatured: Boolean!
+  ownerId: String!
+  agentId: String
+  location: PropertyLocation
+  landArea: LandAreaDetails
+  media: [PropertyMedia!]!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+}
+
+type PropertyListResponse {
+  items: [PropertyResponse!]!
+  total: Int!
+}
+
 type Query {
   propertiesFeed(first: Int = 20, after: String): PropertyPage!
   property(idOrSlug: ID!): Property!
   myProperties: [Property!]!
+  trendingProperties(limit: Int = 10, period: String = "7d"): TrendingPropertiesResponse!
+  similarProperties(propertyId: ID!, limit: Int = 10): PropertyListResponse!
+  recentlyViewedProperties(limit: Int = 10): PropertyListResponse!
+  featuredProperties(limit: Int = 10): PropertyListResponse!
+  propertyAnalytics(propertyId: ID!): TrendingPropertiesResponse!
 }
 
 type Mutation {
@@ -134,6 +187,7 @@ input CreatePropertyInput {
   roadType: RoadType
   facing: FacingDirection
   isCornerPlot: Boolean
+  isFeatured: Boolean
   agentId: String
   landArea: LandAreaDetailsInput!
   location: PropertyLocationInput!
@@ -195,6 +249,7 @@ input UpdatePropertyInput {
   roadType: RoadType
   facing: FacingDirection
   isCornerPlot: Boolean
+  isFeatured: Boolean
   agentId: String
   landArea: LandAreaDetailsInput
   location: PropertyLocationInput

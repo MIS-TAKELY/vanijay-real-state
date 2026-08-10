@@ -9,12 +9,15 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthModalStore } from "store/auth-modal";
+import { useCartStore } from "store/cart";
 
 export function Navbar() {
   const { data: session, isPending } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
   const { open: openAuth } = useAuthModalStore();
+  const cartCount = useCartStore((state) => state.count);
+  const loadCart = useCartStore((state) => state.load);
 
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
@@ -24,6 +27,11 @@ export function Navbar() {
 
   const user = session?.user;
   const isLoggedIn = !!user;
+
+  // Keep the cart badge in sync with the server whenever auth state settles.
+  useEffect(() => {
+    if (hasLoadedOnce && isLoggedIn) void loadCart();
+  }, [hasLoadedOnce, isLoggedIn, loadCart]);
 
   // Close menus on route change
   useEffect(() => {
@@ -117,6 +125,24 @@ export function Navbar() {
               />
             )}
           </div>
+
+          {/* Cart */}
+          <Button
+            asChild
+            variant="ghost"
+            size="icon"
+            aria-label={`Cart${cartCount > 0 ? ` — ${cartCount} items` : " (empty)"}`}
+            className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
+          >
+            <Link href="/cart">
+              <Icon name="add_shopping_cart" className="text-[24px]" />
+              {isLoggedIn && cartCount > 0 && (
+                <span className="mono-stat absolute -right-0.5 -top-0.5 inline-flex h-5 min-w-5 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-bold leading-none text-on-primary shadow-sm">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
+            </Link>
+          </Button>
 
           {/* Auth area */}
           <div className="relative">

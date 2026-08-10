@@ -203,6 +203,11 @@ export class CreatePropertyInput {
   @IsOptional()
   isCornerPlot?: boolean;
 
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isFeatured?: boolean;
+
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()

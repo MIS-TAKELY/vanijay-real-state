@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "@repo/ui";
 import { Suspense } from "react";
 import { AuthModalListener } from "../components/auth/AuthModalListener";
 import { Footer } from "../components/common/Footer";
@@ -27,6 +28,7 @@ export default function RootLayout({
         <Navbar />
         {children}
         <Footer />
+        <Toaster position="top-center" richColors />
         <Suspense fallback={null}>
           <AuthModalListener />
         </Suspense>

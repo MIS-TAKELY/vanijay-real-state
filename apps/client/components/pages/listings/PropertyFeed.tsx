@@ -16,19 +16,9 @@ interface PropertyFeedProps {
   initialItems: ApiProperty[];
   initialNextCursor: string | null;
   initialHasMore: boolean;
-  /** Error from the server-side fetch, if any. */
   initialError?: string | null;
 }
 
-/**
- * Property feed (Client Component).
- *
- * The first page is fetched on the server (SSR) by the listings route and
- * passed in as `initialItems`, so the first paint shows real listings with no
- * client-side loading state (better SEO / LCP). Only "load more" pagination is
- * handled client-side via cursor (keyset) pagination. The API URL always comes
- * from the single source of truth in `lib/api` via `fetchFeedPage`.
- */
 export function PropertyFeed({
   initialItems,
   initialNextCursor,

@@ -24,12 +24,39 @@ export const API_ENDPOINTS = {
       `/api/${API_VERSION}/uploads/${encodeURIComponent(publicId)}`,
   },
 
-  auth: {
+  favorites: {
+    base: `/api/${API_VERSION}/favorites`,
+    byProperty: (propertyId: string) =>
+      `/api/${API_VERSION}/favorites/${encodeURIComponent(propertyId)}`,
+    status: (propertyId: string) =>
+      `/api/${API_VERSION}/favorites/status/${encodeURIComponent(propertyId)}`,
+  },
+
+  cart: {
+    base: `/api/${API_VERSION}/cart`,
+    count: `/api/${API_VERSION}/cart/count`,
+    byProperty: (propertyId: string) =>
+      `/api/${API_VERSION}/cart/${encodeURIComponent(propertyId)}`,
+  },
+
+    auth: {
     base: `/api/auth`,
     signUpEmail: `/api/auth/sign-up/email`,
     signInEmail: `/api/auth/sign-in/email`,
     signOut: `/api/auth/sign-out`,
     getSession: `/api/auth/get-session`,
+  },
+
+  analytics: {
+    trending: `/api/${API_VERSION}/analytics/trending`,
+    trackView: (propertyId: string) =>
+      `/api/${API_VERSION}/analytics/properties/${encodeURIComponent(propertyId)}/view`,
+    trackShare: (propertyId: string) =>
+      `/api/${API_VERSION}/analytics/properties/${encodeURIComponent(propertyId)}/share`,
+    trackPhoneClick: (propertyId: string) =>
+      `/api/${API_VERSION}/analytics/properties/${encodeURIComponent(propertyId)}/phone-click`,
+    sellerContact: (propertyId: string) =>
+      `/api/${API_VERSION}/analytics/properties/${encodeURIComponent(propertyId)}/seller-contact`,
   },
 } as const;
 

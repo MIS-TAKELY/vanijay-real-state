@@ -130,6 +130,9 @@ export class Property {
   @Field(() => Boolean)
   isCornerPlot!: boolean;
 
+  @Field(() => Boolean)
+  isFeatured!: boolean;
+
   @Field(() => String)
   ownerId!: string;
 
