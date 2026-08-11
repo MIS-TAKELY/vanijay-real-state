@@ -381,7 +381,7 @@ Sidebar sections: **Overview** · **My Listings** · **Document Vault** · **Sav
 ## 5.1 Overview `/dashboard`
 
 - **Greeting row**: "Namaste, {name}" Fraunces 28px + role badges + verification status chip (Unverified → CTA banner).
-- **Verification banner** (if not L2): amber banner — "Complete identity verification to list property" [Upload citizenship →] linking Document Vault.
+- **Verification banner** (if not L2): amber banner — "Complete number verification to list property" [Verify Number →] .
 - **Stat cards row** (4): Active listings · Total views (30d) · Open inquiries · Saved-search matches (7d) — each mono value + delta chip.
 - **Two-col below**:
   - *Left*: **Recent activity feed** — mixed timeline (inquiry received, document verified, price-drop on a favorite, appointment scheduled), icon dots by type, mono timestamps, relative "2h ago".

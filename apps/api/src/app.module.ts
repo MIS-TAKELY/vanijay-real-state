@@ -19,6 +19,7 @@ import { UploadsModule } from './modules/rest/uploads/uploads.module';
 import { FavoritesModule } from './modules/rest/favorites/favorites.module';
 import { CartModule } from './modules/rest/cart/cart.module';
 import { AnalyticsModule } from './modules/rest/analytics/analytics.module';
+import { DashboardModule } from './modules/rest/dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { AnalyticsModule } from './modules/rest/analytics/analytics.module';
     FavoritesModule,
     CartModule,
     AnalyticsModule,
+    DashboardModule,
   ],
   controllers: [AppController],
   providers: [AppService],

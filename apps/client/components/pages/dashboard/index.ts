@@ -2,7 +2,6 @@ export * from "./listings";
 
 export * from "./overview";
 
-export * from "./documents";
 
 export * from "./saved-searches";
 

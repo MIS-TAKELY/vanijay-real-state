@@ -43,7 +43,7 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
   {
     heading: "Records",
     items: [
-      { label: "Document Vault", href: "/documents", icon: "folder" },
+      // { label: "Document Vault", href: "/documents", icon: "folder" },
       {
         label: "Saved Searches",
         href: "/saved-searches",
@@ -142,7 +142,7 @@ export const DASHBOARD_STATS: DashboardStat[] = [
 /* Recent activity feed (overview §5.1 left)                          */
 /* ------------------------------------------------------------------ */
 
-export type ActivityType = "inquiry" | "document" | "pricedrop" | "appointment";
+export type ActivityType = "inquiry" | "document" | "pricedrop" | "appointment" | "view" | "verification";
 
 export interface ActivityItem {
   id: string;
@@ -343,6 +343,16 @@ export const ACTIVITY_STYLES: Record<
     dot: "bg-[#b45309]",
     icon: "event",
     label: "Appointment",
+  },
+  view: {
+    dot: "bg-primary",
+    icon: "visibility",
+    label: "View",
+  },
+  verification: {
+    dot: "bg-secondary",
+    icon: "verified",
+    label: "Verification",
   },
 };
 

@@ -7,15 +7,6 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
-/**
- * Guards the "Listings" section (My Listings + New Listing).
- *
- * A user must be registered as BOTH a buyer and a seller (i.e. hold the
- * SELLER role on top of the default BUYER role) to add a listing or view
- * their own listings. Otherwise the section is blocked and the WhatsApp
- * phone-verification modal is shown instead; only after the number is
- * verified (and they are registered as a seller) is the content unlocked.
- */
 export function ListingsGate({ children }: { children: ReactNode }) {
   const { data: session, isPending } = useSession();
   const [modalOpen, setModalOpen] = useState(true);
@@ -34,12 +25,13 @@ export function ListingsGate({ children }: { children: ReactNode }) {
   }
 
   const sessionUser = session?.user as unknown as
-    | { role?: string[] }
+    | { role?: string[]; phoneNumberVerified?: boolean }
     | undefined;
   const roles: Array<string> = Array.isArray(sessionUser?.role)
     ? (sessionUser.role as string[])
     : [];
-  const canAccess = roles.includes("BUYER") && roles.includes("SELLER");
+  const phoneVerified = sessionUser?.phoneNumberVerified === true;
+  const canAccess = phoneVerified && roles.includes("BUYER") && roles.includes("SELLER");
 
   if (canAccess) {
     return <>{children}</>;
@@ -81,9 +73,6 @@ export function ListingsGate({ children }: { children: ReactNode }) {
         onOpenChange={setModalOpen}
         onVerified={() => {
           setModalOpen(false);
-          // The better-auth phone-number plugin emits a session signal on
-          // verify, so useSession() re-fetches and the gate re-renders with
-          // access granted automatically.
         }}
       />
     </>

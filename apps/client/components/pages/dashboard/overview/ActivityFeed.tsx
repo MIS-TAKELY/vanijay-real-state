@@ -1,9 +1,14 @@
 import { cn, Icon } from "@repo/ui";
 import { EmptyState } from "../../../common/dashboard/EmptyState";
-import { ACTIVITY_ITEMS, ACTIVITY_STYLES } from "../constants";
+import { ACTIVITY_STYLES, DEFAULT_STATUS_STYLE } from "../constants";
+import type { DashboardActivityItem } from "../../../../lib/api/services/dashboard";
 
-export function ActivityFeed() {
-  const items = ACTIVITY_ITEMS;
+interface ActivityFeedProps {
+  activity?: DashboardActivityItem[];
+}
+
+export function ActivityFeed({ activity }: ActivityFeedProps) {
+  const items = activity ?? [];
 
   if (items.length === 0) {
     return (
@@ -30,7 +35,7 @@ export function ActivityFeed() {
         />
 
         {items.map((item) => {
-          const style = ACTIVITY_STYLES[item.type];
+          const style = ACTIVITY_STYLES[item.type] ?? DEFAULT_STATUS_STYLE;
           return (
             <li key={item.id} className="relative flex gap-sm pl-md">
               {/* dot */}

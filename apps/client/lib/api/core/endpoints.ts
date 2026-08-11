@@ -58,6 +58,10 @@ export const API_ENDPOINTS = {
     sellerContact: (propertyId: string) =>
       `/api/${API_VERSION}/analytics/properties/${encodeURIComponent(propertyId)}/seller-contact`,
   },
+
+  dashboard: {
+    overview: `/api/${API_VERSION}/dashboard/overview`,
+  },
 } as const;
 
 export const GRAPHQL_ENDPOINT = `/api/${API_VERSION}/vanijay-real-state`;

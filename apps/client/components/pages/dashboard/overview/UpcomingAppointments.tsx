@@ -3,11 +3,15 @@ import { EmptyState } from "../../../common/dashboard/EmptyState";
 import {
   DEFAULT_STATUS_STYLE,
   STATUS_STYLES,
-  UPCOMING_APPOINTMENTS,
 } from "../constants";
+import type { DashboardAppointment } from "../../../../lib/api/services/dashboard";
 
-export function UpcomingAppointments() {
-  const items = UPCOMING_APPOINTMENTS;
+interface UpcomingAppointmentsProps {
+  appointments?: DashboardAppointment[];
+}
+
+export function UpcomingAppointments({ appointments }: UpcomingAppointmentsProps) {
+  const items = appointments ?? [];
 
   if (items.length === 0) {
     return (

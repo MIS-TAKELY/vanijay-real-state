@@ -3,12 +3,16 @@ import Link from "next/link";
 import { EmptyState } from "../../../common/dashboard/EmptyState";
 import {
   DEFAULT_STATUS_STYLE,
-  SNAPSHOT_LISTINGS,
   STATUS_STYLES,
 } from "../constants";
+import type { DashboardListingSnapshot } from "../../../../lib/api/services/dashboard";
 
-export function ListingsSnapshot() {
-  const items = SNAPSHOT_LISTINGS;
+interface ListingsSnapshotProps {
+  listings?: DashboardListingSnapshot[];
+}
+
+export function ListingsSnapshot({ listings }: ListingsSnapshotProps) {
+  const items = listings ?? [];
 
   if (items.length === 0) {
     return (
@@ -72,7 +76,7 @@ export function ListingsSnapshot() {
               <div className="flex flex-col min-w-0">
                 <div className="flex items-center gap-1.5">
                   <span className="mono-stat text-[12px] text-on-surface-variant">
-                    {item.code}
+                    {item.listingCode}
                   </span>
                   <span
                     className={cn(
@@ -94,9 +98,9 @@ export function ListingsSnapshot() {
                 {item.views}
               </span>
               <Link
-                href={`/dashboard/listings/${item.id}`}
+                href={`/my-listings/${item.id}`}
                 className="inline-flex items-center justify-center h-7 w-7 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors"
-                aria-label={`Manage ${item.code}`}
+                aria-label={`Manage ${item.listingCode}`}
               >
                 <Icon name="manage_accounts" className="text-body-lg" />
               </Link>
