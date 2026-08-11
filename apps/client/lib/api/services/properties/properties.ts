@@ -137,12 +137,23 @@ export function fetchMyListingsGraphql(): Promise<ApiProperty[]> {
 
 export function updateProperty(
   id: string,
-  input: Record<string, unknown>,
+  input: object,
 ): Promise<ApiProperty> {
   return apiFetch<ApiProperty>(API_ENDPOINTS.properties.update(id), {
     method: "PATCH",
     body: input,
   });
+}
+
+/**
+ * Move a listing through the lifecycle (Mark sold / Archive / re-publish) by
+ * PATCHing only the status field. Used by the My Listings row menu.
+ */
+export function updatePropertyStatus(
+  id: string,
+  status: string,
+): Promise<ApiProperty> {
+  return updateProperty(id, { status });
 }
 
 export function deleteProperty(id: string): Promise<void> {

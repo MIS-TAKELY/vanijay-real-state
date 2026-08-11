@@ -2,14 +2,19 @@
 
 import { Alert, AlertDescription, Button, Icon } from "@repo/ui";
 import { ApiError } from "lib/api/core/client";
-import { createProperty } from "lib/api/services/properties";
+import {
+  createProperty,
+  fetchMyListingsGraphql,
+  updateProperty,
+} from "lib/api/services/properties";
 import type { ApiProperty } from "lib/api/services/properties/types";
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { WIZARD_STEPS } from "./constants";
 import {
   buildCreatePayload,
   INITIAL_DRAFT,
+  listingDraftFromApiProperty,
   validateAll,
   validateStep,
   type DraftErrors,
@@ -22,13 +27,47 @@ import { StepMediaDocs } from "./StepMediaDocs";
 import { StepReview } from "./StepReview";
 import { WizardProgress } from "./WizardProgress";
 
-export function ListingWizard() {
+export function ListingWizard({ editId }: { editId?: string }) {
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<ListingDraft>(INITIAL_DRAFT);
   const [errors, setErrors] = useState<DraftErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [created, setCreated] = useState<ApiProperty | null>(null);
+
+  // Edit mode: pre-load the property into the draft before showing the form.
+  const [loading, setLoading] = useState(Boolean(editId));
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [reloadKey, setReloadKey] = useState(0);
+
+  useEffect(() => {
+    if (!editId) return;
+    let cancelled = false;
+    setLoading(true);
+    setLoadError(null);
+    void fetchMyListingsGraphql()
+      .then((properties) => {
+        if (cancelled) return;
+        const found = properties.find((p) => p.id === editId);
+        if (!found) {
+          setLoadError(
+            "Listing not found or you don't have access to it.",
+          );
+          setLoading(false);
+          return;
+        }
+        setDraft(listingDraftFromApiProperty(found));
+        setLoading(false);
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        setLoadError(e instanceof Error ? e.message : "Failed to load listing.");
+        setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [editId, reloadKey]);
 
   const isLast = step === WIZARD_STEPS.length - 1;
 
@@ -64,7 +103,10 @@ export function ListingWizard() {
     setSubmitting(true);
     setServerError(null);
     try {
-      const property = await createProperty(buildCreatePayload(draft));
+      const payload = buildCreatePayload(draft);
+      const property = editId
+        ? await updateProperty(editId, payload)
+        : await createProperty(payload);
       setCreated(property);
     } catch (error) {
       if (error instanceof ApiError) {
@@ -83,9 +125,40 @@ export function ListingWizard() {
     } finally {
       setSubmitting(false);
     }
-  };
+    };
+
+  // Edit-mode gates: while the property is loading (or retrying) show a skeleton
+  // / error state instead of the fresh-draft form.
+  if (loading) {
+    return (
+      <div className="flex flex-col gap-md">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div
+            key={i}
+            className="h-16 animate-pulse rounded-xl border border-outline-variant bg-surface"
+          />
+        ))}
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
+        <p className="max-w-md text-sm text-on-surface-variant">{loadError}</p>
+        <Button
+          variant="outline"
+          onClick={() => setReloadKey((k) => k + 1)}
+          className="rounded-md border-outline-variant px-md py-2 text-sm font-semibold text-on-surface hover:border-primary hover:text-primary"
+        >
+          Try again
+        </Button>
+      </div>
+    );
+  }
 
   if (created) {
+    const isNew = !editId;
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary">
@@ -95,10 +168,24 @@ export function ListingWizard() {
           {created.title}
         </h2>
         <p className="text-sm leading-6 text-on-surface-variant">
-          Listing{" "}
-          <span className="mono-stat font-semibold">{created.listingCode}</span>{" "}
-          was saved as a draft and queued for verification. It goes live on the
-          public feed once the document check passes.
+          {isNew ? (
+            <>
+              Listing{" "}
+              <span className="mono-stat font-semibold">
+                {created.listingCode}
+              </span>{" "}
+              was saved as a draft and queued for verification. It goes live on
+              the public feed once the document check passes.
+            </>
+          ) : (
+            <>
+              Changes to{" "}
+              <span className="mono-stat font-semibold">
+                {created.listingCode}
+              </span>{" "}
+              were saved. Refresh My Listings to confirm the updated details.
+            </>
+          )}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-sm">
           <Button asChild className="rounded-md">
@@ -107,21 +194,23 @@ export function ListingWizard() {
               My Listings
             </Link>
           </Button>
-          <Button
-            type="button"
-            variant="outline"
-            className="rounded-md"
-            onClick={() => {
-              setDraft(INITIAL_DRAFT);
-              setStep(0);
-              setCreated(null);
-              setErrors({});
-              setServerError(null);
-            }}
-          >
-            <Icon name="add" className="text-data-table" />
-            Create another
-          </Button>
+          {isNew && (
+            <Button
+              type="button"
+              variant="outline"
+              className="rounded-md"
+              onClick={() => {
+                setDraft(INITIAL_DRAFT);
+                setStep(0);
+                setCreated(null);
+                setErrors({});
+                setServerError(null);
+              }}
+            >
+              <Icon name="add" className="text-data-table" />
+              Create another
+            </Button>
+          )}
         </div>
       </div>
     );

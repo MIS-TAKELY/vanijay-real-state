@@ -1,13 +1,14 @@
 "use client";
 
 import { Button } from "@repo/ui";
-import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   FALLBACK_GRADIENT,
   TYPE_GRADIENTS,
   fetchMyListingsGraphql,
   type ApiProperty,
 } from "lib/api";
+import Link from "next/link";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { EmptyState } from "../../../common/dashboard/EmptyState";
 import {
   LISTING_FILTER_TABS,
@@ -18,7 +19,6 @@ import {
 import { ListingsBulkBar } from "./ListingsBulkBar";
 import { ListingsFilterTabs } from "./ListingsFilterTabs";
 import { ListingsTable } from "./ListingsTable";
-import Link from "next/link";
 
 function formatRelativeTime(iso: string): string {
   const then = new Date(iso).getTime();
@@ -46,9 +46,11 @@ function toMyListing(p: ApiProperty): MyListing {
     verificationLevel: p.verificationLevel,
     askingPrice: p.askingPrice,
     gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
+    thumbnailUrl: p.media?.find((m) => m.isCover)?.url ?? p.media?.[0]?.url,
     views: 0,
     inquiries: 0,
     updatedAt: formatRelativeTime(p.updatedAt),
+    raw: p,
   };
 }
 
@@ -65,14 +67,14 @@ export function MyListings() {
     setError(null);
     fetchMyListingsGraphql()
       .then((properties) => {
-        if (!cancelled) setListings(properties.map(toMyListing));
+        if (!cancelled) {
+          setListings(properties.map(toMyListing));
+        }
       })
       .catch((e) => {
         if (!cancelled)
           setError(
-            e instanceof Error
-              ? e.message
-              : "Failed to load your listings.",
+            e instanceof Error ? e.message : "Failed to load your listings.",
           );
       })
       .finally(() => {
@@ -98,9 +100,7 @@ export function MyListings() {
 
   const filtered = useMemo(
     () =>
-      active === "ALL"
-        ? listings
-        : listings.filter((l) => l.status === active),
+      active === "ALL" ? listings : listings.filter((l) => l.status === active),
     [active, listings],
   );
 
@@ -199,6 +199,7 @@ export function MyListings() {
           selectedIds={selectedIds}
           onToggleRow={toggleRow}
           onToggleAll={toggleAll}
+          onChanged={() => void load()}
         />
       )}
     </div>

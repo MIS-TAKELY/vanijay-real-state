@@ -3,6 +3,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import type { LucideIcon } from "lucide-react";
 import {
+  Archive,
   ArrowLeftRight,
   ArrowRight,
   ArrowUp,
@@ -50,6 +51,7 @@ import {
   LayoutDashboard,
   Leaf,
   ListFilter,
+  Loader2,
   LocateFixed,
   Lock,
   Mail,
@@ -136,6 +138,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   account_balance: Landmark,
   analytics: BarChart3,
   apartment: Building,
+  archive: Archive,
   badge: BadgeCheck,
   bookmark: Bookmark,
   calculate: Calculator,
@@ -183,6 +186,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   photo_camera: Camera,
   phone: Phone,
   play_arrow: Play,
+  progress_activity: Loader2,
   public: Globe,
   receipt_long: Receipt,
   schedule: Clock,

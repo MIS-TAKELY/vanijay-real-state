@@ -8,6 +8,18 @@ const nextConfig = {
 
   transpilePackages: ["@repo/ui"],
 
+  images: {
+    // Property media is uploaded to Cloudinary — allow the Next.js <Image>
+    // optimizer to load those remote thumbnails in My Listings / cards.
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+        pathname: "/**",
+      },
+    ],
+  },
+
   turbopack: {
     resolveAlias: {
       "@": [path.resolve(__dirname, "../../packages/ui/src")],

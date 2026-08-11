@@ -24,7 +24,15 @@ async function loadProperty(name: string): Promise<ApiProperty> {
   try {
     return await fetchPropertyByGraphql(name);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound();
+    // The API returns GraphQL resolver errors on an HTTP 200 response (e.g. the
+    // "Property … not found" message from a non-LIVE/invalid slug), so normalize
+    // those to 404 and render the not-found page instead of crashing.
+    if (
+      error instanceof ApiError &&
+      (error.status === 404 || /not found/i.test(error.message))
+    ) {
+      notFound();
+    }
     throw error;
   }
 }

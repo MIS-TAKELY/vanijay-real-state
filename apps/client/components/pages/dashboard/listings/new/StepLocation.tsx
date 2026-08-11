@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@repo/ui";
-import type { LatLng } from "@repo/ui/gmap";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -111,10 +110,25 @@ export function StepLocation({ draft, update, errors }: StepProps) {
 
   const isWritable = useCallback(
     (field: AutoFillField, d: ListingDraft): boolean => {
+      // A field is writable if the user hasn't manually edited it (not in ownedRef)
+      // or if the current value matches what was auto-filled
+      const owned = ownedRef.current.get(field);
+      if (owned == null) return true;
       const cur = ((d[field] as string | null | undefined) ?? "").trim();
-20/06/2026
-Your security code with Nirpesh Dost changed. Click to learn more
-Today     timerRef.current = setTimeout(async () => {
+      return cur === owned;
+    },
+    [],
+  );
+
+  const handleMapSelect = useCallback(
+    (coords: [number, number]) => {
+      const [lat, lng] = coords;
+      const epoch = ++epochRef.current;
+
+      if (timerRef.current) clearTimeout(timerRef.current);
+      abortRef.current?.abort();
+
+      timerRef.current = setTimeout(async () => {
         abortRef.current?.abort();
         const controller = new AbortController();
         abortRef.current = controller;
@@ -126,8 +140,7 @@ Today     timerRef.current = setTimeout(async () => {
             controller.signal,
           );
           if (controller.signal.aborted) return;
-
-          console.log(result, draftRef.current, isWritable);
+          console.log("result-->", result, draftRef.current, isWritable);
 
           const patch = buildLocationPatch(
             result,

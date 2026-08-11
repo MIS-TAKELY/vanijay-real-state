@@ -1,4 +1,7 @@
-import type { CreatePropertyPayload } from "lib/api/services/properties/types";
+import type {
+  ApiProperty,
+  CreatePropertyPayload,
+} from "lib/api/services/properties/types";
 import { PRICE_UNITS, type UnitSystem } from "./constants";
 
 export type { CreatePropertyPayload };
@@ -272,6 +275,61 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
       ...(draft.latitude != null && { latitude: draft.latitude }),
       ...(draft.longitude != null && { longitude: draft.longitude }),
     },
-    ...(media.length > 0 && { media }),
+        ...(media.length > 0 && { media }),
+  };
+}
+
+/**
+ * Hydrate a create draft from an existing API record (used by the listing
+ * wizard's edit mode). The wizard's steps read/write a `ListingDraft`, so this
+ * is the bridge that lets "Edit" load the same form a property was created on.
+ */
+export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
+  const location = p.location;
+  const area = p.landArea;
+  const usedBigha = Boolean(area && (area.bigha || area.katha || area.dhur));
+
+  const media: DraftMedia[] = (p.media ?? []).map((m) => ({
+    url: m.url,
+    ...(m.altText ? { altText: m.altText } : {}),
+  }));
+
+  const units: Record<string, string> = {};
+  if (area) {
+    if (area.ropani) units.ropani = String(area.ropani);
+    if (area.aana) units.aana = String(area.aana);
+    if (area.paisa) units.paisa = String(area.paisa);
+    if (area.daam) units.daam = String(area.daam);
+    if (area.bigha) units.bigha = String(area.bigha);
+    if (area.katha) units.katha = String(area.katha);
+    if (area.dhur) units.dhur = String(area.dhur);
+  }
+
+  // The original API record stores the ward as a number; mirror the wizard's
+  // "Ward N" display/text format.
+  const ward = location?.wardNumber ? `Ward ${location.wardNumber}` : "";
+
+  return {
+    title: p.title,
+    propertyType: p.propertyType,
+    description: p.description ?? "",
+    askingPrice: String(p.askingPrice),
+    priceUnit: "",
+    province: location?.province ?? "",
+    district: location?.district ?? "",
+    municipality: location?.municipality ?? "",
+    ward,
+    areaName: location?.areaName ?? "",
+    address: location?.addressText ?? "",
+    latitude: location?.latitude ?? null,
+    longitude: location?.longitude ?? null,
+    unitSystem: (usedBigha ? "BIGHA" : "ROPANI") as UnitSystem,
+    units,
+    roadType: p.roadType ?? "",
+    roadWidthFt: p.roadAccessWidthFt ? String(p.roadAccessWidthFt) : "",
+    facing: p.facing ?? "",
+    isCornerPlot: p.isCornerPlot,
+    media,
+    videoUrl: "",
   };
 }

@@ -18,6 +18,8 @@ interface ListingsTableProps {
   selectedIds: Set<string>;
   onToggleRow: (id: string) => void;
   onToggleAll: () => void;
+  /** Reload the list after a row action (mark sold / archive / duplicate). */
+  onChanged: () => void;
 }
 
 const HEADER_CELL_CLASS =
@@ -28,6 +30,7 @@ export function ListingsTable({
   selectedIds,
   onToggleRow,
   onToggleAll,
+  onChanged,
 }: ListingsTableProps) {
   const allSelected =
     listings.length > 0 && listings.every((l) => selectedIds.has(l.id));
@@ -67,6 +70,7 @@ export function ListingsTable({
               listing={listing}
               selected={selectedIds.has(listing.id)}
               onToggle={onToggleRow}
+              onChanged={onChanged}
             />
           ))}
         </TableBody>

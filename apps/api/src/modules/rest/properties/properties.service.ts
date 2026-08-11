@@ -140,10 +140,18 @@ export class PropertiesService {
       where: { id },
       data: {
         ...rest,
-        ...(landArea && { landArea: { create: landArea as any } }),
-        ...(location && { location: { create: location as any } }),
+        // Nested records are one-to-one with @unique FKs, so create would
+        // violate the constraint on a second edit — upsert instead.
+        ...(landArea && {
+          landArea: { upsert: { create: landArea as any, update: landArea as any } },
+        }),
+        ...(location && {
+          location: { upsert: { create: location as any, update: location as any } },
+        }),
         ...(cadastralRecord && {
-          cadastralRecord: { create: cadastralRecord as any },
+          cadastralRecord: {
+            upsert: { create: cadastralRecord as any, update: cadastralRecord as any },
+          },
         }),
       },
       include: { landArea: true, location: true, cadastralRecord: true },

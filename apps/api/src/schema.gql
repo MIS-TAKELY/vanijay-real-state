@@ -256,4 +256,5 @@ input UpdatePropertyInput {
   cadastralRecord: CadastralRecordInput
   media: [PropertyMediaInput!]
   id: ID!
+  status: PropertyStatus
 }

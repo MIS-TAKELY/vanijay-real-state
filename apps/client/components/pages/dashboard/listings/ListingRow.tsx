@@ -6,6 +6,8 @@ import {
   labelEnum,
   TYPE_LABELS,
 } from "lib/api/services/properties/types";
+import Image from "next/image";
+import Link from "next/link";
 import type { MyListing } from "./constants";
 import { LISTING_TABLE_COLUMNS } from "./constants";
 import { ListingMenu } from "./ListingMenu";
@@ -16,6 +18,8 @@ interface ListingRowProps {
   listing: MyListing;
   selected: boolean;
   onToggle: (id: string) => void;
+  /** Reload the list after a row action (mark sold / archive / duplicate). */
+  onChanged: () => void;
 }
 
 const CELL_CLASS = "px-sm py-3";
@@ -25,7 +29,27 @@ function columnClassName(key: string): string | undefined {
   return LISTING_TABLE_COLUMNS.find((col) => col.key === key)?.cellClassName;
 }
 
-export function ListingRow({ listing, selected, onToggle }: ListingRowProps) {
+export function ListingRow({
+  listing,
+  selected,
+  onToggle,
+  onChanged,
+}: ListingRowProps) {
+  const publicHref =
+    listing.status === "LIVE" ? `/listings/${listing.slug}` : null;
+
+  const thumbContent = listing.thumbnailUrl ? (
+    <Image
+      src={listing.thumbnailUrl}
+      alt=""
+      fill
+      sizes="48px"
+      className="object-cover"
+    />
+  ) : (
+    <div className={cn("h-full w-full bg-gradient-to-br", listing.gradient)} />
+  );
+
   return (
     <TableRow className={cn(selected && "bg-secondary-container/40")}>
       {/* Checkbox */}
@@ -40,12 +64,18 @@ export function ListingRow({ listing, selected, onToggle }: ListingRowProps) {
 
       {/* Cover thumb */}
       <TableCell className={CELL_CLASS} aria-hidden>
-        <div
-          className={cn(
-            "h-12 w-12 rounded-lg bg-gradient-to-br",
-            listing.gradient,
-          )}
-        />
+        {publicHref ? (
+          <Link
+            href={publicHref}
+            className="block relative h-12 w-12 overflow-hidden rounded-lg bg-gradient-to-br"
+          >
+            {thumbContent}
+          </Link>
+        ) : (
+          <div className="relative h-12 w-12 overflow-hidden rounded-lg bg-gradient-to-br">
+            {thumbContent}
+          </div>
+        )}
       </TableCell>
 
       {/* Code + title */}
@@ -54,9 +84,18 @@ export function ListingRow({ listing, selected, onToggle }: ListingRowProps) {
           <span className="mono-stat text-[12px] text-on-surface-variant">
             {listing.listingCode}
           </span>
-          <span className="truncate max-w-[280px] text-sm font-medium text-on-surface">
-            {listing.title}
-          </span>
+          {publicHref ? (
+            <Link
+              href={publicHref}
+              className="truncate max-w-[280px] text-sm font-medium text-on-surface hover:text-primary hover:underline"
+            >
+              {listing.title}
+            </Link>
+          ) : (
+            <span className="truncate max-w-[280px] text-sm font-medium text-on-surface">
+              {listing.title}
+            </span>
+          )}
         </div>
       </TableCell>
 
@@ -113,7 +152,7 @@ export function ListingRow({ listing, selected, onToggle }: ListingRowProps) {
 
       {/* Row menu */}
       <TableCell className={CELL_CLASS}>
-        <ListingMenu />
+        <ListingMenu listing={listing} onChanged={onChanged} />
       </TableCell>
     </TableRow>
   );

@@ -27,7 +27,15 @@ async function loadProperty(slug: string): Promise<ApiProperty> {
   try {
     return await fetchPropertyByGraphql(slug);
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) notFound();
+    // The API returns GraphQL resolver errors on an HTTP 200 response (e.g. the
+    // "Property … not found" message from a non-LIVE/invalid slug), so normalize
+    // those to 404 and render the not-found page instead of crashing.
+    if (
+      error instanceof ApiError &&
+      (error.status === 404 || /not found/i.test(error.message))
+    ) {
+      notFound();
+    }
     throw error;
   }
 }
@@ -101,10 +109,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
       "Price per Aana",
       property.pricePerAana ? formatNPR(property.pricePerAana) : null,
     ],
-    [
-      "Listing Code",
-      property.listingCode ?? null,
-    ],
+    ["Listing Code", property.listingCode ?? null],
     [
       "Status",
       labelEnum(property.status, {
@@ -205,7 +210,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 {specs
                   .filter(([, value]) => value)
                   .map(([label, value]) => (
-                    <SpecRow key={label} label={label} value={value as string} />
+                    <SpecRow
+                      key={label}
+                      label={label}
+                      value={value as string}
+                    />
                   ))}
               </div>
             </section>
