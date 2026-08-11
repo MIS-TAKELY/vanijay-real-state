@@ -26,10 +26,17 @@ type LandAreaDetails {
 }
 
 type PropertyMedia {
+  type: MediaType
   url: String!
   altText: String
   sortOrder: Int!
   isCover: Boolean!
+}
+
+enum MediaType {
+  IMAGE
+  VIDEO_WALKTHROUGH
+  CADASTRAL_MAP
 }
 
 type Property {
@@ -231,12 +238,6 @@ input PropertyMediaInput {
   altText: String
   sortOrder: Float
   isCover: Boolean
-}
-
-enum MediaType {
-  IMAGE
-  VIDEO_WALKTHROUGH
-  CADASTRAL_MAP
 }
 
 input UpdatePropertyInput {

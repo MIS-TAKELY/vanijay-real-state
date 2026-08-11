@@ -1,4 +1,13 @@
-import { cn, Icon } from "@repo/ui";
+import {
+  cn,
+  Icon,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui";
 import Link from "next/link";
 import { EmptyState } from "../../../common/dashboard/EmptyState";
 import {
@@ -52,62 +61,70 @@ export function ListingsSnapshot({ listings }: ListingsSnapshotProps) {
         </Link>
       </div>
 
-      <div className="flex flex-col">
-        {/* header row */}
-        <div className="grid grid-cols-[1fr_auto_auto] gap-sm px-xs py-2 border-b border-outline-variant">
-          <span className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
-            Listing
-          </span>
-          <span className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
-            Views
-          </span>
-          <span className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
-            Manage
-          </span>
-        </div>
-
-        {items.map((item) => {
-          const status = STATUS_STYLES[item.status] ?? DEFAULT_STATUS_STYLE;
-          return (
-            <div
-              key={item.id}
-              className="grid grid-cols-[1fr_auto_auto] items-center gap-sm px-xs py-3 border-b border-outline-variant last:border-b-0 hover:bg-surface-container-high transition-colors"
-            >
-              <div className="flex flex-col min-w-0">
-                <div className="flex items-center gap-1.5">
-                  <span className="mono-stat text-[12px] text-on-surface-variant">
-                    {item.listingCode}
-                  </span>
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium leading-none",
-                      status.chip,
-                    )}
-                  >
-                    <span
-                      className={cn("h-1.5 w-1.5 rounded-full", status.dot)}
-                    />
-                    {status.label}
-                  </span>
-                </div>
-                <span className="font-body-md text-sm text-on-surface truncate">
-                  {item.title}
-                </span>
-              </div>
-              <span className="mono-stat text-label-sm text-on-surface tabular-nums">
-                {item.views}
-              </span>
-              <Link
-                href={`/my-listings/${item.id}`}
-                className="inline-flex items-center justify-center h-7 w-7 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors"
-                aria-label={`Manage ${item.listingCode}`}
+      <Table>
+        <TableHeader>
+          <TableRow className="border-outline-variant hover:bg-transparent">
+            <TableHead className="h-auto px-xs py-2 font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+              Listing
+            </TableHead>
+            <TableHead className="h-auto px-xs py-2 text-right font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+              Views
+            </TableHead>
+            <TableHead className="h-auto px-xs py-2 text-right font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+              Manage
+            </TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {items.map((item) => {
+            const status = STATUS_STYLES[item.status] ?? DEFAULT_STATUS_STYLE;
+            return (
+              <TableRow
+                key={item.id}
+                className="border-outline-variant hover:bg-surface-container-high transition-colors"
               >
-                <Icon name="manage_accounts" className="text-body-lg" />
-              </Link>
-            </div>
-          );
-        })}
-      </div>
+                <TableCell className="px-xs py-3">
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-1.5">
+                      <span className="mono-stat text-[12px] text-on-surface-variant">
+                        {item.listingCode}
+                      </span>
+                      <span
+                        className={cn(
+                          "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium leading-none",
+                          status.chip,
+                        )}
+                      >
+                        <span
+                          className={cn("h-1.5 w-1.5 rounded-full", status.dot)}
+                        />
+                        {status.label}
+                      </span>
+                    </div>
+                    <span className="font-body-md text-sm text-on-surface truncate">
+                      {item.title}
+                    </span>
+                  </div>
+                </TableCell>
+                <TableCell className="px-xs py-3 text-right">
+                  <span className="mono-stat text-label-sm text-on-surface tabular-nums">
+                    {item.views}
+                  </span>
+                </TableCell>
+                <TableCell className="px-xs py-3 text-right">
+                  <Link
+                    href={`/my-listings/new?slug=${item.slug}`}
+                    className="inline-flex items-center justify-center h-7 w-7 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors"
+                    aria-label={`Manage ${item.listingCode}`}
+                  >
+                    <Icon name="manage_accounts" className="text-body-lg" />
+                  </Link>
+                </TableCell>
+              </TableRow>
+            );
+          })}
+        </TableBody>
+      </Table>
     </div>
   );
 }

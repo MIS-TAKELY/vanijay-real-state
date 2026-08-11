@@ -8,6 +8,7 @@ import {
 } from '@nestjs/graphql';
 import {
   FacingDirection,
+  MediaType,
   PropertyStatus,
   PropertyType,
   RoadType,
@@ -73,6 +74,9 @@ export class LandAreaDetails {
 
 @ObjectType()
 export class PropertyMedia {
+  @Field(() => MediaType, { nullable: true })
+  type?: MediaType;
+
   @Field(() => String)
   url!: string;
 

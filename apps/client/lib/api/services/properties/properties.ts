@@ -73,6 +73,7 @@ const PROPERTY_FRAGMENT = `
       totalSqMeters
     }
     media {
+      type
       url
       altText
       sortOrder

@@ -13,6 +13,7 @@ export interface DashboardListingSnapshot {
   listingCode: string;
   title: string;
   status: string;
+  slug: string;
   views: number;
   updatedAt: string;
 }

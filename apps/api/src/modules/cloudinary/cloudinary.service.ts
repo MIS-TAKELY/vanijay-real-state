@@ -78,14 +78,14 @@ export class CloudinaryService {
     files: { buffer: Buffer; originalname?: string }[],
     options: CloudinaryUploadOptions = {},
   ): Promise<CloudinaryUploadResult[]> {
-    return Promise.all(
-      files.map((file) =>
-        this.uploadBuffer(file.buffer, options).then((result) => ({
-          ...result,
-          originalFilename: file.originalname,
-        })),
-      ),
-    );
+    // Upload sequentially: firing every file at Cloudinary in parallel trips
+    // its rate limits on batches and fails the whole request.
+    const results: CloudinaryUploadResult[] = [];
+    for (const file of files) {
+      const result = await this.uploadBuffer(file.buffer, options);
+      results.push({ ...result, originalFilename: file.originalname });
+    }
+    return results;
   }
 
   async delete(

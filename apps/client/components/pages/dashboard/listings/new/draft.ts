@@ -275,7 +275,9 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
       ...(draft.latitude != null && { latitude: draft.latitude }),
       ...(draft.longitude != null && { longitude: draft.longitude }),
     },
-        ...(media.length > 0 && { media }),
+    // Always send the media array: on create an empty array simply means "no
+    // media", while on update it lets the API replace (or clear) the gallery.
+    media,
   };
 }
 
@@ -289,10 +291,23 @@ export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
   const area = p.landArea;
   const usedBigha = Boolean(area && (area.bigha || area.katha || area.dhur));
 
-  const media: DraftMedia[] = (p.media ?? []).map((m) => ({
-    url: m.url,
-    ...(m.altText ? { altText: m.altText } : {}),
-  }));
+  const allMedia = p.media ?? [];
+
+  // The video walkthrough round-trips through the dedicated video field, not
+  // the photo gallery.
+  const video = allMedia.find((m) => m.type === "VIDEO_WALKTHROUGH");
+
+  // Only genuine gallery images populate the photo uploader. Document /
+  // cadastral rows stay out of the gallery entirely — they were never
+  // "photos" and showing them there surfaced a phantom extra image on edit.
+  // Rows without a type (legacy records created before type was exposed)
+  // are kept as photos to avoid dropping real uploads.
+  const media: DraftMedia[] = allMedia
+    .filter((m) => !m.type || m.type === "IMAGE")
+    .map((m) => ({
+      url: m.url,
+      ...(m.altText ? { altText: m.altText } : {}),
+    }));
 
   const units: Record<string, string> = {};
   if (area) {
@@ -330,6 +345,6 @@ export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
     facing: p.facing ?? "",
     isCornerPlot: p.isCornerPlot,
     media,
-    videoUrl: "",
+    videoUrl: video?.url ?? "",
   };
 }

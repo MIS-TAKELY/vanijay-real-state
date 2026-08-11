@@ -6,10 +6,10 @@ import { ListingsGate } from "components/pages/dashboard/listings/ListingsGate";
 export default async function NewListingPage({
   searchParams,
 }: {
-  searchParams: Promise<{ id?: string }>;
+  searchParams: Promise<{ slug?: string }>;
 }) {
-  const { id } = await searchParams;
-  const isEdit = Boolean(id);
+  const { slug } = await searchParams;
+  const isEdit = Boolean(slug);
 
   return (
     <div className="flex flex-col">
@@ -31,7 +31,7 @@ export default async function NewListingPage({
       />
 
       <ListingsGate>
-        <ListingWizard editId={id} />
+        <ListingWizard editSlug={slug} />
       </ListingsGate>
     </div>
   );

@@ -120,10 +120,13 @@ export class DashboardService {
       }),
     ]);
 
+    console.log("server listing",listings)
+
     const listingSnapshots: DashboardListingSnapshot[] = listings.map((p) => ({
       id: p.id,
       listingCode: p.listingCode,
       title: p.title,
+      slug: p.slug,
       status: p.status,
       views: p.analytics?.viewCount ?? 0,
       updatedAt: p.updatedAt.toISOString(),

@@ -104,6 +104,12 @@ export function GoogleMapPicker({
   }, [onChange]);
   const ignoreNextValueRef = useRef(false);
 
+  /* --- Track the latest `value` prop for use in map init & handlers --- */
+  const valueRef = useRef(value);
+  useEffect(() => {
+    valueRef.current = value;
+  }, [value]);
+
   /* --- Load the Maps JS API (once) ---------------------------------- */
   useEffect(() => {
     if (!apiKey) {
@@ -159,7 +165,13 @@ export function GoogleMapPicker({
     listenersRef.current = [
       /* eslint-disable @typescript-eslint/no-explicit-any */
       maps.event.addListener(map, "click", (e: any) => {
-        if (e?.latLng) emit(e.latLng);
+        if (e?.latLng) {
+          // Move the marker to the clicked spot immediately; the controlled
+          // `value` update follows via onChange (ignoreNextValue skips the
+          // redundant re-sync).
+          marker.setPosition(e.latLng);
+          emit(e.latLng);
+        }
       }),
       maps.event.addListener(marker, "dragend", () => {
         const pos = marker.getPosition();
@@ -168,7 +180,8 @@ export function GoogleMapPicker({
       /* eslint-enable @typescript-eslint/no-explicit-any */
     ];
 
-    // Reflect an external initial pin (e.g. from search) if one exists.
+    // Reflect an external initial pin (e.g. from search or edit-mode
+    // hydration) if one exists at the time the map finishes loading.
     const initial = valueRef.current;
     if (initial) {
       marker.setPosition({ lat: initial[0], lng: initial[1] });
@@ -178,9 +191,7 @@ export function GoogleMapPicker({
   }, [maps, center, bounds, zoom, minZoom]);
 
   /* --- Reflect external `value` changes into the map ------------------ */
-  const valueRef = useRef(value);
   useEffect(() => {
-    valueRef.current = value;
     if (!maps || !mapRef.current || !markerRef.current || !value) return;
 
     if (ignoreNextValueRef.current) {

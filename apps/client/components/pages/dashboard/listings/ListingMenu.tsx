@@ -156,7 +156,7 @@ export function ListingMenu({ listing, onChanged }: ListingMenuProps) {
       <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuGroup>
           <DropdownMenuItem asChild>
-            <Link href={`/my-listings/new?id=${listing.id}`}>
+            <Link href={`/my-listings/new?slug=${listing.slug}`}>
               <Icon name="edit" />
               Edit
             </Link>

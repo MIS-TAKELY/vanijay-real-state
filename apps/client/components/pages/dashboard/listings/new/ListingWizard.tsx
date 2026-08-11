@@ -27,7 +27,7 @@ import { StepMediaDocs } from "./StepMediaDocs";
 import { StepReview } from "./StepReview";
 import { WizardProgress } from "./WizardProgress";
 
-export function ListingWizard({ editId }: { editId?: string }) {
+export function ListingWizard({ editSlug }: { editSlug?: string }) {
   const [step, setStep] = useState(0);
   const [draft, setDraft] = useState<ListingDraft>(INITIAL_DRAFT);
   const [errors, setErrors] = useState<DraftErrors>({});
@@ -36,19 +36,21 @@ export function ListingWizard({ editId }: { editId?: string }) {
   const [created, setCreated] = useState<ApiProperty | null>(null);
 
   // Edit mode: pre-load the property into the draft before showing the form.
-  const [loading, setLoading] = useState(Boolean(editId));
+  const [loading, setLoading] = useState(Boolean(editSlug));
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  // The DB id resolved from the slug — required for the PATCH on save.
+  const [editPropertyId, setEditPropertyId] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!editId) return;
+    if (!editSlug) return;
     let cancelled = false;
     setLoading(true);
     setLoadError(null);
     void fetchMyListingsGraphql()
       .then((properties) => {
         if (cancelled) return;
-        const found = properties.find((p) => p.id === editId);
+        const found = properties.find((p) => p.slug === editSlug);
         if (!found) {
           setLoadError(
             "Listing not found or you don't have access to it.",
@@ -56,6 +58,7 @@ export function ListingWizard({ editId }: { editId?: string }) {
           setLoading(false);
           return;
         }
+        setEditPropertyId(found.id);
         setDraft(listingDraftFromApiProperty(found));
         setLoading(false);
       })
@@ -67,7 +70,7 @@ export function ListingWizard({ editId }: { editId?: string }) {
     return () => {
       cancelled = true;
     };
-  }, [editId, reloadKey]);
+  }, [editSlug, reloadKey]);
 
   const isLast = step === WIZARD_STEPS.length - 1;
 
@@ -104,8 +107,8 @@ export function ListingWizard({ editId }: { editId?: string }) {
     setServerError(null);
     try {
       const payload = buildCreatePayload(draft);
-      const property = editId
-        ? await updateProperty(editId, payload)
+      const property = editPropertyId
+        ? await updateProperty(editPropertyId, payload)
         : await createProperty(payload);
       setCreated(property);
     } catch (error) {
@@ -158,7 +161,7 @@ export function ListingWizard({ editId }: { editId?: string }) {
   }
 
   if (created) {
-    const isNew = !editId;
+    const isNew = !editSlug;
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
         <span className="flex h-14 w-14 items-center justify-center rounded-full bg-primary text-on-primary">

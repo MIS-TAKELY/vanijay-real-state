@@ -125,6 +125,11 @@ export function StepLocation({ draft, update, errors }: StepProps) {
       const [lat, lng] = coords;
       const epoch = ++epochRef.current;
 
+      // Reflect the new pin position in the draft immediately so the
+      // controlled map marker stays in sync with the clicked/dragged
+      // location (the debounced geocode below only fills the text fields).
+      update({ latitude: lat, longitude: lng });
+
       if (timerRef.current) clearTimeout(timerRef.current);
       abortRef.current?.abort();
 

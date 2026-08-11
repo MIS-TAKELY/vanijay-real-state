@@ -64,14 +64,21 @@ export async function uploadFiles(
   folder: UploadFolder = "properties",
 ): Promise<UploadedAsset[]> {
   if (files.length === 0) return [];
-  const formData = new FormData();
-  for (const file of files) formData.append("files", file);
-  const body = await uploadForm(
-    API_ENDPOINTS.uploads.multiple,
-    folder,
-    formData,
-  );
-  return (body as UploadedAsset[]) ?? [];
+  // Upload one file per request instead of a single multipart batch: a batch
+  // shares one timeout and one failure kills every file, which made
+  // multi-image picks appear to "not upload". Sequential per-file uploads
+  // keep each file inside its own 60s window and preserve partial success.
+  const results: UploadedAsset[] = [];
+  let lastError: unknown = null;
+  for (const file of files) {
+    try {
+      results.push(await uploadFile(file, folder));
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  if (results.length === 0 && lastError) throw lastError;
+  return results;
 }
 
 export async function uploadFile(

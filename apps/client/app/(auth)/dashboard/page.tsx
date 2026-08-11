@@ -59,6 +59,8 @@ export default function DashboardPage() {
   const activity: DashboardActivityItem[] = data?.activity ?? [];
   const appointments: DashboardAppointment[] = data?.appointments ?? [];
 
+  console.log("listings-->",listings)
+
   return (
     <div className="flex flex-col">
       <DashboardHeader

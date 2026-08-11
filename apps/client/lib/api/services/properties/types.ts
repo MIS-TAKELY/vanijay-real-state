@@ -22,6 +22,8 @@ export interface ApiLandArea {
 }
 
 export interface ApiPropertyMedia {
+  /** MediaType enum (IMAGE | VIDEO_WALKTHROUGH | CADASTRAL_MAP) when exposed by the API. */
+  type?: string | null;
   url: string;
   altText?: string | null;
   sortOrder: number;

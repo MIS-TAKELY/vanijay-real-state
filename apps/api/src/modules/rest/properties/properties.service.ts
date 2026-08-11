@@ -15,7 +15,13 @@ const PROPERTY_SUMMARY_INCLUDE = {
   landArea: true,
   media: {
     orderBy: { sortOrder: 'asc' },
-    select: { url: true, altText: true, sortOrder: true, isCover: true },
+    select: {
+      type: true,
+      url: true,
+      altText: true,
+      sortOrder: true,
+      isCover: true,
+    },
   },
 } satisfies Prisma.PropertyInclude;
 
@@ -134,7 +140,6 @@ export class PropertiesService {
 
   async update(input: UpdatePropertyInput): Promise<Property> {
     const { id, landArea, location, cadastralRecord, media, ...rest } = input;
-    void media; // media replacement on update is out of scope for now
     await this.exists(id);
     const row = await this.prisma.property.update({
       where: { id },
@@ -153,8 +158,27 @@ export class PropertiesService {
             upsert: { create: cadastralRecord as any, update: cadastralRecord as any },
           },
         }),
+        // Media is replaced wholesale when provided (even an empty array,
+        // which clears the gallery). `undefined` leaves the gallery untouched.
+        ...(media !== undefined && {
+          media: {
+            deleteMany: {},
+            create: media.map((m, index) => ({
+              url: m.url,
+              altText: m.altText,
+              type: m.type ?? 'IMAGE',
+              sortOrder: m.sortOrder ?? index,
+              isCover: m.isCover ?? index === 0,
+            })),
+          },
+        }),
       },
-      include: { landArea: true, location: true, cadastralRecord: true },
+      include: {
+        landArea: true,
+        location: true,
+        cadastralRecord: true,
+        media: { orderBy: { sortOrder: 'asc' } },
+      },
     });
     return PropertiesService.mapToResponse(row);
   }
