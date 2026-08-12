@@ -7,8 +7,10 @@ FROM base AS builder
 # and next.config.js reads AUTH_API_URL for /api/auth/* rewrites at build time.
 ARG NEXT_PUBLIC_API_URL=https://realstate-api.vanijay.com
 ARG AUTH_API_URL=http://api:5000
+ARG NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV AUTH_API_URL=$AUTH_API_URL
+ENV NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 COPY package.json package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
 COPY apps/client ./apps/client
 COPY packages ./packages 

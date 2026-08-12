@@ -1,5 +1,5 @@
 import { gqlRequest } from "../../core/graphql";
-import type { ApiProperty } from "./types";
+import { toCardProps, type ApiProperty, type CardProperty } from "./types";
 
 export interface PropertyItem {
   id: string;
@@ -223,6 +223,30 @@ const FEATURED_PROPERTIES_QUERY = `
   }
 `;
 
+/**
+ * Shared mapper for the home-page scroll rails (Recently Viewed, Trending,
+ * Featured, Similar). The trending payload returns a flat `location` string
+ * (all other queries return a `location` object) — normalized here — then
+ * delegates to `toCardProps` so every rail renders the same rich `PropertyCard`
+ * as the listings feed.
+ */
+export function toCardPropsFromItem(p: PropertyItem): CardProperty {
+  const normalized: ApiProperty = {
+    ...p,
+    location:
+      typeof p.location === "string"
+        ? {
+            province: "",
+            district: "",
+            municipality: "",
+            wardNumber: 0,
+            areaName: p.location,
+          }
+        : p.location,
+  };
+  return toCardProps(normalized);
+}
+
 export async function fetchTrendingPropertiesGraphql(
   limit = 10,
   period = '7d',
@@ -235,6 +259,9 @@ export async function fetchTrendingPropertiesGraphql(
   return {
     items: data.trendingProperties.items.map((item: any) => ({
       ...item,
+      // Trending returns `propertyId` (the real DB id) instead of `id` —
+      // normalize here so consumers can rely on the `PropertyItem` contract.
+      id: item.propertyId ?? item.id,
       media: item.imageUrl ? [{ url: item.imageUrl, isCover: true, sortOrder: 0 }] : [],
     })),
     total: data.trendingProperties.items.length,

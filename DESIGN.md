@@ -218,39 +218,115 @@ Route group `(public)`. All pages share Navbar + Footer, `max-w-container-max` c
 
 ## 3.1 Home `/`
 
-**Section 1 — Hero**
-- Layout: full-width, min-h-[560px], `.topo-bg` over `surface`; 2-col on desktop (copy left 55% / map preview right 45%), stacked mobile.
-- Eyebrow: mono 13px uppercase `text-tertiary` — "NEPAL'S VERIFIED LAND ARCHIVE".
-- H1 (Fraunces 48–64px): "Buy land with the paperwork already done."
-- Sub (18px, on-surface-variant, max-w-prose): "Every listing carries its Lalpurja, tax clearance, and cadastral map — verified before it goes live."
-- **Search bar** (hero centerpiece): elevated card `rounded-2xl shadow-lg p-2`, segmented tabs [Buy Land | Buy House | Commercial], fields: Location combobox (district/municipality), Property type select, Budget range (min–max mono inputs), primary button "Search the Archive" (`search` icon).
-- Trust strip below: three mono stats — `2,847 verified parcels` · `77 districts covered` · `Rs 0 hidden fees`.
+The landing page is `app/(real-state)/page.tsx` — a **Server Component**. On first load it runs `fetchFeedPageGraphql({ first: PAGE_SIZE })` on the server and seeds the `PropertyFeed` with the result (SSR-first for SEO; the client handles subsequent pages). It also injects a `BreadcrumbList` JSON-LD `<script type="application/ld+json">`. The route is mounted inside the `(real-state)` route group, so it inherits the shared shell: `Navbar` (top, sticky, `z-50`, `backdrop-blur-md`, glass border-b) and `Footer` (see §2.3). The page body is `max-w-container-max` centered with `px-gutter` and `topo-bg` / gradient accents layered via `relative z-10` stacking.
 
-**Section 2 — Map Explorer** (`MapExplorer.tsx` / `NepalmapWrapper`)
-- Full-bleed section `h-[640px]`: Leaflet map left (65%), sidebar right (35%).
-- Sidebar: "Explore by District" headline, search input, scrollable district list — each row: district name, listings count (mono), avg price/aana (mono), hover reveals `→`.
-- Map shows province polygons (geojson), price pins on live listings, hover tooltip.
-- Bottom-left of map: mode switcher + legend.
+**Render order (the source of truth lives in `page.tsx`):**
 
-**Section 3 — Browse by Intent** (`BrowseByIntent`)
-- 4-card grid: Residential Land / Heritage Homes / Commercial / Agricultural — each card: `.blueprint-grid` thumb with line icon, Fraunces title, count chip, short descriptor, arrow link. Hover lifts.
+```tsx
+<main>
+  <HeroBannerCarousel />          // §3.1.1 Hero carousel
+  <SearchFilters />               // §3.1.2 Quick filters (search-first, under hero)
+  <CategoryStrip />               // §3.1.3 Category strip
+  <NepalmapWrapper />             // §3.1.4 Nepal map
+  <PropertyFeed … />              // §3.1.5 Listings grid (SSR-seeded)
+  <ListingsMarketplace />         // §3.1.6 Marketplace carousels
+  <RecentlyViewed />              // §3.1.7 Recently viewed
+  <FeaturedListings />            // §3.1.8 Featured (hand-picked)
+  <CallToActionBanner />          // §3.1.9 Bottom CTA
+</main>
+```
 
-**Section 4 — Verified Property Carousel** (`PropertyCarousel`)
-- Headline row: "Fresh to the Archive" + [View all →].
-- Horizontal scroll-snap row of PropertyCards (4 visible), edge-fade masks, prev/next round buttons, `animate-scroll` auto-drift pausing on hover.
+The ordering is **search-first**: the quick-filter bar sits directly under the hero because searching is the page's primary conversion action, and the category strip offers a secondary browse path right below it.
 
-**Section 5 — Verification Steps** (`VerificationSteps`)
-- 3-step horizontal process (numbered mono `01 02 03`): Document Submission → Desk Verification → Field Survey & Stamp. Each: icon in `secondary-container` circle, Fraunces title, 2-line copy. Connected by dashed line. Right side: `.verification-stamp` large decorative mark.
+### §3.1.1 Hero Carousel — `HeroBannerCarousel.tsx`
 
-**Section 6 — Trust Stack** (`TrustStack`)
-- Dark section `bg-inverse-surface text-inverse-on-surface` (contrast break): 3 stat blocks (mono 48px: listings verified %, avg days-to-verify, disputes resolved), plus partner/office row (Land Revenue Office logos as outline text badges).
+Full-bleed autoplay carousel that opens the page and establishes scale + trust through motion.
 
-**Section 7 — Ask the Archive** (`AskArchive`)
-- Q&A teaser: left — Fraunces headline "Ask the Broker", select category chips (Legal, Financing, NRN, Area); right — 3 recent question cards (category chip, question excerpt, answer count mono, area tag). CTA: "Browse all questions →" + [Ask a question] primary (opens auth modal if logged out).
+- **Container:** `relative w-full h-[70vh] min-h-[480px] max-h-[720px] overflow-hidden`. `onMouseEnter`/`onMouseLeave` toggles `isHovering`, which pauses the 4 s `setInterval` auto-advance; `onMouseLeave` resumes it. Touch: `onTouchStart`/`onTouchEnd` with a 50 px swipe threshold routes to prev/next.
+- **Each slide:** background `bg-cover bg-center` image + `bg-gradient-to-r from-black/70 via-black/40 to-transparent` overlay. Content sits in a `relative z-20` column (`max-w-container-max mx-auto px-gutter`).
+- **Copy:** white text — `font-display-lg` (Fraunces) headline → `font-body-lg` (Public Sans) subheadline at `white/80`. Slides come from the `heroSlides` constant (3 slides: "Find Your Dream Property", "Luxury Living Redefined", "Smart Investments Start Here"), each with primary/secondary CTAs ("Explore Properties" / "List Your Property").
+- **CTAs:** `Button size="lg"` — primary (`variant="default"`, `shadow-lg`) + outline (`variant="outline"`, `border-white/30`, `hover:bg-white/10`).
+- **Navigation:** dot indicators (bottom-center, `h-2 rounded-full`, active = `w-8 bg-white`, rest = `w-2 bg-white/50 hover:bg-white/80`) + chevron buttons (desktop only, `md:flex`, `backdrop-blur-sm`, `bg-black/20`, appear on hover via `isHovering`). Inactive slides are hidden from assistive tech (`aria-hidden={index !== current}`).
 
-**Section 8 — NRN Concierge banner** (`NRNConcierge`) — split card: left copy targeting Non-Resident Nepalis ("Buy from abroad. We verify on the ground."), right —booking-card mock with video-call icon. CTA: "Book a concierge call".
+### §3.1.2 Quick Filters — `SearchFilters.tsx` (reused from `/listings`)
 
-**Section 9 — Activity Ticker** (`ActivityTicker`): thin marquee strip, mono 13px: "LOT-512-KTM marked SOLD · New listing in Pokhara Ward 6 · Price drop −8% in Bhaktapur…" `animate-scroll`.
+Compact, always-visible filter bar placed directly under the hero so users can start searching immediately — the page's primary conversion action.
+
+- **Form row:** `flex flex-wrap items-center gap-2` — transparent, borderless controls (`bg-transparent`, `shadow-none`, `focus-visible:ring-0`) so the bar reads as one continuous surface.
+- **Controls:** search (magnifying-glass `Icon` + text `Input`, `aria-label`d), Property Type (`Select` — All/Residential/Commercial/Apartment/Plot), Price (`Select` — Any/Under 20L/20L–50L/50L–1Cr/1Cr+), District (text `Input`), Size (min/max paired `Input`s separated by `-`), Apply action (`Button`, `bg-primary`, `filter_alt` icon).
+- **Sizing tokens:** `h-9` controls, `px-gutter`, `max-w-container-max`. Form `onSubmit` is a no-op placeholder (filter logic is wired on the listings page).
+
+### §3.1.3 Category Strip — `CategoryStrip.tsx`
+
+Scrollable row of property-type tiles offering a secondary browse path under the quick filters.
+
+- **Section wrap:** `py-10 md:py-14`, centered shell. Header: "Browse by Category" (`font-headline-md` / `text-primary`) + "See All" link (mono `text-on-surface-variant`), both at the left of a `flex items-end justify-between` bar.
+- **Scroll rail:** `overflow-x-auto` with **drag-to-scroll** via the local `useHorizontalDrag` hook — `onMouseDown` records start X + scrollLeft, `onMouseMove` pans at 1.5× multiplier and calls `preventDefault()`, `onMouseUp`/`onMouseLeave` releases the drag flag (`cursor-grab` ↔ `cursor-grabbing`). `snap-x snap-start` + `no-scrollbar` (CSS-hidden via `.no-scrollbar`).
+- **Tiles:** 8 categories from the `categories` constant (Apartments, Villas, Land, Commercial, Rentals, Farm Houses, Plots, Offices) — each `min-w-[88px] snap-start`: rounded-2xl image (`size-20 md:size-24`, `object-cover`, `loading="lazy"`) + `font-label-sm` label. Group hover: `-translate-y-1` + `shadow-lg` (`transition-transform duration-200`).
+
+### §3.1.4 Nepal Map — `NepalmapWrapper.tsx`
+
+The only SSR-disabled component on the home page.
+
+- **Lazy boundary:** loaded via `next/dynamic` with `ssr: false` and a styled loading fallback (centered "Loading map…" in `rgba(13,26,20,0.6)` with `#4ade80` text, `letterSpacing: 0.05em`, `borderRadius: 12`). This keeps the heavy Google Maps bundle off the SSR path and out of the main first-paint thread.
+- **Wrapped component:** `GoogleNepalMap` (from `components/real-state/googlemap`) rendered with `MARKERS`, `REGIONS`, `REGION_CENTERS` constants. Wrapped in `memo` + `useMemo` (deps: markers/regions/regionCenters + `JSON.stringify(rest)`) to avoid re-renders.
+- **Container:** `height: clamp(420px, 52vh, 620px)`, `width: 100%` (the page passes this value explicitly; the `GoogleNepalMap` default matches it, so the lazy-loading placeholder and the hydrated map stay the same height).
+
+### §3.1.5 Listings Grid — `PropertyFeed.tsx`
+
+The primary discovery surface. Server-hydrated grid with client-side keyset pagination.
+
+- **SSR seed:** `page.tsx` pre-fetches `PAGE_SIZE` items via GraphQL; passed as `initialItems`/`initialNextCursor`/`initialHasMore`. If the SSR fetch throws, a centered error + "Try again" button (`variant="outline"`, `border-outline-variant`) renders.
+- **Grid:** `mx-auto grid … sm:grid-cols-2 lg:grid-cols-3 gap-md`. Each tile → `PropertyCard` (§2.2): image/gradient thumb with a top-left `verification-stamp` "Verified" badge, location line, title, mono price, meta bullets, and a [View Details] primary + favorite + add-to-cart row.
+- **Pagination:** `Pagination` component at the base — keyset cursor (`after: nextCursor`), `hasMore` guard, `loading` swaps the button to a spinner, "You've reached the end of the listings." when exhausted.
+- **States:** `loading && items.length === 0` → `FeedSkeleton` (3-col `animate-pulse` cards); empty after load → centered "No listings available right now."; inline error banner (`text-on-surface-variant`) only when items already exist but a *later* page failed.
+
+### §3.1.6 Marketplace Carousels — `ListingsMarketplace.tsx`
+
+Two back-to-back `HorizontalScrollSection` strips (see §2.1) that share the reusable component.
+
+- **Left pane (Trending):** fetches `fetchTrendingPropertiesGraphql(10, "7d")` → section titled "Trending Now" with `accent="trending"` (left border `border-l-destructive` pink). Cards carry a `"HOT"` badge.
+- **Right pane (Featured):** fetches `fetchFeaturedProperties(10)` → section titled "Featured Properties" with `accent="default"`.
+- **Concurrency:** both async reads fire in parallel inside one `useEffect`; `loading` is true until *both* settle; each section renders only when its own `items.length > 0` (so a slow trending query never blocks featured from appearing).
+- **Header (reused):** eyebrow + `font-headline-md` title + "View All" link (`href="/listings"`) + prev/next icon-buttons (`Button variant="outline" size="icon"`). Scroll pans by card width via `scrollByCard`.
+
+### §3.1.7 Recently Viewed — `RecentlyViewed.tsx`
+
+Client-only, reads from API on mount; **returns `null` when empty** (no placeholder markup is emitted).
+
+- **Header:** "Your browsing history" eyebrow + "Recently Viewed" title + "Clear History" link + custom prev/next icon-buttons (smooth-scroll `scroll()` helper using card width + 16 px gap). Same `HorizontalScrollSection` rail as the Marketplace, rendered with `cardVariant="common"` → the rich `PropertyCard` (§2.4).
+- **Loading skeleton:** `animate-pulse` cards (`min-w-[280px] md:min-w-[320px] h-[460px]`, `bg-surface-container`) sized to the common card.
+- **Mapping:** `PropertyItem` → `CardProperty` via the shared `toCardPropsFromItem` helper (same mapper as the feed grid, so every rail card is identical to a feed card).
+
+### §3.1.8 Featured Listings — `FeaturedListings.tsx`
+
+A dedicated featured strip using the same `HorizontalScrollSection` but with a distinct visual treatment.
+
+- **Eyebrow:** "Handpicked for you" + title "Featured Listings" (`font-headline-md` / `text-primary`).
+- **Accent:** `accent="trending"` (left border `border-l-destructive` + section background `bg-surface-container-low`). Section is wrapped in `py-10 md:py-14 bg-surface-container-low relative z-10`.
+- **Cards:** carry a `"FEATURED"` badge (otherwise identical mapping to §3.1.7).
+- **Loading / empty:** center-aligned `animate-pulse` skeleton (3 cards), then `null` if no data.
+- **⚠️ Known duplication:** This section and the "Featured Properties" pane in `ListingsMarketplace` (§3.1.6) both call `fetchFeaturedProperties(10)`. Tracked for consolidation into a single source.
+
+### §3.1.9 Bottom Call-to-Action — `CallToActionBanner.tsx`
+
+Far-converting dark CTA anchored to the page bottom.
+
+- **Container:** `py-16 md:py-24`, full-bleed Unsplash background image + `bg-black/60` overlay.
+- **Content:** centered — Fraunces headline ("Can't find what you're looking for?") + body copy + two `Button size="lg"`: primary "Post a Requirement" (`bg-primary`) + outline "Talk to an Agent" (white/30 border, `hover:bg-white/10`, `shadow-xl`).
+
+### Landing-page design patterns
+
+Inventory of the patterns that recur across the home page (most are shared with the dashboard and listings pages — see §2 for component-level rules).
+
+1. **`HorizontalScrollSection` (compound carousel)** — a single composable that owns the header (eyebrow + `font-headline-md` title + "View All" link + prev/next icon-buttons), the `snap-x` scroll rail, and delegates card rendering via the `cardVariant` prop (`"horizontal"` → slim `PropertyHorizontalCard`, `"common"` → rich `PropertyCard`). All home-page rails use `cardVariant="common"` so Recently Viewed, Trending, Featured, and Similar render the *same* card as the listings feed. Consumed by `ListingsMarketplace`, `RecentlyViewed`, `FeaturedListings`, and `SimilarProperties`. The `accent` prop (`"default" | "primary-left" | "trending"`) flips the left-border colour and the section background — no per-consumer header markup is duplicated.
+2. **Skeleton-while-loading** — every data-driven section renders `animate-pulse` placeholders (`min-w-[280px] md:min-w-[320px] h-[460px]`, `bg-surface-container`) sized to the common card geometry before content paints. After load, empty states *collapse to `null`* (Recently Viewed, Featured, Marketplace sections) or render explicit copy only for the feed grid ("No listings available right now.").
+3. **SSR seed + client pagination** — the feed uses the server to resolve the first page (SEO-friendly HTML, no client `await`), then hands a cursor to the client for `loadMore`. `PropertyFeed` keeps `items`, `nextCursor`, `hasMore`, `loading`, `error` in **local component state** — no global store — because the feed is read-once per mount.
+4. **Parallel fetch + per-section gating** — `ListingsMarketplace` fires two async reads in one `useEffect` and renders each section independently once its own data resolves, so a slow trending query never blocks featured content from appearing. Every async effect uses the `cancelled` flag to avoid setting state after unmount.
+5. **Lazy boundary** — `NepalmapWrapper` is the only `next/dynamic` + `ssr:false` component; its loading fallback is a tinted block that occupies the same `clamp` height, so layout doesn't jump when the map hydrates.
+6. **Constants-as-content** — every headline, slide, category, and map region is a typed array in `constants/varibles-constants.ts` (`heroSlides`, `categories`, `MARKERS`, `REGIONS`, `REGION_CENTERS`). Swapping copy never touches component code.
+7. **Token-driven typography & space** — components compose **only** token classes (`font-display-lg`, `text-headline-md`, `px-gutter`, `max-w-container-max`, `py-xl`, `rounded-2xl`, `border-outline-variant`, `text-on-surface-variant`, `mono-stat`, `verification-stamp`, `topo-bg`, `blueprint-grid`, `animate-fade-in-up`, `animate-scroll`) — never raw Tailwind values. The `.verification-stamp`, `.topo-bg`, `.mono-stat`, `.blueprint-grid` utilities and the `animate-*` keyframes are defined in `globals.css` (§1.x) and reused across the whole app.
+8. **Accessibility micro-patterns** — carousel slides use `aria-hidden` to mask inactive panels and `aria-label`s on every nav button; `SearchFilters` uses `sr-only` Labels; card images use `loading="lazy"` and `alt ?? title`; the map loading fallback carries `aria-busy`/`aria-label`. `@media (prefers-reduced-motion)` in `globals.css` short-circuits all animations/transitions.
 
 ## 3.2 Listings / Search `/listings`
 

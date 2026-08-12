@@ -1,9 +1,11 @@
-import { Body, Controller, Get, Param, Post, Query, Headers, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Headers, UseGuards, Req } from '@nestjs/common';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/role.guard';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { AnalyticsService } from './analytics.service';
+import { auth } from '@repo/auth';
+import { fromNodeHeaders } from 'better-auth/node';
 
 @Controller('api/v1/analytics')
 export class AnalyticsController {
@@ -27,11 +29,21 @@ export class AnalyticsController {
     @Param('id') propertyId: string,
     @Headers('user-agent') userAgent?: string,
     @Headers('referer') referrer?: string,
+    @Req() req?: any,
   ) {
     const exists = await this.analytics.isLiveProperty(propertyId);
     if (!exists) return { tracked: false };
 
+    let userId: string | undefined;
+    try {
+      const session = await auth.api.getSession({
+        headers: fromNodeHeaders(req.headers),
+      });
+      userId = session?.user?.id;
+    } catch {}
+
     await this.analytics.trackView(propertyId, {
+      userId,
       userAgent,
       referrer,
     });

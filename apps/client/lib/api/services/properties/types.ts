@@ -121,6 +121,8 @@ export interface CardProperty {
   gradient: string;
   imageUrl?: string;
   meta: string[];
+  /** Optional accent badge (e.g. "HOT", "FEATURED") rendered top-right. */
+  badge?: string;
 }
 
 export const TYPE_LABELS: Record<string, string> = {

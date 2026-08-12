@@ -1,0 +1,13 @@
+@theme {
+  /* Scrape app theme — dark, tool-like. Adjust freely. */
+  --color-scrape-bg: #0f1115;
+  --color-scrape-surface: #171a21;
+  --color-scrape-primary: #4f8cff;
+  --color-scrape-on-bg: #e6e8ee;
+  --color-scrape-muted: #8b93a7;
+}
+
+.scrape-app {
+  background: var(--color-scrape-bg);
+  color: var(--color-scrape-on-bg);
+}

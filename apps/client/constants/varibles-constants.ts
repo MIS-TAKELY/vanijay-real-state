@@ -3,7 +3,6 @@ import { Marker, Region } from "types/nepal-map";
 export const navLinks = [
   { label: "Area Guides", href: "/area-guid" },
   { label: "NRN Concierge", href: "/nrn-concierge" },
-  { label: "Listings", href: "/listings" },
   { label: "About", href: "/about" },
 ];
 
@@ -358,143 +357,6 @@ export const REGION_CENTERS: Record<Region, [number, number]> = {
   Western: [27.78, 82.55],
 };
 
-export const stats = [
-  { value: "12,482", label: "Verified Listings" },
-  { value: "74", label: "Districts Covered" },
-  { value: "0%", label: "Title Discrepancies" },
-];
-
-export const browseCards = [
-  {
-    title: "Browse Land",
-    description:
-      "Filter by area, soil quality, and future infrastructure plans.",
-    icon: "arrow_forward",
-    variant: "default" as const,
-  },
-  {
-    title: "Browse Buildings",
-    description:
-      "Pre-inspected commercial and residential assets with full history.",
-    icon: "arrow_forward",
-    variant: "default" as const,
-  },
-  {
-    title: "What's My Land Worth?",
-    description:
-      "Get an archival-grade valuation based on verified transaction data.",
-    icon: "analytics",
-    variant: "primary" as const,
-  },
-];
-
-export const trustItems = [
-  { icon: "description", text: "Every document checked before listing" },
-  { icon: "location_on", text: "Field verification, not just paperwork" },
-  {
-    icon: "verified_user",
-    text: "You'll always know what's disputed or clear",
-  },
-];
-
-export interface Property {
-  id: string;
-  location: string;
-  title: string;
-  plotId: string;
-  size: string;
-  price: string;
-  image: string;
-  alt: string;
-}
-
-export const properties: Property[] = [
-  {
-    id: "1",
-    location: "Bhaktapur - Sector 04",
-    title: "Mountain View Estate Plot",
-    plotId: "BK-44102",
-    size: "4.5 Aana",
-    price: "रू 24,500,000",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuBx-ORyBwj6oYzqTpSn7QY5OrynAjIRBEV2P7G2FywW2BzOy8a7IzdlJT29eEjpoupPL1YnAa8yYlQ6BjtpIZMmR2LbRtlUJlyOEYqxzMC-jm-4x1d2P0JvzgnCkJIPIs0oy6wNCB1Z805bMMnonOW_knMwjt1MmUtBwNnz8kTcACoolXkspjN4v_v1oADoElqpg16XpBAyxYdWxzjimrlhFGfvcdVhWYaaVIEDxc3btiLVXxTuFprmfQRQ5F7XttVB37wYmSayQgg",
-    alt: "Prime Land Plot",
-  },
-  {
-    id: "2",
-    location: "Lalitpur - Patan Heritage",
-    title: "Refurbished Commercial Loft",
-    plotId: "LT-9902",
-    size: "1,200 SqFt",
-    price: "रू 52,000,000",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCwGcMtLGfKoSUnpWGH9wo0TgdIPN-bGosQvG_M-vjID8DcCpHH3H5OAM0-BytOMK7bd6glY7y1BzBqiKXomRnnksOwzZw1pF-ck_W3QBaa0ArIR1dy8r3m_NOP4-XUp7Vw75zyNsRVBgU89V6ev1Cr2lvMZgocxGOFDL-5Idsf4fYV08M0F8BTP3x-TvDvTEx94p_v63b3e0TSQi7n-nNjDdkpOexp7AdsULBXzHON29G4XASR8-EAPwtfavJZ2pXf2jVJm0QDVFM",
-    alt: "Commercial Loft",
-  },
-  {
-    id: "3",
-    location: "Pokhara - Lakeside South",
-    title: "Fertile Multi-Use Plot",
-    plotId: "PK-1108",
-    size: "1.2 Ropani",
-    price: "रू 18,700,000",
-    image:
-      "https://lh3.googleusercontent.com/aida-public/AB6AXuCkgfgcvBCs4awPzbDmkhjk-YlSQy_V72_mpHIHTEsNoYYsIvhraaMfRtx7uP1mEbwYmRs3X20z-ekTobs1kndsP5aXB2cP9r_dFiOY6wqYaAPakTuvtt5lddIV7JOfZPCovWkoLZgXgcJ-MtVjymoZuAE7c0SJvrYMabmjJKvoTjgXSYFCWehPWaLtk5MIRzDH-R-qBNPz7OEZvv6bmOH5uG3Are5nnyRTpqbcNzigMbzsg4QR4xwpJ7rQsSrfvG_9FTO9y8fYvgw",
-    alt: "Fertile Plot",
-  },
-];
-
-export const steps = [
-  {
-    number: "01",
-    title: "Document Audit",
-    description:
-      "Deep audit of ownership history, tax clearances, and cadastral maps from Land Revenue Offices.",
-    icon: null,
-  },
-  {
-    number: "02",
-    title: "Field Verification",
-    description:
-      "Physical visit by our certified surveyors to confirm boundaries, topography, and absence of physical disputes.",
-    icon: null,
-  },
-  {
-    number: null,
-    title: "Archival Stamp",
-    description:
-      "The property is awarded the 'Verified' status and indexed into our public-trust archival platform.",
-    icon: "check_circle",
-  },
-];
-
-export const tickerItems = [
-  "#LT-9923 SOLD • रू 45,000,000",
-  "VERIFICATION IN PROGRESS: DISTRICT LAMJUNG",
-  "#BK-1102 NEW LISTING • रू 12,800,000",
-  "ANNUAL VALUATION UPDATE: KATHMANDU +8.4%",
-];
-
-export const archiveCards = [
-  {
-    category: "Title Inquiry",
-    question: "How do I know if a Guthi land plot is safely transferable?",
-    action: "Read Analysis",
-  },
-  {
-    category: "Investment Strategy",
-    question:
-      "What is the projected price trend for plots near the new bypass?",
-    action: "View Projections",
-  },
-  {
-    category: "Process Transparency",
-    question:
-      "What specific field checks are done during Lekhaprati verification?",
-    action: "See Methodology",
-  },
-];
-
 export const team = [
   {
     name: "Aayush Shrestha",
@@ -559,8 +421,6 @@ export const milestones = [
   },
 ];
 
-
-
 export const heroSlides = [
   {
     image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&h=900&fit=crop",
@@ -596,85 +456,11 @@ export const categories = [
   { name: "Offices", image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=200&h=200&fit=crop" },
 ];
 
-
-export const trustValues = [
-  { icon: "verified", title: "Verified Listings", description: "Every property is manually verified for authenticity" },
-  { icon: "user", title: "Direct Owner Contact", description: "Connect directly with property owners, no middlemen" },
-  { icon: "video", title: "Virtual Tours Available", description: "Explore properties from the comfort of your home" },
-  { icon: "shield", title: "Secure Transactions", description: "End-to-end encrypted and legally compliant process" },
+export const appModes = [
+  { id: "real-state", label: "Browse Properties", icon: "domain", href: "/", soon: false },
+  { id: "scrape", label: "Scrape Data", icon: "analytics", href: "/scrape", soon: false },
+  { id: "construction", label: "Buy Construction Products", icon: "storefront", href: "/construction", soon: true },
 ];
-
-export interface ListingProperty {
-  id: string;
-  title: string;
-  location: string;
-  price: string;
-  image: string;
-  listingType: "For Sale" | "For Rent";
-  beds?: number;
-  baths?: number;
-  sqft?: string;
-  alt: string;
-  listedDays?: string;
-  highDemand?: boolean;
-}
-
-export const similarProperties: ListingProperty[] = [
-  { id: "sim-1", title: "Modern 3BHK Apartment", location: "Bandra West, Mumbai", price: "₹ 2.5 Cr", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=600&h=450&fit=crop", listingType: "For Sale", beds: 3, baths: 2, sqft: "1,800 sqft", alt: "Modern apartment in Bandra" },
-  { id: "sim-2", title: "Luxury Villa with Pool", location: "Juhu, Mumbai", price: "₹ 8.2 Cr", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=600&h=450&fit=crop", listingType: "For Sale", beds: 5, baths: 4, sqft: "4,500 sqft", alt: "Luxury villa with pool" },
-  { id: "sim-3", title: "Spacious 2BHK for Rent", location: "Andheri East, Mumbai", price: "₹ 45,000/mo", image: "https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=600&h=450&fit=crop", listingType: "For Rent", beds: 2, baths: 2, sqft: "1,100 sqft", alt: "2BHK apartment in Andheri" },
-  { id: "sim-4", title: "Penthouse with City View", location: "Worli, Mumbai", price: "₹ 5.1 Cr", image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600&h=450&fit=crop", listingType: "For Sale", beds: 4, baths: 3, sqft: "3,200 sqft", alt: "Penthouse in Worli" },
-  { id: "sim-5", title: "Cozy Studio Apartment", location: "Powai, Mumbai", price: "₹ 28,000/mo", image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600&h=450&fit=crop", listingType: "For Rent", beds: 1, baths: 1, sqft: "650 sqft", alt: "Studio apartment in Powai" },
-  { id: "sim-6", title: "Premium Office Space", location: "BKC, Mumbai", price: "₹ 1.8 Cr", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&h=450&fit=crop", listingType: "For Sale", beds: 0, baths: 2, sqft: "2,400 sqft", alt: "Office space in BKC" },
-];
-
-export const trendingProperties: ListingProperty[] = [
-  { id: "trend-1", title: "Waterfront Luxury Condo", location: "Marine Drive, Mumbai", price: "₹ 4.7 Cr", image: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600&h=450&fit=crop", listingType: "For Sale", beds: 3, baths: 3, sqft: "2,600 sqft", alt: "Waterfront condo", listedDays: "Listed 2 days ago", highDemand: true },
-  { id: "trend-2", title: "Gated Community Villa", location: "Thane West, Mumbai", price: "₹ 3.9 Cr", image: "https://images.unsplash.com/photo-1600047509807-ba8f99d2cdde?w=600&h=450&fit=crop", listingType: "For Sale", beds: 4, baths: 3, sqft: "3,100 sqft", alt: "Gated community villa", listedDays: "Listed 5 days ago", highDemand: true },
-  { id: "trend-3", title: "Commercial Shop Space", location: "Dadar East, Mumbai", price: "₹ 95 Lakh", image: "https://images.unsplash.com/photo-1554469384-e58fac16e23a?w=600&h=450&fit=crop", listingType: "For Rent", beds: 0, baths: 1, sqft: "800 sqft", alt: "Commercial shop space", listedDays: "Listed 1 day ago", highDemand: true },
-  { id: "trend-4", title: "Hillside Bungalow", location: "Malabar Hill, Mumbai", price: "₹ 12 Cr", image: "https://images.unsplash.com/photo-1600585153490-76fb20a32601?w=600&h=450&fit=crop", listingType: "For Sale", beds: 5, baths: 4, sqft: "5,500 sqft", alt: "Hillside bungalow", listedDays: "Listed 3 days ago", highDemand: true },
-  { id: "trend-5", title: "Fully Furnished 1BHK", location: "Ghatkopar West, Mumbai", price: "₹ 32,000/mo", image: "https://images.unsplash.com/photo-1600573472550-8090b5e0745e?w=600&h=450&fit=crop", listingType: "For Rent", beds: 1, baths: 1, sqft: "750 sqft", alt: "Furnished 1BHK", listedDays: "Listed 6 hours ago", highDemand: true },
-];
-
-export interface RecentlyViewedItem {
-  id: string;
-  title: string;
-  location: string;
-  price: string;
-  image: string;
-  alt: string;
-}
-
-export const recentlyViewed: RecentlyViewedItem[] = [
-  { id: "rec-1", title: "Splendid 3BHK in Lokhandwala", location: "Andheri West, Mumbai", price: "₹ 2.1 Cr", image: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=400&h=250&fit=crop", alt: "3BHK in Lokhandwala" },
-  { id: "rec-2", title: "Premium Plot in Kharghar", location: "Navi Mumbai", price: "₹ 85 Lakh", image: "https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=400&h=250&fit=crop", alt: "Plot in Kharghar" },
-  { id: "rec-3", title: "Sea-Facing Apartment", location: "Juhu, Mumbai", price: "₹ 4.2 Cr", image: "https://images.unsplash.com/photo-1600047509358-9dc75507daeb?w=400&h=250&fit=crop", alt: "Sea-facing apartment" },
-  { id: "rec-4", title: "Independent House in Virar", location: "Virar West, Mumbai", price: "₹ 72 Lakh", image: "https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=400&h=250&fit=crop", alt: "Independent house" },
-  { id: "rec-5", title: "Retail Space in Inorbit Mall", location: "Malad West, Mumbai", price: "₹ 1.2 Cr", image: "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?w=400&h=250&fit=crop", alt: "Retail space in Malad" },
-  { id: "rec-6", title: "Chawl Renovation Ready Unit", location: "Dadar West, Mumbai", price: "₹ 48 Lakh", image: "https://images.unsplash.com/photo-1600573472592-401b489a3cdc?w=400&h=250&fit=crop", alt: "Renovation ready unit" },
-];
-
-export interface FeaturedListing {
-  id: string;
-  title: string;
-  location: string;
-  description: string;
-  price: string;
-  image: string;
-  alt: string;
-  beds?: number;
-  baths?: number;
-  sqft?: string;
-  agentName: string;
-  agentAvatar: string;
-}
-
-export const featuredListings: FeaturedListing[] = [
-  { id: "feat-1", title: "Grand Presidential Suite", location: "Altamount Road, Mumbai", description: "A rare opportunity to own a piece of Mumbai's most prestigious address. This meticulously designed residence features Italian marble flooring, a private elevator, panoramic city views, and a rooftop infinity pool. Every detail speaks luxury.", price: "₹ 18.5 Cr", image: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800&h=600&fit=crop", alt: "Presidential suite interior", beds: 5, baths: 6, sqft: "6,200 sqft", agentName: "Priya Kapoor", agentAvatar: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop&crop=face" },
-  { id: "feat-2", title: "Heritage Bungalow by the Sea", location: "Juhu Tara, Mumbai", description: "An iconic heritage bungalow blending Art Deco charm with contemporary luxury. Set on a sprawling plot with a private beach access, landscaped gardens, and a state-of-the-art home theater. Perfect for collectors and connoisseurs.", price: "₹ 22 Cr", image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&h=600&fit=crop", alt: "Heritage bungalow exterior", beds: 6, baths: 5, sqft: "7,800 sqft", agentName: "Rohan Mehta", agentAvatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" },
-  { id: "feat-3", title: "Sky Villa in Lower Parel", location: "Prestige Ozone, Mumbai", description: "Perched above the city skyline, this sky villa redefines urban living with its double-height living room, private terrace garden, and wraparound views of the Arabian Sea. Smart-home automation throughout.", price: "₹ 9.8 Cr", image: "https://images.unsplash.com/photo-1600607687644-c7171b42498f?w=800&h=600&fit=crop", alt: "Sky villa living room", beds: 4, baths: 4, sqft: "4,100 sqft", agentName: "Ananya Iyer", agentAvatar: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop&crop=face" },
-];
-
 
 export const about_stats = [
   { value: "74", label: "Districts Indexed" },

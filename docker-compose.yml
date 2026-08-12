@@ -58,6 +58,9 @@ services:
         # Internal Docker address for /api/auth/* rewrites in next.config.js
         # (baked at build time by the client Dockerfile)
         - AUTH_API_URL=${AUTH_API_URL:-http://api:5000}
+        # NEXT_PUBLIC_* is inlined into the client JS bundle at BUILD time —
+        # passing it only via `environment:` below has no effect.
+        - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
     restart: unless-stopped
     environment:
       - NODE_ENV=production

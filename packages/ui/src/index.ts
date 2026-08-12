@@ -228,33 +228,15 @@ export {
 } from "./components/ui/tooltip";
 
 /* ------------------------------------------------------------------ */
-/* Maps (react-leaflet re-exports)                                     */
-/* ------------------------------------------------------------------ */
-// NOTE: only re-export from `react-leaflet` here — it is SSR-safe. Do NOT
-// re-export `leaflet` itself or any module that imports it (e.g. MapPicker,
-// setupLeafletDefaults): raw `leaflet` references `window` at module load
-// and would crash Server Components that import this barrel ("window is not
-// defined"). Those browser-only pieces live behind the `@repo/ui/map`
-// subpath export so they only enter the client bundle.
-
-export { MapContainer, TileLayer, Popup, useMap } from "react-leaflet";
-
-/* ------------------------------------------------------------------ */
 /* Reusable location components                                        */
 /* ------------------------------------------------------------------ */
 
-// LocationSearch is SSR-safe (no leaflet import — only a fetch in an effect),
-// so it can live in the main barrel.
-// MapPicker / setupLeafletDefaults import raw `leaflet` → import them from
-// `@repo/ui/map` instead, only in client components.
 export { LocationSearch } from "./components/LocationSearch";
 export type {
   GeocodeResult,
   LocationSearchProps,
 } from "./components/LocationSearch";
 
-// reverseGeocode is SSR-safe (a pure fetch — no leaflet import) like
-// LocationSearch, so it also lives in the main barrel.
 export { reverseGeocode } from "./components/reverseGeocode";
 export type {
   ReverseGeocodeAddress,
@@ -262,9 +244,5 @@ export type {
   ReverseGeocodeResult,
 } from "./components/reverseGeocode";
 
-// Google Geocoding reverse-geocoder — also a pure fetch, same shape.
 export { reverseGeocodeGoogle } from "./components/googleReverseGeocode";
 export type { GoogleReverseGeocodeOptions } from "./components/googleReverseGeocode";
-
-// GoogleMapPicker (browser-only) is exported from the `@repo/ui/gmap`
-// subpath to keep Google Maps out of the SSR main barrel.

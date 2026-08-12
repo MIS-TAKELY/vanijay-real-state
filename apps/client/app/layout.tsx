@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import { Toaster } from "@repo/ui";
 import { Suspense } from "react";
-import { AuthModalListener } from "../components/auth/AuthModalListener";
-import { Footer } from "../components/common/Footer";
-import { Navbar } from "../components/common/Navbar";
+import { AuthModalListener } from "components/real-state/auth/AuthModalListener";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -25,9 +23,7 @@ export default function RootLayout({
         />
       </head>
       <body className="text-on-surface">
-        <Navbar />
         {children}
-        <Footer />
         <Toaster position="top-center" richColors />
         <Suspense fallback={null}>
           <AuthModalListener />
