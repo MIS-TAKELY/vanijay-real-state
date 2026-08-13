@@ -1,26 +1,40 @@
 "use client";
 
-import { Icon, Input, Label, ToggleGroup, ToggleGroupItem } from "@repo/ui";
+import { Button, Icon, Input, Label } from "@repo/ui";
 import { useState } from "react";
-import {
-  CONTACT_METHODS,
-  LANGUAGES,
-  type ContactMethod,
-  type PreferredLanguage,
-  type ProfileData,
-} from "./constants";
+import { updateProfile } from "lib/api/services/profile";
+import type { ProfileData } from "./constants";
 
 interface DetailsFormProps {
   profile: ProfileData;
+  onSaved?: (updated: ProfileData) => void;
 }
 
-export function DetailsForm({ profile }: DetailsFormProps) {
-  const [language, setLanguage] = useState<PreferredLanguage>(
-    profile.preferredLanguage,
-  );
-  const [contact, setContact] = useState<ContactMethod>(
-    profile.preferredContactMethod,
-  );
+export function DetailsForm({ profile, onSaved }: DetailsFormProps) {
+  const [district, setDistrict] = useState(profile.permanentDistrict);
+  const [address, setAddress] = useState(profile.permanentAddress);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const dirty =
+    district !== profile.permanentDistrict ||
+    address !== profile.permanentAddress;
+
+  async function handleSave() {
+    setSaving(true);
+    setError(null);
+    try {
+      const updated = await updateProfile({
+        permanentDistrict: district,
+        permanentAddress: address,
+      });
+      onSaved?.(updated);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to save details");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
@@ -35,7 +49,8 @@ export function DetailsForm({ profile }: DetailsFormProps) {
           <Input
             id="pf-district"
             type="text"
-            defaultValue={profile.permanentDistrict}
+            value={district}
+            onChange={(e) => setDistrict(e.target.value)}
             className="h-11"
           />
         </div>
@@ -46,72 +61,36 @@ export function DetailsForm({ profile }: DetailsFormProps) {
           <Input
             id="pf-address"
             type="text"
-            defaultValue={profile.permanentAddress}
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
             className="h-11"
           />
         </div>
       </div>
 
-      {/* Preferred language toggle */}
-      <div className="mt-md flex flex-col gap-xs">
-        <Label>Preferred language</Label>
-        <ToggleGroup
-          type="single"
-          value={language}
-          onValueChange={(v) => {
-            if (v) setLanguage(v as PreferredLanguage);
-          }}
-          variant="outline"
-          aria-label="Preferred language"
-          className="inline-flex w-fit items-center rounded-full border border-outline-variant bg-surface p-0.5"
-        >
-          {LANGUAGES.map((opt) => (
-            <ToggleGroupItem
-              key={opt.key}
-              value={opt.key}
-              aria-label={opt.label}
-              className="rounded-full px-3 py-1 text-sm font-medium data-[state=on]:bg-primary data-[state=on]:text-on-primary data-[state=off]:text-on-surface-variant data-[state=off]:hover:text-on-surface"
-            >
-              {opt.label}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-      </div>
+      {error && (
+        <p className="mt-sm text-[12px] text-destructive">{error}</p>
+      )}
 
-      {/* Preferred contact method radio */}
-      <div className="mt-md flex flex-col gap-xs">
-        <Label>Preferred contact method</Label>
-        <ToggleGroup
-          type="single"
-          value={contact}
-          onValueChange={(v) => {
-            if (v) setContact(v as ContactMethod);
-          }}
-          variant="outline"
-          aria-label="Preferred contact method"
-          className="flex flex-wrap gap-sm"
+      <div className="mt-md flex justify-end">
+        <Button
+          type="button"
+          disabled={!dirty || saving}
+          onClick={handleSave}
+          className="gap-1.5"
         >
-          {CONTACT_METHODS.map((opt) => (
-            <ToggleGroupItem
-              key={opt.key}
-              value={opt.key}
-              aria-label={opt.label}
-              className="inline-flex items-center gap-1.5 rounded-md border px-3 py-2 text-sm font-medium data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:text-primary data-[state=off]:border-outline-variant data-[state=off]:text-on-surface-variant data-[state=off]:hover:border-primary/40"
-            >
-              <Icon
-                name={
-                  opt.key === "PHONE"
-                    ? "phone"
-                    : opt.key === "WHATSAPP"
-                      ? "chat"
-                      : "message"
-                }
-                className="text-data-table"
-              />
-              {opt.label}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
+          {saving ? (
+            <>
+              <Icon name="progress_activity" className="animate-spin text-data-table" />
+              Saving…
+            </>
+          ) : (
+            <>
+              <Icon name="save" className="text-data-table" />
+              Save changes
+            </>
+          )}
+        </Button>
       </div>
     </div>
   );

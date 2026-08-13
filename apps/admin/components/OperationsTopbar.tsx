@@ -70,7 +70,7 @@ export function OperationsTopbar() {
       </div>
 
       {/* Center: global search */}
-      <div className="flex-1 max-w-xl">
+      <div className="flex-1 max-w-(--container-xl)">
         <form onSubmit={(e) => e.preventDefault()} role="search" className="relative">
           <label htmlFor="admin-search" className="sr-only">
             Search listings and documents

@@ -62,6 +62,11 @@ export const API_ENDPOINTS = {
   dashboard: {
     overview: `/api/${API_VERSION}/dashboard/overview`,
   },
+
+  profile: {
+    base: `/api/${API_VERSION}/profile`,
+    citizenship: `/api/${API_VERSION}/profile/citizenship`,
+  },
 } as const;
 
 export const GRAPHQL_ENDPOINT = `/api/${API_VERSION}/vanijay-real-state`;

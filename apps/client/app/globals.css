@@ -98,6 +98,15 @@
   --spacing-container-max: 1280px;
   --width-container-max: 1280px;
   --max-width-container-max: 1280px;
+
+  /* Restore container max-widths. Custom --spacing-{sm,md,lg,xl} otherwise
+     win over --container-* for max-w-* utilities (Tailwind v4), collapsing
+     dialogs/sheets to a few dozen pixels. */
+  --max-width-xs: 20rem;
+  --max-width-sm: 24rem;
+  --max-width-md: 28rem;
+  --max-width-lg: 32rem;
+  --max-width-xl: 36rem;
 }
 
 body {

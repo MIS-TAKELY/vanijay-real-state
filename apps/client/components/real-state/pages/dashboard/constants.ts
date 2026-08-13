@@ -18,8 +18,8 @@ export interface DashboardNavItem {
   href: string;
   /** Material Symbols icon name. */
   icon: string;
-  /** Optional count badge (e.g. open inquiries). */
-  badge?: string;
+  /** Key into dashboard stats for a live count badge. */
+  badgeKey?: "activeListings" | "openInquiries";
 }
 
 export interface DashboardNavSection {
@@ -36,7 +36,7 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
         label: "My Listings",
         href: "/my-listings",
         icon: "list_alt",
-        badge: "3",
+        badgeKey: "activeListings",
       },
     ],
   },
@@ -64,7 +64,7 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
         label: "Inquiries",
         href: "/inquiries",
         icon: "forum",
-        badge: "5",
+        badgeKey: "openInquiries",
       },
       {
         label: "Appointments",

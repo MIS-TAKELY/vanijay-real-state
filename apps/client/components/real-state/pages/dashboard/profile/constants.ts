@@ -129,25 +129,4 @@ export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> = 
   email: "Email",
 };
 
-/* ------------------------------------------------------------------ */
-/* Mock data                                                           */
-/* ------------------------------------------------------------------ */
 
-export const PROFILE_DATA: ProfileData = {
-  name: "Aayush Shrestha",
-  email: "aayush@example.com",
-  emailVerified: true,
-  phone: "+9779801234567",
-  phoneVerified: true,
-  avatarUrl: null,
-  roles: ["BUYER", "SELLER"],
-  verificationLevel: 2,
-  permanentDistrict: "Lalitpur",
-  permanentAddress: "Pulchowk, Ward 3, Lalitpur",
-  preferredLanguage: "en",
-  preferredContactMethod: "WHATSAPP",
-  citizenshipNo: "••••••••23",
-  citizenshipIssueDate: "2018-04-12",
-  citizenshipStatus: "verified",
-  licenseNumber: null,
-};

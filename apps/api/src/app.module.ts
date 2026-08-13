@@ -20,6 +20,7 @@ import { FavoritesModule } from './modules/rest/favorites/favorites.module';
 import { CartModule } from './modules/rest/cart/cart.module';
 import { AnalyticsModule } from './modules/rest/analytics/analytics.module';
 import { DashboardModule } from './modules/rest/dashboard/dashboard.module';
+import { ProfileModule } from './modules/rest/profile/profile.module';
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { DashboardModule } from './modules/rest/dashboard/dashboard.module';
     CartModule,
     AnalyticsModule,
     DashboardModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService],

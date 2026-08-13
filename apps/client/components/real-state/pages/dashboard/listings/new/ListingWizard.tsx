@@ -148,7 +148,7 @@ export function ListingWizard({ editSlug }: { editSlug?: string }) {
   if (loadError) {
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
-        <p className="max-w-md text-sm text-on-surface-variant">{loadError}</p>
+        <p className="max-w-(--container-md) text-sm text-on-surface-variant">{loadError}</p>
         <Button
           variant="outline"
           onClick={() => setReloadKey((k) => k + 1)}

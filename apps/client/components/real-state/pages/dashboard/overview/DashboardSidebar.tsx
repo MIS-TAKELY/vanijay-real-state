@@ -4,9 +4,26 @@ import { cn, Icon } from "@repo/ui";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { DASHBOARD_NAV_SECTIONS } from "../constants";
+import { useDashboardStats } from "./useDashboardStats";
+
+function NavBadge({ count }: { count: number }) {
+  if (count <= 0) return null;
+
+  return (
+    <span className="mono-stat text-[11px] font-bold rounded-full bg-primary text-on-primary px-1.5 py-0.5 leading-none">
+      {count > 99 ? "99+" : count}
+    </span>
+  );
+}
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const stats = useDashboardStats();
+
+  const badgeCount = (key: "activeListings" | "openInquiries" | undefined) => {
+    if (!key || !stats) return 0;
+    return stats[key];
+  };
 
   const isActive = (href: string) =>
     href === "/dashboard"
@@ -42,11 +59,7 @@ export function DashboardSidebar() {
                         className="text-[20px]"
                       />
                       <span className="flex-1">{item.label}</span>
-                      {item.badge ? (
-                        <span className="mono-stat text-[11px] font-bold rounded-full bg-primary text-on-primary px-1.5 py-0.5 leading-none">
-                          {item.badge}
-                        </span>
-                      ) : null}
+                      <NavBadge count={badgeCount(item.badgeKey)} />
                     </Link>
                   );
                 })}
@@ -72,6 +85,7 @@ export function DashboardSidebar() {
             >
               <Icon name={item.icon} className="text-data-table" />
               {item.label}
+              <NavBadge count={badgeCount(item.badgeKey)} />
             </Link>
           );
         })}
