@@ -23,16 +23,17 @@ export function DetailCard({
     <div
       style={{
         position: "absolute",
-        top: 16,
+        top: 14,
         left: 16,
-        zIndex: 45,
+        zIndex: 1001,
         width: 300,
-        background: "rgba(13,26,20,0.82)",
+        background: "rgba(13,26,20,0.85)",
         backdropFilter: "blur(20px)",
-        border: "1px solid rgba(74,222,128,0.25)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: "1px solid rgba(74,222,128,0.3)",
         borderRadius: 16,
         padding: "16px 18px",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.55)",
+        boxShadow: "0 20px 60px rgba(0,0,0,0.65)",
         animation: "nm-card-in 0.3s ease forwards",
       }}
     >
@@ -117,7 +118,9 @@ export function DetailCard({
             fontFamily: "'IBM Plex Mono', monospace",
           }}
         >
-          {m.price}
+          {m.price
+            ? m.price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim()
+            : `₹ ${m.priceValue}M`}
         </span>
         <span
           style={{

@@ -36,14 +36,6 @@ async function reverseGeocodeBest(
   lng: number,
   signal: AbortSignal,
 ): Promise<ReverseGeocodeResult | null> {
-  if (GOOGLE_MAPS_API_KEY) {
-    const fromGoogle = await reverseGeocodeGoogle(lat, lng, {
-      apiKey: GOOGLE_MAPS_API_KEY,
-      endpoint: GOOGLE_ENDPOINT,
-      signal,
-    });
-    if (fromGoogle) return fromGoogle;
-  }
   return reverseGeocode(lat, lng, { endpoint: NOMINATIM_ENDPOINT, signal });
 }
 

@@ -2,14 +2,11 @@
 
 import dynamic from "next/dynamic";
 import { memo, useMemo } from "react";
-import { MARKERS, REGIONS, REGION_CENTERS } from "constants/varibles-constants";
-import type { NepalMapProps } from "components/real-state/googlemap/types";
+import { MARKERS } from "constants/varibles-constants";
+import type { Marker } from "components/real-state/googlemap/types";
 
-const GoogleNepalMapDynamic = dynamic(
-  () =>
-    import("components/real-state/googlemap").then((m) => ({
-      default: m.GoogleNepalMap,
-    })),
+const LeafletNepalMapDynamic = dynamic(
+  () => import("components/real-state/leaflet-map/LeafletNepalMap"),
   {
     ssr: false,
     loading: () => (
@@ -35,28 +32,27 @@ const GoogleNepalMapDynamic = dynamic(
   },
 );
 
-export interface NepalMapWrapperProps extends Omit<
-  NepalMapProps,
-  "markers" | "regions" | "regionCenters"
-> {
-  markers?: NepalMapProps["markers"];
-  regions?: NepalMapProps["regions"];
-  regionCenters?: NepalMapProps["regionCenters"];
+export interface NepalMapWrapperProps {
+  markers?: Marker[];
+  height?: string;
+  className?: string;
+  onMarkerSelect?: (marker: Marker | null) => void;
 }
 
 const NepalmapWrapper = memo(function NepalmapWrapper({
   markers = MARKERS,
-  regions = REGIONS,
-  regionCenters = REGION_CENTERS,
   ...rest
 }: NepalMapWrapperProps) {
-  const props = useMemo<NepalMapProps>(
-    () => ({ markers, regions, regionCenters, ...rest }),
+  const props = useMemo(
+    () => ({ markers, ...rest }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [markers, regions, regionCenters, JSON.stringify(rest)],
+    [markers, JSON.stringify(rest)],
   );
 
-  return <GoogleNepalMapDynamic {...props} />;
+  return <LeafletNepalMapDynamic {...props} />;
 });
 
 export default NepalmapWrapper;
+
+
+

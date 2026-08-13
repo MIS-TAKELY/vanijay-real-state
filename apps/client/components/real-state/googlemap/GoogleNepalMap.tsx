@@ -154,8 +154,8 @@ export function GoogleNepalMap({
         );
         if (pos && this.div) {
           this.div.style.position = "absolute";
-          this.div.style.left = `${pos.x - 44}px`;
-          this.div.style.top = `${pos.y - 54}px`;
+          this.div.style.left = `${pos.x - 48}px`;
+          this.div.style.top = `${pos.y - 58}px`;
         }
       }
       onRemove() {
@@ -194,14 +194,17 @@ export function GoogleNepalMap({
     [onMarkerSelect],
   );
 
-  const handleSatelliteZoom = useCallback(() => {
-    setModalTab("satellite");
-    setModalOpen(true);
+  const handleSatelliteZoom = useCallback((m: Marker) => {
+    googleMapRef.current?.panTo({ lat: m.lat, lng: m.lng });
+    googleMapRef.current?.setZoom(16);
   }, []);
 
-  const handleStreetView = useCallback(() => {
-    setModalTab("streetview");
-    setModalOpen(true);
+  const handleStreetView = useCallback((m: Marker) => {
+    window.open(
+      `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${m.lat},${m.lng}`,
+      "_blank",
+      "noopener,noreferrer",
+    );
   }, []);
 
   if (!apiKey) {
@@ -216,6 +219,7 @@ export function GoogleNepalMap({
           color: "#f87171",
           fontSize: 13,
           fontWeight: 700,
+          borderRadius: 14,
         }}
       >
         Missing NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
@@ -235,6 +239,7 @@ export function GoogleNepalMap({
           color: "#4ade80",
           fontSize: 13,
           fontWeight: 700,
+          borderRadius: 14,
         }}
       >
         Loading map...
@@ -246,17 +251,22 @@ export function GoogleNepalMap({
     <div
       className={className}
       style={{
-        display: "flex",
         height,
         width: "100%",
         position: "relative",
         background: "#0d1a14",
-        overflow: "clip",
+        overflow: "hidden",
+        borderRadius: 14,
       }}
     >
       <div
         ref={mapRef}
-        style={{ flex: 1, height: "100%", position: "relative" }}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+        }}
       >
         <CompassRose />
         <HintBar />
@@ -296,39 +306,43 @@ export function GoogleNepalMap({
   );
 }
 
+function formatDisplayPrice(price: string): string {
+  if (!price) return "₹ 0";
+  return price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim();
+}
+
 function buildPinHtml(
   marker: Marker,
   selected: boolean,
   hottest: boolean,
 ): string {
   const c = getTrendColor(marker.trend, marker.tier);
-  const bg = selected ? "#1a3326" : "#ffffff";
-  const fg = selected ? "#ffffff" : "#111827";
-  const sub = selected ? "rgba(255,255,255,0.75)" : c;
+  const formattedPrice = formatDisplayPrice(marker.price);
+  const trendSign =
+    marker.trend === "up" ? "↑" : marker.trend === "down" ? "↓" : "-";
+  const trendColor =
+    marker.trend === "up"
+      ? "#ef4444"
+      : marker.trend === "down"
+        ? "#3b82f6"
+        : "#f97316";
   const hotBadge = hottest
     ? `<span style="position:absolute;top:-7px;right:-4px;background:${c};color:#fff;font-size:8px;font-weight:800;letter-spacing:0.08em;padding:1px 5px;border-radius:99px;z-index:2">HOT</span>`
     : "";
 
   return `
-<div style="width:88px;display:flex;flex-direction:column;align-items:center;${
+<div style="width:96px;display:flex;flex-direction:column;align-items:center;${
     selected
-      ? "filter:drop-shadow(0 12px 24px rgba(0,0,0,0.45));transform:scale(1.15) translateY(-3px);"
-      : "filter:drop-shadow(0 3px 8px rgba(0,0,0,0.22));transform:scale(1);"
+      ? "filter:drop-shadow(0 12px 24px rgba(0,0,0,0.45));transform:scale(1.15) translateY(-4px);"
+      : "filter:drop-shadow(0 4px 12px rgba(0,0,0,0.25));transform:scale(1);"
   }transform-origin:bottom center;transition:transform 0.28s cubic-bezier(.175,.885,.32,1.275),filter 0.28s ease">
-  <div style="background:${bg};border:2px solid ${
-    selected ? "#244530" : "#e5e7eb"
-  };border-left:4px solid ${c};border-radius:10px;padding:4px 8px;position:relative;width:88px;box-sizing:border-box;text-align:center">
+  <div style="background:#ffffff;border:1px solid #e2e8f0;border-top:3.5px solid ${c};border-radius:8px;padding:4px 6px;position:relative;width:96px;box-sizing:border-box;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.25)">
     ${hotBadge}
-    <div style="font-size:11px;font-weight:700;color:${fg};letter-spacing:-0.02em;white-space:nowrap;font-family:'IBM Plex Mono',monospace;line-height:1.2">${
-      marker.price
-    }</div>
-    <div style="font-size:9px;font-weight:700;color:${sub};margin-top:1px;line-height:1.2">${getTrendLabel(marker.trend)} ${marker.change}</div>
-    <div style="font-size:8px;font-weight:600;color:${
-      selected ? "rgba(255,255,255,0.6)" : "#6b7280"
-    };margin-top:1px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${marker.area}</div>
+    <div style="font-size:11.5px;font-weight:800;color:#0f172a;letter-spacing:-0.02em;white-space:nowrap;font-family:system-ui,-apple-system,sans-serif;line-height:1.2">${formattedPrice}</div>
+    <div style="font-size:9.5px;font-weight:700;color:${trendColor};margin-top:1px;line-height:1.2">${trendSign} ${marker.change}</div>
+    <div style="font-size:8.5px;font-weight:600;color:#64748b;margin-top:1px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${marker.area}</div>
   </div>
-  <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid ${
-    selected ? "#244530" : "#e5e7eb"
-  };margin-top:-1px"></div>
+  <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #ffffff;margin-top:-1px"></div>
 </div>`;
 }
+

@@ -2,7 +2,6 @@
 
 import React from "react";
 import type { Marker } from "../types";
-import { getTrendColor } from "../utils";
 
 interface SidebarProps {
   markers: Marker[];
@@ -24,19 +23,21 @@ export function Sidebar({
   return (
     <div
       style={{
-        width: showList ? 300 : 0,
+        position: "absolute",
+        top: 0,
+        right: 0,
+        bottom: 0,
+        width: showList ? 320 : 0,
         minWidth: 0,
-        flexShrink: 0,
-        height: "100%",
+        zIndex: 1000,
         display: "flex",
         flexDirection: "column",
-        background: "rgba(10,20,13,0.85)",
+        background: "rgba(10,20,13,0.88)",
         backdropFilter: "blur(16px)",
+        WebkitBackdropFilter: "blur(16px)",
         borderLeft: showList ? "1px solid rgba(255,255,255,0.08)" : "none",
         overflow: "hidden",
-        transition: "width 0.3s cubic-bezier(.4,0,.2,1), border 0.3s ease",
-        position: "relative",
-        zIndex: 40,
+        transition: "all 0.3s cubic-bezier(.4,0,.2,1)",
       }}
     >
       <div
@@ -59,12 +60,12 @@ export function Sidebar({
               textTransform: "uppercase",
             }}
           >
-            {markers.length} Location{markers.length !== 1 ? "s" : ""}
+            {markers.length} LOCATIONS
           </div>
           <div
             style={{
               fontSize: 10,
-              color: "rgba(209,250,229,0.4)",
+              color: "rgba(209,250,229,0.45)",
               marginTop: 1,
             }}
           >
@@ -86,12 +87,13 @@ export function Sidebar({
             <div
               style={{
                 fontSize: 9,
-                color: "rgba(209,250,229,0.4)",
+                fontWeight: 700,
+                color: "rgba(209,250,229,0.45)",
                 textTransform: "uppercase",
                 letterSpacing: "0.05em",
               }}
             >
-              Avg growth
+              AVG GROWTH
             </div>
           </div>
         )}
@@ -100,7 +102,7 @@ export function Sidebar({
       <div
         ref={listRef}
         className="nm-list"
-        style={{ overflowY: "auto", flex: 1, padding: "8px 0" }}
+        style={{ overflowY: "auto", flex: 1, padding: "4px 0" }}
       >
         {markers.length === 0 && (
           <div
@@ -117,9 +119,20 @@ export function Sidebar({
 
         {[...markers]
           .sort((a, b) => b.priceValue - a.priceValue)
-          .map((m, i) => {
+          .map((m) => {
             const isActive = m.id === selectedId;
-            const c = getTrendColor(m.trend, m.tier);
+            const formattedPrice = m.price
+              ? m.price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim()
+              : `₹ ${m.priceValue}M`;
+            const trendColor =
+              m.trend === "up"
+                ? "#f87171"
+                : m.trend === "down"
+                  ? "#60a5fa"
+                  : "#fb923c";
+            const trendSign =
+              m.trend === "up" ? "↑" : m.trend === "down" ? "↓" : "→";
+
             return (
               <button
                 key={m.id}
@@ -128,18 +141,18 @@ export function Sidebar({
                 style={{
                   width: "100%",
                   textAlign: "left",
-                  padding: "10px 16px",
+                  padding: "12px 16px",
                   borderBottom: "1px solid rgba(255,255,255,0.05)",
                   cursor: "pointer",
-                  border: "none",
+                  borderTop: "none",
+                  borderRight: "none",
                   background: isActive
-                    ? "rgba(74,222,128,0.1)"
+                    ? "rgba(74,222,128,0.12)"
                     : "transparent",
                   borderLeft: isActive
                     ? "3px solid #4ade80"
                     : "3px solid transparent",
                   transition: "all 0.15s ease",
-                  animationDelay: `${i * 30}ms`,
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
@@ -158,39 +171,35 @@ export function Sidebar({
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "space-between",
-                    marginBottom: 6,
+                    marginBottom: 4,
                   }}
                 >
                   <div
                     style={{
-                      fontSize: 14,
-                      fontWeight: 700,
-                      color: isActive ? "#4ade80" : "#d1fae5",
+                      fontSize: 15,
+                      fontWeight: 800,
+                      color: isActive ? "#4ade80" : "#fafafa",
                       fontFamily: "'IBM Plex Mono', monospace",
                     }}
                   >
-                    {m.price}
+                    {formattedPrice}
                   </div>
                   <span
                     style={{
-                      fontSize: 10,
+                      fontSize: 11,
                       fontWeight: 700,
-                      color: c,
-                      background: "rgba(255,255,255,0.05)",
-                      padding: "1px 6px",
-                      borderRadius: 4,
+                      color: trendColor,
                     }}
                   >
-                    {m.trend === "up" ? "↑" : m.trend === "down" ? "↓" : "→"}{" "}
-                    {m.change}
+                    {trendSign} {m.change}
                   </span>
                 </div>
                 <div
                   style={{
-                    fontSize: 13,
-                    fontWeight: 600,
-                    color: isActive ? "#f0fdf4" : "rgba(209,250,229,0.7)",
-                    marginBottom: 4,
+                    fontSize: 14,
+                    fontWeight: 700,
+                    color: isActive ? "#f0fdf4" : "#ffffff",
+                    marginBottom: 6,
                   }}
                 >
                   {m.area}
@@ -199,22 +208,20 @@ export function Sidebar({
                   style={{
                     display: "flex",
                     flexWrap: "wrap",
-                    gap: 4,
-                    fontSize: 9,
-                    color: "rgba(134,239,172,0.7)",
+                    gap: 6,
                   }}
                 >
                   {m.tags.slice(0, 2).map((t) => (
                     <span
                       key={t}
                       style={{
-                        fontSize: 9,
-                        fontWeight: 700,
-                        color: "rgba(134,239,172,0.7)",
-                        background: "rgba(74,222,128,0.08)",
-                        padding: "2px 6px",
+                        fontSize: 10,
+                        fontWeight: 600,
+                        color: "#4ade80",
+                        background: "rgba(34, 197, 94, 0.15)",
+                        padding: "2px 8px",
                         borderRadius: 4,
-                        letterSpacing: "0.03em",
+                        letterSpacing: "0.02em",
                       }}
                     >
                       {t}
@@ -233,12 +240,13 @@ export function Sidebar({
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          background: "rgba(10,20,13,0.95)",
         }}
       >
         <span
           style={{
-            fontSize: 10,
-            color: "rgba(209,250,229,0.35)",
+            fontSize: 11,
+            color: "rgba(209,250,229,0.45)",
             letterSpacing: "0.03em",
           }}
         >
@@ -247,7 +255,7 @@ export function Sidebar({
         <a
           href="/map"
           style={{
-            fontSize: 11,
+            fontSize: 12,
             fontWeight: 700,
             color: "#4ade80",
             textDecoration: "none",
@@ -263,3 +271,4 @@ export function Sidebar({
     </div>
   );
 }
+
