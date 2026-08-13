@@ -1,36 +1,34 @@
 import type { Metadata } from "next";
-import { Hero } from "components/scrape/pages/home/Hero";
-import { GlobalLandscape } from "components/scrape/pages/home/GlobalLandscape";
-import { NepalFocus } from "components/scrape/pages/home/NepalFocus";
-import { Challenges } from "components/scrape/pages/home/Challenges";
-import { Playbook } from "components/scrape/pages/home/Playbook";
-import { CTA } from "components/scrape/pages/home/CTA";
+import {
+  Calculator,
+  CategoryGrid,
+  CTA,
+  Hero,
+  HowItWorks,
+  RateCatalog,
+} from "components/kabadi/pages/home";
 
 export const metadata: Metadata = {
-  title: "Scrape Intelligence | Global Tools Decoded for Nepal — Lekhaprati",
+  title: "Kabadi | Sell Your Scrap, Get Paid in Cash",
   description:
-    "An analysis of the world's web-scraping platforms — open-source crawlers, browser automation, proxy APIs and AI-native extractors — mapped against Nepal's real data sources: Hamrobazaar, Daraz, Merojob and more.",
+    "Check today's kabadi rates in Kathmandu — paper, plastic, metals, e-waste and appliances priced per kg or per piece. Estimate your payout and book a doorstep pickup for cash on the spot.",
   keywords: [
-    "web scraping Nepal",
-    "Nepal data extraction",
-    "Hamrobazaar scraping",
-    "Daraz Nepal scraping",
-    "Merojob scraping",
-    "scraping tools comparison",
-    "Crawlee",
-    "Playwright",
-    "Bright Data",
-    "Nepal real estate data",
+    "kabadi price Nepal",
+    "scrap price Kathmandu",
+    "sell scrap online",
+    "kawadi rates",
+    "copper price per kg Nepal",
+    "newspaper rate Nepal",
+    "e-waste recycling Nepal",
+    "scrap pickup Kathmandu",
   ],
-  alternates: {
-    canonical: "/scrape",
-  },
+  alternates: { canonical: "/scrape" },
   openGraph: {
-    title: "The Scraping Landscape, Decoded for Nepal",
+    title: "Kabadi — Turn your scrap into cash",
     description:
-      "15 global scraping platforms profiled and mapped against 9 Nepali data sources across real estate, e-commerce and jobs.",
+      "Transparent kabadi rates across the Kathmandu Valley, an instant payout calculator, and same-day doorstep pickup with cash on the spot.",
     url: "/scrape",
-    siteName: "Lekhaprati",
+    siteName: "Kabadi",
     type: "website",
   },
   robots: { index: true, follow: true },
@@ -38,32 +36,58 @@ export const metadata: Metadata = {
 
 const schema = {
   "@context": "https://schema.org",
-  "@type": "WebPage",
-  name: "Scrape Intelligence — Global Tools Decoded for Nepal",
-  description:
-    "Analysis of global web-scraping platforms mapped against Nepal's real estate, e-commerce and job-portal data sources.",
+  "@type": "WebSite",
+  name: "Kabadi",
   url: "/scrape",
-  isPartOf: { "@type": "WebSite", name: "Lekhaprati" },
-  about: {
-    "@type": "Thing",
-    name: "Web scraping in Nepal",
-    description:
-      "A comparison of web scraping tools and an overview of Nepali data sources including Hamrobazaar, Daraz Nepal, Merojob, Nepal Homes, Gharghaderi, Gharbazar, SastoDeal, Thulo.com and JobsNepal.",
-  },
+  description:
+    "Nepal's transparent kabadi (scrap) price guide and doorstep pickup service for paper, plastic, metals, e-waste and appliances.",
+  inLanguage: "en",
 };
 
-export default function ScrapeHomePage() {
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  name: "Kabadi buy rates",
+  itemListElement: [
+    {
+      "@type": "ListItem",
+      position: 1,
+      name: "Copper wire — Rs 1,400 per kg",
+    },
+    {
+      "@type": "ListItem",
+      position: 2,
+      name: "Newspaper — Rs 35 per kg",
+    },
+    {
+      "@type": "ListItem",
+      position: 3,
+      name: "PET bottles — Rs 20 per kg",
+    },
+    {
+      "@type": "ListItem",
+      position: 4,
+      name: "Old smartphone — Rs 150 per piece",
+    },
+  ],
+};
+
+export default function KabadiHomePage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
+      />
       <Hero />
-      <GlobalLandscape />
-      <NepalFocus />
-      <Challenges />
-      <Playbook />
+      <RateCatalog />
+      <Calculator />
+      <CategoryGrid />
+      <HowItWorks />
       <CTA />
     </>
   );
