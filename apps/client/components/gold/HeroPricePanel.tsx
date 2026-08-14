@@ -1,10 +1,11 @@
 "use client";
 
+import Link from "next/link";
 import type {
   CurrencyCode,
   MetalData,
-  MetalId,
 } from "../../constants/gold/metals";
+import { METAL_SLUGS } from "../../constants/gold/metals";
 import {
   formatChange,
   formatChangePercent,
@@ -18,7 +19,6 @@ interface HeroPricePanelProps {
   metals: MetalData[];
   currency: CurrencyCode;
   onCurrencyChange: (currency: CurrencyCode) => void;
-  onMetalChange: (id: MetalId) => void;
 }
 
 export function HeroPricePanel({
@@ -26,7 +26,6 @@ export function HeroPricePanel({
   metals,
   currency,
   onCurrencyChange,
-  onMetalChange,
 }: HeroPricePanelProps) {
   const isUp = metal.change >= 0;
   const { bid, ask } = getBidAsk(metal, currency);
@@ -41,25 +40,30 @@ export function HeroPricePanel({
           role="tablist"
           aria-label="Select a metal"
         >
-          {metals.map((m) => (
-            <button
-              key={m.id}
-              role="tab"
-              aria-selected={metal.id === m.id}
-              onClick={() => onMetalChange(m.id)}
-              className={`
-                rounded-full px-3 py-1 text-xs font-medium capitalize tracking-wide transition-colors
-                ${
-                  metal.id === m.id
-                    ? "bg-white/[0.12] text-[#E8E6E1]"
-                    : "text-white/40 hover:text-white/70"
-                }
-              `}
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              {m.name}
-            </button>
-          ))}
+          {metals.map((m) => {
+            const isActive = metal.id === m.id;
+            const slug = METAL_SLUGS[m.id];
+            const href = `/${slug}`;
+            return (
+              <Link
+                key={m.id}
+                href={href}
+                role="tab"
+                aria-selected={isActive}
+                className={`
+                  rounded-full px-3 py-1 text-xs font-medium capitalize tracking-wide transition-colors
+                  ${
+                    isActive
+                      ? "bg-white/[0.12] text-[#E8E6E1]"
+                      : "text-white/40 hover:text-white/70"
+                  }
+                `}
+                style={{ fontFamily: "var(--font-body)" }}
+              >
+                {m.name}
+              </Link>
+            );
+          })}
         </div>
 
         {/* Currency toggle */}

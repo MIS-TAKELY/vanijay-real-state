@@ -3,7 +3,7 @@ import { METAL_SEO_DATA } from "../../../constants/gold/seo-data";
 import { MetalPageTemplate } from "../../../components/gold/MetalPageTemplate";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = METAL_SEO_DATA.gold;
+  const seo = METAL_SEO_DATA.steel;
   return {
     title: seo.title,
     description: seo.description,
@@ -12,18 +12,18 @@ export async function generateMetadata(): Promise<Metadata> {
       title: seo.title,
       description: seo.description,
       type: "website",
-      url: "/gold",
+      url: "/steel",
     },
     twitter: {
       card: "summary_large_image",
       title: seo.title,
       description: seo.description,
     },
-    alternates: { canonical: "/gold" },
+    alternates: { canonical: "/steel" },
     robots: { index: true, follow: true },
   };
 }
 
-export default function GoldPage() {
-  return <MetalPageTemplate metalId="gold" />;
+export default function SteelPage() {
+  return <MetalPageTemplate metalId="steel" />;
 }

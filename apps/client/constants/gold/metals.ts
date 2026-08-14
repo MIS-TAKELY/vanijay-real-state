@@ -5,15 +5,41 @@ export type MetalId =
   | "palladium"
   | "bitcoin"
   | "ethereum"
-  | "copper";
+  | "copper"
+  | "diamond"
+  | "steel";
 
 /** Display currencies supported by the market UI. */
-export type CurrencyCode = "NPR" | "USD";
+export type CurrencyCode = "NPR" | "USD" | "EUR" | "GBP" | "INR" | "CNY";
 
 export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   NPR: "रू",
   USD: "$",
+  EUR: "€",
+  GBP: "£",
+  INR: "₹",
+  CNY: "¥",
 };
+
+/** Approximate conversion rates from USD for display purposes. */
+export const USD_EXCHANGE_RATES: Record<CurrencyCode, number> = {
+  USD: 1,
+  NPR: 133,
+  EUR: 0.92,
+  GBP: 0.79,
+  INR: 83.5,
+  CNY: 7.24,
+};
+
+/** Unit conversion factors relative to troy ounce. */
+export const UNIT_FACTORS: Record<string, number> = {
+  oz: 1,
+  gram: 31.1035,
+  kilo: 0.0311035,
+  tola: 2.6667,
+};
+
+export type WeightUnit = keyof typeof UNIT_FACTORS;
 
 /** Display currency for the market — Nepali Rupee. */
 export const CURRENCY_SYMBOL = CURRENCY_SYMBOLS.NPR;
@@ -139,6 +165,26 @@ export const METAL_META_LIST: MetalMeta[] = [
     description:
       "The industrial metal of electrification — wiring, motors, and grids as the world transitions to clean energy.",
   },
+  {
+    id: "diamond",
+    name: "Diamond",
+    symbol: "DIA",
+    unit: "carat",
+    accentColor: "#B9F2FF",
+    volatility: 0.005,
+    description:
+      "The ultimate store of value in gemstone form. Industrial-grade diamonds drive semiconductor and quantum computing research.",
+  },
+  {
+    id: "steel",
+    name: "Steel",
+    symbol: "STL",
+    unit: "ton",
+    accentColor: "#71797E",
+    volatility: 0.018,
+    description:
+      "The backbone of modern infrastructure. Steel prices reflect global construction demand, iron ore supply, and carbon policy.",
+  },
 ];
 
 export const METAL_META = Object.fromEntries(
@@ -243,7 +289,77 @@ export const FALLBACK_PRICES: Record<MetalId, number> = {
   bitcoin: 9_639_000,
   ethereum: 286_600,
   copper: 995,
+  diamond: 1_200_000,
+  steel: 85_000,
 };
+
+/** Convert a USD price to any supported display currency. */
+export function convertCurrency(
+  usdPrice: number,
+  currency: CurrencyCode,
+): number {
+  return usdPrice * (USD_EXCHANGE_RATES[currency] ?? 1);
+}
+
+/** Conversion factors: how many grams in one unit. */
+const GRAMS_PER_UNIT: Record<string, number> = {
+  oz: 31.1035,
+  gram: 1,
+  kilo: 1000,
+  tola: 11.66,
+  lb: 453.592,
+  carat: 0.2,
+  ton: 1_000_000,
+};
+
+/** Convert a price from one unit to another. Works for any source/target unit pair. */
+export function convertUnit(
+  price: number,
+  fromUnit: string,
+  toUnit: WeightUnit | string,
+): number {
+  if (fromUnit === toUnit) return price;
+  const fromGrams = GRAMS_PER_UNIT[fromUnit] || 31.1035;
+  const toGrams = GRAMS_PER_UNIT[toUnit] || 31.1035;
+  const pricePerGram = price / fromGrams;
+  return pricePerGram * toGrams;
+}
+
+/** Format price with currency symbol and unit conversion. */
+export function formatConvertedPrice(
+  usdPrice: number,
+  currency: CurrencyCode,
+  unit: WeightUnit = "oz",
+  originalUnit: string = "oz",
+): string {
+  const converted = convertUnit(usdPrice, originalUnit, unit);
+  const inCurrency = convertCurrency(converted, currency);
+  return `${CURRENCY_SYMBOLS[currency]}${inCurrency.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+/** SEO-friendly slug for each metal. */
+export const METAL_SLUGS: Record<MetalId, string> = {
+  gold: "gold",
+  silver: "silver",
+  platinum: "platinum",
+  palladium: "palladium",
+  bitcoin: "bitcoin",
+  ethereum: "ethereum",
+  copper: "copper",
+  diamond: "diamond",
+  steel: "steel",
+};
+
+/** Reverse lookup: slug → MetalId. */
+export const SLUG_TO_METAL: Record<string, MetalId> = Object.fromEntries(
+  (Object.entries(METAL_SLUGS) as [MetalId, string][]).map(([id, slug]) => [
+    slug,
+    id,
+  ]),
+) as Record<string, MetalId>;
 
 export const METALS_DATA: MetalData[] = METAL_META_LIST.map((m) =>
   buildMetalData(m.id, FALLBACK_PRICES[m.id]),
