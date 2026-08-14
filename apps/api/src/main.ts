@@ -18,11 +18,10 @@ async function bootstrap() {
   // front-end app (client + admin) can talk to the API.
   // You can also override the whole list with ALLOWED_ORIGINS (comma-separated).
   const corsOrigins =
-    process.env.ALLOWED_ORIGINS?.split(',').map((o) => o.trim()).filter(Boolean) ??
-    [
-      process.env.CLIENT_URL ?? 'https://realstate.vanijay.com',
-      process.env.ADMIN_URL,
-    ]
+    process.env.ALLOWED_ORIGINS?.split(',')
+      .map((o) => o.trim())
+      .filter(Boolean) ??
+    [process.env.CLIENT_URL ?? 'https://malpothcom', process.env.ADMIN_URL]
       .map((o) => o?.trim()) // trim in case env values have stray spaces
       .filter(Boolean);
 
