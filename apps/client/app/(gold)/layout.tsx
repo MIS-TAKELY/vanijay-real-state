@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./metals.css";
 
 export const metadata: Metadata = {
-  title: "Vanijay | Precious Metals Market",
+  title: "Malpoth | Precious Metals Market",
   description:
     "Live NPR prices, trends, and historical data for gold, silver, platinum, palladium, bitcoin, ethereum, and copper.",
 };

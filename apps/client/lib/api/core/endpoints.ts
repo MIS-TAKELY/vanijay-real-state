@@ -69,6 +69,6 @@ export const API_ENDPOINTS = {
   },
 } as const;
 
-export const GRAPHQL_ENDPOINT = `/api/${API_VERSION}/vanijay-real-state`;
+export const GRAPHQL_ENDPOINT = `/api/${API_VERSION}/malpoth`;
 
 export type ApiDomain = keyof typeof API_ENDPOINTS;

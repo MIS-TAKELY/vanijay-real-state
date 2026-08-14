@@ -27,7 +27,7 @@ import { ProfileModule } from './modules/rest/profile/profile.module';
     LoggerModule.forRoot({
       pinoHttp: {
         level: 'info',
-        base: { service: 'vanijay-real-state-api' },
+        base: { service: 'malpoth' },
       },
     }),
 
@@ -42,7 +42,7 @@ import { ProfileModule } from './modules/rest/profile/profile.module';
       driver: ApolloDriver,
       autoSchemaFile: 'src/schema.gql',
       playground: process.env.NODE_ENV !== 'production',
-      path: '/api/v1/vanijay-real-state',
+      path: '/api/v1/malpoth',
       validationRules: graphqlValidationRules,
     }),
     AuthModule,

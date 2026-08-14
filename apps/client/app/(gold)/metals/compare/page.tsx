@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Compare Precious Metals | Side-by-Side Analysis | Vanijay",
+  title: "Compare Precious Metals | Side-by-Side Analysis | Malpoth",
   description: "Compare gold, silver, platinum, palladium, copper, diamond, and steel prices side by side. Real-time rates, performance metrics, and correlation analysis.",
   robots: { index: true, follow: true },
 };

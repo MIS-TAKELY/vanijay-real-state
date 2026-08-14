@@ -12,8 +12,9 @@ export const auth = betterAuth({
   advanced: {
     crossSubDomainCookies: {
       enabled: true,
-      domain:
-        process.env.NODE_ENV === "production" ? ".vanijay.com" : undefined,
+      // Use COOKIE_DOMAIN env var (e.g. ".malpoth.com" or ".vanijay.com").
+      // Falls back to undefined in dev so cookies are scoped to localhost.
+      domain: process.env.COOKIE_DOMAIN ?? undefined,
     },
   },
 

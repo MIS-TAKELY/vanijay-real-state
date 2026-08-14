@@ -172,7 +172,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
           Prices are indicative and delayed. Not financial advice.
         </p>
         <p className="mt-1">
-          Vanijay Precious Metals &copy; {new Date().getFullYear()}
+          Malpoth Precious Metals &copy; {new Date().getFullYear()}
         </p>
       </footer>
     </main>

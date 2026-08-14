@@ -10,7 +10,7 @@ export interface MetalSEOData {
 export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   gold: {
     title:
-      "Live Gold Price Today | Real-Time Gold Rates Per Gram & Ounce | Vanijay",
+      "Live Gold Price Today | Real-Time Gold Rates Per Gram & Ounce | Malpoth",
     description:
       "Track live gold prices in NPR & USD. Real-time spot rates, historical charts, bid/ask spreads, and investment guides updated every 60 seconds.",
     keywords: [
@@ -33,7 +33,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   silver: {
     title:
-      "Live Silver Price Today | Real-Time Silver Rates Per Ounce | Vanijay",
+      "Live Silver Price Today | Real-Time Silver Rates Per Ounce | Malpoth",
     description:
       "Track live silver prices with real-time updates. Historical data, industrial demand analysis, and silver investment insights.",
     keywords: [
@@ -55,7 +55,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   platinum: {
     title:
-      "Live Platinum Price Today | Real-Time Platinum Rates | Vanijay",
+      "Live Platinum Price Today | Real-Time Platinum Rates | Malpoth",
     description:
       "Track live platinum prices with real-time updates. Rarer than gold, critical for automotive and hydrogen technology.",
     keywords: [
@@ -76,7 +76,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   palladium: {
     title:
-      "Live Palladium Price Today | Real-Time Palladium Rates | Vanijay",
+      "Live Palladium Price Today | Real-Time Palladium Rates | Malpoth",
     description:
       "Track live palladium prices. Essential for emissions control, supply concentrated in Russia and South Africa.",
     keywords: [
@@ -97,7 +97,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   bitcoin: {
     title:
-      "Live Bitcoin Price Today | Real-Time BTC Rate | Vanijay",
+      "Live Bitcoin Price Today | Real-Time BTC Rate | Malpoth",
     description:
       "Track live Bitcoin prices with real-time updates. Digital gold with a hard supply cap of 21 million coins.",
     keywords: [
@@ -119,7 +119,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   ethereum: {
     title:
-      "Live Ethereum Price Today | Real-Time ETH Rate | Vanijay",
+      "Live Ethereum Price Today | Real-Time ETH Rate | Malpoth",
     description:
       "Track live Ethereum prices. Programmable money powering smart contracts, DeFi, and the largest app ecosystem in crypto.",
     keywords: [
@@ -140,7 +140,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   copper: {
     title:
-      "Live Copper Price Today | Real-Time Copper Rates | Vanijay",
+      "Live Copper Price Today | Real-Time Copper Rates | Malpoth",
     description:
       "Track live copper prices. The industrial metal of electrification — wiring, motors, and clean energy grids.",
     keywords: [
@@ -162,7 +162,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   diamond: {
     title:
-      "Live Diamond Price Today | Real-Time Diamond Rates Per Carat | Vanijay",
+      "Live Diamond Price Today | Real-Time Diamond Rates Per Carat | Malpoth",
     description:
       "Track live diamond prices per carat. The ultimate store of value in gemstone form with industrial applications.",
     keywords: [
@@ -183,7 +183,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   },
   steel: {
     title:
-      "Live Steel Price Today | Real-Time Steel Rates Per Ton | Vanijay",
+      "Live Steel Price Today | Real-Time Steel Rates Per Ton | Malpoth",
     description:
       "Track live steel prices per ton. The backbone of modern infrastructure reflecting global construction demand.",
     keywords: [

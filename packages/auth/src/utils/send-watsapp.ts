@@ -52,9 +52,6 @@ export async function sendWhatsAppMessage(
       const errorMessage =
         parsed.details || parsed.error || `WhatsApp send failed: ${res.status}`;
 
-      // Known post-send crash: the gateway already delivered the message but
-      // threw while reading `response.id._serialized` to build its success
-      // JSON. Treat as delivered (matches Vanijay buyer/seller behaviour).
       if (isProviderPostSendResponseError(errorMessage)) {
         console.warn(
           "[WhatsApp] gateway crashed after successful send; treating message as delivered.",

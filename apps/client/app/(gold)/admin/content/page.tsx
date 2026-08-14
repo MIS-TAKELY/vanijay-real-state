@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Content Management | Admin | Vanijay",
+  title: "Content Management | Admin | Malpoth",
   description: "Manage content blocks, FAQs, and market commentary for precious metals pages.",
   robots: { index: false, follow: false },
 };
