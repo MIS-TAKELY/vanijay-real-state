@@ -1,3 +1,5 @@
+import { listingCoverImageUrl } from "lib/media/videoThumbnail";
+
 export interface ApiPropertyLocation {
   province: string;
   district: string;
@@ -69,6 +71,14 @@ export interface PropertyMediaPayload {
   isCover?: boolean;
 }
 
+export interface PropertyDocumentPayload {
+  type: string; // DocumentType enum
+  fileUrl: string;
+  fileName: string;
+  fileSizeMb: number;
+  isPrivate?: boolean;
+}
+
 /**
  * POST /api/v1/properties body. Mirrors the API's `CreatePropertyInput` DTO.
  * Enum fields stay `string` so the client doesn't depend on Prisma — the API
@@ -107,6 +117,8 @@ export interface CreatePropertyPayload {
   };
   /** Uploaded gallery + video assets (Cloudinary URLs). */
   media?: PropertyMediaPayload[];
+  /** Verification documents (Lalpurja, citizenship, tax clearance, etc.). */
+  documents?: PropertyDocumentPayload[];
 }
 
 export interface CardProperty {
@@ -220,7 +232,7 @@ export function toCardProps(p: ApiProperty): CardProperty {
     price: formatNPR(p.askingPrice),
     location: formatLocation(p.location),
     gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
-    imageUrl: p.media?.find((m) => m.isCover)?.url ?? p.media?.[0]?.url,
+    imageUrl: listingCoverImageUrl(p.media),
     meta,
   };
 }

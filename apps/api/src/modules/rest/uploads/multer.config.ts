@@ -44,14 +44,25 @@ export const DOCUMENT_MIMETYPES = [
   'text/csv',
 ] as const;
 
+/** Listing walkthrough / media video formats accepted by the client picker. */
+export const VIDEO_MIMETYPES = [
+  'video/mp4',
+  'video/webm',
+  'video/quicktime',
+] as const;
+
 /** Every asset accepted by default. */
 export const ACCEPTED_ASSET_MIMETYPES: readonly string[] = [
   ...IMAGE_MIMETYPES,
   ...DOCUMENT_MIMETYPES,
+  ...VIDEO_MIMETYPES,
 ];
 
-/** Default ceiling for a single uploaded file: 10 MB. */
+/** Default ceiling for a single uploaded file: 10 MB (images / documents). */
 export const DEFAULT_MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+/** Ceiling for listing videos: 50 MB. */
+export const VIDEO_MAX_FILE_SIZE = 50 * 1024 * 1024;
 
 /** Default ceiling for the number of files accepted by one request. */
 export const DEFAULT_MAX_FILES = 20;

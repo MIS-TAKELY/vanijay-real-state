@@ -200,6 +200,7 @@ input CreatePropertyInput {
   location: PropertyLocationInput!
   cadastralRecord: CadastralRecordInput
   media: [PropertyMediaInput!]
+  documents: [PropertyDocumentInput!]
 }
 
 input LandAreaDetailsInput {
@@ -240,6 +241,24 @@ input PropertyMediaInput {
   isCover: Boolean
 }
 
+input PropertyDocumentInput {
+  type: DocumentType!
+  fileUrl: String!
+  fileName: String!
+  fileSizeMb: Float!
+  isPrivate: Boolean
+}
+
+enum DocumentType {
+  LALPURJA
+  CITIZENSHIP_FRONT
+  CITIZENSHIP_BACK
+  TAX_CLEARANCE
+  SURVEY_NAKSA_MAP
+  PAN_CARD
+  OTHER
+}
+
 input UpdatePropertyInput {
   title: String
   description: String
@@ -256,6 +275,7 @@ input UpdatePropertyInput {
   location: PropertyLocationInput
   cadastralRecord: CadastralRecordInput
   media: [PropertyMediaInput!]
+  documents: [PropertyDocumentInput!]
   id: ID!
   status: PropertyStatus
 }

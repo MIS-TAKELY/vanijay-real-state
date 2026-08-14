@@ -5,15 +5,25 @@ import {
   Icon,
   Input,
   Label,
-  Textarea,
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/ui";
+import { RichTextEditor } from "components/real-state/common/RichTextEditor";
 import { PROPERTY_TYPES } from "./constants";
 import { DESC_MAX, TITLE_MAX } from "./draft";
 import { FieldError, type StepProps } from "./types";
 
+/** Strip HTML tags to get plain text length for character counting */
+function getPlainTextLength(html: string): number {
+  if (!html) return 0;
+  const tmp = document.createElement("div");
+  tmp.innerHTML = html;
+  return tmp.textContent?.length ?? 0;
+}
+
 export function StepBasics({ draft, update, errors }: StepProps) {
+  const plainDescLength = getPlainTextLength(draft.description);
+
   return (
     <div className="flex flex-col gap-md">
       {/* Title + char counter */}
@@ -80,15 +90,14 @@ export function StepBasics({ draft, update, errors }: StepProps) {
         </ToggleGroup>
       </div>
 
-      {/* Description */}
+      {/* Description — Rich Text Editor */}
       <div className="flex flex-col gap-xs">
         <Label htmlFor="w-desc">Description</Label>
-        <Textarea
+        <RichTextEditor
           id="w-desc"
-          rows={4}
           value={draft.description}
+          onChange={(html) => update({ description: html })}
           maxLength={DESC_MAX}
-          onChange={(e) => update({ description: e.target.value })}
           placeholder="Describe the plot, access, nearby facilities, and verification highlights…"
           aria-invalid={!!errors.description}
           className={cn(errors.description && "border-error")}
@@ -96,7 +105,7 @@ export function StepBasics({ draft, update, errors }: StepProps) {
         <div className="flex items-start justify-between gap-sm">
           <FieldError message={errors.description} />
           <span className="mono-stat ml-auto shrink-0 text-[11px] text-on-surface-variant">
-            {draft.description.length}/{DESC_MAX}
+            {plainDescLength}/{DESC_MAX}
           </span>
         </div>
       </div>

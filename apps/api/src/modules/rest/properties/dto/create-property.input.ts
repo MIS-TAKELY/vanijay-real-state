@@ -12,6 +12,7 @@ import {
 } from 'class-validator';
 import { Type } from 'class-transformer';
 import {
+  DocumentType,
   FacingDirection,
   MediaType,
   PropertyType,
@@ -157,6 +158,32 @@ class PropertyMediaInput {
 }
 
 @InputType()
+class PropertyDocumentInput {
+  @Field(() => DocumentType)
+  @IsEnum(DocumentType)
+  type!: DocumentType;
+
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
+  fileUrl!: string;
+
+  @Field(() => String)
+  @IsString()
+  @IsNotEmpty()
+  fileName!: string;
+
+  @Field(() => Number)
+  @IsNumber()
+  fileSizeMb!: number;
+
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
+  @IsOptional()
+  isPrivate?: boolean;
+}
+
+@InputType()
 export class CreatePropertyInput {
   @Field(() => String)
   @IsString()
@@ -237,4 +264,11 @@ export class CreatePropertyInput {
   @Type(() => PropertyMediaInput)
   @IsOptional()
   media?: PropertyMediaInput[];
+
+  /** Verification documents (Lalpurja, citizenship, tax clearance, etc.). */
+  @Field(() => [PropertyDocumentInput], { nullable: true })
+  @ValidateNested({ each: true })
+  @Type(() => PropertyDocumentInput)
+  @IsOptional()
+  documents?: PropertyDocumentInput[];
 }

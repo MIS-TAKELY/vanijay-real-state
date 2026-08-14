@@ -11,7 +11,6 @@ export function PropertyViewTracker({ propertyId }: { propertyId: string }) {
       console.log("tracking fail")
     });
   }, [propertyId]);
-  console.log("tracked")
 
   return null;
 }

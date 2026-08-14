@@ -7,7 +7,7 @@ import { ListingVideo } from "./ListingVideo";
 
 type ListingLinksProps = {
   location?: ApiPropertyLocation | null;
-  videos: ApiPropertyMedia[];
+  videos?: ApiPropertyMedia[];
   cadastralMaps: ApiPropertyMedia[];
 };
 
@@ -17,7 +17,7 @@ function isProbablyImage(url: string): boolean {
 
 export function ListingLinks({
   location,
-  videos,
+  videos = [],
   cadastralMaps,
 }: ListingLinksProps) {
   const mapsUrl =

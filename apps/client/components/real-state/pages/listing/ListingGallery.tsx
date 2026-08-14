@@ -1,7 +1,10 @@
 "use client";
 
 import { Button, Icon, cn } from "@repo/ui";
-import { useState } from "react";
+import type { ApiPropertyMedia } from "lib/api/services/properties/types";
+import { useEffect, useState } from "react";
+import { ListingVideo } from "./ListingVideo";
+import { VideoPoster } from "./VideoPoster";
 
 export type GalleryImage = {
   url: string;
@@ -10,99 +13,462 @@ export type GalleryImage = {
 
 type ListingGalleryProps = {
   images: GalleryImage[];
+  videos?: ApiPropertyMedia[];
+  /** Cadastral maps (Naksa) — the only documents shown on the listing page. */
+  cadastralMaps?: ApiPropertyMedia[];
   title: string;
   fallbackGradient: string;
 };
 
 export function ListingGallery({
   images,
+  videos = [],
+  cadastralMaps = [],
   title,
   fallbackGradient,
 }: ListingGalleryProps) {
-  const [active, setActive] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const hasImages = images.length > 0;
+  const hasVideos = videos.length > 0;
+  const hasDocs = cadastralMaps.length > 0;
 
-  if (images.length === 0) {
+  const [activeTab, setActiveTab] = useState<"photos" | "videos" | "documents">(
+    hasImages ? "photos" : hasVideos ? "videos" : "documents",
+  );
+  const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImageSrc, setLightboxImageSrc] = useState<string | null>(null);
+  const [lightboxCaption, setLightboxCaption] = useState<string | null>(null);
+  const [activeVideoIndex, setActiveVideoIndex] = useState(0);
+  const [activeDocIndex, setActiveDocIndex] = useState(0);
+
+  const showPrevPhoto = () => {
+    setActiveImage((i) => (i === 0 ? images.length - 1 : i - 1));
+  };
+  const showNextPhoto = () => {
+    setActiveImage((i) => (i === images.length - 1 ? 0 : i + 1));
+  };
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setLightboxOpen(false);
+      if (activeTab === "photos" && images.length > 1) {
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          setActiveImage((i) => (i === 0 ? images.length - 1 : i - 1));
+        }
+        if (event.key === "ArrowRight") {
+          event.preventDefault();
+          setActiveImage((i) => (i === images.length - 1 ? 0 : i + 1));
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [lightboxOpen, images.length, activeTab]);
+
+  if (!hasImages && !hasVideos && !hasDocs) {
     return (
       <div
         className={cn(
           "aspect-video overflow-hidden rounded-2xl bg-gradient-to-br",
           fallbackGradient,
         )}
-        aria-label="No photos available"
+        aria-label="No media available"
       />
     );
   }
 
-  const current = images[Math.min(active, images.length - 1)]!;
+  const showingPhotos = activeTab === "photos" && hasImages;
+  const showingVideos = activeTab === "videos" && hasVideos;
+  const showingDocs = activeTab === "documents" && hasDocs;
+
+  const currentImage = showingPhotos
+    ? images[Math.min(activeImage, images.length - 1)]!
+    : null;
+  const activeVideo = showingVideos ? videos[activeVideoIndex] : null;
+  const activeDoc = showingDocs
+    ? cadastralMaps[Math.min(activeDocIndex, cadastralMaps.length - 1)]
+    : null;
+
+  const availableTabsCount =
+    (hasImages ? 1 : 0) + (hasVideos ? 1 : 0) + (hasDocs ? 1 : 0);
+
+  const openPhotoLightbox = () => {
+    setLightboxImageSrc(null);
+    setLightboxCaption(null);
+    setLightboxOpen(true);
+  };
+
+  const openDocLightbox = () => {
+    if (!activeDoc) return;
+    setLightboxImageSrc(activeDoc.url);
+    setLightboxCaption(activeDoc.altText ?? "Naksa (Cadastral Map)");
+    setLightboxOpen(true);
+  };
 
   return (
-    <div className="flex flex-col gap-3">
-      <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-container">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={current.url}
-          alt={current.altText ?? title}
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-x-0 bottom-0 flex items-center justify-between gap-2 bg-gradient-to-t from-black/55 to-transparent px-3 pb-3 pt-10">
-          <span className="rounded-md bg-surface/95 px-2 py-1 text-[11px] font-medium text-on-surface">
-            {active + 1} / {images.length}
+    <section>
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h2 className="font-headline-md text-xl font-semibold tracking-tight text-on-surface">
+          Media & Documents
+        </h2>
+
+        {availableTabsCount > 1 && (
+          <div className="flex gap-1 rounded-lg bg-surface-container p-1 shadow-inner">
+            {hasImages && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("photos")}
+                aria-pressed={activeTab === "photos"}
+                className={cn(
+                  "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                  activeTab === "photos"
+                    ? "bg-surface text-on-surface shadow-sm"
+                    : "text-on-surface-variant hover:text-on-surface",
+                )}
+              >
+                <Icon name="photo_library" className="text-[16px]" aria-hidden />
+                Photos
+                <span className="tabular-nums">({images.length})</span>
+              </button>
+            )}
+            {hasVideos && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("videos")}
+                aria-pressed={activeTab === "videos"}
+                className={cn(
+                  "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                  activeTab === "videos"
+                    ? "bg-surface text-on-surface shadow-sm"
+                    : "text-on-surface-variant hover:text-on-surface",
+                )}
+              >
+                <Icon name="videocam" className="text-[16px]" aria-hidden />
+                Videos
+                <span className="tabular-nums">({videos.length})</span>
+              </button>
+            )}
+            {hasDocs && (
+              <button
+                type="button"
+                onClick={() => setActiveTab("documents")}
+                aria-pressed={activeTab === "documents"}
+                className={cn(
+                  "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                  activeTab === "documents"
+                    ? "bg-surface text-on-surface shadow-sm"
+                    : "text-on-surface-variant hover:text-on-surface",
+                )}
+              >
+                <Icon name="map" className="text-[16px]" aria-hidden />
+                Documents
+                <span className="tabular-nums">({cadastralMaps.length})</span>
+              </button>
+            )}
+          </div>
+        )}
+
+        {availableTabsCount === 1 && (
+          <span className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant">
+            {hasImages && (
+              <>
+                <Icon name="photo_library" className="text-[16px]" />
+                <span className="tabular-nums">
+                  {images.length} photo{images.length === 1 ? "" : "s"}
+                </span>
+              </>
+            )}
+            {hasVideos && (
+              <>
+                <Icon name="videocam" className="text-[16px]" />
+                <span className="tabular-nums">
+                  {videos.length} video{videos.length === 1 ? "" : "s"}
+                </span>
+              </>
+            )}
+            {hasDocs && (
+              <>
+                <Icon name="map" className="text-[16px]" />
+                <span className="tabular-nums">
+                  {cadastralMaps.length} naksa{cadastralMaps.length === 1 ? "" : "s"}
+                </span>
+              </>
+            )}
           </span>
-          <Button
-            type="button"
-            variant="secondary"
-            size="sm"
-            className="h-8 rounded-md bg-surface/95 text-xs font-semibold text-on-surface hover:bg-surface"
-            onClick={() => setLightboxOpen(true)}
-          >
-            <Icon name="photo_camera" className="text-[16px]" />
-            View all photos
-          </Button>
-        </div>
+        )}
       </div>
 
-      {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6">
-          {images.map((image, idx) => (
+      {/* Photos View */}
+      {showingPhotos && currentImage && (
+        <div className="flex flex-col gap-2">
+          <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-container shadow-sm">
             <button
-              key={`${image.url}-${idx}`}
               type="button"
-              onClick={() => setActive(idx)}
-              aria-label={`Show photo ${idx + 1}`}
-              aria-current={idx === active}
-              className={cn(
-                "aspect-video overflow-hidden rounded-lg bg-surface-container ring-offset-2 ring-offset-surface transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
-                idx === active
-                  ? "ring-2 ring-primary"
-                  : "opacity-80 hover:opacity-100",
-              )}
+              onClick={openPhotoLightbox}
+              className="group block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40"
+              aria-label="Open photo gallery"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
-                src={image.url}
-                alt={image.altText ?? `${title} photo ${idx + 1}`}
-                className="h-full w-full object-cover"
+                src={currentImage.url}
+                alt={currentImage.altText ?? title}
+                className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-black/10 transition-transform duration-200 group-hover:scale-[1.01]"
               />
             </button>
-          ))}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/55 to-transparent px-3 pb-3 pt-10">
+              <span className="rounded-full bg-surface/95 px-2.5 py-1 text-[11px] font-medium tabular-nums text-on-surface backdrop-blur-sm">
+                {activeImage + 1} / {images.length}
+              </span>
+            </div>
+            {images.length > 1 && (
+              <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3">
+                <button
+                  type="button"
+                  aria-label="Previous photo"
+                  className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
+                  onClick={showPrevPhoto}
+                >
+                  <Icon name="chevron_left" className="text-[22px]" />
+                </button>
+                <button
+                  type="button"
+                  aria-label="Next photo"
+                  className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
+                  onClick={showNextPhoto}
+                >
+                  <Icon name="chevron_right" className="text-[22px]" />
+                </button>
+              </div>
+            )}
+            <button
+              type="button"
+              onClick={openPhotoLightbox}
+              className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
+              aria-label="View all photos"
+            >
+              <Icon name="fullscreen" className="text-[18px]" />
+            </button>
+          </div>
+
+          {images.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {images.map((image, idx) => (
+                <button
+                  key={`thumb-${image.url}-${idx}`}
+                  type="button"
+                  onClick={() => setActiveImage(idx)}
+                  className={cn(
+                    "flex-shrink-0 overflow-hidden rounded-lg border transition-all",
+                    "w-20 sm:w-24",
+                    idx === activeImage
+                      ? "border-primary ring-1 ring-primary/30"
+                      : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                  )}
+                  aria-label={`View photo ${idx + 1}`}
+                  aria-pressed={idx === activeImage}
+                >
+                  <div className="aspect-video">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={image.url}
+                      alt=""
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
 
-      {lightboxOpen && (
+      {/* Videos View */}
+      {showingVideos && activeVideo && (
+        <div className="flex flex-col gap-2">
+          <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
+            <div className="aspect-[21/9] w-full">
+              <ListingVideo
+                url={activeVideo.url}
+                title={
+                  activeVideo.altText ?? `${title} — video walkthrough`
+                }
+                className="h-full w-full"
+              />
+            </div>
+          </div>
+
+          {videos.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {videos.map((video, idx) => {
+                const isActive = idx === activeVideoIndex;
+                return (
+                  <button
+                    key={`vid-thumb-${idx}`}
+                    type="button"
+                    onClick={() => setActiveVideoIndex(idx)}
+                    className={cn(
+                      "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
+                      "w-28 sm:w-36",
+                      isActive
+                        ? "border-primary ring-1 ring-primary/30"
+                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                    )}
+                    aria-label={`Play video ${idx + 1}`}
+                    aria-pressed={isActive}
+                  >
+                    <div className="aspect-video bg-surface-container">
+                      <VideoPoster
+                        url={video.url}
+                        alt={video.altText ?? `Video ${idx + 1} thumbnail`}
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity group-hover:bg-black/30">
+                        <Icon
+                          name="play_circle"
+                          className={cn(
+                            "text-[24px] text-white drop-shadow-md",
+                            isActive && "text-primary",
+                          )}
+                        />
+                      </div>
+                    </div>
+                    {isActive && (
+                      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+          <p className="text-xs leading-5 text-on-surface-variant">
+            Video walkthroughs show the property as-is. Verify dimensions and
+            condition during your site visit.
+          </p>
+        </div>
+      )}
+
+      {/* Documents View — naksa (cadastral map) only */}
+      {showingDocs && activeDoc && (
+        <div className="flex flex-col gap-2">
+          <div className="relative aspect-video overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
+            <button
+              type="button"
+              onClick={openDocLightbox}
+              className="group block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40"
+              aria-label="Open naksa full view"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={activeDoc.url}
+                alt={activeDoc.altText ?? "Naksa (Cadastral Map)"}
+                className="h-full w-full bg-black/5 object-contain"
+              />
+            </button>
+
+            {/* Document Header Bar */}
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 bg-gradient-to-b from-black/60 via-black/20 to-transparent p-3 text-white">
+              <div className="flex items-center gap-2 truncate">
+                <span className="rounded-md bg-primary/90 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground backdrop-blur-sm">
+                  Naksa
+                </span>
+                <span className="truncate text-sm font-medium">
+                  {activeDoc.altText ?? "Cadastral Map (Naksa)"}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={activeDoc.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-surface/80 text-on-surface transition-transform hover:scale-105"
+                  title="Open full size"
+                >
+                  <Icon name="open_in_new" className="text-[16px]" />
+                </a>
+                <button
+                  type="button"
+                  onClick={openDocLightbox}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-surface/80 text-on-surface transition-transform hover:scale-105"
+                  title="Fullscreen preview"
+                >
+                  <Icon name="fullscreen" className="text-[16px]" />
+                </button>
+              </div>
+            </div>
+
+            {/* Document Footer */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/55 to-transparent px-3 pb-3 pt-8 text-white">
+              <span className="inline-flex items-center gap-1 rounded-full bg-surface/90 px-2.5 py-1 text-xs font-medium text-on-surface backdrop-blur-sm">
+                <Icon name="map" className="text-[14px] text-primary" />
+                Cadastral Map (Naksa)
+              </span>
+              <span className="rounded-full bg-surface/90 px-2.5 py-1 text-[11px] font-medium tabular-nums text-on-surface backdrop-blur-sm">
+                {activeDocIndex + 1} / {cadastralMaps.length}
+              </span>
+            </div>
+          </div>
+
+          {cadastralMaps.length > 1 && (
+            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+              {cadastralMaps.map((map, idx) => {
+                const isActive = idx === activeDocIndex;
+                return (
+                  <button
+                    key={`naksa-thumb-${map.url}-${idx}`}
+                    type="button"
+                    onClick={() => setActiveDocIndex(idx)}
+                    className={cn(
+                      "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
+                      "w-28 sm:w-36",
+                      isActive
+                        ? "border-primary ring-1 ring-primary/30"
+                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                    )}
+                    aria-label={`View naksa ${idx + 1}`}
+                    aria-pressed={isActive}
+                  >
+                    <div className="aspect-video bg-surface-container">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={map.url}
+                        alt=""
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    {isActive && (
+                      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
+                    )}
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
+          <p className="text-xs leading-5 text-on-surface-variant">
+            Naksa (cadastral map) is a public land record showing the parcel
+            boundaries. Verify it during your site visit.
+          </p>
+        </div>
+      )}
+
+      {/* Lightbox Dialog */}
+      {lightboxOpen && (currentImage || lightboxImageSrc) && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="All listing photos"
-          className="fixed inset-0 z-50 flex flex-col bg-on-surface/90 p-4 sm:p-6"
+          aria-label="Media gallery viewer"
+          className="fixed inset-0 z-50 flex flex-col bg-on-surface/95 p-4 sm:p-6 backdrop-blur-md"
           onClick={() => setLightboxOpen(false)}
-          onKeyDown={(e) => {
-            if (e.key === "Escape") setLightboxOpen(false);
-          }}
         >
-          <div className="mb-4 flex items-center justify-between text-surface">
-            <p className="text-sm font-medium">
-              {active + 1} of {images.length} photos
+          <div className="mb-3 flex items-center justify-between text-surface">
+            <p className="text-sm font-medium tabular-nums">
+              {lightboxImageSrc
+                ? lightboxCaption ?? "Naksa (Cadastral Map)"
+                : `${activeImage + 1} of ${images.length} photos`}
             </p>
             <Button
               type="button"
@@ -117,70 +483,68 @@ export function ListingGallery({
           </div>
 
           <div
-            className="relative mx-auto flex min-h-0 w-full max-w-5xl flex-1 items-center justify-center"
+            className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 items-center gap-3 sm:gap-4"
             onClick={(e) => e.stopPropagation()}
           >
-            {images.length > 1 && (
-              <Button
+            {!lightboxImageSrc && images.length > 1 && (
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
                 aria-label="Previous photo"
-                className="absolute left-0 z-10 text-surface hover:bg-surface/10 sm:left-2"
-                onClick={() =>
-                  setActive((i) => (i === 0 ? images.length - 1 : i - 1))
-                }
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
+                onClick={showPrevPhoto}
               >
-                <Icon name="chevron_left" className="text-[28px]" />
-              </Button>
+                <Icon name="chevron_left" className="text-[24px]" />
+              </button>
             )}
+
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={current.url}
-              alt={current.altText ?? title}
-              className="max-h-full max-w-full rounded-lg object-contain"
+              src={lightboxImageSrc ?? (currentImage ? currentImage.url : "")}
+              alt={lightboxCaption ?? currentImage?.altText ?? title}
+              className="mx-auto max-h-full min-w-0 flex-1 rounded-lg object-contain"
             />
-            {images.length > 1 && (
-              <Button
+
+            {!lightboxImageSrc && images.length > 1 && (
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
                 aria-label="Next photo"
-                className="absolute right-0 z-10 text-surface hover:bg-surface/10 sm:right-2"
-                onClick={() =>
-                  setActive((i) => (i === images.length - 1 ? 0 : i + 1))
-                }
+                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
+                onClick={showNextPhoto}
               >
-                <Icon name="chevron_right" className="text-[28px]" />
-              </Button>
+                <Icon name="chevron_right" className="text-[24px]" />
+              </button>
             )}
           </div>
 
-          <div
-            className="mx-auto mt-4 grid max-w-5xl grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {images.map((image, idx) => (
-              <button
-                key={`lb-${image.url}-${idx}`}
-                type="button"
-                onClick={() => setActive(idx)}
-                className={cn(
-                  "aspect-video overflow-hidden rounded-md",
-                  idx === active ? "ring-2 ring-primary" : "opacity-70",
-                )}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image.url}
-                  alt=""
-                  className="h-full w-full object-cover"
-                />
-              </button>
-            ))}
-          </div>
+          {!lightboxImageSrc && images.length > 1 && (
+            <div
+              className="mx-auto mt-3 grid max-w-5xl grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {images.map((image, idx) => (
+                <button
+                  key={`lb-${image.url}-${idx}`}
+                  type="button"
+                  onClick={() => setActiveImage(idx)}
+                  aria-label={`View photo ${idx + 1}`}
+                  aria-current={idx === activeImage ? "true" : undefined}
+                  className={cn(
+                    "aspect-video overflow-hidden rounded-md transition-all",
+                    idx === activeImage ? "ring-2 ring-primary" : "opacity-70 hover:opacity-100",
+                  )}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.url}
+                    alt=""
+                    className="h-full w-full object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          )}
         </div>
       )}
-    </div>
+    </section>
   );
 }

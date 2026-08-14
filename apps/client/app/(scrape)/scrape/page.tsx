@@ -84,9 +84,9 @@ export default function KabadiHomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
       <Hero />
-      <RateCatalog />
-      <Calculator />
       <CategoryGrid />
+      <Calculator />
+      <RateCatalog />
       <HowItWorks />
       <CTA />
     </>

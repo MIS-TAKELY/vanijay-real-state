@@ -1,0 +1,302 @@
+export type MetalId =
+  | "gold"
+  | "silver"
+  | "platinum"
+  | "palladium"
+  | "bitcoin"
+  | "ethereum"
+  | "copper";
+
+/** Display currencies supported by the market UI. */
+export type CurrencyCode = "NPR" | "USD";
+
+export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
+  NPR: "रू",
+  USD: "$",
+};
+
+/** Display currency for the market — Nepali Rupee. */
+export const CURRENCY_SYMBOL = CURRENCY_SYMBOLS.NPR;
+export const CURRENCY_CODE = "NPR";
+
+/** Approximate NPR→USD rate used only for pre-fetch fallback rendering. */
+export const FALLBACK_USD_TO_NPR = 133;
+
+export interface MetalMeta {
+  id: MetalId;
+  name: string;
+  /** gold-api.com symbol (XAU, XAG, XPT, XPD, BTC, ETH, HG). */
+  symbol: string;
+  unit: string;
+  accentColor: string;
+  /** Relative volatility used to shape the synthetic sparkline around the live price. */
+  volatility: number;
+  description: string;
+}
+
+export interface MetalData extends MetalMeta {
+  /** Live price in NPR. */
+  price: number;
+  /** Live price in USD. */
+  usdPrice: number;
+  /** Bid in NPR (only for metals whose source has an order book). */
+  bid?: number;
+  /** Ask in NPR. */
+  ask?: number;
+  /** Bid in USD. */
+  usdBid?: number;
+  /** Ask in USD. */
+  usdAsk?: number;
+  change: number;
+  /** Absolute change in USD. */
+  changeUsd: number;
+  changePercent: number;
+  /** Synthetic sparkline in NPR, anchored at the live price. */
+  sparkline: number[];
+  /** Synthetic sparkline in USD, anchored at the live USD price. */
+  sparklineUsd: number[];
+}
+
+export interface HistoricalRow {
+  date: string;
+  open: number;
+  high: number;
+  low: number;
+  close: number;
+  change: number;
+}
+
+// ── Static metadata for the symbols served by the gold-api / freegoldprice APIs ──
+
+export const METAL_META_LIST: MetalMeta[] = [
+  {
+    id: "gold",
+    name: "Gold",
+    symbol: "XAU",
+    unit: "oz",
+    accentColor: "#C9A84C",
+    volatility: 0.004,
+    description:
+      "The benchmark precious metal. Global reserve asset, inflation hedge, and cornerstone of portfolio diversification.",
+  },
+  {
+    id: "silver",
+    name: "Silver",
+    symbol: "XAG",
+    unit: "oz",
+    accentColor: "#A8A9AD",
+    volatility: 0.01,
+    description:
+      "Dual-purpose metal with industrial demand from solar panels and electronics alongside a traditional store-of-value role.",
+  },
+  {
+    id: "platinum",
+    name: "Platinum",
+    symbol: "XPT",
+    unit: "oz",
+    accentColor: "#E5E4E2",
+    volatility: 0.008,
+    description:
+      "Rarer than gold. Critical in automotive catalytic converters and hydrogen fuel cell technology.",
+  },
+  {
+    id: "palladium",
+    name: "Palladium",
+    symbol: "XPD",
+    unit: "oz",
+    accentColor: "#CED0DD",
+    volatility: 0.012,
+    description:
+      "Essential for gasoline engine emissions control. Supply is concentrated in Russia and South Africa.",
+  },
+  {
+    id: "bitcoin",
+    name: "Bitcoin",
+    symbol: "BTC",
+    unit: "coin",
+    accentColor: "#F7931A",
+    volatility: 0.03,
+    description:
+      "Digital gold — a scarce, decentralized store of value with a hard supply cap of 21 million coins.",
+  },
+  {
+    id: "ethereum",
+    name: "Ethereum",
+    symbol: "ETH",
+    unit: "coin",
+    accentColor: "#627EEA",
+    volatility: 0.04,
+    description:
+      "Programmable money powering smart contracts, DeFi, and the largest app ecosystem in crypto.",
+  },
+  {
+    id: "copper",
+    name: "Copper",
+    symbol: "HG",
+    unit: "lb",
+    accentColor: "#B87333",
+    volatility: 0.015,
+    description:
+      "The industrial metal of electrification — wiring, motors, and grids as the world transitions to clean energy.",
+  },
+];
+
+export const METAL_META = Object.fromEntries(
+  METAL_META_LIST.map((m) => [m.id, m]),
+) as Record<MetalId, MetalMeta>;
+
+// ── Synthetic sparkline / history, anchored at the live price ──
+
+function generateSparkline(
+  base: number,
+  volatilityRatio: number,
+  points: number,
+): number[] {
+  const data: number[] = [];
+  let current = base * (1 - volatilityRatio * 2);
+  for (let i = 0; i < points - 1; i++) {
+    const t = i / (points - 1);
+    const change =
+      Math.sin(i * 0.8) * volatilityRatio * base +
+      Math.cos(i * 1.3) * volatilityRatio * base * 0.5;
+    // Dampen oscillation toward the end so the series closes on the live price.
+    current += change * (1 - t);
+    data.push(current);
+  }
+  data.push(base);
+  return data;
+}
+
+function generateHistory(basePrice: number, days: number): HistoricalRow[] {
+  const rows: HistoricalRow[] = [];
+  const now = new Date();
+  let price = basePrice * 0.94;
+
+  for (let i = days; i >= 0; i--) {
+    const date = new Date(now);
+    date.setDate(date.getDate() - i);
+
+    const dailyVol = basePrice * 0.012;
+    const open = price;
+    const change =
+      Math.sin(i * 0.7) * dailyVol + Math.cos(i * 1.1) * dailyVol * 0.4;
+    const close = price + change;
+    const high = Math.max(open, close) + Math.abs(change) * 0.3;
+    const low = Math.min(open, close) - Math.abs(change) * 0.3;
+
+    rows.push({
+      date: date.toLocaleDateString("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }),
+      open: Math.round(open * 100) / 100,
+      high: Math.round(high * 100) / 100,
+      low: Math.round(low * 100) / 100,
+      close: Math.round(close * 100) / 100,
+      change: Math.round((close - open) * 100) / 100,
+    });
+
+    price = close;
+  }
+
+  return rows.reverse();
+}
+
+// ── Construction helpers ──
+
+export function buildMetalData(
+  id: MetalId,
+  price: number,
+  extra?: Partial<
+    Pick<MetalData, "bid" | "ask" | "usdPrice" | "usdBid" | "usdAsk">
+  >,
+): MetalData {
+  const meta = METAL_META[id];
+  const usdPrice = extra?.usdPrice ?? price / FALLBACK_USD_TO_NPR;
+  const sparkline = generateSparkline(price, meta.volatility, 30);
+  const sparklineUsd = generateSparkline(usdPrice, meta.volatility, 30);
+  const first = sparkline[0] ?? price;
+  const firstUsd = sparklineUsd[0] ?? usdPrice;
+  const change = price - first;
+  const changeUsd = usdPrice - firstUsd;
+  const changePercent = (change / first) * 100;
+  return {
+    ...meta,
+    price,
+    usdPrice,
+    sparkline,
+    sparklineUsd,
+    change,
+    changeUsd,
+    changePercent,
+    ...extra,
+  };
+}
+
+/** Fallback quotes (NPR) so the page renders before the first live fetch. */
+export const FALLBACK_PRICES: Record<MetalId, number> = {
+  gold: 666386.69,
+  silver: 9907.36,
+  platinum: 263802.85,
+  palladium: 205316.26,
+  bitcoin: 9_639_000,
+  ethereum: 286_600,
+  copper: 995,
+};
+
+export const METALS_DATA: MetalData[] = METAL_META_LIST.map((m) =>
+  buildMetalData(m.id, FALLBACK_PRICES[m.id]),
+);
+
+export function getHistoricalData(price: number): HistoricalRow[] {
+  return generateHistory(price, 14);
+}
+
+// ── Formatting ──
+
+export function formatPrice(
+  value: number,
+  currency: CurrencyCode = "NPR",
+): string {
+  return `${CURRENCY_SYMBOLS[currency]}${value.toLocaleString("en-US", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}`;
+}
+
+/** Bid/ask pair for the requested currency (undefined when unavailable). */
+export function getBidAsk(
+  metal: Pick<MetalData, "bid" | "ask" | "usdBid" | "usdAsk">,
+  currency: CurrencyCode,
+): { bid?: number; ask?: number } {
+  return currency === "USD"
+    ? { bid: metal.usdBid, ask: metal.usdAsk }
+    : { bid: metal.bid, ask: metal.ask };
+}
+
+/**
+ * Formatted bid/ask spread like "रू386.69 (0.06%)", or null when the
+ * source has no order book for the metal (BTC/ETH/HG).
+ */
+export function formatSpread(
+  bid: number | undefined,
+  ask: number | undefined,
+  currency: CurrencyCode = "NPR",
+): string | null {
+  if (bid == null || ask == null || bid <= 0 || ask <= 0) return null;
+  const spread = ask - bid;
+  const mid = (bid + ask) / 2;
+  const pct = (spread / mid) * 100;
+  return `${formatPrice(spread, currency)} (${pct.toFixed(2)}%)`;
+}
+
+export function formatChange(value: number): string {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(2)}`;
+}
+
+export function formatChangePercent(value: number): string {
+  const sign = value >= 0 ? "+" : "";
+  return `${sign}${value.toFixed(2)}%`;
+}

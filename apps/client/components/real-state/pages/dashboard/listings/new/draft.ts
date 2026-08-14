@@ -13,6 +13,14 @@ export interface DraftMedia {
   altText?: string;
 }
 
+export interface DraftDocument {
+  type: string; // DocumentType enum
+  fileUrl: string;
+  publicId?: string;
+  fileName: string;
+  fileSizeMb: number;
+}
+
 export interface ListingDraft {
   /* basics */
   title: string;
@@ -41,7 +49,8 @@ export interface ListingDraft {
 
   /* media & documents */
   media: DraftMedia[];
-  videoUrl: string;
+  videoUrls: string[];
+  documents: DraftDocument[];
 }
 
 export const INITIAL_DRAFT: ListingDraft = {
@@ -65,7 +74,8 @@ export const INITIAL_DRAFT: ListingDraft = {
   facing: "",
   isCornerPlot: false,
   media: [],
-  videoUrl: "",
+  videoUrls: [],
+  documents: [],
 };
 
 export type DraftErrors = Partial<Record<string, string>>;
@@ -232,24 +242,63 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
     if (totalAana > 0) pricePerAana = Math.round(askingPrice / totalAana);
   }
 
-  // Assemble media: uploaded gallery (first = cover) then any video walkthrough.
+  // Assemble media: uploaded images first (first image = cover), then uploaded
+  // videos, then external video URLs. Sort orders are sequential across all.
   const media: NonNullable<CreatePropertyPayload["media"]> = [];
-  draft.media.forEach((m, index) => {
+  let sortOrder = 0;
+  let coverAssigned = false;
+
+  // Uploaded images — first one becomes the cover. Cadastral maps (naksa) are
+  // never the cover.
+  for (const m of draft.media) {
+    if (m.type === "VIDEO_WALKTHROUGH" || m.type === "CADASTRAL_MAP") continue;
     media.push({
       type: m.type ?? "IMAGE",
       url: m.url,
       ...(m.altText && { altText: m.altText }),
-      sortOrder: index,
-      isCover: index === 0,
+      sortOrder,
+      isCover: !coverAssigned,
     });
-  });
-  const video = draft.videoUrl.trim();
-  if (video) {
+    coverAssigned = true;
+    sortOrder++;
+  }
+
+  // Cadastral maps (Naksa)
+  for (const m of draft.media) {
+    if (m.type !== "CADASTRAL_MAP") continue;
+    media.push({
+      type: "CADASTRAL_MAP",
+      url: m.url,
+      ...(m.altText && { altText: m.altText }),
+      sortOrder,
+      isCover: false,
+    });
+    sortOrder++;
+  }
+
+  // Uploaded videos
+  for (const m of draft.media) {
+    if (m.type !== "VIDEO_WALKTHROUGH") continue;
     media.push({
       type: "VIDEO_WALKTHROUGH",
-      url: video,
-      sortOrder: media.length,
+      url: m.url,
+      ...(m.altText && { altText: m.altText }),
+      sortOrder,
     });
+    sortOrder++;
+  }
+
+  // External video URLs
+  for (const url of draft.videoUrls) {
+    const trimmed = url.trim();
+    if (trimmed) {
+      media.push({
+        type: "VIDEO_WALKTHROUGH",
+        url: trimmed,
+        sortOrder,
+      });
+      sortOrder++;
+    }
   }
 
   return {
@@ -278,6 +327,15 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
     // Always send the media array: on create an empty array simply means "no
     // media", while on update it lets the API replace (or clear) the gallery.
     media,
+    ...(draft.documents.length > 0 && {
+      documents: draft.documents.map((d) => ({
+        type: d.type,
+        fileUrl: d.fileUrl,
+        fileName: d.fileName,
+        fileSizeMb: d.fileSizeMb,
+        isPrivate: true,
+      })),
+    }),
   };
 }
 
@@ -293,19 +351,32 @@ export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
 
   const allMedia = p.media ?? [];
 
-  // The video walkthrough round-trips through the dedicated video field, not
-  // the photo gallery.
-  const video = allMedia.find((m) => m.type === "VIDEO_WALKTHROUGH");
+  // Uploaded videos live on Cloudinary; external URLs are anything else.
+  // ApiPropertyMedia has no publicId field, so we distinguish by URL host.
+  const isUploaded = (url: string) => url.includes("res.cloudinary.com");
 
-  // Only genuine gallery images populate the photo uploader. Document /
-  // cadastral rows stay out of the gallery entirely — they were never
-  // "photos" and showing them there surfaced a phantom extra image on edit.
-  // Rows without a type (legacy records created before type was exposed)
-  // are kept as photos to avoid dropping real uploads.
+  const videoUrls = allMedia
+    .filter((m) => m.type === "VIDEO_WALKTHROUGH" && !isUploaded(m.url))
+    .map((m) => m.url);
+
+  // Gallery items: images + uploaded videos + cadastral maps (naksa). Rows
+  // without a type (legacy records) are kept as photos to avoid dropping real
+  // uploads. Cadastral maps must be kept here too — the API replaces media
+  // wholesale on update, so dropping them on edit would delete the naksa.
   const media: DraftMedia[] = allMedia
-    .filter((m) => !m.type || m.type === "IMAGE")
+    .filter(
+      (m) =>
+        !m.type ||
+        m.type === "IMAGE" ||
+        m.type === "CADASTRAL_MAP" ||
+        (m.type === "VIDEO_WALKTHROUGH" && isUploaded(m.url)),
+    )
+    .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
     .map((m) => ({
       url: m.url,
+      ...(m.type === "VIDEO_WALKTHROUGH" || m.type === "CADASTRAL_MAP"
+        ? { type: m.type }
+        : {}),
       ...(m.altText ? { altText: m.altText } : {}),
     }));
 
@@ -345,6 +416,12 @@ export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
     facing: p.facing ?? "",
     isCornerPlot: p.isCornerPlot,
     media,
-    videoUrl: video?.url ?? "",
+    videoUrls,
+    documents: (p as any).documents?.map((d: any) => ({
+      type: d.type,
+      fileUrl: d.fileUrl,
+      fileName: d.fileName,
+      fileSizeMb: d.fileSizeMb,
+    })) ?? [],
   };
 }

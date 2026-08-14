@@ -102,7 +102,7 @@ export class PropertiesService {
   }
 
   async create(input: CreatePropertyInput, ownerId: string): Promise<Property> {
-    const { landArea, location, cadastralRecord, media, ...propertyData } =
+    const { landArea, location, cadastralRecord, media, documents, ...propertyData } =
       input;
     const row = await this.prisma.property.create({
       data: {
@@ -127,6 +127,18 @@ export class PropertiesService {
             })),
           },
         }),
+        ...(documents && documents.length > 0 && {
+          documents: {
+            create: documents.map((d) => ({
+              type: d.type,
+              fileUrl: d.fileUrl,
+              fileName: d.fileName,
+              fileSizeMb: d.fileSizeMb,
+              isPrivate: d.isPrivate ?? true,
+              status: 'PENDING',
+            })),
+          },
+        }),
       },
       include: {
         landArea: true,
@@ -139,7 +151,7 @@ export class PropertiesService {
   }
 
   async update(input: UpdatePropertyInput): Promise<Property> {
-    const { id, landArea, location, cadastralRecord, media, ...rest } = input;
+    const { id, landArea, location, cadastralRecord, media, documents, ...rest } = input;
     await this.exists(id);
     const row = await this.prisma.property.update({
       where: { id },
@@ -169,6 +181,20 @@ export class PropertiesService {
               type: m.type ?? 'IMAGE',
               sortOrder: m.sortOrder ?? index,
               isCover: m.isCover ?? index === 0,
+            })),
+          },
+        }),
+        // Documents are replaced wholesale when provided, same as media.
+        ...(documents !== undefined && {
+          documents: {
+            deleteMany: {},
+            create: documents.map((d) => ({
+              type: d.type,
+              fileUrl: d.fileUrl,
+              fileName: d.fileName,
+              fileSizeMb: d.fileSizeMb,
+              isPrivate: d.isPrivate ?? true,
+              status: 'PENDING',
             })),
           },
         }),

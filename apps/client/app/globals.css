@@ -218,3 +218,67 @@ body {
   scrollbar-width: none;
 }
 
+
+/* SunEditor customizations */
+.suneditor-wrapper .sun-editor {
+  border: none;
+  font-family: "Public Sans", sans-serif;
+}
+
+.suneditor-wrapper .sun-editor .se-toolbar {
+  background-color: #f0eee9;
+  border-bottom: 1px solid #c2c8c0;
+  padding: 4px 8px;
+}
+
+.suneditor-wrapper .sun-editor .se-btn {
+  color: #424842;
+}
+
+.suneditor-wrapper .sun-editor .se-btn:hover {
+  background-color: #e4e2dd;
+  color: #244530;
+}
+
+.suneditor-wrapper .sun-editor .se-btn.active {
+  background-color: #244530;
+  color: #ffffff;
+}
+
+.suneditor-wrapper .sun-editor .se-wrapper-inner {
+  padding: 12px;
+  min-height: 150px;
+}
+
+.suneditor-wrapper .sun-editor .se-placeholder {
+  color: #727972;
+  font-style: italic;
+}
+
+/* Rich text content styling */
+.suneditor-content {
+  line-height: 1.7;
+}
+
+.suneditor-content p {
+  margin-bottom: 0.75em;
+}
+
+.suneditor-content ul,
+.suneditor-content ol {
+  margin-bottom: 0.75em;
+  padding-left: 1.5em;
+}
+
+.suneditor-content li {
+  margin-bottom: 0.25em;
+}
+
+.suneditor-content a {
+  color: #244530;
+  text-decoration: underline;
+}
+
+.suneditor-content a:hover {
+  color: #3b5d46;
+}

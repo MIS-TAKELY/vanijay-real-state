@@ -7,6 +7,7 @@ import {
   fetchMyListingsGraphql,
   type ApiProperty,
 } from "lib/api";
+import { listingCoverImageUrl } from "lib/media/videoThumbnail";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { EmptyState } from "components/real-state/layout/dashboard/EmptyState";
@@ -46,7 +47,7 @@ function toMyListing(p: ApiProperty): MyListing {
     verificationLevel: p.verificationLevel,
     askingPrice: p.askingPrice,
     gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
-    thumbnailUrl: p.media?.find((m) => m.isCover)?.url ?? p.media?.[0]?.url,
+    thumbnailUrl: listingCoverImageUrl(p.media),
     views: 0,
     inquiries: 0,
     updatedAt: formatRelativeTime(p.updatedAt),

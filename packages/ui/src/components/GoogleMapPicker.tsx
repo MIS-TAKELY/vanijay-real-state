@@ -261,14 +261,14 @@ export function GoogleMapPicker({
         )}
       </div>
 
-      <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface">
+      <div className="relative z-0 overflow-hidden rounded-2xl border border-outline-variant bg-surface">
         <div
           ref={containerRef}
           style={{ height: heightStyle, width: "100%" }}
         />
 
         {showCoordinates && value && (
-          <div className="absolute bottom-3 right-3 z-[400] rounded-lg bg-surface/90 px-2.5 py-1 text-xs font-bold text-on-surface shadow-sm backdrop-blur-sm border border-outline-variant">
+          <div className="absolute bottom-3 right-3 z-10 rounded-lg bg-surface/90 px-2.5 py-1 text-xs font-bold text-on-surface shadow-sm backdrop-blur-sm border border-outline-variant">
             📍 {value[0].toFixed(5)}, {value[1].toFixed(5)}
           </div>
         )}

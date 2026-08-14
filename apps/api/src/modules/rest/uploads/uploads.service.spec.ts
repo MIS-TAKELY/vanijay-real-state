@@ -31,7 +31,14 @@ describe('UploadsService', () => {
     cloudinary.uploadBuffer.mockResolvedValue({ publicId: 'properties/x' });
 
     const result = await service.uploadFile(
-      { buffer: Buffer.from('a'), originalname: 'a.jpg' },
+      {
+        fieldname: 'file',
+        originalname: 'a.jpg',
+        encoding: '7bit',
+        mimetype: 'image/jpeg',
+        size: 1,
+        buffer: Buffer.from('a'),
+      },
       'properties',
     );
 
@@ -42,9 +49,22 @@ describe('UploadsService', () => {
     expect(result).toEqual({ publicId: 'properties/x' });
   });
 
-  it('delegates deletion to cloudinary', async () => {
+  it('delegates deletion to cloudinary as an image first', async () => {
     cloudinary.delete.mockResolvedValue({ result: 'ok' });
     await service.deleteFile('properties/x');
-    expect(cloudinary.delete).toHaveBeenCalledWith('properties/x');
+    expect(cloudinary.delete).toHaveBeenCalledWith('properties/x', 'image');
+    expect(cloudinary.delete).toHaveBeenCalledTimes(1);
+  });
+
+  it('retries deletion as a video when the image resource is missing', async () => {
+    cloudinary.delete
+      .mockResolvedValueOnce({ result: 'not found' })
+      .mockResolvedValueOnce({ result: 'ok' });
+
+    const result = await service.deleteFile('properties/clip');
+
+    expect(cloudinary.delete).toHaveBeenNthCalledWith(1, 'properties/clip', 'image');
+    expect(cloudinary.delete).toHaveBeenNthCalledWith(2, 'properties/clip', 'video');
+    expect(result).toEqual({ result: 'ok' });
   });
 });

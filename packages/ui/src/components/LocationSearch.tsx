@@ -132,7 +132,7 @@ export function LocationSearch({
     results.length === 0;
 
   return (
-    <div className={cn("relative z-50 flex flex-col gap-xs", className)}>
+    <div className={cn("relative z-30 flex flex-col gap-xs", className)}>
       <Label>{label}</Label>
       <div className="relative">
         <Input
@@ -150,7 +150,7 @@ export function LocationSearch({
       </div>
 
       {results.length > 0 && (
-        <div className="absolute top-full mt-1 w-full overflow-hidden rounded-lg border border-outline-variant bg-surface shadow-lg">
+        <div className="absolute top-full z-50 mt-1 w-full overflow-hidden rounded-lg border border-outline-variant bg-surface shadow-lg">
           {results.map((result) => (
             <button
               key={result.id}

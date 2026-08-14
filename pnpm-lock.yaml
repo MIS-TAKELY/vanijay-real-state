@@ -241,6 +241,12 @@ importers:
       react-leaflet:
         specifier: ^5.0.0
         version: 5.0.0(leaflet@1.9.4)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      suneditor:
+        specifier: ^2.47.11
+        version: 2.47.11
+      suneditor-react:
+        specifier: ^3.6.1
+        version: 3.6.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(suneditor@2.47.11)
       zustand:
         specifier: ^5.0.14
         version: 5.0.14(@types/react@19.2.2)(react@19.2.4)
@@ -6140,6 +6146,17 @@ packages:
     deprecated: The `subscriptions-transport-ws` package is no longer maintained. We recommend you use `graphql-ws` instead. For help migrating Apollo software to `graphql-ws`, see https://www.apollographql.com/docs/apollo-server/data/subscriptions/#switching-from-subscriptions-transport-ws    For general help using `graphql-ws`, see https://github.com/enisdenjo/graphql-ws/blob/master/README.md
     peerDependencies:
       graphql: ^15.7.2 || ^16.0.0
+
+  suneditor-react@3.6.1:
+    resolution: {integrity: sha512-12f9KLnEB6pAdyHJINTzRBg3UOWVZZ+jVYSEtwdBTDYQW4amUZr0xOnpikbBAlxb9rcTYV5RHAsad3gnNhLsuA==}
+    peerDependencies:
+      react: '>= 16.8.0'
+      react-dom: '>= 16.8.0'
+      suneditor: ^2.44.10
+
+  suneditor@2.47.11:
+    resolution: {integrity: sha512-YAl4YDMFFuOsrq8hw4cR7Nb2uQ87WOIm2n9aNpKhVYfCpOvBTQyGkWQq/sUEFToj9VFJsUz7H01YRN+wk3TWEg==}
+    engines: {node: <13.0.0}
 
   superagent@10.3.0:
     resolution: {integrity: sha512-B+4Ik7ROgVKrQsXTV0Jwp2u+PXYLSlqtDAhYnkkD+zn3yg8s/zjA2MeGayPoY/KICrbitwneDHrjSotxKL+0XQ==}
@@ -12918,6 +12935,14 @@ snapshots:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
+
+  suneditor-react@3.6.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(suneditor@2.47.11):
+    dependencies:
+      react: 19.2.4
+      react-dom: 19.2.4(react@19.2.4)
+      suneditor: 2.47.11
+
+  suneditor@2.47.11: {}
 
   superagent@10.3.0:
     dependencies:

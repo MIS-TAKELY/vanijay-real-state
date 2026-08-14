@@ -274,6 +274,7 @@ export default function LeafletNepalMap({
         width: "100%",
         overflow: "hidden",
         background: "#0d1a14",
+        zIndex: 0,
       }}
     >
       {/* Leaflet CSS via CDN */}

@@ -29,17 +29,8 @@ export function Hero() {
           </Badge>
 
           <h1 className="mt-6 font-display-lg text-5xl leading-[1.04] tracking-tight text-kabadi-on-bg md:text-7xl">
-            Turn your kabadi
-            <span className="kabadi-glow block bg-gradient-to-r from-kabadi-primary via-kabadi-accent-strong to-kabadi-accent bg-clip-text text-transparent">
-              into cash.
-            </span>
+            Kabadi
           </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-kabadi-muted">
-            Check what your scrap is worth before you sell. Paper, plastic,
-            metals, e-waste and appliances — priced per kg or per piece, then
-            collected from your doorstep with cash in hand.
-          </p>
 
           {/* Search jump */}
           <form
@@ -70,7 +61,7 @@ export function Hero() {
           </p>
 
           {/* Stats */}
-          <dl className="mt-12 grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-kabadi-border bg-kabadi-border">
+          {/* <dl className="mt-12 grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-kabadi-border bg-kabadi-border">
             {STATS.map((stat) => {
               const Icon = stat.icon;
               return (
@@ -88,12 +79,12 @@ export function Hero() {
                 </div>
               );
             })}
-          </dl>
+          </dl> */}
 
-          <p className="mt-6 font-label-sm text-label-sm text-kabadi-muted">
+          {/* <p className="mt-6 font-label-sm text-label-sm text-kabadi-muted">
             {KABADI_CATEGORIES.length} categories ·{" "}
             {KABADI_CATEGORIES.map((c) => c.name).join(" · ")}
-          </p>
+          </p> */}
         </div>
       </div>
     </section>

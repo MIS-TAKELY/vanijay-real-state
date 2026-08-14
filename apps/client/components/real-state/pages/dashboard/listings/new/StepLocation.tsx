@@ -430,13 +430,6 @@ function resolveLocationMatches(addr: ReverseGeocodeAddress | undefined): {
   return { province, district, municipality };
 }
 
-/**
- * Extract a ward number from a reverse-geocoded address. Nepal's ward number
- * surfaces in provider-specific fields:
- *  - Nominatim: `city_district` → "Kathmandu-28", "Siddharthanagar-13"
- *  - Google:    `sublocality_level_2/1` → "Ward No. 4"
- *  - display name: "Ward No. 4, …", "Ward 4", "VDC 5"
- */
 function extractWardNumber(
   addr: ReverseGeocodeAddress,
   displayName?: string,

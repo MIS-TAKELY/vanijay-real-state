@@ -10,6 +10,7 @@ import {
 } from "lib/api/services/properties/types";
 import { askingPriceNumber, formatLandAreaLabel, totalSqFt } from "./draft";
 import type { StepProps } from "./types";
+import { listingCoverImageUrl } from "lib/media/videoThumbnail";
 
 interface ChecklistItem {
   label: string;
@@ -22,6 +23,10 @@ export function StepReview({ draft }: StepProps) {
   const price = askingPriceNumber(draft);
   const sqft = totalSqFt(draft);
   const area = formatLandAreaLabel(draft);
+  const photoCount = draft.media.filter(
+    (m) => m.type !== "VIDEO_WALKTHROUGH" && m.type !== "CADASTRAL_MAP",
+  ).length;
+  const hasNaksa = draft.media.some((m) => m.type === "CADASTRAL_MAP");
   const locationLine = [draft.areaName.trim(), draft.district]
     .filter(Boolean)
     .join(", ");
@@ -34,8 +39,8 @@ export function StepReview({ draft }: StepProps) {
     },
     {
       label: "Photos",
-      ok: draft.media.length > 0,
-      hint: draft.media.length > 0 ? `${draft.media.length} uploaded` : "none",
+      ok: photoCount > 0,
+      hint: photoCount > 0 ? `${photoCount} uploaded` : "none",
     },
     {
       label: "Asking price",
@@ -55,9 +60,9 @@ export function StepReview({ draft }: StepProps) {
       hint: sqft > 0 ? `${sqft.toLocaleString()} sq ft` : "missing",
     },
     {
-      label: "Cadastral record",
-      ok: false,
-      hint: "added during verification",
+      label: "Cadastral record (Naksa)",
+      ok: hasNaksa,
+      hint: hasNaksa ? "attached" : "not added yet",
     },
   ];
 
@@ -76,6 +81,8 @@ export function StepReview({ draft }: StepProps) {
   }
   if (draft.isCornerPlot) meta.push("Corner plot");
 
+  const coverUrl = listingCoverImageUrl(draft.media);
+
   return (
     <div className="grid grid-cols-1 gap-md lg:grid-cols-3">
       {/* Preview mirror — same shape as the public feed card */}
@@ -84,11 +91,11 @@ export function StepReview({ draft }: StepProps) {
           className={cn("relative h-44 bg-gradient-to-br", gradient)}
           aria-hidden
         >
-          {draft.media[0] && (
+          {coverUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
-              src={draft.media[0].url}
-              alt={draft.media[0].altText ?? "Listing cover"}
+              src={coverUrl}
+              alt=""
               className="absolute inset-0 h-full w-full object-cover"
             />
           )}
@@ -96,10 +103,10 @@ export function StepReview({ draft }: StepProps) {
             <Icon name="pending_actions" className="text-[12px]" /> Pending
             verification
           </span>
-          {draft.media.length > 1 && (
+          {photoCount > 1 && (
             <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md bg-surface/95 px-2 py-1 text-[10px] font-bold text-on-surface-variant">
               <Icon name="photo_camera" className="text-[12px]" />
-              {draft.media.length}
+              {photoCount}
             </span>
           )}
         </div>
