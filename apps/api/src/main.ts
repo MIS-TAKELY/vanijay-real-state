@@ -21,7 +21,7 @@ async function bootstrap() {
     process.env.ALLOWED_ORIGINS?.split(',')
       .map((o) => o.trim())
       .filter(Boolean) ??
-    [process.env.CLIENT_URL ?? 'https://malpothcom', process.env.ADMIN_URL]
+    [process.env.CLIENT_URL ?? 'https://malpoth.com', process.env.ADMIN_URL]
       .map((o) => o?.trim()) // trim in case env values have stray spaces
       .filter(Boolean);
 

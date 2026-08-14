@@ -5,8 +5,8 @@ monorepo on a Dockploy server so that every app gets its own custom domain:
 
 | App    | Domain (edit to match yours) | Container Port |
 | ------ | ---------------------------- | -------------- |
-| API    | `api.malpothcom`             | 5000           |
-| Client | `malpothcom`                 | 3000           |
+| API    | `api.malpoth.com`            | 5000           |
+| Client | `malpoth.com`                | 3000           |
 | Admin  | `admin.vanijay.com`          | 3000           |
 
 ---
@@ -18,7 +18,7 @@ monorepo on a Dockploy server so that every app gets its own custom domain:
 - **Docker + Docker Compose v2** (bundled with Dockploy).
 - **Ports 80 and 443** open on the server firewall (Traefik needs them).
 - **DNS**: A/CNAME records for the three domains above pointing to your server's
-  public IP. You can verify with `dig +short api.malpothcom`.
+  public IP. You can verify with `dig +short api.malpoth.com`.
 
 > **Tip** — Use Dockploy's free `traefik.me` domains for a quick test before
 > buying real domains. You still need to create a certificate in the
@@ -84,8 +84,8 @@ interpolated into `docker-compose.yml` via `${VAR}`.
 1. In the Dokploy dashboard, go to **Certificates** → **Create Certificate**.
 2. Choose **Let's Encrypt** and enter all three domain names so they're
    covered by one certificate:
-   - `api.malpothcom`
-   - `malpothcom`
+   - `api.malpoth.com`
+   - `malpoth.com`
    - `admin.vanijay.com`
 3. **Save**. Dockploy / Traefik will request the certificate from Let's
    Encrypt. This usually takes a few seconds to a minute. You'll see a check
@@ -110,17 +110,17 @@ labels:
   - "traefik.docker.network=dokploy-network" # Connect via the shared network
   - "traefik.http.middlewares.realstate-redirect-to-https.redirectscheme.scheme=https"
   - "traefik.http.routers.api.entrypoints=web" # HTTP  (:80) — redirect to HTTPS
-  - "traefik.http.routers.api.rule=Host(`api.malpothcom`)"
+  - "traefik.http.routers.api.rule=Host(`api.malpoth.com`)"
   - "traefik.http.routers.api.middlewares=realstate-redirect-to-https"
   - "traefik.http.routers.api-secure.entrypoints=websecure" # HTTPS (:443)
-  - "traefik.http.routers.api-secure.rule=Host(`api.malpothcom`)"
+  - "traefik.http.routers.api-secure.rule=Host(`api.malpoth.com`)"
   - "traefik.http.routers.api-secure.tls=true"
   - "traefik.http.routers.api-secure.tls.certresolver=le" # Let's Encrypt
   - "traefik.http.services.api.loadbalancer.server.port=5000"
 ```
 
 The same three-router pattern repeats for `client` (port 3000, domain
-`malpothcom`) and `admin` (port 3000, domain `admin.vanijay.com`).
+`malpoth.com`) and `admin` (port 3000, domain `admin.vanijay.com`).
 
 ### Key points
 
@@ -206,15 +206,15 @@ After deployment completes, test each domain:
 
 ```bash
 # API health
-curl -I https://api.malpothcom/
+curl -I https://api.malpoth.com/
 
 # API GraphQL
-curl -X POST https://api.malpothcom/api/v1/vanijay-real-state \
+curl -X POST https://api.malpoth.com/api/v1/vanijay-real-state \
   -H 'Content-Type: application/json' \
   -d '{"query":"{ __typename }"}'
 
 # Client
-curl -I https://malpothcom/
+curl -I https://malpoth.com/
 
 # Admin
 curl -I https://admin.vanijay.com/
