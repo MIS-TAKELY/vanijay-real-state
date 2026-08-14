@@ -11,3 +11,4 @@
    - Never omit `newString`. If replacing text with nothing, pass `newString: ""` (empty string).
    - Use camelCase keys (`filePath`, `oldString`, `newString`). Never use snake_case (`file_path`, `old_string`, `new_string`).
 
+hii
