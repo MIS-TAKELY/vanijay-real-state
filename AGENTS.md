@@ -10,4 +10,4 @@
    - Every `edit` tool call MUST include all 3 required properties: `filePath`, `oldString`, and `newString`.
    - Never omit `newString`. If replacing text with nothing, pass `newString: ""` (empty string).
    - Use camelCase keys (`filePath`, `oldString`, `newString`). Never use snake_case (`file_path`, `old_string`, `new_string`).
-hi
+
