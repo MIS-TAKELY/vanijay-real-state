@@ -1,7 +1,10 @@
 import { registerEnumType } from '@nestjs/graphql';
 import {
+  ContentPlacement,
+  ContentSlot,
   DocumentType,
   FacingDirection,
+  KabadiUnit,
   MediaType,
   PropertyStatus,
   PropertyType,
@@ -26,3 +29,6 @@ registerEnumType(FacingDirection, { name: 'FacingDirection' });
 registerEnumType(MediaType, { name: 'MediaType' });
 registerEnumType(DocumentType, { name: 'DocumentType' });
 registerEnumType(UserRole, { name: 'UserRole' });
+registerEnumType(ContentPlacement, { name: 'ContentPlacement' });
+registerEnumType(ContentSlot, { name: 'ContentSlot' });
+registerEnumType(KabadiUnit, { name: 'KabadiUnit' });

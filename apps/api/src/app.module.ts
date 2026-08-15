@@ -21,6 +21,11 @@ import { CartModule } from './modules/rest/cart/cart.module';
 import { AnalyticsModule } from './modules/rest/analytics/analytics.module';
 import { DashboardModule } from './modules/rest/dashboard/dashboard.module';
 import { ProfileModule } from './modules/rest/profile/profile.module';
+import { CmsModule } from './modules/rest/cms/cms.module';
+import { GoldModule } from './modules/rest/gold/gold.module';
+import { KabadiModule } from './modules/rest/kabadi/kabadi.module';
+import { AdminModule } from './modules/rest/admin/admin.module';
+import { SettingsModule } from './modules/rest/settings/settings.module';
 
 @Module({
   imports: [
@@ -54,6 +59,11 @@ import { ProfileModule } from './modules/rest/profile/profile.module';
     AnalyticsModule,
     DashboardModule,
     ProfileModule,
+    CmsModule,
+    GoldModule,
+    KabadiModule,
+    AdminModule,
+    SettingsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -2,7 +2,7 @@
 import { useState, useRef } from "react";
 import Link from "next/link";
 import { Icon } from "@repo/ui";
-import { categories } from "constants/varibles-constants";
+import { useContentStore } from "store/content";
 
 function useHorizontalDrag(ref: React.RefObject<HTMLDivElement | null>) {
   const [isDragging, setIsDragging] = useState(false);
@@ -33,6 +33,11 @@ function CategoryStrip() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { onMouseDown, onMouseMove, onMouseUp, onMouseLeave } =
     useHorizontalDrag(scrollRef);
+  const categoriesEnabled = useContentStore((s) => s.categoriesEnabled);
+  const categories = useContentStore((s) => s.categories);
+
+  if (!categoriesEnabled || categories.length === 0) return null;
+
 
   return (
     <section className="py-10 md:py-14 relative z-10">

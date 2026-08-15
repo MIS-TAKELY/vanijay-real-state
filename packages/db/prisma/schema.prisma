@@ -188,6 +188,11 @@ model User {
     shareEvents         PropertyShareEvent[]
     phoneClickEvents    PropertyPhoneClickEvent[]
 
+    // CMS + admin (Phase 1 additions)
+    createdContentItems ContentItem[]       @relation("ContentAuthor")
+    goldPriceOverrides  GoldPriceOverride[]
+    adminAuditLogs      AdminAuditLog[]
+
     @@index([phoneNumber])
     @@index([role])
     @@index([agencyId])
@@ -344,6 +349,9 @@ model Property {
     facing            FacingDirection?
     isCornerPlot      Boolean          @default(false)
     isFeatured        Boolean          @default(false)
+
+    // Internal moderation note — visible to the verification/admin team only.
+    adminNote String? @db.Text
 
     // Ownership & Agency Relationships
     ownerId String
@@ -809,3 +817,237 @@ model PropertyPhoneClickEvent {
     @@index([propertyId, clickedAt])
     @@index([userId, clickedAt])
 }
+
+// ==========================================
+// CMS — CONTENT MANAGEMENT SYSTEM (Phase 1)
+// ==========================================
+// A single polymorphic content store drives what the client renders across
+// real-state, gold, and scrape/kabadi. `slot` classifies the content ("hero",
+// "categories", "content_block", "faq", "how_it_works", ...) and `key`
+// disambiguates within a placement+slot (e.g. which metal / which category).
+// Rich client metadata (order, icon, badge, published state, CTA href) is
+// stored in the `metadata` JSON column.
+
+enum ContentPlacement {
+    REAL_STATE_HOME
+    REAL_STATE_STATIC
+    GOLD
+    KABADI
+    GLOBAL
+}
+
+enum ContentSlot {
+    HERO_BANNER
+    CATEGORY
+    SECTION
+    CONTENT_BLOCK
+    FAQ
+    STATIC_PAGE
+    NAV_ITEM
+    FOOTER
+    SEO
+    HOW_IT_WORKS
+    CTA
+}
+
+model ContentItem {
+    id         String           @id @default(cuid())
+    placement  ContentPlacement
+    slot       ContentSlot
+    key        String // e.g. "hero", "categories", "gold", "steel", "how-it-works", "about-values"
+
+    title    String?
+    subtitle String?
+    body     String? @db.Text // rich text (HTML) or plain copy depending on slot
+    image    String?
+    ctaLabel String?
+    ctaHref  String?
+    metadata Json? // flexible per-slot extras (sortOrder, icon, badge, published, link)
+
+    sortOrder Int     @default(0)
+    published Boolean @default(true)
+
+    createdById String?
+    createdBy   User?   @relation("ContentAuthor", fields: [createdById], references: [id])
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@unique([placement, slot, key])
+    @@index([placement, slot, published, sortOrder])
+}
+
+// Structured static/navigation content that benefits from real forms rather
+// than a raw JSON blob.
+model StaticPage {
+    id        String @id @default(cuid())
+    slug      String @unique // "about" | "area-guid" | "nrn-concierge" | "compare"
+    route     String @unique
+    title     String?
+    body      String? @db.Text
+    published Boolean @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+model NavItem {
+    id        String  @id @default(cuid())
+    label     String
+    href      String
+    sortOrder Int     @default(0)
+    published Boolean @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([published, sortOrder])
+}
+
+model FooterLink {
+    id        String @id @default(cuid())
+    column    String // e.g. "Company" | "Resources" | "Legal"
+    label     String
+    href      String
+    sortOrder Int    @default(0)
+
+    @@index([column, sortOrder])
+}
+
+model SeoConfig {
+    id          String  @id @default(cuid())
+    route       String  @unique // "/" | "/gold" | "/scrape" | "/about" ...
+    title       String?
+    description String?
+    keywords    String?
+    robots      String? @default("index, follow")
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+}
+
+
+// ==========================================
+// GOLD PRICE MANAGEMENT
+// ==========================================
+
+model MetalConfig {
+    id            String     @id @default(cuid())
+    slug          String     @unique // "gold" | "silver" | "copper" | "diamond" | "steel"
+    name          String
+    symbol        String? // "Au"
+    isEnabled     Boolean    @default(true)
+    description   String?    @db.Text
+    accentColor   String?
+    seoTitle      String?
+    seoDescription String?
+    createdAt     DateTime   @default(now())
+    updatedAt     DateTime   @updatedAt
+
+    faqs MetalFaq[]
+}
+
+model MetalFaq {
+    id        String      @id @default(cuid())
+    metalId   String
+    metal     MetalConfig @relation(fields: [metalId], references: [id], onDelete: Cascade)
+    question  String
+    answer    String      @db.Text
+    sortOrder Int         @default(0)
+
+    @@index([metalId, sortOrder])
+}
+
+// Manual price override — lets an admin pin a value that takes precedence over
+// the live external gold API on the client.
+model GoldPriceOverride {
+    id        String   @id @default(cuid())
+    metalSlug String
+    ask       Decimal? @db.Decimal(14, 2)
+    bid       Decimal? @db.Decimal(14, 2)
+    unit      String   @default("oz") // "oz" | "gram" | "tola"
+    currency  String   @default("NPR")
+    active    Boolean  @default(true)
+    note      String?
+    setById   String?
+    setBy     User?    @relation(fields: [setById], references: [id])
+
+    createdAt DateTime @default(now())
+
+    @@index([metalSlug, active])
+}
+
+// ==========================================
+// SCRAPE / KABADI RATE MANAGEMENT
+// ==========================================
+
+enum KabadiUnit {
+    KG
+    PIECE
+}
+
+model KabadiCategory {
+    id        String       @id @default(cuid())
+    slug      String       @unique // "paper" | "plastic" | "metal" | "ewaste" | "appliance" | "other"
+    name      String
+    nepali    String?
+    icon      String?
+    blurb     String?
+    sortOrder Int          @default(0)
+    published Boolean      @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    items KabadiItem[]
+
+    @@index([published, sortOrder])
+}
+
+model KabadiItem {
+    id         String        @id @default(cuid())
+    categoryId String
+    category   KabadiCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+    name       String
+    nepali     String?
+    unit       KabadiUnit     @default(KG)
+    rate       Decimal        @db.Decimal(14, 2)
+    note       String?
+    popular    Boolean        @default(false)
+    sortOrder  Int            @default(0)
+    published  Boolean        @default(true)
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([categoryId, published, sortOrder])
+}
+
+// ==========================================
+// ADMIN AUDIT + OPERATIONS
+// ==========================================
+
+model AdminAuditLog {
+    id        String   @id @default(cuid())
+    actorId   String
+    actor     User     @relation(fields: [actorId], references: [id])
+    action    String // "create" | "update" | "publish" | "reject" | "verify" ...
+    entity    String // "property" | "content_item" | "user" | "kabadi_item" ...
+    entityId  String?
+    summary   String?
+    payload   Json?
+    createdAt DateTime @default(now())
+
+    @@index([actorId, createdAt])
+    @@index([entity, entityId])
+}
+
+
+// Site-wide settings (brand, contact, social) — a single JSON record keyed "main".
+model SiteConfig {
+    id        String   @id @default(cuid())
+    key       String   @unique
+    data      Json
+    updatedAt DateTime @updatedAt
+}
+

@@ -13,6 +13,8 @@
   "scripts": {
     "db:generate": "prisma generate",
     "db:migrate": "prisma migrate dev",
+    "db:build-seed": "tsc prisma/seed.ts --outDir . --module commonjs --moduleResolution node --esModuleInterop --target es2019 --skipLibCheck --types node",
+    "db:seed": "npm run db:build-seed && node seed.js && rm -f seed.js",
     "build": "prisma generate && tsc"
   },
   "keywords": [],

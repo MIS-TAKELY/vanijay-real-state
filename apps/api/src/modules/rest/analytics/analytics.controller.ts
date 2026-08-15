@@ -107,11 +107,12 @@ export class AnalyticsController {
   @Roles('SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'ADMIN')
   async getPropertyAnalytics(
     @Param('id') propertyId: string,
-    @CurrentUser('id') userId: string,
+    @CurrentUser() user: { id: string; role: string[] },
   ) {
-    const isOwner = await this.analytics.isPropertyOwner(propertyId, userId);
-    if (!isOwner) return null;
+    const isAdmin = Array.isArray(user.role) && user.role.includes('ADMIN');
+    const isOwner = await this.analytics.isPropertyOwner(propertyId, user.id);
+    if (!isOwner && !isAdmin) return null;
 
-    return this.analytics.getPropertyAnalytics(propertyId, userId);
+    return this.analytics.getPropertyAnalytics(propertyId, user.id);
   }
 }

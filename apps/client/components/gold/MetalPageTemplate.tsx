@@ -1,10 +1,13 @@
 "use client";
 
+import Link from "next/link";
+import { Settings2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type { CurrencyCode, MetalId, WeightUnit } from "../../constants/gold/metals";
 import { METAL_META, METALS_DATA } from "../../constants/gold/metals";
 import { METAL_FAQS } from "../../constants/gold/faq-data";
-import { getContentBlocksForMetal } from "../../constants/gold/content-blocks";
+import type { ContentBlock } from "../../constants/gold/content-blocks";
+import { useContentStore } from "store/content";
 import { useLiveMetalPrices } from "../../hooks/use-live-metal-prices";
 import { Breadcrumb } from "./Breadcrumb";
 import { HeroPricePanel } from "./HeroPricePanel";
@@ -33,7 +36,18 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
     return found ?? METALS_DATA.find((m) => m.id === metalId) ?? metals[0]!;
   }, [metals, metalId]);
 
-  const contentBlocks = useMemo(() => getContentBlocksForMetal(metalId), [metalId]);
+  const allContentBlocks = useContentStore((s) => s.contentBlocks);
+  const contentBlocks = useMemo(
+    () =>
+      allContentBlocks
+        .filter(
+          (block: ContentBlock) =>
+            block.isPublished &&
+            (block.metal === metalId || block.metal === "all"),
+        )
+        .sort((a, b) => a.order - b.order),
+    [allContentBlocks, metalId],
+  );
   const faqs = METAL_FAQS[metalId] ?? [];
   const meta = METAL_META[metalId];
 
@@ -173,6 +187,15 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         </p>
         <p className="mt-1">
           Malpoth Precious Metals &copy; {new Date().getFullYear()}
+        </p>
+        <p className="mt-3">
+          <Link
+            href="/admin/content"
+            className="inline-flex items-center gap-1 rounded-lg border border-white/[0.08] px-3 py-1.5 text-xs text-white/40 transition-colors hover:border-white/20 hover:text-[#E8E6E1]"
+          >
+            <Settings2 size={13} aria-hidden="true" />
+            Content admin
+          </Link>
         </p>
       </footer>
     </main>

@@ -421,7 +421,20 @@ export const milestones = [
   },
 ];
 
-export const heroSlides = [
+export interface HeroSlide {
+  image: string;
+  headline: string;
+  subheadline: string;
+  ctaPrimary: string;
+  ctaSecondary: string;
+}
+
+export interface Category {
+  name: string;
+  image: string;
+}
+
+export const heroSlides: HeroSlide[] = [
   {
     image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&h=900&fit=crop",
     headline: "Find Your Dream Property",
@@ -445,7 +458,7 @@ export const heroSlides = [
   },
 ];
 
-export const categories = [
+export const categories: Category[] = [
   { name: "Apartments", image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=200&fit=crop" },
   { name: "Villas", image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=200&h=200&fit=crop" },
   { name: "Land", image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop" },

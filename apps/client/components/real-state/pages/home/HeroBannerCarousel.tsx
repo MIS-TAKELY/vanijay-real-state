@@ -3,26 +3,35 @@
 import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Icon } from "@repo/ui";
-import { heroSlides } from "constants/varibles-constants";
+import { useContentStore } from "store/content";
 
 function HeroBannerCarousel() {
   const router = useRouter();
+  const heroEnabled = useContentStore((s) => s.heroEnabled);
+  const heroSlides = useContentStore((s) => s.heroSlides);
   const [current, setCurrent] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
   const goTo = useCallback((index: number) => {
-    setCurrent((_prev) => (index + heroSlides.length) % heroSlides.length);
-  }, []);
+    setCurrent(() => (index + heroSlides.length) % heroSlides.length);
+  }, [heroSlides.length]);
 
   const goNext = useCallback(() => goTo(current + 1), [current, goTo]);
   const goPrev = useCallback(() => goTo(current - 1), [current, goTo]);
 
   useEffect(() => {
-    if (isHovering) return;
+    if (isHovering || heroSlides.length === 0) return;
     const timer = setInterval(goNext, 4000);
     return () => clearInterval(timer);
-  }, [goNext, isHovering]);
+  }, [goNext, isHovering, heroSlides.length]);
+
+  useEffect(() => {
+    // Clamp the index when the slide list shrinks (admin reorder/delete).
+    setCurrent((prev) => Math.min(prev, Math.max(heroSlides.length - 1, 0)));
+  }, [heroSlides.length]);
+
+  if (!heroEnabled || heroSlides.length === 0) return null;
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches[0]) {
