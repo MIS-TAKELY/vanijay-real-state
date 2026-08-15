@@ -120,6 +120,12 @@ type PropertyPage {
   hasMore: Boolean!
 }
 
+type SearchSuggestion {
+  value: String!
+  label: String!
+  type: String!
+}
+
 type TrendingProperty {
   propertyId: ID!
   title: String!
@@ -168,13 +174,15 @@ type PropertyListResponse {
 }
 
 type Query {
-  propertiesFeed(first: Int = 20, after: String): PropertyPage!
+  propertiesFeed(first: Int = 20, after: String, q: String, type: String, price: String, district: String, minSize: Float, maxSize: Float): PropertyPage!
+  searchSuggestions(q: String!, limit: Int = 8): [SearchSuggestion!]!
   property(idOrSlug: ID!): Property!
   myProperties: [Property!]!
   trendingProperties(limit: Int = 10, period: String = "7d"): TrendingPropertiesResponse!
   similarProperties(propertyId: ID!, limit: Int = 10): PropertyListResponse!
   recentlyViewedProperties(limit: Int = 10): PropertyListResponse!
   featuredProperties(limit: Int = 10): PropertyListResponse!
+  recentlyAddedProperties(limit: Int = 10): PropertyListResponse!
   propertyAnalytics(propertyId: ID!): TrendingPropertiesResponse!
 }
 

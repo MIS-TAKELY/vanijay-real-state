@@ -3,10 +3,7 @@
 import { Button, cn, Icon, toast } from "@repo/ui";
 import { PropertyCard } from "components/real-state/common/PropertyCard";
 import { ApiError } from "lib/api/core/client";
-import {
-  removeFavorite,
-  updateFavoriteNotify,
-} from "lib/api/services/favorites";
+import { updateFavoriteNotify } from "lib/api/services/favorites";
 import type { FavoriteItem } from "lib/api/services/favorites/types";
 import type { CardProperty } from "lib/api/services/properties/types";
 import { useState } from "react";
@@ -72,39 +69,35 @@ export function FavoriteCard({
     }
   };
 
-  const handleRemove = async () => {
-    setBusy(true);
-    try {
-      await removeFavorite(favorite.propertyId);
-      setSaved(false);
-      onRemoved(favorite.propertyId);
-      toast.success("Removed from favorites");
-    } catch (error) {
-      toast.error(
-        error instanceof ApiError ? error.message : "Could not remove favorite",
-      );
-    } finally {
-      setBusy(false);
-    }
-  };
-
   return (
-    <div className="relative">
-      <PropertyCard property={card} />
+    <div className="flex flex-col gap-2">
+      <PropertyCard
+        property={card}
+        onFavoriteChange={(isFavorite) => {
+          if (!isFavorite) {
+            setSaved(false);
+            onRemoved(favorite.propertyId);
+          }
+        }}
+      />
 
-      <div className="absolute right-3 bottom-34 z-10 flex items-center gap-1.5">
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-outline-variant bg-surface-container-low px-3 py-2">
+        <span className="mono-stat text-[11px] text-on-surface-variant">
+          Saved {timeAgo(favorite.createdAt)}
+        </span>
+
         <Button
           type="button"
-          variant="outline"
+          variant="ghost"
           aria-pressed={notify}
           aria-label="Toggle price-change alerts"
           onClick={() => void toggleNotify()}
           disabled={busy}
           className={cn(
-            "inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium shadow-sm cursor-pointer border-outline-variant",
+            "inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium shadow-sm cursor-pointer border border-outline-variant",
             notify
               ? "bg-primary text-on-primary"
-              : "bg-surface/95 text-on-surface-variant",
+              : "bg-surface text-on-surface-variant",
           )}
         >
           <Icon
@@ -114,23 +107,7 @@ export function FavoriteCard({
           />
           {notify ? "Alerts on" : "Alerts off"}
         </Button>
-
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          aria-label="Remove from favorites"
-          onClick={() => void handleRemove()}
-          disabled={busy}
-          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-surface/95 border border-outline-variant text-tertiary shadow-sm hover:bg-error/10 hover:text-error hover:border-error/30 cursor-pointer"
-        >
-          <Icon name="favorite" filled className="text-body-lg" />
-        </Button>
       </div>
-
-      <span className="mono-stat absolute left-3 bottom-34 z-10 rounded bg-surface/90 px-1.5 py-0.5 text-[10px] text-on-surface-variant shadow-sm">
-        Saved {timeAgo(favorite.createdAt)}
-      </span>
     </div>
   );
 }

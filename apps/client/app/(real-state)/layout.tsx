@@ -1,5 +1,6 @@
 import { Navbar } from "components/real-state/layout/Navbar";
 import { Footer } from "components/real-state/layout/Footer";
+import { CompareBarWrapper } from "components/real-state/common/CompareBarWrapper";
 
 export default function RealStateLayout({
   children,
@@ -10,6 +11,7 @@ export default function RealStateLayout({
     <>
       <Navbar />
       {children}
+      <CompareBarWrapper />
       <Footer />
     </>
   );

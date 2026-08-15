@@ -3,12 +3,12 @@ import {
   CategoryStrip,
   HeroBannerCarousel,
   ListingsMarketplace,
+  RecentlyAdded,
   RecentlyViewed,
-  SearchFilters,
+  SearchBar,
 } from "components/real-state/pages/home";
 import NepalmapWrapper from "components/real-state/pages/home/NepalmapWrapper";
 import { AppModeStrip } from "components/shared/AppModeStrip";
-import { PAGE_SIZE, fetchFeedPageGraphql, type FeedPage } from "lib/api";
 import type { Metadata } from "next";
 
 const PAGE_URL = "https://lekhaprati.com";
@@ -59,15 +59,6 @@ const breadcrumbSchema = {
 };
 
 export default async function HomePage() {
-  let initial: FeedPage = { items: [], nextCursor: null, hasMore: false };
-  let initialError: string | null = null;
-
-  try {
-    initial = await fetchFeedPageGraphql({ first: PAGE_SIZE });
-  } catch (e) {
-    initialError = e instanceof Error ? e.message : "Failed to load listings";
-  }
-
   return (
     <>
       <script
@@ -89,9 +80,10 @@ export default async function HomePage() {
             <NepalmapWrapper height="clamp(420px, 52vh, 620px)" />
           </div>
         </section>
-        <SearchFilters />
+        <SearchBar />
 
         <ListingsMarketplace />
+        <RecentlyAdded />
         <RecentlyViewed />
         <CallToActionBanner />
       </main>

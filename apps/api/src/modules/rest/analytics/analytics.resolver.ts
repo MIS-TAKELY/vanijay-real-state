@@ -183,6 +183,14 @@ export class AnalyticsResolver {
     return this.analytics.getFeaturedProperties(limit);
   }
 
+  @Query(() => PropertyListResponse, { name: 'recentlyAddedProperties' })
+  async findRecentlyAdded(
+    @Args('limit', { type: () => Int, nullable: true, defaultValue: 10 })
+    limit: number,
+  ) {
+    return this.analytics.getRecentlyAddedProperties(limit);
+  }
+
   @Query(() => TrendingPropertiesResponse, { name: 'propertyAnalytics' })
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('SELLER', 'AGENCY_AGENT', 'AGENCY_ADMIN', 'ADMIN')

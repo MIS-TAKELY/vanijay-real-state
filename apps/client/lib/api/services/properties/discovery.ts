@@ -223,6 +223,62 @@ const FEATURED_PROPERTIES_QUERY = `
   }
 `;
 
+const RECENTLY_ADDED_PROPERTIES_QUERY = `
+  query RecentlyAddedProperties($limit: Int) {
+    recentlyAddedProperties(limit: $limit) {
+      items {
+        id
+        listingCode
+        slug
+        title
+        description
+        propertyType
+        status
+        verificationLevel
+        askingPrice
+        pricePerAana
+        roadAccessWidthFt
+        roadType
+        facing
+        isCornerPlot
+        isFeatured
+        ownerId
+        agentId
+        createdAt
+        updatedAt
+        location {
+          province
+          district
+          municipality
+          wardNumber
+          areaName
+          addressText
+          latitude
+          longitude
+        }
+        landArea {
+          ropani
+          aana
+          paisa
+          daam
+          bigha
+          katha
+          dhur
+          totalSqFt
+          totalSqMeters
+        }
+        media {
+          url
+          altText
+          sortOrder
+          isCover
+        }
+      }
+      total
+    }
+  }
+`;
+
 /**
  * Shared mapper for the home-page scroll rails (Recently Viewed, Trending,
  * Featured, Similar). The trending payload returns a flat `location` string
@@ -297,4 +353,14 @@ export async function fetchFeaturedProperties(
     { limit },
   );
   return data.featuredProperties;
+}
+
+export async function fetchRecentlyAddedProperties(
+  limit = 10,
+): Promise<PropertyListResponse> {
+  const data = await gqlRequest<{ recentlyAddedProperties: PropertyListResponse }>(
+    RECENTLY_ADDED_PROPERTIES_QUERY,
+    { limit },
+  );
+  return data.recentlyAddedProperties;
 }

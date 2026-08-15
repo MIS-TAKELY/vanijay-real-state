@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Icon, toast } from "@repo/ui";
+import { Button, cn, Icon, toast } from "@repo/ui";
 import { ApiError } from "lib/api/core/client";
 import {
   addFavorite,
@@ -15,12 +15,18 @@ interface SaveToFavoritesButtonProps {
   /** Real DB id of the listing. */
   propertyId: string;
   variant?: "ghost" | "outline" | "default";
+  /** Renders only the heart icon — used as a media overlay on property cards. */
+  iconOnly?: boolean;
+  /** Fired with the new state after a successful toggle (keeps parents in sync). */
+  onChange?: (isFavorite: boolean) => void;
   className?: string;
 }
 
 export function SaveToFavoritesButton({
   propertyId,
   variant = "ghost",
+  iconOnly = false,
+  onChange,
   className,
 }: SaveToFavoritesButtonProps) {
   const { isSignedIn, sessionReady, requireAuth } = useRequireAuth();
@@ -55,6 +61,7 @@ export function SaveToFavoritesButton({
       if (status.isFavorite) {
         await removeFavorite(propertyId);
         setStatus({ isFavorite: false, notifyOnPriceChange: true });
+        onChange?.(false);
         toast.success("Removed from favorites");
       } else {
         const saved = await addFavorite(propertyId, true);
@@ -62,6 +69,7 @@ export function SaveToFavoritesButton({
           isFavorite: true,
           notifyOnPriceChange: saved.notifyOnPriceChange,
         });
+        onChange?.(true);
         toast.success("Saved to favorites");
       }
     } catch (error) {
@@ -76,20 +84,35 @@ export function SaveToFavoritesButton({
   return (
     <Button
       type="button"
-      // variant={status.isFavorite ? "default" : variant}
-      variant={variant}
+      variant={iconOnly ? "ghost" : variant}
+      size={iconOnly ? "icon" : "default"}
       onClick={() => void toggle()}
       disabled={loading}
       aria-pressed={status.isFavorite}
+      aria-label={
+        iconOnly
+          ? status.isFavorite
+            ? "Remove from favorites"
+            : "Save to favorites"
+          : undefined
+      }
       aria-live="polite"
-      className={className}
+      className={cn(
+        className,
+        iconOnly && status.isFavorite && "text-tertiary",
+      )}
     >
-      <Icon name="favorite" filled={status.isFavorite} className="text-[18px]" />
-      {loading
-        ? "Saving…"
-        : status.isFavorite
-          ? "Saved to Favorites"
-          : "Save to Favorites"}
+      <Icon
+        name="favorite"
+        filled={status.isFavorite}
+        className={cn("text-[18px]", iconOnly && "text-[20px]")}
+      />
+      {!iconOnly &&
+        (loading
+          ? "Saving…"
+          : status.isFavorite
+            ? "Saved to Favorites"
+            : "Save to Favorites")}
     </Button>
   );
 }

@@ -2,7 +2,13 @@
 
 import { useEffect, useState } from "react";
 import { HorizontalScrollSection } from "../../common/HorizontalScrollSection";
-import { fetchTrendingPropertiesGraphql, fetchFeaturedProperties, toCardPropsFromItem, type CardProperty, type PropertyItem } from "lib/api/services/properties";
+import {
+  fetchTrendingPropertiesGraphql,
+  fetchFeaturedProperties,
+  toCardPropsFromItem,
+  type CardProperty,
+  type PropertyItem,
+} from "lib/api/services/properties";
 
 function mapToCardProps(p: PropertyItem): CardProperty {
   return toCardPropsFromItem(p);
@@ -59,20 +65,30 @@ export function ListingsMarketplace() {
       <>
         <div className="py-10 md:py-14">
           <div className="max-w-container-max mx-auto px-gutter">
-            <h2 className="font-headline-md text-headline-md text-primary mb-4">Featured Properties</h2>
+            <h2 className="font-headline-md text-headline-md text-primary mb-4">
+              Featured Properties
+            </h2>
             <div className="flex gap-4 overflow-x-auto pb-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="min-w-[280px] md:min-w-[320px] h-[460px] animate-pulse rounded-2xl bg-surface-container" />
+                <div
+                  key={i}
+                  className="min-w-[280px] md:min-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container"
+                />
               ))}
             </div>
           </div>
         </div>
         <div className="py-10 md:py-14 bg-surface-container-low">
           <div className="max-w-container-max mx-auto px-gutter">
-            <h2 className="font-headline-md text-headline-md text-primary mb-4">Trending Now</h2>
+            <h2 className="font-headline-md text-headline-md text-primary mb-4">
+              Trending Now
+            </h2>
             <div className="flex gap-4 overflow-x-auto pb-4">
               {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="min-w-[280px] md:min-w-[320px] h-[460px] animate-pulse rounded-2xl bg-surface-container" />
+                <div
+                  key={i}
+                  className="min-w-[280px] md:min-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container"
+                />
               ))}
             </div>
           </div>
@@ -85,7 +101,7 @@ export function ListingsMarketplace() {
     <>
       {similarItems.length > 0 && (
         <HorizontalScrollSection
-        eyebrow="Handpicked for you"
+          eyebrow="Handpicked for you"
           title="Featured Properties"
           items={similarItems.map(mapToCardProps)}
           viewAllHref="/"

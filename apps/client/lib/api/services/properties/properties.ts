@@ -16,7 +16,6 @@ export function fetchPropertyById(id: string): Promise<ApiProperty> {
   return apiFetch<ApiProperty>(API_ENDPOINTS.properties.byId(id));
 }
 
-
 export function fetchPropertyBySlug(slug: string): Promise<ApiProperty> {
   return apiFetch<ApiProperty>(API_ENDPOINTS.properties.byId(slug));
 }
@@ -82,9 +81,20 @@ const PROPERTY_FRAGMENT = `
   }
 `;
 
+export interface FeedQueryOptions {
+  first: number;
+  after?: string | null;
+  q?: string | null;
+  type?: string | null;
+  price?: string | null;
+  district?: string | null;
+  minSize?: string | number | null;
+  maxSize?: string | number | null;
+}
+
 const LISTINGS_FEED_QUERY = `
-  query ListingsFeed($first: Int, $after: String) {
-    propertiesFeed(first: $first, after: $after) {
+  query ListingsFeed($first: Int, $after: String, $q: String, $type: String, $price: String, $district: String, $minSize: Float, $maxSize: Float) {
+    propertiesFeed(first: $first, after: $after, q: $q, type: $type, price: $price, district: $district, minSize: $minSize, maxSize: $maxSize) {
       items {
         ...PropertyFields
       }
@@ -113,14 +123,47 @@ const MY_PROPERTIES_QUERY = `
   ${PROPERTY_FRAGMENT}
 `;
 
-export function fetchFeedPageGraphql(opts: {
-  first: number;
-  after?: string | null;
-}): Promise<FeedPage> {
+export function fetchFeedPageGraphql(
+  opts: FeedQueryOptions,
+): Promise<FeedPage> {
   return gqlRequest<{ propertiesFeed: FeedPage }>(LISTINGS_FEED_QUERY, {
     first: opts.first,
     after: opts.after ?? null,
+    q: opts.q?.trim() ? opts.q.trim() : null,
+    type: opts.type && opts.type !== "all" ? opts.type : null,
+    price: opts.price && opts.price !== "any" ? opts.price : null,
+    district: opts.district?.trim() ? opts.district.trim() : null,
+    minSize:
+      opts.minSize != null && opts.minSize !== "" ? Number(opts.minSize) : null,
+    maxSize:
+      opts.maxSize != null && opts.maxSize !== "" ? Number(opts.maxSize) : null,
   }).then((data) => data.propertiesFeed);
+}
+
+export interface SearchSuggestion {
+  value: string;
+  label: string;
+  type: string;
+}
+
+const SEARCH_SUGGESTIONS_QUERY = `
+  query SearchSuggestions($q: String!, $limit: Int) {
+    searchSuggestions(q: $q, limit: $limit) {
+      value
+      label
+      type
+    }
+  }
+`;
+
+export function fetchSearchSuggestionsGraphql(
+  q: string,
+  limit = 8,
+): Promise<SearchSuggestion[]> {
+  return gqlRequest<{ searchSuggestions: SearchSuggestion[] }>(
+    SEARCH_SUGGESTIONS_QUERY,
+    { q, limit },
+  ).then((data) => data.searchSuggestions);
 }
 
 export function fetchPropertyByGraphql(idOrSlug: string): Promise<ApiProperty> {
@@ -128,7 +171,6 @@ export function fetchPropertyByGraphql(idOrSlug: string): Promise<ApiProperty> {
     idOrSlug,
   }).then((data) => data.property);
 }
-
 
 export function fetchMyListingsGraphql(): Promise<ApiProperty[]> {
   return gqlRequest<{ myProperties: ApiProperty[] }>(MY_PROPERTIES_QUERY).then(

@@ -3,9 +3,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "@repo/ui";
 import { HorizontalScrollSection } from "../../common/HorizontalScrollSection";
-import { fetchRecentlyViewedProperties, toCardPropsFromItem, type CardProperty, type PropertyItem } from "lib/api/services/properties";
+import { fetchRecentlyAddedProperties, toCardPropsFromItem, type CardProperty, type PropertyItem } from "lib/api/services/properties";
 
-function RecentlyViewed() {
+function RecentlyAdded() {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [items, setItems] = useState<PropertyItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +20,7 @@ function RecentlyViewed() {
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
-    fetchRecentlyViewedProperties(10)
+    fetchRecentlyAddedProperties(10)
       .then((data) => {
         if (!cancelled) {
           setItems(data.items);
@@ -46,10 +46,10 @@ function RecentlyViewed() {
           <div className="flex items-end justify-between mb-6">
             <div>
               <p className="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">
-                Your browsing history
+                Fresh on the market
               </p>
               <h2 className="font-headline-md text-headline-md text-primary">
-                Recently Viewed
+                Recently Added
               </h2>
             </div>
           </div>
@@ -70,35 +70,25 @@ function RecentlyViewed() {
   return (
     <section className="py-10 md:py-14 relative z-10">
       <div className="max-w-container-max mx-auto px-gutter">
-        {/* Section header */}
         <div className="flex items-end justify-between mb-6">
           <div>
             <p className="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">
-              Your browsing history
+              Fresh on the market
             </p>
             <h2 className="font-headline-md text-headline-md text-primary">
-              Recently Viewed
+              Recently Added
             </h2>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="#"
-              className="font-label-sm text-sm text-on-surface-variant hover:text-primary transition-colors"
-            >
-              Clear History
-            </a>
-            <div className="flex items-center gap-2">
-              <Button variant="outline" size="icon" aria-label="Previous" onClick={() => scroll("prev")} className="shrink-0">
-                <Icon name="chevron_left" />
-              </Button>
-              <Button variant="outline" size="icon" aria-label="Next" onClick={() => scroll("next")} className="shrink-0">
-                <Icon name="chevron_right" />
-              </Button>
-            </div>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="icon" aria-label="Previous" onClick={() => scroll("prev")} className="shrink-0">
+              <Icon name="chevron_left" />
+            </Button>
+            <Button variant="outline" size="icon" aria-label="Next" onClick={() => scroll("next")} className="shrink-0">
+              <Icon name="chevron_right" />
+            </Button>
           </div>
         </div>
 
-        {/* Scrollable row */}
         <HorizontalScrollSection
           items={items.map(mapToCardProps)}
           accent="default"
@@ -110,4 +100,4 @@ function RecentlyViewed() {
   );
 }
 
-export { RecentlyViewed };
+export { RecentlyAdded };

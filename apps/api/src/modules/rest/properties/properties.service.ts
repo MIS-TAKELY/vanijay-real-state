@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, PrismaClient } from '@repo/db';
+import { Prisma, PrismaClient, PropertyType } from '@repo/db';
 import {
   CursorPage,
   decodeCursor,
@@ -9,6 +9,35 @@ import {
 import { CreatePropertyInput } from './dto/create-property.input';
 import { UpdatePropertyInput } from './dto/update-property.input';
 import { Property } from './entities/property.entity';
+import { SearchSuggestion } from './entities/search-suggestion.entity';
+
+export interface FeedFilters {
+  q?: string;
+  type?: string;
+  price?: string;
+  district?: string;
+  minSize?: number;
+  maxSize?: number;
+}
+
+/** Category → PropertyType groups for the public filter dropdowns. Unknown
+ *  values fall back to a direct enum match so callers can also pass exact
+ *  enum values (e.g. RESIDENTIAL_LAND). */
+const TYPE_GROUPS: Record<string, PropertyType[]> = {
+  residential: ['RESIDENTIAL_LAND', 'RESIDENTIAL_HOUSE'],
+  commercial: ['COMMERCIAL_LAND', 'COMMERCIAL_SPACE'],
+  plot: ['RESIDENTIAL_LAND', 'COMMERCIAL_LAND', 'AGRICULTURAL_LAND'],
+  house: ['RESIDENTIAL_HOUSE', 'HERITAGE_HOME'],
+  land: ['RESIDENTIAL_LAND', 'COMMERCIAL_LAND', 'AGRICULTURAL_LAND'],
+};
+
+/** Price band presets (in NPR) used by the "Price" filter dropdown. */
+const PRICE_BANDS: Record<string, { gte?: number; lt?: number }> = {
+  'under-20l': { lt: 2_000_000 },
+  '20l-50l': { gte: 2_000_000, lt: 5_000_000 },
+  '50l-1cr': { gte: 5_000_000, lt: 10_000_000 },
+  '1cr-plus': { gte: 10_000_000 },
+};
 
 const PROPERTY_SUMMARY_INCLUDE = {
   location: true,
@@ -33,7 +62,7 @@ export class PropertiesService {
     opts: {
       first?: number;
       after?: string;
-    } = {},
+    } & FeedFilters = {},
   ): Promise<CursorPage<Property>> {
     const first = resolveFirst(opts.first);
     const after = opts.after ? decodeCursor(opts.after) : undefined;
@@ -41,12 +70,22 @@ export class PropertiesService {
     const rows = await this.prisma.property.findMany({
       where: {
         status: 'LIVE',
-        ...(after && {
-          OR: [
-            { createdAt: { lt: after.createdAt } },
-            { createdAt: { equals: after.createdAt }, id: { lt: after.id } },
-          ],
-        }),
+        AND: [
+          ...(after
+            ? [
+                {
+                  OR: [
+                    { createdAt: { lt: after.createdAt } },
+                    {
+                      createdAt: { equals: after.createdAt },
+                      id: { lt: after.id },
+                    },
+                  ],
+                } as Prisma.PropertyWhereInput,
+              ]
+            : []),
+          this.buildFilterWhere(opts),
+        ],
       },
       include: PROPERTY_SUMMARY_INCLUDE,
       orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
@@ -92,6 +131,56 @@ export class PropertiesService {
     return rows.map(PropertiesService.mapToResponse);
   }
 
+  /** Location autocomplete for the landing-page search box. Returns distinct
+   *  districts / municipalities / areas that match the query, ranked so exact
+   *  matches come before prefixes, which come before loose contains-matches. */
+  async suggestLocations(q: string, limit = 8): Promise<SearchSuggestion[]> {
+    const needle = q.trim();
+    if (!needle) return [];
+
+    const like = { contains: needle, mode: 'insensitive' } as const;
+    const rows = await this.prisma.propertyLocation.findMany({
+      where: {
+        property: { status: 'LIVE' },
+        OR: [{ district: like }, { municipality: like }, { areaName: like }],
+      },
+      select: { district: true, municipality: true, areaName: true },
+      take: 200,
+    });
+
+    const needleLower = needle.toLowerCase();
+    const seen = new Set<string>();
+    const candidates: Array<SearchSuggestion & { rank: number }> = [];
+
+    const push = (value: string, type: string) => {
+      const clean = value.trim();
+      if (!clean) return;
+      const key = `${type}:${clean.toLowerCase()}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+      const lower = clean.toLowerCase();
+      const rank = lower === needleLower ? 0 : lower.startsWith(needleLower) ? 1 : 2;
+      candidates.push({ value: clean, label: clean, type, rank });
+    };
+
+    for (const row of rows) {
+      if (row.areaName?.toLowerCase().includes(needleLower)) {
+        push(row.areaName, 'AREA');
+      }
+      if (row.municipality?.toLowerCase().includes(needleLower)) {
+        push(row.municipality, 'MUNICIPALITY');
+      }
+      if (row.district?.toLowerCase().includes(needleLower)) {
+        push(row.district, 'DISTRICT');
+      }
+    }
+
+    return candidates
+      .sort((a, b) => a.rank - b.rank || a.value.localeCompare(b.value))
+      .slice(0, limit)
+      .map(({ value, label, type }) => ({ value, label, type }));
+  }
+
   async findByOwner(ownerId: string): Promise<Property[]> {
     const rows = await this.prisma.property.findMany({
       where: { ownerId },
@@ -102,8 +191,14 @@ export class PropertiesService {
   }
 
   async create(input: CreatePropertyInput, ownerId: string): Promise<Property> {
-    const { landArea, location, cadastralRecord, media, documents, ...propertyData } =
-      input;
+    const {
+      landArea,
+      location,
+      cadastralRecord,
+      media,
+      documents,
+      ...propertyData
+    } = input;
     const row = await this.prisma.property.create({
       data: {
         ...propertyData,
@@ -116,29 +211,31 @@ export class PropertiesService {
         ...(cadastralRecord && {
           cadastralRecord: { create: cadastralRecord },
         }),
-        ...(media && media.length > 0 && {
-          media: {
-            create: media.map((m, index) => ({
-              url: m.url,
-              altText: m.altText,
-              type: m.type ?? 'IMAGE',
-              sortOrder: m.sortOrder ?? index,
-              isCover: m.isCover ?? index === 0,
-            })),
-          },
-        }),
-        ...(documents && documents.length > 0 && {
-          documents: {
-            create: documents.map((d) => ({
-              type: d.type,
-              fileUrl: d.fileUrl,
-              fileName: d.fileName,
-              fileSizeMb: d.fileSizeMb,
-              isPrivate: d.isPrivate ?? true,
-              status: 'PENDING',
-            })),
-          },
-        }),
+        ...(media &&
+          media.length > 0 && {
+            media: {
+              create: media.map((m, index) => ({
+                url: m.url,
+                altText: m.altText,
+                type: m.type ?? 'IMAGE',
+                sortOrder: m.sortOrder ?? index,
+                isCover: m.isCover ?? index === 0,
+              })),
+            },
+          }),
+        ...(documents &&
+          documents.length > 0 && {
+            documents: {
+              create: documents.map((d) => ({
+                type: d.type,
+                fileUrl: d.fileUrl,
+                fileName: d.fileName,
+                fileSizeMb: d.fileSizeMb,
+                isPrivate: d.isPrivate ?? true,
+                status: 'PENDING',
+              })),
+            },
+          }),
       },
       include: {
         landArea: true,
@@ -151,7 +248,15 @@ export class PropertiesService {
   }
 
   async update(input: UpdatePropertyInput): Promise<Property> {
-    const { id, landArea, location, cadastralRecord, media, documents, ...rest } = input;
+    const {
+      id,
+      landArea,
+      location,
+      cadastralRecord,
+      media,
+      documents,
+      ...rest
+    } = input;
     await this.exists(id);
     const row = await this.prisma.property.update({
       where: { id },
@@ -160,14 +265,21 @@ export class PropertiesService {
         // Nested records are one-to-one with @unique FKs, so create would
         // violate the constraint on a second edit — upsert instead.
         ...(landArea && {
-          landArea: { upsert: { create: landArea as any, update: landArea as any } },
+          landArea: {
+            upsert: { create: landArea as any, update: landArea as any },
+          },
         }),
         ...(location && {
-          location: { upsert: { create: location as any, update: location as any } },
+          location: {
+            upsert: { create: location as any, update: location as any },
+          },
         }),
         ...(cadastralRecord && {
           cadastralRecord: {
-            upsert: { create: cadastralRecord as any, update: cadastralRecord as any },
+            upsert: {
+              create: cadastralRecord as any,
+              update: cadastralRecord as any,
+            },
           },
         }),
         // Media is replaced wholesale when provided (even an empty array,
@@ -215,11 +327,106 @@ export class PropertiesService {
     return PropertiesService.mapToResponse(row);
   }
 
-
   private async exists(id: string) {
     const found = await this.prisma.property.findUnique({ where: { id } });
     if (!found) throw new NotFoundException(`Property ${id} not found`);
     return found;
+  }
+
+  /** Builds the Prisma WHERE clause for the public search/filter controls
+   *  (keyword, type, price band, district, and land size). */
+  private buildFilterWhere(opts: FeedFilters): Prisma.PropertyWhereInput {
+    const { q, type, price, district, minSize, maxSize } = opts;
+    const filters: Prisma.PropertyWhereInput[] = [];
+
+    if (q && q.trim()) {
+      // Split into tokens so "kathmandu land" matches listings whose title,
+      // description, code, or location contain all of the tokens.
+      const tokens = q
+        .trim()
+        .split(/\s+/)
+        .map((t) => t.toLowerCase())
+        .filter(Boolean);
+      if (tokens.length > 0) {
+        filters.push({
+          AND: tokens.map((token) => ({
+            OR: [
+              { title: { contains: token, mode: 'insensitive' } },
+              { description: { contains: token, mode: 'insensitive' } },
+              { listingCode: { contains: token, mode: 'insensitive' } },
+              {
+                location: {
+                  is: { district: { contains: token, mode: 'insensitive' } },
+                },
+              },
+              {
+                location: {
+                  is: {
+                    municipality: { contains: token, mode: 'insensitive' },
+                  },
+                },
+              },
+              {
+                location: {
+                  is: { areaName: { contains: token, mode: 'insensitive' } },
+                },
+              },
+              {
+                location: {
+                  is: { addressText: { contains: token, mode: 'insensitive' } },
+                },
+              },
+            ],
+          })),
+        });
+      }
+    }
+
+    if (type && type !== 'all') {
+      const types =
+        TYPE_GROUPS[type] ??
+        ((Object.values(PropertyType) as string[]).includes(type)
+          ? [type as PropertyType]
+          : undefined);
+      if (types?.length) {
+        filters.push({ propertyType: { in: types } });
+      }
+    }
+
+    if (price && price !== 'any') {
+      const band = PRICE_BANDS[price];
+      if (band) {
+        filters.push({
+          askingPrice: {
+            ...(band.gte != null ? { gte: band.gte } : {}),
+            ...(band.lt != null ? { lt: band.lt } : {}),
+          },
+        });
+      }
+    }
+
+    if (district && district.trim()) {
+      filters.push({
+        location: {
+          is: { district: { contains: district.trim(), mode: 'insensitive' } },
+        },
+      });
+    }
+
+    if (minSize != null || maxSize != null) {
+      filters.push({
+        landArea: {
+          is: {
+            totalSqFt: {
+              ...(minSize != null ? { gte: minSize } : {}),
+              ...(maxSize != null ? { lte: maxSize } : {}),
+            },
+          },
+        },
+      });
+    }
+
+    return filters.length > 0 ? { AND: filters } : {};
   }
 
   private async generateListingCode(): Promise<string> {

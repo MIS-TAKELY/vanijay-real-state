@@ -352,6 +352,29 @@ export class AnalyticsService {
     };
   }
 
+  async getRecentlyAddedProperties(limit: number = 10) {
+    const properties = await this.prisma.property.findMany({
+      where: {
+        status: 'LIVE',
+      },
+      include: {
+        location: true,
+        landArea: true,
+        media: {
+          orderBy: { sortOrder: 'asc' },
+          select: { url: true, altText: true, sortOrder: true, isCover: true },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+
+    return {
+      items: properties.map(PropertiesService.mapToResponse),
+      total: properties.length,
+    };
+  }
+
   async getPropertyAnalytics(propertyId: string, userId: string) {
     // Verify the user owns this property
     const isOwner = await this.isPropertyOwner(propertyId, userId);
