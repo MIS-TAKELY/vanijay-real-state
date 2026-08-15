@@ -1,0 +1,1278 @@
+2026-08-15 15:14:05.192 INFO    malpoth-com_9cb1 - strix.core.runner: Starting Strix scan malpoth-com_9cb1 (image=ghcr.io/usestrix/strix-sandbox:1.3.0, max_turns=500, interactive=False, run_dir=/home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1)
+2026-08-15 15:14:05.192 INFO    malpoth-com_9cb1 - strix.core.runner: LLM model resolved: openai/qwen/qwen3.8-max
+2026-08-15 15:14:05.193 INFO    malpoth-com_9cb1 - strix.core.runner: Bringing up sandbox session for scan malpoth-com_9cb1
+2026-08-15 15:14:05.193 DEBUG   malpoth-com_9cb1 - strix.runtime.backends: Selected sandbox backend: docker
+2026-08-15 15:14:05.193 INFO    malpoth-com_9cb1 - strix.runtime.session_manager: Creating sandbox session for scan malpoth-com_9cb1 (backend=docker, image=ghcr.io/usestrix/strix-sandbox:1.3.0)
+2026-08-15 15:14:05.328 DEBUG   malpoth-com_9cb1 - strix.runtime.docker_client: Creating sandbox container: image=ghcr.io/usestrix/strix-sandbox:1.3.0 caps=['NET_ADMIN', 'NET_RAW'] exposed_ports=[48080]
+2026-08-15 15:14:09.058 INFO    malpoth-com_9cb1 - strix.runtime.docker_client: Sandbox container created: id=5278b3faa45c image=ghcr.io/usestrix/strix-sandbox:1.3.0
+2026-08-15 15:14:09.596 DEBUG   malpoth-com_9cb1 - strix.runtime.session_manager: Caido host endpoint resolved: http://127.0.0.1:32768
+2026-08-15 15:14:09.596 INFO    malpoth-com_9cb1 - strix.runtime.caido_bootstrap: Bootstrapping Caido client (host=http://127.0.0.1:32768, container=http://127.0.0.1:48080)
+2026-08-15 15:14:09.653 DEBUG   malpoth-com_9cb1 - strix.runtime.caido_bootstrap: loginAsGuest attempt 1/10 failed: curl exit 7: curl: (7) Failed to connect to 127.0.0.1 port 48080 after 0 ms: Could not connect to server
+
+2026-08-15 15:14:11.900 INFO    malpoth-com_9cb1 - strix.runtime.caido_bootstrap: Caido project selected: f63d9851-9f34-4a49-86ae-707ec8413e57
+2026-08-15 15:14:11.901 INFO    malpoth-com_9cb1 - strix.runtime.session_manager: Sandbox session for scan malpoth-com_9cb1 ready and cached
+2026-08-15 15:14:11.901 INFO    malpoth-com_9cb1 - strix.core.runner: Sandbox ready for scan malpoth-com_9cb1
+2026-08-15 15:14:11.905 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: scan_modes/standard -> standard
+2026-08-15 15:14:11.907 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-08-15 15:14:11.910 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/python -> python
+2026-08-15 15:14:11.911 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: coordination/root_agent -> root_agent
+2026-08-15 15:14:11.912 DEBUG   malpoth-com_9cb1 - strix.skills: load_skills: 4 skill(s) resolved
+2026-08-15 15:14:11.967 DEBUG   malpoth-com_9cb1 - strix.agents.prompt: render_system_prompt: scan_mode=standard root=True whitebox=False skills=4 prompt_len=73019
+2026-08-15 15:14:11.968 INFO    malpoth-com_9cb1 - strix.agents.factory: Built root agent 'Root Agent' (skills=0, tools=30, scan_mode=standard, whitebox=False)
+2026-08-15 15:14:11.968 INFO    malpoth-com_9cb1 - strix.core.agents: agent.register 71ca8879 (Root Agent) parent=-
+2026-08-15 15:14:12.033 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating trace
+2026-08-15 15:14:12.035 DEBUG   malpoth-com_9cb1 - openai.agents: Setting current trace: no-op
+2026-08-15 15:14:12.036 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:12.043 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:12.043 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Root Agent
+2026-08-15 15:14:12.043 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:12.045 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:14:12.045 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:12.046 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:14:12.982 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:12.993 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:12.998 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:13.010 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:14.003 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:14.223 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:14.225 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:14.229 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:22.330 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:14:22.331 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:14:22.332 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:14:22.332 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:14:22.333 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:22.333 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:14:22.333 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:14:22.334 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:14:22.345 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=Root Agent
+2026-08-15 15:14:22.345 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:22.346 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:14:22.346 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:22.348 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:14:30.288 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:14:30.289 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:14:30.289 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:14:30.290 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:14:30.290 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:14:30.291 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:30.292 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_todo
+2026-08-15 15:14:30.292 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_todo completed.
+2026-08-15 15:14:30.293 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-08-15 15:14:30.306 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 3, current_agent=Root Agent
+2026-08-15 15:14:30.306 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:30.308 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:14:30.308 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:30.310 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:14:37.454 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:14:37.455 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:14:37.456 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:14:37.456 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:14:37.456 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:14:37.456 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:37.457 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_agent
+2026-08-15 15:14:37.459 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: reconnaissance/asset_discovery -> asset_discovery
+2026-08-15 15:14:37.460 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/katana -> katana
+2026-08-15 15:14:37.461 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/nmap -> nmap
+2026-08-15 15:14:37.461 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/subfinder -> subfinder
+2026-08-15 15:14:37.466 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: scan_modes/standard -> standard
+2026-08-15 15:14:37.473 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-08-15 15:14:37.474 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/python -> python
+2026-08-15 15:14:37.475 DEBUG   malpoth-com_9cb1 - strix.skills: load_skills: 7 skill(s) resolved
+2026-08-15 15:14:37.486 DEBUG   malpoth-com_9cb1 - strix.agents.prompt: render_system_prompt: scan_mode=standard root=False whitebox=False skills=7 prompt_len=89499
+2026-08-15 15:14:37.486 INFO    malpoth-com_9cb1 - strix.agents.factory: Built child agent 'Recon & Mapping Agent' (skills=4, tools=30, scan_mode=standard, whitebox=False)
+2026-08-15 15:14:37.486 INFO    malpoth-com_9cb1 - strix.core.agents: agent.register a0cd591b (Recon & Mapping Agent) parent=71ca8879
+2026-08-15 15:14:37.487 INFO    malpoth-com_9cb1 - strix.tools.agents_graph.tools: create_agent: spawned a0cd591b (Recon & Mapping Agent) parent=71ca8879 skills=4 task_len=973
+2026-08-15 15:14:37.487 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_agent completed.
+2026-08-15 15:14:37.488 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-08-15 15:14:37.506 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 4, current_agent=Root Agent
+2026-08-15 15:14:37.506 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:37.507 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:14:37.507 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:37.509 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:14:37.520 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:37.527 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:37.527 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Recon & Mapping Agent
+2026-08-15 15:14:37.527 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:37.528 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:14:37.528 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:37.530 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:14:38.721 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:38.724 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:38.725 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:38.725 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:38.726 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:38.727 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:38.729 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:14:40.132 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:40.133 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:40.134 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:40.135 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:40.136 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:40.136 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:40.137 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:14:50.664 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:14:50.665 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:14:50.666 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:14:50.667 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:14:50.667 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:14:50.667 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:50.842 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:14:50.854 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=Recon & Mapping Agent
+2026-08-15 15:14:50.854 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:50.855 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:14:50.855 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:50.856 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:14:51.892 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:14:51.894 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:14:51.894 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:14:51.895 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:14:51.895 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:14:51.896 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:14:51.896 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool wait_for_agents
+2026-08-15 15:14:51.896 INFO    malpoth-com_9cb1 - strix.core.agents: agent.status 71ca8879=waiting
+2026-08-15 15:14:58.613 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:14:58.614 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:14:58.614 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:14:58.614 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:14:58.614 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:14:58.615 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:08.621 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-08-15 15:15:08.631 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 3, current_agent=Recon & Mapping Agent
+2026-08-15 15:15:08.631 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:08.633 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:15:08.633 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:08.635 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:15:14.504 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:15:14.507 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:15:14.507 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:15:14.508 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:15:14.509 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:14.509 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:15:14.509 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:15:14.510 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-08-15 15:15:14.519 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 4, current_agent=Recon & Mapping Agent
+2026-08-15 15:15:14.519 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:14.520 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:15:14.521 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:14.522 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:15:21.698 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:15:21.700 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:15:21.702 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:15:21.703 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:15:21.703 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:15:21.707 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:23.574 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 4 complete, next_step type=NextStepRunAgain
+2026-08-15 15:15:23.584 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 5, current_agent=Recon & Mapping Agent
+2026-08-15 15:15:23.584 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:23.585 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:15:23.585 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:23.586 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:15:33.080 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:15:33.082 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:15:33.083 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:15:33.083 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:15:33.084 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:33.084 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:15:33.085 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:15:33.085 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 5 complete, next_step type=NextStepRunAgain
+2026-08-15 15:15:33.096 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 6, current_agent=Recon & Mapping Agent
+2026-08-15 15:15:33.096 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:33.097 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:15:33.097 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:33.098 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:15:43.604 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:15:43.605 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:15:43.606 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:15:43.606 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:15:43.606 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:15:43.607 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:53.615 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 6 complete, next_step type=NextStepRunAgain
+2026-08-15 15:15:53.626 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 7, current_agent=Recon & Mapping Agent
+2026-08-15 15:15:53.626 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:53.627 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:15:53.627 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:15:53.628 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:16:07.877 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:16:07.883 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:16:07.888 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:16:07.890 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:16:07.892 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:07.893 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:16:07.893 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:16:07.894 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 7 complete, next_step type=NextStepRunAgain
+2026-08-15 15:16:07.903 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 8, current_agent=Recon & Mapping Agent
+2026-08-15 15:16:07.904 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:07.904 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:16:07.904 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:07.905 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:16:14.424 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:16:14.425 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:16:14.425 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:16:14.426 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:16:14.426 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:16:14.426 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:14.468 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 8 complete, next_step type=NextStepRunAgain
+2026-08-15 15:16:14.491 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 9, current_agent=Recon & Mapping Agent
+2026-08-15 15:16:14.492 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:14.493 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:16:14.493 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:14.495 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:16:29.682 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:16:29.683 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:16:29.684 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:16:29.684 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:16:29.684 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:16:29.685 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:29.851 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 9 complete, next_step type=NextStepRunAgain
+2026-08-15 15:16:29.862 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 10, current_agent=Recon & Mapping Agent
+2026-08-15 15:16:29.862 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:29.863 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:16:29.864 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:29.865 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:16:42.503 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:16:42.504 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:16:42.505 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:16:42.506 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:16:42.506 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:16:42.508 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:42.508 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_note
+2026-08-15 15:16:42.509 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_note completed.
+2026-08-15 15:16:42.510 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 10 complete, next_step type=NextStepRunAgain
+2026-08-15 15:16:42.528 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 11, current_agent=Recon & Mapping Agent
+2026-08-15 15:16:42.528 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:42.534 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:16:42.536 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:16:42.545 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:17:03.899 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:17:03.900 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:17:03.901 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:17:03.902 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:17:03.902 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:17:03.902 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:03.903 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_note
+2026-08-15 15:17:03.904 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_note completed.
+2026-08-15 15:17:03.904 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 11 complete, next_step type=NextStepRunAgain
+2026-08-15 15:17:03.914 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 12, current_agent=Recon & Mapping Agent
+2026-08-15 15:17:03.914 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:03.915 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:17:03.916 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:03.917 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:17:18.629 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:17:18.630 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:17:18.631 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:17:18.631 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:17:18.631 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:17:18.632 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:18.763 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 12 complete, next_step type=NextStepRunAgain
+2026-08-15 15:17:18.773 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 13, current_agent=Recon & Mapping Agent
+2026-08-15 15:17:18.773 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:18.775 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:17:18.775 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:18.777 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:17:43.127 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:17:43.128 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:17:43.129 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:17:43.130 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:17:43.130 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:43.131 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:17:43.131 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:17:43.131 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 13 complete, next_step type=NextStepRunAgain
+2026-08-15 15:17:43.142 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 14, current_agent=Recon & Mapping Agent
+2026-08-15 15:17:43.142 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:43.143 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:17:43.144 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:17:43.145 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:18:17.610 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:18:17.611 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:18:17.612 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:18:17.613 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:18:17.613 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:18:17.614 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:17.739 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 14 complete, next_step type=NextStepRunAgain
+2026-08-15 15:18:17.751 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 15, current_agent=Recon & Mapping Agent
+2026-08-15 15:18:17.751 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:17.753 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:18:17.753 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:17.755 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:18:31.438 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:18:31.439 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:18:31.440 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:18:31.440 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:18:31.441 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:31.441 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:18:31.441 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:18:31.441 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 15 complete, next_step type=NextStepRunAgain
+2026-08-15 15:18:31.452 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 16, current_agent=Recon & Mapping Agent
+2026-08-15 15:18:31.452 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:31.454 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:18:31.454 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:31.461 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:18:47.221 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:18:47.228 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:18:47.234 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:18:47.235 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:18:47.235 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:18:47.236 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:47.237 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool agent_finish
+2026-08-15 15:18:47.239 INFO    malpoth-com_9cb1 - strix.core.agents: agent.status a0cd591b=completed
+2026-08-15 15:18:47.240 INFO    malpoth-com_9cb1 - strix.tools.agents_graph.tools: agent_finish: a0cd591b success=True findings=9 parent_notified=True
+2026-08-15 15:18:47.241 DEBUG   malpoth-com_9cb1 - openai.agents: Tool agent_finish completed.
+2026-08-15 15:18:47.245 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 16 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:18:47.257 DEBUG   malpoth-com_9cb1 - openai.agents: Tool wait_for_agents completed.
+2026-08-15 15:18:47.259 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 4 complete, next_step type=NextStepRunAgain
+2026-08-15 15:18:47.270 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 5, current_agent=Root Agent
+2026-08-15 15:18:47.270 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:47.272 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:18:47.272 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:18:47.274 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:04.705 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:19:04.708 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:19:04.709 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:19:04.709 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:19:04.710 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:04.710 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:19:04.711 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:19:04.711 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 5 complete, next_step type=NextStepRunAgain
+2026-08-15 15:19:04.720 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 6, current_agent=Root Agent
+2026-08-15 15:19:04.721 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:04.722 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:04.722 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:04.724 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:19.058 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:19:19.059 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:19:19.060 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:19:19.061 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:19:19.061 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:19:19.062 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:19.062 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool mark_todo_done
+2026-08-15 15:19:19.062 DEBUG   malpoth-com_9cb1 - openai.agents: Tool mark_todo_done completed.
+2026-08-15 15:19:19.062 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 6 complete, next_step type=NextStepRunAgain
+2026-08-15 15:19:19.072 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 7, current_agent=Root Agent
+2026-08-15 15:19:19.072 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:19.073 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:19.074 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:19.075 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:36.158 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:19:36.159 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:19:36.159 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:19:36.160 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:19:36.160 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:19:36.160 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:36.161 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_agent
+2026-08-15 15:19:36.163 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/open_redirect -> open_redirect
+2026-08-15 15:19:36.164 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/authentication_jwt -> authentication_jwt
+2026-08-15 15:19:36.167 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: scan_modes/standard -> standard
+2026-08-15 15:19:36.170 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-08-15 15:19:36.176 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/python -> python
+2026-08-15 15:19:36.178 DEBUG   malpoth-com_9cb1 - strix.skills: load_skills: 5 skill(s) resolved
+2026-08-15 15:19:36.203 DEBUG   malpoth-com_9cb1 - strix.agents.prompt: render_system_prompt: scan_mode=standard root=False whitebox=False skills=5 prompt_len=83140
+2026-08-15 15:19:36.203 INFO    malpoth-com_9cb1 - strix.agents.factory: Built child agent 'Open Redirect & Auth Agent' (skills=2, tools=30, scan_mode=standard, whitebox=False)
+2026-08-15 15:19:36.203 INFO    malpoth-com_9cb1 - strix.core.agents: agent.register d18f6c43 (Open Redirect & Auth Agent) parent=71ca8879
+2026-08-15 15:19:36.204 INFO    malpoth-com_9cb1 - strix.tools.agents_graph.tools: create_agent: spawned d18f6c43 (Open Redirect & Auth Agent) parent=71ca8879 skills=2 task_len=775
+2026-08-15 15:19:36.204 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_agent completed.
+2026-08-15 15:19:36.205 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 7 complete, next_step type=NextStepRunAgain
+2026-08-15 15:19:36.214 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 8, current_agent=Root Agent
+2026-08-15 15:19:36.214 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:36.215 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:36.215 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:36.216 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:36.227 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:36.235 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:36.235 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:19:36.235 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:36.236 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:36.237 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:36.239 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:37.497 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:19:37.500 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:19:37.504 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:19:37.507 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:19:37.511 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:19:39.134 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:19:39.137 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:19:39.138 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:19:39.141 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:19:39.144 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:19:48.052 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:19:48.054 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:19:48.055 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:19:48.055 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:19:48.056 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:48.056 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:19:48.056 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:19:48.057 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:19:48.067 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:19:48.067 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:48.068 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:48.069 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:48.075 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:58.777 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:19:58.779 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:19:58.779 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:19:58.780 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:19:58.780 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:19:58.791 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (1/500): Reviewing recon files and starting open redirect testing on the auth redirect parameter.
+2026-08-15 15:19:58.796 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:19:58.799 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:19:58.803 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:19:58.808 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:19:58.808 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:19:58.815 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.818 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_agent
+2026-08-15 15:19:58.828 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/ssrf -> ssrf
+2026-08-15 15:19:58.829 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/rce -> rce
+2026-08-15 15:19:58.832 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: scan_modes/standard -> standard
+2026-08-15 15:19:58.834 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-08-15 15:19:58.835 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/python -> python
+2026-08-15 15:19:58.836 DEBUG   malpoth-com_9cb1 - strix.skills: load_skills: 5 skill(s) resolved
+2026-08-15 15:19:58.853 DEBUG   malpoth-com_9cb1 - strix.agents.prompt: render_system_prompt: scan_mode=standard root=False whitebox=False skills=5 prompt_len=84701
+2026-08-15 15:19:58.853 INFO    malpoth-com_9cb1 - strix.agents.factory: Built child agent 'SSRF & Scrape Endpoint Agent' (skills=2, tools=30, scan_mode=standard, whitebox=False)
+2026-08-15 15:19:58.853 INFO    malpoth-com_9cb1 - strix.core.agents: agent.register fcceb27c (SSRF & Scrape Endpoint Agent) parent=71ca8879
+2026-08-15 15:19:58.854 INFO    malpoth-com_9cb1 - strix.tools.agents_graph.tools: create_agent: spawned fcceb27c (SSRF & Scrape Endpoint Agent) parent=71ca8879 skills=2 task_len=715
+2026-08-15 15:19:58.854 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_agent completed.
+2026-08-15 15:19:58.855 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.856 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 8 complete, next_step type=NextStepRunAgain
+2026-08-15 15:19:58.890 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.890 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:19:58.891 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.892 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 9, current_agent=Root Agent
+2026-08-15 15:19:58.892 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.896 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:58.896 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.898 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:58.915 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:58.916 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.917 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:19:58.928 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.951 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.951 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:19:58.952 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.956 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:19:58.957 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:19:58.965 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:00.317 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:00.319 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:00.321 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:00.324 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:00.330 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:01.457 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:01.458 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:01.458 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:01.462 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:01.750 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:08.509 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:08.510 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:08.511 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:08.511 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:08.511 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.550 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:08.556 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:08.564 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:08.567 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:20:08.568 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:08.571 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.573 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_agent
+2026-08-15 15:20:08.578 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/xss -> xss
+2026-08-15 15:20:08.581 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/sql_injection -> sql_injection
+2026-08-15 15:20:08.582 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: scan_modes/standard -> standard
+2026-08-15 15:20:08.583 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-08-15 15:20:08.586 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/python -> python
+2026-08-15 15:20:08.586 DEBUG   malpoth-com_9cb1 - strix.skills: load_skills: 5 skill(s) resolved
+2026-08-15 15:20:08.598 DEBUG   malpoth-com_9cb1 - strix.agents.prompt: render_system_prompt: scan_mode=standard root=False whitebox=False skills=5 prompt_len=83983
+2026-08-15 15:20:08.598 INFO    malpoth-com_9cb1 - strix.agents.factory: Built child agent 'XSS & SQLi Discovery Agent' (skills=2, tools=30, scan_mode=standard, whitebox=False)
+2026-08-15 15:20:08.598 INFO    malpoth-com_9cb1 - strix.core.agents: agent.register 2672a1de (XSS & SQLi Discovery Agent) parent=71ca8879
+2026-08-15 15:20:08.599 INFO    malpoth-com_9cb1 - strix.tools.agents_graph.tools: create_agent: spawned 2672a1de (XSS & SQLi Discovery Agent) parent=71ca8879 skills=2 task_len=746
+2026-08-15 15:20:08.599 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_agent completed.
+2026-08-15 15:20:08.600 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 9 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:08.612 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 10, current_agent=Root Agent
+2026-08-15 15:20:08.612 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.613 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:08.613 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.615 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:08.658 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.673 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.673 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:20:08.673 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.675 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:08.675 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.676 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:08.686 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:08.706 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:20:08.706 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.715 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:08.716 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:08.717 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:09.742 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:09.743 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:09.744 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:09.744 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:09.744 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:09.745 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:20:09.745 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:20:09.745 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:09.755 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:20:09.755 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:09.756 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:09.756 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:09.758 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:10.043 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:10.044 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:10.045 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:10.046 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:10.048 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:11.594 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:11.596 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:11.597 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:11.599 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:11.600 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:18.237 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:18.239 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:18.240 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:18.240 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:20:18.240 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:18.241 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.343 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:18.345 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:18.347 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:18.348 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:20:18.348 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:18.349 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.350 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool create_agent
+2026-08-15 15:20:18.363 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/business_logic -> business_logic
+2026-08-15 15:20:18.370 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/race_conditions -> race_conditions
+2026-08-15 15:20:18.374 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: vulnerabilities/idor -> idor
+2026-08-15 15:20:18.390 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: scan_modes/standard -> standard
+2026-08-15 15:20:18.393 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/agent_browser -> agent_browser
+2026-08-15 15:20:18.394 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: tooling/python -> python
+2026-08-15 15:20:18.398 DEBUG   malpoth-com_9cb1 - strix.skills: load_skills: 6 skill(s) resolved
+2026-08-15 15:20:18.417 DEBUG   malpoth-com_9cb1 - strix.agents.prompt: render_system_prompt: scan_mode=standard root=False whitebox=False skills=6 prompt_len=95406
+2026-08-15 15:20:18.417 INFO    malpoth-com_9cb1 - strix.agents.factory: Built child agent 'Business Logic & Cart Agent' (skills=3, tools=30, scan_mode=standard, whitebox=False)
+2026-08-15 15:20:18.418 INFO    malpoth-com_9cb1 - strix.core.agents: agent.register 33b826d3 (Business Logic & Cart Agent) parent=71ca8879
+2026-08-15 15:20:18.419 INFO    malpoth-com_9cb1 - strix.tools.agents_graph.tools: create_agent: spawned 33b826d3 (Business Logic & Cart Agent) parent=71ca8879 skills=3 task_len=751
+2026-08-15 15:20:18.419 DEBUG   malpoth-com_9cb1 - openai.agents: Tool create_agent completed.
+2026-08-15 15:20:18.421 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 10 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:18.432 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 11, current_agent=Root Agent
+2026-08-15 15:20:18.432 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.438 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:18.439 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.448 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:18.474 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.478 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.478 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Business Logic & Cart Agent
+2026-08-15 15:20:18.479 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.479 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:18.479 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.480 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:18.814 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:18.833 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 3, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:20:18.833 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.834 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:18.835 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:18.837 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:19.570 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:19.578 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:19.582 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:19.584 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:19.584 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:19.587 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:19.588 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:19.602 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:19.604 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:19.605 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:19.605 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:19.606 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:20:19.606 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:20:19.606 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:19.616 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:20:19.616 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:19.617 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:19.617 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:19.618 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:21.117 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:21.120 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:21.121 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:21.123 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:21.125 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:21.128 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:24.489 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:24.491 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:24.492 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:24.492 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:20:24.492 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:24.493 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:24.668 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:24.681 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 3, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:20:24.681 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:24.682 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:24.682 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:24.684 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:33.391 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:33.393 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:33.395 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:33.396 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:20:33.396 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:33.396 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:33.397 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool wait_for_agents
+2026-08-15 15:20:33.397 INFO    malpoth-com_9cb1 - strix.core.agents: agent.status 71ca8879=waiting
+2026-08-15 15:20:36.260 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:36.262 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:36.264 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:36.264 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:36.265 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:36.265 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:20:36.265 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:20:36.266 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:36.283 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 4, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:20:36.283 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:36.284 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:36.284 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:36.285 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:36.887 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:36.888 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:36.890 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:36.890 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:36.890 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:36.891 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:20:36.891 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:20:36.891 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:36.901 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=Business Logic & Cart Agent
+2026-08-15 15:20:36.901 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:36.902 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:36.902 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:36.903 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:43.938 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:43.940 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:43.942 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:43.943 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:20:43.943 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:43.944 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:43.945 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool load_skill
+2026-08-15 15:20:43.955 DEBUG   malpoth-com_9cb1 - strix.skills: Loaded skill: frameworks/nextjs -> nextjs
+2026-08-15 15:20:43.957 DEBUG   malpoth-com_9cb1 - strix.skills: load_skills: 1 skill(s) resolved
+2026-08-15 15:20:43.959 DEBUG   malpoth-com_9cb1 - openai.agents: Tool load_skill completed.
+2026-08-15 15:20:43.961 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 4 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:43.982 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 5, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:20:43.982 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:43.983 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:43.983 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:43.984 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:44.667 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:44.669 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:44.672 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:44.673 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:20:44.673 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:44.675 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:44.806 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:44.821 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 3, current_agent=Business Logic & Cart Agent
+2026-08-15 15:20:44.821 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:44.826 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:44.827 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:44.836 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:20:45.029 DEBUG   - - strix.telemetry.posthog: posthog event sent: skill_loaded
+2026-08-15 15:20:46.395 DEBUG   - - strix.telemetry.scarf: scarf event sent: skill_loaded
+2026-08-15 15:20:51.517 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:20:51.518 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:20:51.520 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:20:51.520 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:20:51.521 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:51.521 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:20:51.521 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:20:51.522 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-08-15 15:20:51.561 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 4, current_agent=Business Logic & Cart Agent
+2026-08-15 15:20:51.561 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:51.562 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:20:51.563 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:20:51.564 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:01.678 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:01.679 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:01.680 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:01.680 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:01.681 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:01.681 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:21:01.681 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:21:01.682 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 4 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:01.693 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 5, current_agent=Business Logic & Cart Agent
+2026-08-15 15:21:01.693 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:01.694 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:01.695 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:01.699 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:04.706 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:04.711 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:04.721 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:04.723 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:21:04.727 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:21:04.745 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (2/500): Recon reviewed. Now I'll write a comprehensive open redirect test script targeting the `redirect` parameter and run it against the live site.
+2026-08-15 15:21:04.757 DEBUG   malpoth-com_9cb1 - strix.llm.context_budget: No LiteLLM model info for 'openai/qwen/qwen3.8-max'; using configured fallbacks
+2026-08-15 15:21:04.827 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:04.834 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:04.835 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:21:04.835 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:04.836 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:04.836 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:04.837 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:09.048 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:09.050 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:09.051 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:09.051 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:09.051 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:09.052 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:21:09.052 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:21:09.052 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 5 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:09.063 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 6, current_agent=Business Logic & Cart Agent
+2026-08-15 15:21:09.063 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:09.063 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:09.064 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:09.066 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:13.145 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:13.146 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:13.148 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:13.149 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:21:13.149 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:13.149 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:13.150 DEBUG   malpoth-com_9cb1 - strix.agents.factory: Tool apply_patch failed; returning error as result
+Traceback (most recent call last):
+  File "strix/agents/factory.py", line 243, in invoke
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 216, in _on_invoke_tool
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 192, in parse_custom_input
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 235, in _parse_custom_tool_input
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 299, in _parse_apply_patch_input
+ValueError: Invalid apply_patch file operation header: *** Create File: /workspace/ssrf_scrape_test.py
+2026-08-15 15:21:13.150 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:13.161 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 4, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:21:13.161 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:13.167 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:13.168 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:13.177 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:13.958 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:13.959 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:13.960 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:13.961 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:13.962 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:20.325 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 6 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:20.336 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 7, current_agent=Business Logic & Cart Agent
+2026-08-15 15:21:20.336 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:20.337 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:20.337 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:20.339 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:27.771 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:27.773 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:27.774 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:27.775 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:21:27.775 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:27.775 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:27.776 DEBUG   malpoth-com_9cb1 - strix.agents.factory: Tool apply_patch failed; returning error as result
+Traceback (most recent call last):
+  File "strix/agents/factory.py", line 243, in invoke
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 216, in _on_invoke_tool
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 192, in parse_custom_input
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 235, in _parse_custom_tool_input
+  File "agents/sandbox/capabilities/tools/apply_patch_tool.py", line 299, in _parse_apply_patch_input
+ValueError: Invalid apply_patch file operation header: *** Create File: /workspace/xss_sqli_spray_2672a1de.py
+2026-08-15 15:21:27.777 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 5 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:27.787 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 6, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:21:27.787 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:27.788 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:27.788 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:27.790 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:31.053 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:31.056 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:31.058 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:31.059 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:21:31.061 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (3/500): <empty>
+2026-08-15 15:21:31.094 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:31.098 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:31.098 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:21:31.098 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:31.099 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:31.099 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:31.100 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:35.966 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:35.971 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:35.973 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:35.974 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:21:35.974 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:35.974 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:36.161 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 4 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:36.174 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 5, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:21:36.174 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:36.175 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:36.175 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:36.177 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:38.118 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:38.119 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:38.120 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:38.121 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:38.121 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:38.121 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:21:38.121 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:21:38.122 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 7 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:38.133 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 8, current_agent=Business Logic & Cart Agent
+2026-08-15 15:21:38.133 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:38.135 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:38.135 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:38.137 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:41.082 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:41.085 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:41.092 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:41.097 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:21:41.108 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (4/500): <empty>
+2026-08-15 15:21:42.658 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:42.660 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:42.661 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:42.662 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:21:42.662 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:42.662 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:45.892 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:45.894 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:45.896 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:45.896 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:21:45.897 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:45.898 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:21:45.898 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:21:45.901 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 8 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:52.668 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 5 complete, next_step type=NextStepRunAgain
+2026-08-15 15:21:52.760 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 9, current_agent=Business Logic & Cart Agent
+2026-08-15 15:21:52.761 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.766 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:52.769 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.780 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:52.796 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 6, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:21:52.796 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.798 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:52.798 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.799 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:52.873 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.881 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.881 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:21:52.881 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.883 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:52.883 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:52.884 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:21:58.722 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:21:58.724 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:21:58.727 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:21:58.727 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:21:58.728 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 6 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:21:58.735 WARNING malpoth-com_9cb1 - strix.core.execution: agent fcceb27c ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (1/500): Script is running. Let me wait for it to complete and check results.    ⚠ Could not execute tool(s): "session_id": expected integer, got string
+2026-08-15 15:21:58.797 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:58.824 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:58.825 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:21:58.825 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:58.831 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:21:58.832 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:21:58.841 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:00.477 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:00.486 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:00.498 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:00.501 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:00.504 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:01.446 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 9 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:01.455 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 10, current_agent=Business Logic & Cart Agent
+2026-08-15 15:22:01.456 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:01.457 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:01.457 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:01.458 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:07.519 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:07.521 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:07.524 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:07.524 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:07.524 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:07.525 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:07.701 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 6 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:07.715 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 7, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:22:07.715 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:07.716 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:07.717 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:07.718 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:08.750 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:08.760 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:08.772 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:08.774 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:08.776 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:08.778 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:22:08.778 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:22:08.779 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:08.790 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:22:08.790 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:08.792 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:08.792 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:08.793 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:09.765 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:09.766 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:09.768 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:09.769 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:09.770 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:09.770 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:22:09.771 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:22:09.771 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 10 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:09.788 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 11, current_agent=Business Logic & Cart Agent
+2026-08-15 15:22:09.788 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:09.789 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:09.789 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:09.790 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:12.321 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:12.324 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:12.326 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:12.326 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:12.327 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:12.509 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:12.523 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 2, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:22:12.524 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:12.530 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:12.531 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:12.541 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:13.645 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:13.646 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:13.647 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:13.648 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:13.648 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:13.648 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:17.957 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:17.972 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:17.975 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:17.976 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:17.977 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:17.977 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:18.556 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:18.572 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 3, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:22:18.572 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:18.573 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:18.573 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:18.575 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:19.990 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:20.000 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:20.014 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:20.018 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:20.025 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:20.027 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:22:20.029 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:22:20.031 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 11 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:20.042 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 12, current_agent=Business Logic & Cart Agent
+2026-08-15 15:22:20.042 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:20.044 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:20.044 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:20.046 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:23.654 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 7 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:23.669 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 8, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:22:23.670 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:23.675 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:23.675 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:23.677 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:29.061 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:29.064 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:29.066 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:29.067 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:29.067 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:29.068 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:30.963 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:30.973 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:30.985 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:30.986 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:30.988 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:30.989 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:22:30.990 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:22:30.990 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 3 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:31.001 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 4, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:22:31.001 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:31.003 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:31.003 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:31.005 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:33.528 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:33.531 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:33.533 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:33.535 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 2 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:22:33.542 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (5/500): <empty>
+2026-08-15 15:22:33.586 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:33.593 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:33.593 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:22:33.594 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:33.596 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:33.597 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:33.608 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:34.073 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 8 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:34.087 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 9, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:22:34.087 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:34.088 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:34.089 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:34.091 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:37.308 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:37.311 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:37.313 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:37.313 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:37.314 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 12 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:22:37.324 WARNING malpoth-com_9cb1 - strix.core.execution: agent 33b826d3 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (1/500): ⚠ Could not execute tool(s): "success": expected boolean, got string "False"
+2026-08-15 15:22:37.401 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:37.409 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:37.409 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Business Logic & Cart Agent
+2026-08-15 15:22:37.409 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:37.410 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:37.410 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:37.412 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:43.953 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:43.955 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:43.963 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:43.968 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:43.977 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:43.991 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:43.995 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:43.997 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:44.009 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:44.015 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 4 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:22:44.017 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:22:44.017 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:22:44.019 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 9 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:44.032 WARNING malpoth-com_9cb1 - strix.core.execution: agent fcceb27c ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (2/500): Testing complete. No SSRF vulnerability found — the `/scrape` endpoint ignores the `url` parameter and returns static page content. Finishing task.    ⚠ Could not execute tool(s): "agent_finish": required field "findings" is missing
+2026-08-15 15:22:44.040 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 10, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:22:44.040 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:44.041 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:44.041 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:44.043 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:44.149 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:44.158 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:44.158 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:22:44.159 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:44.159 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:44.160 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:44.161 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:47.232 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:47.235 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:47.239 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:47.240 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:22:47.244 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (6/500): <empty>
+2026-08-15 15:22:47.299 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:47.319 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:47.319 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:22:47.319 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:47.321 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:47.321 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:47.323 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:58.292 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:58.295 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:58.298 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:58.299 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:58.300 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:22:58.311 WARNING malpoth-com_9cb1 - strix.core.execution: agent 33b826d3 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (2/500): ⚠ Could not execute tool(s): "success": expected boolean, got string "False"
+2026-08-15 15:22:58.362 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:58.370 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:58.370 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Business Logic & Cart Agent
+2026-08-15 15:22:58.370 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:58.372 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:58.373 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:58.381 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:58.437 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:58.438 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:58.440 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:58.440 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:58.440 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:22:58.441 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:59.245 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 10 complete, next_step type=NextStepRunAgain
+2026-08-15 15:22:59.254 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 11, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:22:59.254 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:59.255 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:59.255 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:59.256 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:22:59.639 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:22:59.645 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:22:59.648 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:22:59.649 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:22:59.651 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:22:59.663 WARNING malpoth-com_9cb1 - strix.core.execution: agent fcceb27c ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (3/500): ⚠ Could not execute tool(s): "agent_finish": required field "findings" is missing
+2026-08-15 15:22:59.744 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:59.752 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:59.753 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:22:59.753 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:59.754 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:22:59.754 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:22:59.756 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:04.751 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:04.754 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:04.756 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:04.760 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:04.762 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (7/500): <empty>
+2026-08-15 15:23:04.845 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:04.852 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:04.852 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:23:04.852 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:04.853 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:04.853 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:04.855 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:11.756 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:11.766 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:11.772 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:11.772 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:23:11.774 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:11.776 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:23:11.776 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:23:11.776 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 11 complete, next_step type=NextStepRunAgain
+2026-08-15 15:23:11.790 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 12, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:23:11.790 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:11.791 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:11.792 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:11.793 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:11.907 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:11.913 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:11.932 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:11.934 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:23:11.940 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:11.954 WARNING malpoth-com_9cb1 - strix.core.execution: agent 33b826d3 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (3/500): ⚠ Could not execute tool(s): "success": expected boolean, got string "False"
+2026-08-15 15:23:11.983 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.007 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.014 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Business Logic & Cart Agent
+2026-08-15 15:23:12.018 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.028 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:12.030 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.040 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:12.579 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:12.583 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:12.586 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:12.586 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:23:12.587 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:12.605 WARNING malpoth-com_9cb1 - strix.core.execution: agent fcceb27c ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (4/500): ⚠ Could not execute tool(s): "agent_finish": required field "findings" is missing
+2026-08-15 15:23:12.688 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.696 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.696 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:23:12.696 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.697 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:12.697 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:12.699 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:20.308 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:20.311 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:20.312 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:20.313 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:23:20.313 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:23:20.313 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:24.334 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 12 complete, next_step type=NextStepRunAgain
+2026-08-15 15:23:24.354 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 13, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:23:24.354 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:24.355 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:24.356 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:24.358 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:26.343 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:26.348 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:26.356 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:26.357 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:26.359 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:26.363 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:26.365 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:23:26.366 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:23:26.373 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:26.379 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:26.389 WARNING malpoth-com_9cb1 - strix.core.execution: agent 33b826d3 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (4/500): ⚠ Could not execute tool(s): "success": expected boolean, got string "False"
+2026-08-15 15:23:26.396 WARNING malpoth-com_9cb1 - strix.core.execution: agent fcceb27c ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (5/500): ⚠ Could not execute tool(s): "agent_finish": required field "findings" is missing
+2026-08-15 15:23:26.471 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.474 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.486 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.486 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Business Logic & Cart Agent
+2026-08-15 15:23:26.486 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.489 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.490 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:23:26.490 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.502 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:26.503 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.513 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:26.573 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:26.574 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:26.576 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:30.690 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:30.697 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:30.712 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:30.718 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:30.729 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (8/500): <empty>
+2026-08-15 15:23:30.795 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:30.827 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:30.827 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:23:30.827 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:30.829 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:30.830 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:30.832 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:38.445 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:38.452 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:38.456 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:38.456 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:23:38.457 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:38.467 WARNING malpoth-com_9cb1 - strix.core.execution: agent fcceb27c ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (6/500): ⚠ Could not execute tool(s): "agent_finish": required field "findings" is missing
+2026-08-15 15:23:38.528 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:38.540 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:38.540 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=SSRF & Scrape Endpoint Agent
+2026-08-15 15:23:38.540 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:38.542 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:38.542 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:38.543 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:39.157 DEBUG   malpoth-com_9cb1 - openai.agents: Retrying failed streamed model request in 51668.0s (attempt 1/5).
+2026-08-15 15:23:41.108 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:41.110 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:41.114 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:41.115 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=message class=ResponseOutputMessage
+2026-08-15 15:23:41.117 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:23:41.129 WARNING malpoth-com_9cb1 - strix.core.execution: agent 33b826d3 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (5/500): ⚠ Could not execute tool(s): "success": expected boolean, got string "False"
+2026-08-15 15:23:41.193 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:41.213 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:41.213 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Business Logic & Cart Agent
+2026-08-15 15:23:41.214 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:41.224 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:41.225 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:41.235 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:41.611 DEBUG   malpoth-com_9cb1 - openai.agents: Retrying failed streamed model request in 51666.0s (attempt 1/5).
+2026-08-15 15:23:48.164 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:23:48.166 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:23:48.168 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:23:48.168 DEBUG   malpoth-com_9cb1 - openai.agents: Processing output item type=function_call class=ResponseFunctionToolCall
+2026-08-15 15:23:48.169 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:48.169 DEBUG   malpoth-com_9cb1 - openai.agents: Invoking tool think
+2026-08-15 15:23:48.169 DEBUG   malpoth-com_9cb1 - openai.agents: Tool think completed.
+2026-08-15 15:23:48.169 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 13 complete, next_step type=NextStepRunAgain
+2026-08-15 15:23:48.178 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 14, current_agent=XSS & SQLi Discovery Agent
+2026-08-15 15:23:48.178 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:48.178 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:23:48.179 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:23:48.180 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:23:48.664 DEBUG   malpoth-com_9cb1 - openai.agents: Retrying failed streamed model request in 51659.0s (attempt 1/5).
+2026-08-15 15:24:01.167 DEBUG   malpoth-com_9cb1 - strix.report.usage: LiteLLM cost estimate unavailable for model qwen/qwen3.8-max
+2026-08-15 15:24:01.170 INFO    malpoth-com_9cb1 - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:24:01.173 INFO    malpoth-com_9cb1 - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:24:01.175 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 1 complete, next_step type=NextStepFinalOutput
+2026-08-15 15:24:01.177 WARNING malpoth-com_9cb1 - strix.core.execution: agent d18f6c43 ended a turn without a lifecycle tool call (interactive=False); forcing tool continuation (9/500): <empty>
+2026-08-15 15:24:01.227 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:24:01.254 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:24:01.254 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 1, current_agent=Open Redirect & Auth Agent
+2026-08-15 15:24:01.254 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:24:01.256 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:24:01.256 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:24:01.258 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:24:01.873 DEBUG   malpoth-com_9cb1 - openai.agents: Retrying failed streamed model request in 51645.0s (attempt 1/5).
+2026-08-15 15:25:34.498 DEBUG   malpoth-com_9cb1 - openai.agents: Turn 11 complete, next_step type=NextStepRunAgain
+2026-08-15 15:25:34.554 DEBUG   malpoth-com_9cb1 - openai.agents: Starting turn 12, current_agent=Root Agent
+2026-08-15 15:25:34.555 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:25:34.562 DEBUG   malpoth-com_9cb1 - openai.agents: No conversation_id available for request
+2026-08-15 15:25:34.564 DEBUG   malpoth-com_9cb1 - openai.agents: Tracing is disabled. Not creating span
+2026-08-15 15:25:34.579 DEBUG   malpoth-com_9cb1 - openai.agents: Calling LLM
+2026-08-15 15:25:35.276 DEBUG   malpoth-com_9cb1 - openai.agents: Retrying failed streamed model request in 51552.0s (attempt 1/5).
+2026-08-15 15:46:43.288 INFO    - - strix.report.sarif: Wrote SARIF 2.1.0 report: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1/findings.sarif (0 results)
+2026-08-15 15:46:43.291 INFO    - - strix.report.state: Essential scan data saved to: /home/mistakely/Desktop/project/dai/real-state/real-state/strix_runs/malpoth-com_9cb1
+2026-08-15 15:46:43.291 DEBUG   malpoth-com_9cb1 - openai.agents: Resetting current trace
+2026-08-15 15:46:43.292 ERROR   malpoth-com_9cb1 - strix.core.runner: Strix scan malpoth-com_9cb1 failed
+Traceback (most recent call last):
+  File "asyncio/runners.py", line 195, in run
+  File "asyncio/runners.py", line 118, in run
+  File "asyncio/base_events.py", line 678, in run_until_complete
+  File "asyncio/base_events.py", line 645, in run_forever
+  File "asyncio/base_events.py", line 1961, in _run_once
+  File "selectors.py", line 468, in select
+  File "strix/interface/cli.py", line 129, in signal_handler
+SystemExit: 1
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "strix/core/runner.py", line 394, in run_strix_scan
+  File "strix/core/execution.py", line 212, in run_agent_loop
+  File "strix/core/execution.py", line 485, in _run_until_lifecycle
+  File "strix/core/execution.py", line 676, in _run_cycle
+  File "agents/result.py", line 809, in stream_events
+  File "asyncio/queues.py", line 158, in get
+asyncio.exceptions.CancelledError
+2026-08-15 15:46:43.293 INFO    malpoth-com_9cb1 - strix.core.agents: agent.status 71ca8879=failed
+2026-08-15 15:46:43.300 INFO    malpoth-com_9cb1 - strix.core.runner: Tearing down sandbox session for scan malpoth-com_9cb1
+2026-08-15 15:46:48.365 INFO    malpoth-com_9cb1 - strix.runtime.session_manager: Cleaned up sandbox session for scan malpoth-com_9cb1
+2026-08-15 15:46:48.367 INFO    malpoth-com_9cb1 - strix.core.runner: Strix scan malpoth-com_9cb1 done

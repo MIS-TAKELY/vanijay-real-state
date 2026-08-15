@@ -17,8 +17,8 @@ export default async function NewListingPage({
         title={isEdit ? "Edit Listing" : "New Listing"}
         description={
           isEdit
-            ? "Update your listing details. Changes are saved as a draft and you can re-submit for verification."
-            : "Create a verified property listing in 5 steps. You can save a draft and finish later."
+            ? "Update your listing details. Changes go live immediately and reset the listing to unverified until our team re-reviews it."
+            : "Create a property listing in 5 steps. It publishes to the public feed immediately as unverified, then our team verifies it."
         }
         action={
           <Button asChild variant="outline">

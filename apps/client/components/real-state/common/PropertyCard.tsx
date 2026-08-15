@@ -19,6 +19,8 @@ interface PropertyCardProps {
     meta: string[];
     /** Optional accent badge (e.g. "HOT", "FEATURED") shown over the image bottom-left. */
     badge?: string;
+    /** Whether the listing is verified — only then the "Verified" stamp shows. */
+    isVerified?: boolean;
   };
   /** Fired when the save-to-favorites state changes (keeps wrappers in sync). */
   onFavoriteChange?: (isFavorite: boolean) => void;
@@ -62,11 +64,15 @@ export function PropertyCard({
             />
           )}
 
-          {/* Verified stamp — the archive's trust mark (DESIGN.md §2.2) */}
-          <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded border border-tertiary/30 bg-surface/95 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-tertiary">
-            <Icon name="verified" filled className="text-[12px]" />
-            Verified
-          </span>
+          {/* Verified stamp — the archive's trust mark (DESIGN.md §2.2). Only
+              shown for listings that carry a verification level; unverified
+              seller uploads render without it. */}
+          {property.isVerified && (
+            <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded border border-tertiary/30 bg-surface/95 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-tertiary">
+              <Icon name="verified" filled className="text-[12px]" />
+              Verified
+            </span>
+          )}
 
           {/* Accent badge (HOT / FEATURED) — bottom-left, clear of the actions */}
           {property.badge && (

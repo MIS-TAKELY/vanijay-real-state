@@ -135,6 +135,8 @@ export interface CardProperty {
   meta: string[];
   /** Optional accent badge (e.g. "HOT", "FEATURED") rendered top-right. */
   badge?: string;
+  /** Whether the listing carries a verification level (shows the stamp). */
+  isVerified?: boolean;
 }
 
 export const TYPE_LABELS: Record<string, string> = {
@@ -234,5 +236,7 @@ export function toCardProps(p: ApiProperty): CardProperty {
     gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
     imageUrl: listingCoverImageUrl(p.media),
     meta,
+    isVerified:
+      p.verificationLevel != null && p.verificationLevel !== "UNVERIFIED",
   };
 }

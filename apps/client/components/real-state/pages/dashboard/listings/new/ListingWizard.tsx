@@ -177,8 +177,10 @@ export function ListingWizard({ editSlug }: { editSlug?: string }) {
               <span className="mono-stat font-semibold">
                 {created.listingCode}
               </span>{" "}
-              was saved as a draft and queued for verification. It goes live on
-              the public feed once the document check passes.
+              is now live on the public feed, marked as{" "}
+              <span className="font-semibold">UNVERIFIED</span>. Our
+              verification team reviews the ownership documents — the
+              verification status updates as it progresses.
             </>
           ) : (
             <>
@@ -277,7 +279,7 @@ export function ListingWizard({ editSlug }: { editSlug?: string }) {
             ) : (
               <>
                 <Icon name="check_circle" className="text-data-table" />
-                Submit for Verification
+                Publish Listing
               </>
             )}
           </Button>

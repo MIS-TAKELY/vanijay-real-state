@@ -20,9 +20,6 @@ export interface FeedFilters {
   maxSize?: number;
 }
 
-/** Category → PropertyType groups for the public filter dropdowns. Unknown
- *  values fall back to a direct enum match so callers can also pass exact
- *  enum values (e.g. RESIDENTIAL_LAND). */
 const TYPE_GROUPS: Record<string, PropertyType[]> = {
   residential: ['RESIDENTIAL_LAND', 'RESIDENTIAL_HOUSE'],
   commercial: ['COMMERCIAL_LAND', 'COMMERCIAL_SPACE'],
@@ -31,7 +28,6 @@ const TYPE_GROUPS: Record<string, PropertyType[]> = {
   land: ['RESIDENTIAL_LAND', 'COMMERCIAL_LAND', 'AGRICULTURAL_LAND'],
 };
 
-/** Price band presets (in NPR) used by the "Price" filter dropdown. */
 const PRICE_BANDS: Record<string, { gte?: number; lt?: number }> = {
   'under-20l': { lt: 2_000_000 },
   '20l-50l': { gte: 2_000_000, lt: 5_000_000 },
@@ -131,9 +127,6 @@ export class PropertiesService {
     return rows.map(PropertiesService.mapToResponse);
   }
 
-  /** Location autocomplete for the landing-page search box. Returns distinct
-   *  districts / municipalities / areas that match the query, ranked so exact
-   *  matches come before prefixes, which come before loose contains-matches. */
   async suggestLocations(q: string, limit = 8): Promise<SearchSuggestion[]> {
     const needle = q.trim();
     if (!needle) return [];
@@ -203,6 +196,12 @@ export class PropertiesService {
       data: {
         ...propertyData,
         ownerId,
+        // Seller submissions are published immediately — visible on the public
+        // feed/landing pages but flagged UNVERIFIED until the verification team
+        // reviews the ownership documents and raises verificationLevel.
+        status: 'LIVE',
+        verificationLevel: 'UNVERIFIED',
+        publishedAt: new Date(),
         listingCode: await this.generateListingCode(),
         slug: this.generateSlug(input.title),
         originalAskingPrice: input.askingPrice,
@@ -258,10 +257,21 @@ export class PropertiesService {
       ...rest
     } = input;
     await this.exists(id);
+    // Content edits (title, price, location, media, …) invalidate the previous
+    // verification — drop the listing back to UNVERIFIED until the team
+    // re-reviews it. Status-only PATCHes (Mark sold / Archive) keep the level.
+    const contentEdited =
+      Object.keys(rest).some((key) => key !== 'status') ||
+      landArea !== undefined ||
+      location !== undefined ||
+      cadastralRecord !== undefined ||
+      media !== undefined ||
+      documents !== undefined;
     const row = await this.prisma.property.update({
       where: { id },
       data: {
         ...rest,
+        ...(contentEdited ? { verificationLevel: 'UNVERIFIED' } : {}),
         // Nested records are one-to-one with @unique FKs, so create would
         // violate the constraint on a second edit — upsert instead.
         ...(landArea && {

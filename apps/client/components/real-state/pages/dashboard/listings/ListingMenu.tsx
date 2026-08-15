@@ -126,7 +126,7 @@ export function ListingMenu({ listing, onChanged }: ListingMenuProps) {
         if (!listing.raw) throw new Error("Listing data is unavailable.");
         await createProperty(toDuplicatePayload(listing.raw));
         toast.success(`Duplicate of ${listing.listingCode} created`, {
-          description: "Saved as a draft — review it before submitting.",
+          description: "Published live on the public feed as unverified.",
         });
       }
       onChanged();

@@ -107,12 +107,45 @@ const row = {
     expect(result.id).toBe('p1');
   });
 
+  it('create publishes the listing immediately as LIVE + UNVERIFIED so it appears on public pages', async () => {
+    const input: CreatePropertyInput = {
+      title: 'My House',
+      propertyType: PropertyType.RESIDENTIAL_HOUSE,
+      askingPrice: 1500000,
+      landArea: { ropani: 1, aana: 0, totalSqFt: 508.74, totalSqMeters: 47.29 },
+      location: {
+        province: 'Bagmati',
+        district: 'Lalitpur',
+        municipality: 'Lalitpur Metropolitan City',
+        wardNumber: 6,
+        areaName: 'Patan',
+      },
+    };
+    await service.create(input, 'u1');
+    const callArg = prisma.property.create.mock.calls[0][0];
+    expect(callArg.data.status).toBe('LIVE');
+    expect(callArg.data.verificationLevel).toBe('UNVERIFIED');
+    expect(callArg.data.publishedAt).toBeInstanceOf(Date);
+  });
+
   it('update checks existence before updating', async () => {
     prisma.property.findUnique.mockResolvedValueOnce(null);
     await expect(service.update({ id: 'x', title: 'new' })).rejects.toBeInstanceOf(
       NotFoundException,
     );
     expect(prisma.property.update).not.toHaveBeenCalled();
+  });
+
+  it('update resets verificationLevel to UNVERIFIED when listing content changes', async () => {
+    await service.update({ id: 'p1', title: 'Renamed', askingPrice: 2000000 });
+    const callArg = prisma.property.update.mock.calls[0][0];
+    expect(callArg.data.verificationLevel).toBe('UNVERIFIED');
+  });
+
+  it('update keeps verificationLevel for status-only PATCHes (mark sold / archive)', async () => {
+    await service.update({ id: 'p1', status: 'SOLD' });
+    const callArg = prisma.property.update.mock.calls[0][0];
+    expect(callArg.data).not.toHaveProperty('verificationLevel');
   });
 
   it('remove checks existence before deleting', async () => {
@@ -138,7 +171,9 @@ const row = {
       expect.objectContaining({
         take: 3,
         orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
-        where: { status: 'LIVE' },
+        // Cursor + filters are AND-wrapped; with no cursor/filters the AND
+        // holds a single empty filter.
+        where: { status: 'LIVE', AND: [{}] },
       }),
     );
     expect(result.items).toHaveLength(2);
@@ -176,9 +211,17 @@ const row = {
     const arg = prisma.property.findMany.mock.calls.at(-1)?.[0];
     expect(arg.where).toEqual({
       status: 'LIVE',
-      OR: [
-        { createdAt: { lt: '2026-07-31T00:00:00.000Z' } },
-        { createdAt: { equals: '2026-07-31T00:00:00.000Z' }, id: { lt: 'p2' } },
+      AND: [
+        {
+          OR: [
+            { createdAt: { lt: '2026-07-31T00:00:00.000Z' } },
+            {
+              createdAt: { equals: '2026-07-31T00:00:00.000Z' },
+              id: { lt: 'p2' },
+            },
+          ],
+        },
+        {},
       ],
     });
     expect(arg.take).toBe(11); // first(10) + 1 lookahead

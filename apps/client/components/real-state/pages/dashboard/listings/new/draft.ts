@@ -83,7 +83,7 @@ export type DraftErrors = Partial<Record<string, string>>;
 
 export const TITLE_MIN = 5;
 export const TITLE_MAX = 80;
-export const DESC_MAX = 5000;
+export const DESC_MAX = 5000000000;
 export const ROAD_WIDTH_MAX_FT = 200;
 
 const num = (s: string | undefined): number => {

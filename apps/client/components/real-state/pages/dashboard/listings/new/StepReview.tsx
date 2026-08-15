@@ -102,8 +102,7 @@ export function StepReview({ draft }: StepProps) {
             />
           )}
           <span className="absolute left-3 top-3 inline-flex items-center gap-1 rounded-md bg-surface/95 px-2 py-1 text-[10px] font-bold uppercase tracking-wide text-tertiary">
-            <Icon name="pending_actions" className="text-[12px]" /> Pending
-            verification
+            <Icon name="pending_actions" className="text-[12px]" /> Unverified
           </span>
           {photoCount > 1 && (
             <span className="absolute right-3 top-3 inline-flex items-center gap-1 rounded-md bg-surface/95 px-2 py-1 text-[10px] font-bold text-on-surface-variant">
@@ -175,9 +174,9 @@ export function StepReview({ draft }: StepProps) {
             ))}
           </ul>
           <p className="mt-md rounded-md bg-surface-container p-sm text-[12px] leading-5 text-on-surface-variant">
-            The listing is saved as a <strong>DRAFT</strong>. Our verification
-            team reviews ownership documents before it goes live on the public
-            feed.
+            Publishing puts the listing on the public feed immediately as{" "}
+            <strong>UNVERIFIED</strong>. Our verification team then reviews
+            ownership documents to raise the verification level.
           </p>
         </div>
       </div>
