@@ -18,6 +18,7 @@ import {
   type ApiProperty,
   type ApiPropertyMedia,
 } from "lib/api/services/properties/types";
+import { stripHtml } from "components/real-state/googlemap/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -47,15 +48,16 @@ export async function generateMetadata({
   const { slug } = await params;
   try {
     const property = await fetchPropertyByGraphql(slug);
+    const plainDesc = stripHtml(property.description);
     return {
       title: `${property.title} | Lekhaprati`,
       description:
-        property.description ??
+        plainDesc ||
         `${labelEnum(property.propertyType, TYPE_LABELS)} for sale in ${formatLocation(property.location)}.`,
       openGraph: {
         title: property.title,
         description:
-          property.description ??
+          plainDesc ||
           `${formatNPR(property.askingPrice)} — ${formatLocation(property.location)}`,
         images: property.media?.[0]?.url ? [property.media[0].url] : undefined,
         type: "website",

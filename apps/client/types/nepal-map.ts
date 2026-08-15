@@ -8,7 +8,7 @@ export type Region =
   | "Western";
 
 export interface Marker {
-  id: number;
+  id: string;
   price: string;
   priceValue: number;
   change: string;

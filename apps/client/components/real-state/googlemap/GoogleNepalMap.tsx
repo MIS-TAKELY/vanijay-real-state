@@ -39,8 +39,8 @@ export function GoogleNepalMap({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const googleMapRef = useRef<any | null>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const overlaysRef = useRef<Map<number, any>>(new Map());
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const overlaysRef = useRef<Map<string, any>>(new Map());
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showList, setShowList] = useState(defaultShowList);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<ModalTab>("streetview");

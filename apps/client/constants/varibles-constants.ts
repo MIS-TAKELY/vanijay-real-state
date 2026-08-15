@@ -69,7 +69,7 @@ export const pillars = [
 
 export const MARKERS: Marker[] = [
   {
-    id: 1,
+    id: "1",
     price: "रू 41.5M",
     priceValue: 41.5,
     change: "12.4%",
@@ -87,7 +87,7 @@ export const MARKERS: Marker[] = [
     tier: "premium",
   },
   {
-    id: 2,
+    id: "2",
     price: "रू 34.2M",
     priceValue: 34.2,
     change: "8.1%",
@@ -105,7 +105,7 @@ export const MARKERS: Marker[] = [
     tier: "premium",
   },
   {
-    id: 3,
+    id: "3",
     price: "रू 28.9M",
     priceValue: 28.9,
     change: "6.7%",
@@ -123,7 +123,7 @@ export const MARKERS: Marker[] = [
     tier: "premium",
   },
   {
-    id: 4,
+    id: "4",
     price: "रू 22.4M",
     priceValue: 22.4,
     change: "4.2%",
@@ -141,7 +141,7 @@ export const MARKERS: Marker[] = [
     tier: "standard",
   },
   {
-    id: 5,
+    id: "5",
     price: "रू 18.6M",
     priceValue: 18.6,
     change: "3.1%",
@@ -159,7 +159,7 @@ export const MARKERS: Marker[] = [
     tier: "standard",
   },
   {
-    id: 6,
+    id: "6",
     price: "रू 19.8M",
     priceValue: 19.8,
     change: "9.3%",
@@ -177,7 +177,7 @@ export const MARKERS: Marker[] = [
     tier: "premium",
   },
   {
-    id: 7,
+    id: "7",
     price: "रू 14.2M",
     priceValue: 14.2,
     change: "5.6%",
@@ -195,7 +195,7 @@ export const MARKERS: Marker[] = [
     tier: "standard",
   },
   {
-    id: 8,
+    id: "8",
     price: "रू 11.5M",
     priceValue: 11.5,
     change: "7.8%",
@@ -213,7 +213,7 @@ export const MARKERS: Marker[] = [
     tier: "standard",
   },
   {
-    id: 9,
+    id: "9",
     price: "रू 9.8M",
     priceValue: 9.8,
     change: "4.5%",
@@ -231,7 +231,7 @@ export const MARKERS: Marker[] = [
     tier: "emerging",
   },
   {
-    id: 10,
+    id: "10",
     price: "रू 13.4M",
     priceValue: 13.4,
     change: "6.2%",
@@ -249,7 +249,7 @@ export const MARKERS: Marker[] = [
     tier: "standard",
   },
   {
-    id: 11,
+    id: "11",
     price: "रू 8.9M",
     priceValue: 8.9,
     change: "2.1%",
@@ -267,7 +267,7 @@ export const MARKERS: Marker[] = [
     tier: "emerging",
   },
   {
-    id: 12,
+    id: "12",
     price: "रू 10.2M",
     priceValue: 10.2,
     change: "5.9%",
@@ -285,7 +285,7 @@ export const MARKERS: Marker[] = [
     tier: "standard",
   },
   {
-    id: 13,
+    id: "13",
     price: "रू 12.1M",
     priceValue: 12.1,
     change: "8.4%",
@@ -303,7 +303,7 @@ export const MARKERS: Marker[] = [
     tier: "standard",
   },
   {
-    id: 14,
+    id: "14",
     price: "रू 9.4M",
     priceValue: 9.4,
     change: "3.8%",
@@ -322,7 +322,7 @@ export const MARKERS: Marker[] = [
     tier: "emerging",
   },
   {
-    id: 15,
+    id: "15",
     price: "रू 7.6M",
     priceValue: 7.6,
     change: "1.2%",

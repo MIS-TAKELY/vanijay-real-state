@@ -1,15 +1,15 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
 import { Button, Icon } from "@repo/ui";
-import Link from "next/link";
-import { PropertyCard } from "../../common/PropertyCard";
 import {
   fetchFeedPageGraphql,
   toCardPropsFromItem,
   type PropertyItem,
 } from "lib/api/services/properties";
 import type { ApiProperty } from "lib/api/services/properties/types";
+import Link from "next/link";
+import { useCallback, useEffect, useState } from "react";
+import { PropertyCard } from "../../common/PropertyCard";
 import { Pagination } from "../home/Pagination";
 
 function toItem(p: ApiProperty): PropertyItem {
@@ -133,56 +133,6 @@ export function SearchResults({
   return (
     <section className="relative z-10 py-6 md:py-10">
       <div className="mx-auto max-w-container-max px-gutter">
-        {/* Header — headline + ledger-style result count */}
-        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <p className="font-label-sm mb-1 text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
-              Search results
-            </p>
-            <h1 className="font-headline-md text-headline-md text-primary">
-              {query.trim()
-                ? `Properties matching “${query.trim()}”`
-                : "Browse all properties"}
-            </h1>
-          </div>
-          {results.length > 0 && (
-            <p className="mono-stat text-sm text-on-surface-variant">
-              <span className="font-semibold text-on-surface">
-                {results.length}
-              </span>{" "}
-              {results.length === 1 ? "property" : "properties"}
-            </p>
-          )}
-        </div>
-
-        {/* Active filters — removable chips */}
-        {chips.length > 0 && (
-          <div className="mb-6 flex flex-wrap items-center gap-2">
-            {chips.map((chip) => (
-              <Link
-                key={chip.key}
-                href={chipRemovalHref(filters, chip.key)}
-                scroll={false}
-                aria-label={`Remove filter ${chip.label}`}
-                className="group inline-flex items-center gap-1.5 rounded-full border border-outline-variant bg-surface px-3 py-1.5 text-xs font-medium text-on-surface-variant transition-colors hover:border-primary/50 hover:text-primary"
-              >
-                {chip.label}
-                <Icon
-                  name="close"
-                  className="text-[14px] opacity-60 transition-opacity group-hover:opacity-100"
-                />
-              </Link>
-            ))}
-            <Link
-              href="/search"
-              scroll={false}
-              className="text-xs font-semibold text-primary underline-offset-4 hover:underline"
-            >
-              Clear all
-            </Link>
-          </div>
-        )}
-
         {initialError && (
           <p
             role="alert"
@@ -195,14 +145,17 @@ export function SearchResults({
         {results.length === 0 && !initialError ? (
           <div className="blueprint-grid rounded-2xl border border-outline-variant bg-surface px-6 py-16 text-center">
             <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-surface-container">
-              <Icon name="search" className="text-[24px] text-on-surface-variant" />
+              <Icon
+                name="search"
+                className="text-[24px] text-on-surface-variant"
+              />
             </div>
             <p className="font-headline-md text-xl font-semibold text-on-surface">
               No properties match your search
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm text-on-surface-variant">
-              Try adjusting your keywords, price range, or location filters —
-              or browse every verified listing in the archive.
+              Try adjusting your keywords, price range, or location filters — or
+              browse every verified listing in the archive.
             </p>
             {chips.length > 0 && (
               <div className="mt-6">

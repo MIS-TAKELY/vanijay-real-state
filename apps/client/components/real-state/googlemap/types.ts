@@ -8,7 +8,7 @@ export type Region =
   | "Western";
 
 export interface Marker {
-  id: number;
+  id: string;
   price: string;
   priceValue: number;
   change: string;
@@ -68,7 +68,7 @@ export interface NepalMapProps {
 }
 
 export interface MinimalMarker {
-  id: number;
+  id: string;
   price: string;
   priceValue?: number;
   change?: string;

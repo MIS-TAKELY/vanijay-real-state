@@ -9,20 +9,16 @@ import {
   ToggleGroupItem,
 } from "@repo/ui";
 import { RichTextEditor } from "components/real-state/common/RichTextEditor";
+import { stripHtml } from "components/real-state/googlemap/utils";
 import { PROPERTY_TYPES } from "./constants";
 import { DESC_MAX, TITLE_MAX } from "./draft";
 import { FieldError, type StepProps } from "./types";
 
-/** Strip HTML tags to get plain text length for character counting */
-function getPlainTextLength(html: string): number {
-  if (!html) return 0;
-  const tmp = document.createElement("div");
-  tmp.innerHTML = html;
-  return tmp.textContent?.length ?? 0;
-}
-
 export function StepBasics({ draft, update, errors }: StepProps) {
-  const plainDescLength = getPlainTextLength(draft.description);
+  const cleanDesc = stripHtml(draft.description);
+  const plainDescLength = cleanDesc.length;
+  const isDescOverLimit =
+    plainDescLength > DESC_MAX || draft.description.length > DESC_MAX;
 
   return (
     <div className="flex flex-col gap-md">
@@ -92,21 +88,34 @@ export function StepBasics({ draft, update, errors }: StepProps) {
 
       {/* Description — Rich Text Editor */}
       <div className="flex flex-col gap-xs">
-        <Label htmlFor="w-desc">Description</Label>
+        <div className="flex items-center justify-between">
+          <Label htmlFor="w-desc">Description</Label>
+          <span
+            className={cn(
+              "mono-stat text-[11px] transition-colors",
+              isDescOverLimit
+                ? "font-semibold text-error"
+                : "text-on-surface-variant",
+            )}
+          >
+            {plainDescLength}/{DESC_MAX}
+          </span>
+        </div>
         <RichTextEditor
           id="w-desc"
           value={draft.description}
           onChange={(html) => update({ description: html })}
-          maxLength={DESC_MAX}
           placeholder="Describe the plot, access, nearby facilities, and verification highlights…"
-          aria-invalid={!!errors.description}
-          className={cn(errors.description && "border-error")}
+          aria-invalid={!!errors.description || isDescOverLimit}
+          className={cn((errors.description || isDescOverLimit) && "border-error")}
         />
-        <div className="flex items-start justify-between gap-sm">
+        <div className="flex items-start justify-between gap-sm min-h-[18px]">
           <FieldError message={errors.description} />
-          <span className="mono-stat ml-auto shrink-0 text-[11px] text-on-surface-variant">
-            {plainDescLength}/{DESC_MAX}
-          </span>
+          {!errors.description && (
+            <p className="text-[11px] text-on-surface-variant">
+              Format using the toolbar above to highlight key property details.
+            </p>
+          )}
         </div>
       </div>
     </div>

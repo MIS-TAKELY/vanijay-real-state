@@ -5,7 +5,7 @@ import type { Marker } from "../types";
 
 interface SidebarProps {
   markers: Marker[];
-  selectedId: number | null;
+  selectedId: string | null;
   avgChange: number;
   onMarkerClick: (marker: Marker) => void;
   showList: boolean;
@@ -252,21 +252,7 @@ export function Sidebar({
         >
           Nepal · {markers.length} locations
         </span>
-        <a
-          href="/map"
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            color: "#4ade80",
-            textDecoration: "none",
-            display: "flex",
-            alignItems: "center",
-            gap: 4,
-            letterSpacing: "0.02em",
-          }}
-        >
-          Full map ↗
-        </a>
+      
       </div>
     </div>
   );

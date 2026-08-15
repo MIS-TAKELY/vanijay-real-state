@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 import type { Marker } from "../types";
-import { getTrendColor, getTrendLabel } from "../utils";
+import { getTrendColor, getTrendLabel, stripHtml } from "../utils";
 
 interface DetailCardProps {
   marker: Marker;
@@ -18,23 +19,35 @@ export function DetailCard({
   onSatelliteZoom,
 }: DetailCardProps) {
   const m = marker;
+  const cleanDesc = stripHtml(m.description);
+  const listingUrl =
+    m.id && m.id.length > 5
+      ? `/listing/${m.id}`
+      : `/search?q=${encodeURIComponent(m.area)}`;
 
   return (
     <div
       style={{
         position: "absolute",
-        top: 14,
+        top: "50%",
         left: 16,
+        transform: "translateY(-50%)",
         zIndex: 1001,
         width: 300,
-        background: "rgba(13,26,20,0.85)",
+        maxWidth: "calc(100% - 32px)",
+        maxHeight: "calc(100% - 24px)",
+        overflowY: "auto",
+        overscrollBehavior: "contain",
+        boxSizing: "border-box",
+        background: "rgba(13,26,20,0.94)",
         backdropFilter: "blur(20px)",
         WebkitBackdropFilter: "blur(20px)",
-        border: "1px solid rgba(74,222,128,0.3)",
+        border: "1px solid rgba(74,222,128,0.35)",
         borderRadius: 16,
-        padding: "16px 18px",
-        boxShadow: "0 20px 60px rgba(0,0,0,0.65)",
-        animation: "nm-card-in 0.3s ease forwards",
+        padding: "14px 16px",
+        boxShadow: "0 24px 64px rgba(0,0,0,0.75)",
+        scrollbarWidth: "thin",
+        scrollbarColor: "rgba(74,222,128,0.3) transparent",
       }}
     >
       <button
@@ -42,19 +55,19 @@ export function DetailCard({
         aria-label="Close detail"
         style={{
           position: "absolute",
-          top: 12,
-          right: 12,
+          top: 10,
+          right: 10,
           background: "rgba(255,255,255,0.08)",
           border: "none",
           borderRadius: "50%",
-          width: 26,
-          height: 26,
+          width: 24,
+          height: 24,
           cursor: "pointer",
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
           color: "rgba(209,250,229,0.7)",
-          fontSize: 14,
+          fontSize: 13,
         }}
       >
         ✕
@@ -62,12 +75,13 @@ export function DetailCard({
 
       <div
         style={{
-          fontSize: 10,
+          fontSize: 9.5,
           fontWeight: 700,
           textTransform: "uppercase",
           letterSpacing: "0.07em",
           color: "rgba(74,222,128,0.7)",
-          marginBottom: 4,
+          marginBottom: 3,
+          paddingRight: 24,
         }}
       >
         {m.city} · {m.region}
@@ -77,17 +91,19 @@ export function DetailCard({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 8,
-          marginBottom: 10,
+          gap: 6,
+          marginBottom: 6,
+          paddingRight: 24,
         }}
       >
         <h3
           style={{
             margin: 0,
-            fontSize: 20,
+            fontSize: 17,
             fontWeight: 800,
             fontFamily: "'Fraunces', serif",
             color: "#f0fdf4",
+            lineHeight: 1.2,
           }}
         >
           {m.area}
@@ -95,13 +111,14 @@ export function DetailCard({
         {m.verified && (
           <span
             style={{
-              fontSize: 10,
+              fontSize: 9,
               fontWeight: 700,
               color: "#4ade80",
               border: "1px solid rgba(74,222,128,0.4)",
               borderRadius: 4,
-              padding: "1px 6px",
+              padding: "1px 5px",
               letterSpacing: "0.05em",
+              flexShrink: 0,
             }}
           >
             ✓ VERIFIED
@@ -109,10 +126,17 @@ export function DetailCard({
         )}
       </div>
 
-      <div style={{ display: "flex", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
+      <div
+        style={{
+          display: "flex",
+          alignItems: "baseline",
+          gap: 8,
+          marginBottom: 8,
+        }}
+      >
         <span
           style={{
-            fontSize: 24,
+            fontSize: 20,
             fontWeight: 800,
             color: "#4ade80",
             fontFamily: "'IBM Plex Mono', monospace",
@@ -124,7 +148,7 @@ export function DetailCard({
         </span>
         <span
           style={{
-            fontSize: 13,
+            fontSize: 11,
             fontWeight: 700,
             color: m.trend === "up" ? "#f87171" : "rgba(209,250,229,0.6)",
             display: "flex",
@@ -134,7 +158,7 @@ export function DetailCard({
               m.trend === "up"
                 ? "rgba(220,38,38,0.15)"
                 : "rgba(255,255,255,0.07)",
-            padding: "2px 8px",
+            padding: "1px 6px",
             borderRadius: 99,
           }}
         >
@@ -142,23 +166,32 @@ export function DetailCard({
         </span>
       </div>
 
-      <p
-        style={{
-          fontSize: 12,
-          color: "rgba(209,250,229,0.6)",
-          lineHeight: 1.5,
-          marginBottom: 12,
-        }}
-      >
-        {m.description}
-      </p>
+      {cleanDesc && (
+        <p
+          style={{
+            fontSize: 11.5,
+            color: "rgba(209,250,229,0.7)",
+            lineHeight: 1.4,
+            marginBottom: 8,
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            wordBreak: "break-word",
+          }}
+          title={cleanDesc}
+        >
+          {cleanDesc}
+        </p>
+      )}
 
       <div
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: 8,
-          marginBottom: 12,
+          gap: 6,
+          marginBottom: 8,
         }}
       >
         {[
@@ -169,25 +202,25 @@ export function DetailCard({
             key={item.label}
             style={{
               background: "rgba(255,255,255,0.05)",
-              borderRadius: 8,
-              padding: "8px 10px",
+              borderRadius: 6,
+              padding: "6px 8px",
             }}
           >
             <div
               style={{
-                fontSize: 9,
+                fontSize: 8.5,
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.07em",
                 color: "rgba(209,250,229,0.4)",
-                marginBottom: 3,
+                marginBottom: 2,
               }}
             >
               {item.label}
             </div>
             <div
               style={{
-                fontSize: 13,
+                fontSize: 12,
                 fontWeight: 700,
                 color: "#d1fae5",
                 fontFamily: "'IBM Plex Mono', monospace",
@@ -203,21 +236,21 @@ export function DetailCard({
         style={{
           display: "flex",
           flexWrap: "wrap",
-          gap: 6,
-          marginBottom: 14,
+          gap: 5,
+          marginBottom: 8,
         }}
       >
         {m.tags.map((t) => (
           <span
             key={t}
             style={{
-              fontSize: 10,
+              fontSize: 9.5,
               fontWeight: 700,
               color: "#86efac",
               background: "rgba(74,222,128,0.12)",
               border: "1px solid rgba(74,222,128,0.2)",
-              padding: "3px 8px",
-              borderRadius: 6,
+              padding: "2px 6px",
+              borderRadius: 5,
               letterSpacing: "0.03em",
             }}
           >
@@ -226,13 +259,13 @@ export function DetailCard({
         ))}
         <span
           style={{
-            fontSize: 10,
+            fontSize: 9.5,
             fontWeight: 700,
             color: "#fcd34d",
             background: "rgba(252,211,77,0.1)",
             border: "1px solid rgba(252,211,77,0.2)",
-            padding: "3px 8px",
-            borderRadius: 6,
+            padding: "2px 6px",
+            borderRadius: 5,
             textTransform: "capitalize",
             letterSpacing: "0.03em",
           }}
@@ -245,22 +278,22 @@ export function DetailCard({
         style={{
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
-          gap: 8,
-          marginBottom: 10,
+          gap: 6,
+          marginBottom: 8,
         }}
       >
         <button
           type="button"
           onClick={() => onSatelliteZoom(m)}
           style={{
-            padding: "8px 0",
-            fontSize: 11,
+            padding: "6px 0",
+            fontSize: 10.5,
             fontWeight: 700,
             fontFamily: "'Public Sans', sans-serif",
             color: "#86efac",
             background: "rgba(36,69,48,0.6)",
             border: "1px solid rgba(74,222,128,0.3)",
-            borderRadius: 8,
+            borderRadius: 6,
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -268,20 +301,20 @@ export function DetailCard({
             gap: 4,
           }}
         >
-          🛰️ Street Zoom (z18)
+          🛰️ Street Zoom
         </button>
         <button
           type="button"
           onClick={() => onStreetView(m)}
           style={{
-            padding: "8px 0",
-            fontSize: 11,
+            padding: "6px 0",
+            fontSize: 10.5,
             fontWeight: 700,
             fontFamily: "'Public Sans', sans-serif",
             color: "#38bdf8",
             background: "rgba(14,165,233,0.18)",
             border: "1px solid rgba(56,189,248,0.35)",
-            borderRadius: 8,
+            borderRadius: 6,
             cursor: "pointer",
             display: "flex",
             alignItems: "center",
@@ -293,21 +326,26 @@ export function DetailCard({
         </button>
       </div>
 
-      <button
+      <Link
+        href={listingUrl}
         style={{
           width: "100%",
-          padding: "10px 0",
-          fontSize: 12,
+          padding: "8px 0",
+          fontSize: 11.5,
           fontWeight: 700,
           fontFamily: "'Public Sans', sans-serif",
           color: "#0d1a14",
           background:
             "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)",
           border: "none",
-          borderRadius: 10,
+          borderRadius: 8,
           cursor: "pointer",
           letterSpacing: "0.02em",
           transition: "opacity 0.15s ease, transform 0.15s ease",
+          textAlign: "center",
+          textDecoration: "none",
+          display: "block",
+          boxSizing: "border-box",
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.opacity = "0.9";
@@ -319,7 +357,7 @@ export function DetailCard({
         }}
       >
         View Listings in {m.area} →
-      </button>
+      </Link>
     </div>
   );
 }

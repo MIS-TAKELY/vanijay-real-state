@@ -11,6 +11,7 @@ import {
 import { askingPriceNumber, formatLandAreaLabel, totalSqFt } from "./draft";
 import type { StepProps } from "./types";
 import { listingCoverImageUrl } from "lib/media/videoThumbnail";
+import { stripHtml } from "components/real-state/googlemap/utils";
 
 interface ChecklistItem {
   label: string;
@@ -19,6 +20,7 @@ interface ChecklistItem {
 }
 
 export function StepReview({ draft }: StepProps) {
+  const cleanDesc = stripHtml(draft.description);
   const gradient = TYPE_GRADIENTS[draft.propertyType] ?? FALLBACK_GRADIENT;
   const price = askingPriceNumber(draft);
   const sqft = totalSqFt(draft);
@@ -123,9 +125,9 @@ export function StepReview({ draft }: StepProps) {
           <p className="text-sm text-on-surface-variant">
             {locationLine || "Location not specified"}
           </p>
-          {draft.description.trim() && (
+          {cleanDesc && (
             <p className="line-clamp-2 text-sm text-on-surface-variant">
-              {draft.description.trim()}
+              {cleanDesc}
             </p>
           )}
           {meta.length > 0 && (

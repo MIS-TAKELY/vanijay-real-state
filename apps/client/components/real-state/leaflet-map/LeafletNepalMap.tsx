@@ -92,13 +92,13 @@ export default function LeafletNepalMap({
   const mapRef = useRef<L.Map | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const tileLayerRef = useRef<L.TileLayer | null>(null);
-  const leafletMarkersRef = useRef<Map<number, L.Marker>>(new Map());
+  const leafletMarkersRef = useRef<Map<string, L.Marker>>(new Map());
 
   const [mapMode, setMapMode] = useState<"dark" | "satellite" | "streets">(
     "dark",
   );
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
-  const [selectedId, setSelectedId] = useState<number | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [showList, setShowList] = useState(defaultShowList);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<ModalTab>("streetview");

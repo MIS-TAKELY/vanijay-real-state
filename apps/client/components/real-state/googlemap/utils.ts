@@ -34,3 +34,42 @@ export function computeAvgChange(markers: Marker[]): number {
 export function buildStreetViewUrl(lat: number, lng: number): string {
   return `https://www.google.com/maps/@?api=1&map_action=pano&viewpoint=${lat},${lng}`;
 }
+
+/**
+ * Strips HTML tags and decodes common HTML entities to return clean plain text.
+ */
+export function stripHtml(input?: string | null): string {
+  if (!input) return "";
+
+  return input
+    // Replace block-level tags and line breaks with spaces so words don't merge together
+    .replace(/<(\/p|p|\/div|div|\/li|li|\/h[1-6]|h[1-6]|br\s*\/?)>/gi, " ")
+    // Remove all remaining HTML tags
+    .replace(/<[^>]+>/g, "")
+    // Decode common named HTML entities
+    .replace(/&amp;/g, "&")
+    .replace(/&lt;/g, "<")
+    .replace(/&gt;/g, ">")
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&apos;/g, "'")
+    .replace(/&nbsp;/g, " ")
+    // Decode numeric decimal entities (e.g. &#8217;)
+    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
+    // Decode numeric hex entities (e.g. &#x27;)
+    .replace(/&#x([0-9a-fA-F]+);/g, (_, code) =>
+      String.fromCharCode(parseInt(code, 16)),
+    )
+    // Collapse multiple whitespaces and newlines
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/**
+ * Truncates text to a maximum length and appends an ellipsis if truncated.
+ */
+export function truncateText(text: string, maxLength = 120): string {
+  if (!text || text.length <= maxLength) return text;
+  return `${text.slice(0, maxLength).trim()}…`;
+}
+

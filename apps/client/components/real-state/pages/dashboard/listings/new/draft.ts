@@ -2,6 +2,7 @@ import type {
   ApiProperty,
   CreatePropertyPayload,
 } from "lib/api/services/properties/types";
+import { stripHtml } from "components/real-state/googlemap/utils";
 import { PRICE_UNITS, type UnitSystem } from "./constants";
 
 export type { CreatePropertyPayload };
@@ -147,8 +148,13 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
     else if (title.length > TITLE_MAX)
       errors.title = `Keep the title under ${TITLE_MAX} characters.`;
     if (!draft.propertyType) errors.propertyType = "Pick a property type.";
-    if (draft.description.trim().length > DESC_MAX)
+
+    const plainDesc = stripHtml(draft.description);
+    if (plainDesc.length > DESC_MAX) {
       errors.description = `Keep the description under ${DESC_MAX.toLocaleString()} characters.`;
+    } else if (draft.description.length > DESC_MAX) {
+      errors.description = `Description with formatting is too long (max ${DESC_MAX.toLocaleString()} characters). Please shorten slightly.`;
+    }
   }
 
   if (step === 1) {
@@ -303,7 +309,7 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
 
   return {
     title: draft.title.trim(),
-    ...(draft.description.trim() && { description: draft.description.trim() }),
+    ...(stripHtml(draft.description) ? { description: draft.description.trim() } : {}),
     propertyType: draft.propertyType,
     askingPrice,
     ...(pricePerAana && { pricePerAana }),

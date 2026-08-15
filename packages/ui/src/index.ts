@@ -99,6 +99,9 @@ export {
 
 export { Checkbox } from "./components/ui/checkbox";
 
+export { Combobox } from "./components/ui/combobox";
+export type { ComboboxOption, ComboboxProps } from "./components/ui/combobox";
+
 export {
   Dialog,
   DialogClose,

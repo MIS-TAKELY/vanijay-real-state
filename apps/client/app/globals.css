@@ -202,6 +202,21 @@ body {
   animation: fadeInUp 0.7s cubic-bezier(0.16, 0.84, 0.44, 1) both;
 }
 
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-dropdown-in {
+  animation: dropdownIn 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
@@ -221,18 +236,23 @@ body {
 
 /* SunEditor customizations */
 .suneditor-wrapper .sun-editor {
-  border: none;
+  border: none !important;
   font-family: "Public Sans", sans-serif;
+  background-color: transparent !important;
 }
 
 .suneditor-wrapper .sun-editor .se-toolbar {
   background-color: #f0eee9;
   border-bottom: 1px solid #c2c8c0;
-  padding: 4px 8px;
+  padding: 6px 8px;
+  outline: none;
 }
 
 .suneditor-wrapper .sun-editor .se-btn {
   color: #424842;
+  border-radius: 6px;
+  margin: 1px;
+  transition: all 0.15s ease;
 }
 
 .suneditor-wrapper .sun-editor .se-btn:hover {
@@ -246,13 +266,30 @@ body {
 }
 
 .suneditor-wrapper .sun-editor .se-wrapper-inner {
-  padding: 12px;
-  min-height: 150px;
+  padding: 12px 14px;
+  min-height: 180px;
+}
+
+.suneditor-wrapper .sun-editor-editable {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.65;
+  color: #1b1c19;
+  background-color: transparent;
 }
 
 .suneditor-wrapper .sun-editor .se-placeholder {
   color: #727972;
-  font-style: italic;
+  font-style: normal;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.suneditor-wrapper .sun-editor .se-resizing-bar,
+.suneditor-wrapper .sun-editor .se-status-bar,
+.suneditor-wrapper .sun-editor .se-navigation {
+  display: none !important;
 }
 
 /* Rich text content styling */
