@@ -223,7 +223,9 @@ export default function LeafletNepalMap({
         L.DomEvent.stopPropagation(e);
         setSelectedId(m.id);
         onMarkerSelect?.(m);
-        map.panTo([m.lat, m.lng], { animate: true });
+        map.flyTo([m.lat, m.lng], Math.max(map.getZoom(), 13), {
+          duration: 0.8,
+        });
       });
     });
 
@@ -238,8 +240,7 @@ export default function LeafletNepalMap({
       setSelectedId(m.id);
       onMarkerSelect?.(m);
       if (mapRef.current) {
-        mapRef.current.panTo([m.lat, m.lng], { animate: true });
-        mapRef.current.setZoom(11, { animate: true });
+        mapRef.current.flyTo([m.lat, m.lng], 14, { duration: 1.2 });
       }
     },
     [onMarkerSelect],
@@ -260,8 +261,8 @@ export default function LeafletNepalMap({
 
   const handleSatelliteZoom = useCallback((m: MarkerType) => {
     if (mapRef.current) {
-      mapRef.current.panTo([m.lat, m.lng], { animate: true });
-      mapRef.current.setZoom(16, { animate: true });
+      setMapMode("satellite");
+      mapRef.current.flyTo([m.lat, m.lng], 16, { duration: 1.0 });
     }
   }, []);
 
@@ -488,8 +489,7 @@ export default function LeafletNepalMap({
           title="Fit Nepal view"
           onClick={() => {
             if (mapRef.current) {
-              mapRef.current.panTo([28.2, 84.4], { animate: true });
-              mapRef.current.setZoom(7, { animate: true });
+              mapRef.current.flyTo([28.2, 84.4], 7, { duration: 1.0 });
             }
           }}
           style={{

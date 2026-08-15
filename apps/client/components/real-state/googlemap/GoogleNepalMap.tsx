@@ -178,8 +178,8 @@ export function GoogleNepalMap({
       el.addEventListener("click", () => {
         setSelectedId(marker.id);
         onMarkerSelect?.(marker);
-        map.panTo({ lat: marker.lat, lng: marker.lng });
-        map.setZoom(12);
+        map.setCenter({ lat: marker.lat, lng: marker.lng });
+        map.setZoom(14);
       });
     });
   }, [markers, apiLoaded, selectedId, onMarkerSelect]);
@@ -188,15 +188,19 @@ export function GoogleNepalMap({
     (marker: Marker) => {
       setSelectedId(marker.id);
       onMarkerSelect?.(marker);
-      googleMapRef.current?.panTo({ lat: marker.lat, lng: marker.lng });
-      googleMapRef.current?.setZoom(12);
+      if (googleMapRef.current) {
+        googleMapRef.current.setCenter({ lat: marker.lat, lng: marker.lng });
+        googleMapRef.current.setZoom(14);
+      }
     },
     [onMarkerSelect],
   );
 
   const handleSatelliteZoom = useCallback((m: Marker) => {
-    googleMapRef.current?.panTo({ lat: m.lat, lng: m.lng });
-    googleMapRef.current?.setZoom(16);
+    if (googleMapRef.current) {
+      googleMapRef.current.setCenter({ lat: m.lat, lng: m.lng });
+      googleMapRef.current.setZoom(16);
+    }
   }, []);
 
   const handleStreetView = useCallback((m: Marker) => {
