@@ -1,7 +1,11 @@
 // apps/client/proxy.ts
-import { apiUrl } from "lib/api/core/config";
+import { AUTH_API_URL } from "lib/api/core/config";
 import { API_ENDPOINTS } from "lib/api/core/endpoints";
 import { NextRequest, NextResponse } from "next/server";
+
+function authApiUrl(path: string): string {
+  return `${AUTH_API_URL}${path}`;
+}
 
 // Redirect to the sign-in flow, remembering the page the user was trying to
 // visit so they can be sent back after authenticating.
@@ -18,7 +22,10 @@ export async function proxy(request: NextRequest) {
   let rejected = false;
 
   try {
-    const res = await fetch(apiUrl(API_ENDPOINTS.auth.getSession), {
+    // Hit the API over the internal Docker network (AUTH_API_URL), not the
+    // public https://api.malpoth.com URL. Going out through Cloudflare from
+    // the Next.js container often 403s/times out, which fail-closes to sign-in.
+    const res = await fetch(authApiUrl(API_ENDPOINTS.auth.getSession), {
       headers: {
         Accept: "application/json",
         cookie: request.headers.get("cookie") ?? "",
@@ -48,14 +55,24 @@ export async function proxy(request: NextRequest) {
 // All routes in the (auth) route group are protected.
 export const config = {
   matcher: [
+    "/dashboard",
     "/dashboard/:path*",
+    "/cart",
+    "/cart/:path*",
     "/documents/:path*",
+    "/appointments",
     "/appointments/:path*",
+    "/favorites",
     "/favorites/:path*",
+    "/inquiries",
     "/inquiries/:path*",
+    "/profile",
     "/profile/:path*",
+    "/questions",
     "/questions/:path*",
+    "/saved-searches",
     "/saved-searches/:path*",
+    "/my-listings",
     "/my-listings/:path*",
   ],
 };

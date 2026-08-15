@@ -1,7 +1,12 @@
 
-
 export const API_URL =
   process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:5000";
+
+/** Server-side API origin (Docker DNS in prod). Never bake the public URL into proxy checks. */
+export const AUTH_API_URL =
+  process.env.AUTH_API_URL ||
+  process.env.NEXT_PUBLIC_API_URL ||
+  "http://localhost:5000";
 
 export const API_VERSION = "v1";
 

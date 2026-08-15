@@ -67,7 +67,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
   const completeAuth = () => {
     const redirectTo = useAuthModalStore.getState().redirect;
     closeModal();
-    if (redirectTo) router.push(redirectTo);
+    router.push(redirectTo || "/dashboard");
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

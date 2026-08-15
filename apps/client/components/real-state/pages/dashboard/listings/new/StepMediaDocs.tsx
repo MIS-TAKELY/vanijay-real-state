@@ -458,7 +458,8 @@ export function StepMediaDocs({ draft, update }: StepProps) {
 
         {draft.videoUrls.length === 0 && (
           <p className="text-[12px] text-on-surface-variant">
-            No videos added. Sellers can add YouTube, Vimeo, or direct video links.
+            No videos added. Add YouTube, Vimeo, TikTok, Instagram, or X (Twitter) links.
+            Social media links (TikTok, Instagram, X) open in a new tab.
           </p>
         )}
 
@@ -477,7 +478,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
                     next[idx] = e.target.value;
                     update({ videoUrls: next });
                   }}
-                  placeholder="https://youtube.com/…"
+                  placeholder="https://youtube.com/… or tiktok.com/…"
                   className="h-11 pl-10 pr-3"
                 />
               </div>

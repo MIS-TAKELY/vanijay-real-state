@@ -1,6 +1,6 @@
-import { ArrowRight, Banknote, Search, Truck, Weight } from "lucide-react";
 import { Badge, Button, Input } from "@repo/ui";
-import { KABADI_CATEGORIES, KABADI_ITEMS } from "lib/kabadi/rates";
+import { KABADI_ITEMS } from "lib/kabadi/rates";
+import { ArrowRight, Banknote, Search, Truck, Weight } from "lucide-react";
 
 const STATS = [
   { icon: Weight, value: `${KABADI_ITEMS.length}+`, label: "Items priced" },
@@ -57,7 +57,8 @@ export function Hero() {
           </form>
 
           <p className="mt-3 font-label-sm text-label-sm text-kabadi-muted">
-            Tip: the search box in “Today&apos;s Rates” below does instant lookups.
+            Tip: the search box in “Today&apos;s Rates” below does instant
+            lookups.
           </p>
 
           {/* Stats */}

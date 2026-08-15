@@ -7,14 +7,48 @@ import { emailOtpVerificationOtp } from "./utils/mail-templates/email-otp-verifi
 import { sendEmail } from "./utils/send-mail";
 import { sendWhatsAppMessage } from "./utils/send-watsapp";
 
+/**
+ * Cookie Domain for sharing the session between the public site (malpoth.com)
+ * and the API (api.malpoth.com).
+ *
+ * Better Auth's own fallback is `new URL(BETTER_AUTH_URL).hostname`, which
+ * becomes `api.malpoth.com` in production. Browsers never send that cookie to
+ * the parent host, so `/dashboard` (served on malpoth.com) always looks signed
+ * out. Prefer CLIENT_URL's host (`malpoth.com`) and ignore an accidental
+ * `api.` prefix / localhost.
+ */
+function resolveCookieDomain(): string | undefined {
+  const hostFromUrl = (value: string | undefined) => {
+    if (!value) return undefined;
+    try {
+      return new URL(value).hostname;
+    } catch {
+      return undefined;
+    }
+  };
+
+  const raw = process.env.COOKIE_DOMAIN?.trim().replace(/^\./, "");
+  const host = raw || hostFromUrl(process.env.CLIENT_URL);
+  if (!host) return undefined;
+  if (
+    host === "localhost" ||
+    host.endsWith(".localhost") ||
+    /^\d{1,3}(\.\d{1,3}){3}$/.test(host)
+  ) {
+    return undefined;
+  }
+  if (host.startsWith("api.")) return host.slice("api.".length);
+  return host;
+}
+
+const cookieDomain = resolveCookieDomain();
+
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET!,
   advanced: {
     crossSubDomainCookies: {
-      enabled: true,
-      // Use COOKIE_DOMAIN env var (e.g. ".malpoth.com" or ".vanijay.com").
-      // Falls back to undefined in dev so cookies are scoped to localhost.
-      domain: process.env.COOKIE_DOMAIN ?? undefined,
+      enabled: !!cookieDomain,
+      domain: cookieDomain,
     },
   },
 
