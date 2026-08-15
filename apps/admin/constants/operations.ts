@@ -22,30 +22,36 @@ export const ADMIN_NAV_SECTIONS: NavSection[] = [
   {
     heading: "Overview",
     items: [
-      { label: "Console", href: "/listings?tab=queue", icon: "space_dashboard" },
-      { label: "Listings", href: "/listings", icon: "list_alt", badge: "87" },
-      { label: "Verifications", href: "/verifications", icon: "verified", badge: "24" },
-      { label: "Documents", href: "/documents", icon: "article", badge: "5" },
+      { label: "Dashboard", href: "/", icon: "space_dashboard" },
+      { label: "Analytics", href: "/analytics", icon: "insights" },
     ],
   },
   {
-    heading: "Cases",
+    heading: "Marketplace",
     items: [
-      { label: "Disputes", href: "/disputes", icon: "warning", badge: "9" },
+      { label: "Listings", href: "/listings", icon: "list_alt" },
+      { label: "Verifications", href: "/verifications", icon: "verified" },
+      { label: "Documents", href: "/documents", icon: "article" },
+      { label: "Disputes", href: "/disputes", icon: "warning" },
       { label: "Appointments", href: "/appointments", icon: "event" },
-    ],
-  },
-  {
-    heading: "People",
-    items: [
       { label: "Users & Agents", href: "/users", icon: "manage_accounts" },
+      { label: "Region Rates", href: "/rates", icon: "public" },
     ],
   },
   {
-    heading: "Reference",
+    heading: "Content (CMS)",
     items: [
-      { label: "Region Rates", href: "/rates", icon: "public" },
-      { label: "Settings", href: "/settings", icon: "info" },
+      { label: "Real Estate", href: "/cms/real-state", icon: "home" },
+      { label: "Gold", href: "/cms/gold", icon: "monitoring" },
+      { label: "Scrape / Kabadi", href: "/cms/scrape", icon: "recycling" },
+      { label: "Global", href: "/cms/global", icon: "settings" },
+    ],
+  },
+  {
+    heading: "System",
+    items: [
+      { label: "Audit Log", href: "/audit", icon: "receipt_long" },
+      { label: "Settings", href: "/settings", icon: "tune" },
     ],
   },
 ];

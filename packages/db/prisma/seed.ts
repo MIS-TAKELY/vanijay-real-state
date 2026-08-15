@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import { hashPassword } from "better-auth/crypto";
+import { randomUUID } from "node:crypto";
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient, KabadiUnit } from '@prisma/client';
 
@@ -144,6 +146,50 @@ async function main() {
     create: { key: 'main', data: { brand: 'Lekhaprati', phone: '9800522234', phoneDisplay: '9800-KABADI', email: 'hello@lekhaprati.com' } as any },
     update: {},
   });
+
+
+  // ---------- Admin user (Lekhaprati operations console) ----------
+  const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@lekhaprati.com";
+  const adminPassword = process.env.ADMIN_SEED_PASSWORD || "LekhapratiAdmin@2026";
+  const adminId = process.env.ADMIN_SEED_ID || "admin-" + randomUUID().slice(0, 8);
+  const passwordHash = await hashPassword(adminPassword);
+  const now = new Date();
+
+  await prisma.user.upsert({
+    where: { email: adminEmail },
+    create: {
+      id: adminId,
+      name: "Super Admin",
+      email: adminEmail,
+      emailVerified: true,
+      role: ["ADMIN"],
+      isVerified: true,
+      agreedToTerms: true,
+      createdAt: now,
+      updatedAt: now,
+      accounts: {
+        create: {
+          id: "acct-" + randomUUID().slice(0, 8),
+          accountId: adminId,
+          providerId: "credential",
+          password: passwordHash,
+          createdAt: now,
+          updatedAt: now,
+        },
+      },
+      sessions: {
+        create: {
+          id: "sess-" + randomUUID().slice(0, 8),
+          token: randomUUID(),
+          expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+          createdAt: now,
+          updatedAt: now,
+        },
+      },
+    },
+    update: { role: ["ADMIN"], isVerified: true, emailVerified: true },
+  });
+  console.log(`Admin user seeded: ${adminEmail} / ${adminPassword}`);
 
   console.log('Seed complete');
 }
