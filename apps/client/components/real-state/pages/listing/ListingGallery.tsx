@@ -291,15 +291,15 @@ export function ListingGallery({
       {showingVideos && activeVideo && (
         <div className="flex flex-col gap-2">
           <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
-            <div className="aspect-[21/9] w-full">
-              <ListingVideo
-                url={activeVideo.url}
-                title={
-                  activeVideo.altText ?? `${title} — video walkthrough`
-                }
-                className="h-full w-full"
-              />
-            </div>
+            {/* No fixed aspect wrapper here — ListingVideo picks the right
+                container shape per platform (16:9 for YouTube, portrait for
+                Instagram Reels and TikTok, etc.). */}
+            <ListingVideo
+              url={activeVideo.url}
+              title={
+                activeVideo.altText ?? `${title} — video walkthrough`
+              }
+            />
           </div>
 
           {videos.length > 1 && (

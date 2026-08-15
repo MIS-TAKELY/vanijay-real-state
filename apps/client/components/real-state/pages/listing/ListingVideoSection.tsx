@@ -46,15 +46,12 @@ export function ListingVideoSection({
         )}
       </div>
 
-      {/* Cinematic letterbox frame — 21:9 ratio signals "film", not "photo" */}
+      {/* Player — ListingVideo picks its own aspect ratio per platform */}
       <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
-        <div className="aspect-[21/9] w-full">
-          <ListingVideo
-            url={activeVideo.url}
-            title={activeVideo.altText ?? `${title} — video walkthrough`}
-            className="h-full w-full"
-          />
-        </div>
+        <ListingVideo
+          url={activeVideo.url}
+          title={activeVideo.altText ?? `${title} — video walkthrough`}
+        />
       </div>
 
       {/* Thumbnail strip for multiple videos */}
