@@ -1,6 +1,29 @@
 import { cookies } from "next/headers";
+import { Badge, cn } from "@repo/ui";
+import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
 import { adminFetch } from "lib/server";
+
+const STATUS_TONE: Record<string, string> = {
+  verified: "bg-secondary-container text-primary",
+  approved: "bg-secondary-container text-primary",
+  rejected: "bg-error/10 text-error",
+  expired: "bg-error/10 text-error",
+};
+
+function DocBadge({ value }: { value: string }) {
+  return (
+    <Badge
+      variant="outline"
+      className={cn(
+        "font-label-sm text-[11px] font-semibold",
+        STATUS_TONE[value] ?? "bg-surface-container text-on-surface-variant",
+      )}
+    >
+      {value}
+    </Badge>
+  );
+}
 
 export const dynamic = "force-dynamic";
 
@@ -32,45 +55,23 @@ export default async function DocumentsPage() {
         description={`${rows.length} documents uploaded across all listings and users.`}
       />
       <section className="mt-lg">
-        <div className="admin-surface border border-outline-variant rounded-xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full min-w-[640px] text-left text-sm">
-              <thead className="border-b border-outline-variant bg-surface-container-low font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">
-                <tr>
-                  <th className="px-md py-3">Type</th>
-                  <th className="px-md py-3">File</th>
-                  <th className="px-md py-3">Status</th>
-                  <th className="px-md py-3">Uploaded</th>
-                  <th className="px-md py-3">Expires</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant/60">
-                {rows.length === 0 ? (
-                  <tr><td colSpan={5} className="px-md py-lg text-center text-on-surface-variant">No documents found.</td></tr>
-                ) : (
-                  rows.map((d) => (
-                    <tr key={d.id} className="hover:bg-surface-container/60">
-                      <td className="px-md py-3 font-medium text-on-surface">{d.type}</td>
-                      <td className="px-md py-3 text-on-surface-variant">{d.fileName || d.id.slice(0, 8)}</td>
-                      <td className="px-md py-3"><Badge value={d.status || "unknown"} /></td>
-                      <td className="mono-stat px-md py-3 text-[12px] text-on-surface-variant">{new Date(d.createdAt).toLocaleDateString()}</td>
-                      <td className="mono-stat px-md py-3 text-[12px] text-on-surface-variant">{d.expiresAt ? new Date(d.expiresAt).toLocaleDateString() : "—"}</td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        </div>
+        <AdminDataTable
+          minWidth={640}
+          columns={["Type", "File", "Status", "Uploaded", "Expires"]}
+          empty={rows.length === 0}
+          emptyMessage="No documents found."
+        >
+          {rows.map((d) => (
+            <AdminDataTable.Row key={d.id}>
+              <AdminDataTable.Cell className="font-medium text-on-surface">{d.type}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface-variant">{d.fileName || d.id.slice(0, 8)}</AdminDataTable.Cell>
+              <AdminDataTable.Cell><DocBadge value={d.status || "unknown"} /></AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{new Date(d.createdAt).toLocaleDateString()}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{d.expiresAt ? new Date(d.expiresAt).toLocaleDateString() : "—"}</AdminDataTable.Cell>
+            </AdminDataTable.Row>
+          ))}
+        </AdminDataTable>
       </section>
     </>
   );
-}
-
-function Badge({ value }: { value: string }) {
-  const tone =
-    value === "verified" || value === "approved" ? "text-primary bg-secondary-container" :
-    value === "rejected" || value === "expired" ? "text-error bg-error/10" :
-    "bg-surface-container text-on-surface-variant";
-  return <span className={"inline-flex rounded-full px-2 py-0.5 font-label-sm text-[11px] font-semibold " + tone}>{value}</span>;
 }

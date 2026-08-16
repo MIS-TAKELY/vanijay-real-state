@@ -199,3 +199,61 @@ html { font-size: 16px; }
 
 .admin-bg { background-color: var(--surface-container-low); }
 .admin-surface { background-color: var(--surface); }
+
+/* ===== SunEditor customizations (shared RichTextEditor in @repo/ui) ===== */
+.suneditor-wrapper .sun-editor {
+  border: none !important;
+  font-family: "Public Sans", sans-serif;
+  background-color: transparent !important;
+}
+
+.suneditor-wrapper .sun-editor .se-toolbar {
+  background-color: var(--surface-container);
+  border-bottom: 1px solid var(--outline-variant);
+  padding: 6px 8px;
+  outline: none;
+}
+
+.suneditor-wrapper .sun-editor .se-btn {
+  color: var(--on-surface-variant);
+  border-radius: 6px;
+  margin: 1px;
+  transition: all 0.15s ease;
+}
+
+.suneditor-wrapper .sun-editor .se-btn:hover {
+  background-color: var(--surface-variant);
+  color: var(--primary);
+}
+
+.suneditor-wrapper .sun-editor .se-btn.active {
+  background-color: var(--primary);
+  color: var(--on-primary);
+}
+
+.suneditor-wrapper .sun-editor .se-wrapper-inner {
+  padding: 12px 14px;
+  min-height: 180px;
+}
+
+.suneditor-wrapper .sun-editor-editable {
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--on-surface);
+  background-color: transparent;
+}
+
+.suneditor-wrapper .sun-editor .se-placeholder {
+  color: var(--outline);
+  font-style: normal;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.65;
+}
+
+.suneditor-wrapper .sun-editor .se-resizing-bar,
+.suneditor-wrapper .sun-editor .se-status-bar,
+.suneditor-wrapper .sun-editor .se-navigation {
+  display: none !important;
+}

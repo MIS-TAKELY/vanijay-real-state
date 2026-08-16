@@ -17,6 +17,33 @@ export class AdminController {
   @Get('analytics/trend')
   analytics(@Query('days') days?: string) { return this.admin.analyticsTrend(days ? Number(days) : 30); }
 
+  @Get('analytics/overview')
+  analyticsOverview() { return this.admin.analyticsOverview(); }
+
+  @Get('analytics/funnel')
+  analyticsFunnel(@Query('days') days?: string) { return this.admin.analyticsFunnel(days ? Number(days) : 30); }
+
+  @Get('analytics/activity')
+  analyticsActivity(@Query('days') days?: string) { return this.admin.analyticsActivity(days ? Number(days) : 30); }
+
+  @Get('analytics/listings')
+  analyticsListings(@Query('days') days?: string) { return this.admin.analyticsListingPerformance(days ? Number(days) : 30); }
+
+  @Get('analytics/market')
+  analyticsMarket(@Query('days') days?: string) { return this.admin.analyticsMarket(days ? Number(days) : 365); }
+
+  @Get('analytics/searches')
+  analyticsSearches(@Query('days') days?: string) { return this.admin.analyticsSearchInsights(days ? Number(days) : 30); }
+
+  @Get('analytics/leads')
+  analyticsLeads(@Query('days') days?: string) { return this.admin.analyticsLeads(days ? Number(days) : 30); }
+
+  @Get('analytics/geography')
+  analyticsGeography(@Query('days') days?: string) { return this.admin.analyticsGeography(days ? Number(days) : 30); }
+
+  @Get('analytics/platform')
+  analyticsPlatform(@Query('days') days?: string) { return this.admin.analyticsPlatform(days ? Number(days) : 30); }
+
   @Get('users')
   users(@Query('q') q?: string) { return this.admin.listUsers(q); }
 
@@ -31,6 +58,16 @@ export class AdminController {
   @Get('properties')
   properties(@Query('search') search?: string, @Query('status') status?: string, @Query('type') type?: string, @Query('take') take?: string, @Query('skip') skip?: string) {
     return this.admin.listPropertiesAdmin({ search, status, type, take: take ? Number(take) : 50, skip: skip ? Number(skip) : 0 });
+  }
+
+  @Get('properties/:id')
+  property(@Param('id') id: string) {
+    return this.admin.getPropertyAdmin(id);
+  }
+
+  @Patch('properties/:id')
+  updateProperty(@Param('id') id: string, @Body() body: any, @CurrentUser('id') actorId: string) {
+    return this.admin.updatePropertyAdmin(actorId, id, body);
   }
 
   @Patch('properties/:id/moderate')

@@ -2,7 +2,7 @@ import 'dotenv/config';
 import { hashPassword } from "better-auth/crypto";
 import { randomUUID } from "node:crypto";
 import { PrismaPg } from '@prisma/adapter-pg';
-import { PrismaClient, KabadiUnit } from '@prisma/client';
+import { PrismaClient, KabadiUnit, PropertyType, PropertyStatus, VerificationStatus } from '@prisma/client';
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -190,6 +190,141 @@ async function main() {
     update: { role: ["ADMIN"], isVerified: true, emailVerified: true },
   });
   console.log(`Admin user seeded: ${adminEmail} / ${adminPassword}`);
+
+  // ---------- Demo marketplace: owners, listings, sold-price comps ----------
+  // Realistic demo data so the admin "Market price trends" chart (avg asking vs
+  // avg sold per month) has points across the last 12 months. LIVE properties
+  // feed the asking-price series; PropertySaleRecord feeds the sold-price comps.
+
+  const demoOwners = [
+    { name: 'Bikash Shrestha', email: 'seller1@lekhaprati.com', phone: '+9779800000001' },
+    { name: 'Sunita Rai', email: 'seller2@lekhaprati.com', phone: '+9779800000002' },
+    { name: 'Ram KC', email: 'seller3@lekhaprati.com', phone: '+9779800000003' },
+  ];
+  const ownerIds: string[] = [];
+  for (const o of demoOwners) {
+    const owner = await prisma.user.upsert({
+      where: { email: o.email },
+      create: {
+        id: 'owner-' + randomUUID().slice(0, 8),
+        name: o.name,
+        email: o.email,
+        emailVerified: true,
+        role: ['SELLER'],
+        isVerified: true,
+        agreedToTerms: true,
+        phoneNumber: o.phone,
+        phoneNumberVerified: true,
+        createdAt: new Date(Date.now() - 400 * 86400000),
+        updatedAt: new Date(),
+      },
+      update: {},
+    });
+    ownerIds.push(owner.id);
+  }
+  console.log('Demo owners seeded');
+
+  const monthsAgo = (months: number, extraDays = 0) => new Date(Date.now() - months * 30 * 86400000 + extraDays * 86400000);
+
+  const demoProperties: {
+    listingCode: string;
+    slug: string;
+    title: string;
+    propertyType: PropertyType;
+    province: string;
+    district: string;
+    municipality: string;
+    wardNumber: number;
+    areaName: string;
+    ropani: number;
+    aana: number;
+    askingPrice: number;
+    ownerIndex: number;
+    createdMonthsAgo: number;
+    status: PropertyStatus;
+    soldMonthsAgo?: number;
+    soldPrice?: number;
+  }[] = [
+    { listingCode: 'LOT-101-KTM', slug: 'buddhanagar-101', title: 'Residential plot, Buddhanagar', propertyType: PropertyType.RESIDENTIAL_LAND, province: 'Bagmati', district: 'Kathmandu', municipality: 'Kathmandu MC', wardNumber: 6, areaName: 'Buddhanagar', ropani: 0, aana: 4, askingPrice: 28000000, ownerIndex: 0, createdMonthsAgo: 11, status: PropertyStatus.LIVE },
+    { listingCode: 'LOT-102-LAL', slug: 'gwarko-102', title: 'Corner plot, Gwarko', propertyType: PropertyType.RESIDENTIAL_LAND, province: 'Bagmati', district: 'Lalitpur', municipality: 'Lalitpur MC', wardNumber: 10, areaName: 'Gwarko', ropani: 0, aana: 5, askingPrice: 32000000, ownerIndex: 1, createdMonthsAgo: 10, status: PropertyStatus.SOLD, soldMonthsAgo: 9, soldPrice: 30500000 },
+    { listingCode: 'LOT-103-BKT', slug: 'suryabinayak-103', title: 'Residential house, Suryabinayak', propertyType: PropertyType.RESIDENTIAL_HOUSE, province: 'Bagmati', district: 'Bhaktapur', municipality: 'Bhaktapur MC', wardNumber: 5, areaName: 'Suryabinayak', ropani: 0, aana: 8, askingPrice: 48000000, ownerIndex: 2, createdMonthsAgo: 10, status: PropertyStatus.LIVE },
+    { listingCode: 'LOT-104-PKR', slug: 'lakeside-104', title: 'Lake-view plot, Lakeside', propertyType: PropertyType.RESIDENTIAL_LAND, province: 'Gandaki', district: 'Kaski', municipality: 'Pokhara MC', wardNumber: 6, areaName: 'Lakeside', ropani: 0, aana: 6, askingPrice: 24500000, ownerIndex: 0, createdMonthsAgo: 9, status: PropertyStatus.SOLD, soldMonthsAgo: 8, soldPrice: 23200000 },
+    { listingCode: 'LOT-105-KTM', slug: 'thamel-105', title: 'Commercial land, Thamel', propertyType: PropertyType.COMMERCIAL_LAND, province: 'Bagmati', district: 'Kathmandu', municipality: 'Kathmandu MC', wardNumber: 11, areaName: 'Thamel', ropani: 0, aana: 3, askingPrice: 36000000, ownerIndex: 1, createdMonthsAgo: 8, status: PropertyStatus.LIVE },
+    { listingCode: 'LOT-106-LAL', slug: 'patan-durbar-106', title: 'Heritage home, Patan Durbar', propertyType: PropertyType.HERITAGE_HOME, province: 'Bagmati', district: 'Lalitpur', municipality: 'Lalitpur MC', wardNumber: 4, areaName: 'Patan', ropani: 0, aana: 10, askingPrice: 65000000, ownerIndex: 2, createdMonthsAgo: 7, status: PropertyStatus.SOLD, soldMonthsAgo: 6, soldPrice: 61000000 },
+    { listingCode: 'LOT-107-BKT', slug: 'chyamasingh-107', title: 'Residential plot, Chyamasingh', propertyType: PropertyType.RESIDENTIAL_LAND, province: 'Bagmati', district: 'Bhaktapur', municipality: 'Bhaktapur MC', wardNumber: 2, areaName: 'Chyamasingh', ropani: 0, aana: 4, askingPrice: 22000000, ownerIndex: 0, createdMonthsAgo: 6, status: PropertyStatus.LIVE },
+    { listingCode: 'LOT-108-PKR', slug: 'new-road-108', title: 'Commercial space, New Road', propertyType: PropertyType.COMMERCIAL_SPACE, province: 'Gandaki', district: 'Kaski', municipality: 'Pokhara MC', wardNumber: 8, areaName: 'New Road', ropani: 0, aana: 7, askingPrice: 30000000, ownerIndex: 1, createdMonthsAgo: 5, status: PropertyStatus.SOLD, soldMonthsAgo: 4, soldPrice: 28800000 },
+    { listingCode: 'LOT-109-KTM', slug: 'chovar-109', title: 'Agricultural land, Chovar', propertyType: PropertyType.AGRICULTURAL_LAND, province: 'Bagmati', district: 'Kathmandu', municipality: 'Kirtipur MC', wardNumber: 4, areaName: 'Chovar', ropani: 1, aana: 0, askingPrice: 18000000, ownerIndex: 2, createdMonthsAgo: 4, status: PropertyStatus.LIVE },
+    { listingCode: 'LOT-110-LAL', slug: 'sanepa-110', title: 'Residential plot, Sanepa', propertyType: PropertyType.RESIDENTIAL_LAND, province: 'Bagmati', district: 'Lalitpur', municipality: 'Lalitpur MC', wardNumber: 3, areaName: 'Sanepa', ropani: 0, aana: 3, askingPrice: 21000000, ownerIndex: 0, createdMonthsAgo: 3, status: PropertyStatus.SOLD, soldMonthsAgo: 2, soldPrice: 20000000 },
+    { listingCode: 'LOT-111-KTM', slug: 'jhamsikhel-111', title: 'Duplex, Jhamsikhel', propertyType: PropertyType.RESIDENTIAL_HOUSE, province: 'Bagmati', district: 'Kathmandu', municipality: 'Kathmandu MC', wardNumber: 9, areaName: 'Jhamsikhel', ropani: 0, aana: 6, askingPrice: 39000000, ownerIndex: 1, createdMonthsAgo: 1, status: PropertyStatus.LIVE },
+    { listingCode: 'LOT-112-BKT', slug: 'sallaghari-112', title: 'Corner plot, Sallaghari', propertyType: PropertyType.RESIDENTIAL_LAND, province: 'Bagmati', district: 'Bhaktapur', municipality: 'Bhaktapur MC', wardNumber: 4, areaName: 'Sallaghari', ropani: 0, aana: 5, askingPrice: 26500000, ownerIndex: 2, createdMonthsAgo: 0, status: PropertyStatus.LIVE },
+  ];
+
+  const coverImages = [
+    'https://images.unsplash.com/photo-1580587771525-78b9dba3b914?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200&h=800&fit=crop',
+    'https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200&h=800&fit=crop',
+  ];
+
+  for (let i = 0; i < demoProperties.length; i++) {
+    const p = demoProperties[i];
+    const created = monthsAgo(p.createdMonthsAgo);
+    const totalSqFt = p.ropani * 5476 + p.aana * 342.25; // 1 ropani = 5476 sqft, 1 aana = 342.25 sqft
+    await prisma.property.upsert({
+      where: { slug: p.slug },
+      create: {
+        listingCode: p.listingCode,
+        slug: p.slug,
+        title: p.title,
+        propertyType: p.propertyType,
+        status: p.status,
+        verificationLevel: p.status === PropertyStatus.SOLD ? VerificationStatus.LEVEL_3_FIELD_VERIFIED : VerificationStatus.LEVEL_2_DOC_VERIFIED,
+        askingPrice: p.askingPrice,
+        originalAskingPrice: p.askingPrice,
+        ownerId: ownerIds[p.ownerIndex],
+        publishedAt: created,
+        createdAt: created,
+        updatedAt: created,
+        location: {
+          create: {
+            province: p.province,
+            district: p.district,
+            municipality: p.municipality,
+            wardNumber: p.wardNumber,
+            areaName: p.areaName,
+          },
+        },
+        landArea: {
+          create: { ropani: p.ropani, aana: p.aana, totalSqFt, totalSqMeters: totalSqFt * 0.092903 },
+        },
+        media: {
+          create: { url: coverImages[i % coverImages.length], altText: p.title, isCover: true, sortOrder: 0 },
+        },
+      },
+      update: { status: p.status, askingPrice: p.askingPrice, propertyType: p.propertyType },
+    });
+  }
+  console.log('Demo listings seeded');
+
+  // Sold-price comps — feeds the admin market price trend (avg sold per month).
+  for (const p of demoProperties.filter((x) => x.status === PropertyStatus.SOLD)) {
+    const property = await prisma.property.findUnique({ where: { slug: p.slug }, select: { id: true } });
+    if (!property || p.soldMonthsAgo === undefined || p.soldPrice === undefined) continue;
+    const totalAana = p.ropani * 16 + p.aana;
+    await prisma.propertySaleRecord.upsert({
+      where: { propertyId: property.id },
+      create: {
+        propertyId: property.id,
+        soldPrice: p.soldPrice,
+        soldPricePerAana: totalAana ? Math.round(p.soldPrice / totalAana) : null,
+        soldDate: monthsAgo(p.soldMonthsAgo, 5),
+        verificationLevel: VerificationStatus.LEVEL_3_FIELD_VERIFIED,
+        daysOnMarket: Math.max(1, (p.createdMonthsAgo - p.soldMonthsAgo) * 30),
+      },
+      update: { soldPrice: p.soldPrice, soldDate: monthsAgo(p.soldMonthsAgo, 5) },
+    });
+  }
+  console.log('Sold-price comps seeded');
 
   console.log('Seed complete');
 }

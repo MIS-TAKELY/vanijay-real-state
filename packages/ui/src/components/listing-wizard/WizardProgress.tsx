@@ -1,5 +1,5 @@
-import { cn } from "@repo/ui";
-import { Icon } from "@repo/ui";
+import { cn } from "@/lib/utils";
+import { Icon } from "@/components/Icon";
 import { WIZARD_STEPS } from "./constants";
 
 interface WizardProgressProps {

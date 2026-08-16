@@ -1,17 +1,22 @@
 "use client";
 
-import { cn, Icon } from "@repo/ui";
+import { cn } from "@/lib/utils";
+import { Icon } from "@/components/Icon";
 import {
-  formatNPR,
-  labelEnum,
+  askingPriceNumber,
+  formatLandAreaLabel,
+  totalSqFt,
+} from "./draft";
+import {
+  FALLBACK_GRADIENT,
   TYPE_GRADIENTS,
   TYPE_LABELS,
-  FALLBACK_GRADIENT,
-} from "lib/api/services/properties/types";
-import { askingPriceNumber, formatLandAreaLabel, totalSqFt } from "./draft";
+  formatNPR,
+  labelEnum,
+  stripHtml,
+} from "./format";
+import { listingCoverImageUrl } from "./media";
 import type { StepProps } from "./types";
-import { listingCoverImageUrl } from "lib/media/videoThumbnail";
-import { stripHtml } from "components/real-state/googlemap/utils";
 
 interface ChecklistItem {
   label: string;

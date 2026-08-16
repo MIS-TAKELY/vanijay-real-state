@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Button, Icon, Input, toast, Alert, Badge } from "@repo/ui";
+import { Alert, Badge, Button, Icon, Input, toast } from "@repo/ui";
+import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
 import { kabadiCategories, kabadiSetRates, KabadiCategory } from "lib/api";
 
@@ -97,46 +98,31 @@ export default function ScrapeCmsPage() {
                 <FilterChip key={c.slug} active={filter === c.slug} onClick={() => setFilter(c.slug)}>{c.name}</FilterChip>
               ))}
             </div>
-            <div className="admin-surface border border-outline-variant rounded-xl overflow-hidden">
-              <div className="overflow-x-auto">
-                <table className="w-full min-w-[640px] text-left text-sm">
-                  <thead className="border-b border-outline-variant bg-surface-container-low font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">
-                    <tr>
-                      <th className="px-md py-3">Item</th>
-                      <th className="px-md py-3">Category</th>
-                      <th className="px-md py-3">Unit</th>
-                      <th className="px-md py-3">Rate (NPR)</th>
-                      <th className="px-md py-3">Popular</th>
-                      <th className="px-md py-3">Published</th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-outline-variant/60">
-                    {filtered.length === 0 ? (
-                      <tr><td colSpan={6} className="px-md py-lg text-center text-on-surface-variant">No rates for this filter.</td></tr>
-                    ) : (
-                      filtered.map((item, idx) => {
-                        const cat = cats.find((c) => c.id === item.categoryId);
-                        return (
-                          <tr key={item.id ?? item.name} className="hover:bg-surface-container/60">
-                            <td className="px-md py-2"><Input value={item.name} onChange={(e) => setRow(idx, { name: e.target.value })} className="h-9 bg-surface" /></td>
-                            <td className="px-md py-2 text-on-surface-variant">{cat?.name}</td>
-                            <td className="px-md py-2">
-                              <select value={item.unit} onChange={(e) => setRow(idx, { unit: e.target.value as "KG" | "PIECE" })} className="h-9 rounded-md border border-outline bg-surface px-2 text-sm">
-                                <option value="KG">KG</option>
-                                <option value="PIECE">Piece</option>
-                              </select>
-                            </td>
-                            <td className="px-md py-2"><Input type="number" value={item.rate} onChange={(e) => setRow(idx, { rate: e.target.value })} className="h-9 w-28 bg-surface mono-stat" /></td>
-                            <td className="px-md py-2"><input type="checkbox" checked={item.popular} onChange={(e) => setRow(idx, { popular: e.target.checked })} /></td>
-                            <td className="px-md py-2"><input type="checkbox" checked={item.published} onChange={(e) => setRow(idx, { published: e.target.checked })} /></td>
-                          </tr>
-                        );
-                      })
-                    )}
-                  </tbody>
-                </table>
-              </div>
-            </div>
+            <AdminDataTable
+              minWidth={640}
+              columns={["Item", "Category", "Unit", "Rate (NPR)", "Popular", "Published"]}
+              empty={filtered.length === 0}
+              emptyMessage="No rates for this filter."
+            >
+              {filtered.map((item, idx) => {
+                const cat = cats.find((c) => c.id === item.categoryId);
+                return (
+                  <AdminDataTable.Row key={item.id ?? item.name}>
+                    <AdminDataTable.Cell className="py-2"><Input value={item.name} onChange={(e) => setRow(idx, { name: e.target.value })} className="h-9 bg-surface" /></AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2 text-on-surface-variant">{cat?.name}</AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2">
+                      <select value={item.unit} onChange={(e) => setRow(idx, { unit: e.target.value as "KG" | "PIECE" })} className="h-9 rounded-md border border-outline bg-surface px-2 text-sm">
+                        <option value="KG">KG</option>
+                        <option value="PIECE">Piece</option>
+                      </select>
+                    </AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2"><Input type="number" value={item.rate} onChange={(e) => setRow(idx, { rate: e.target.value })} className="h-9 w-28 bg-surface mono-stat" /></AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2"><input type="checkbox" checked={item.popular} onChange={(e) => setRow(idx, { popular: e.target.checked })} /></AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2"><input type="checkbox" checked={item.published} onChange={(e) => setRow(idx, { published: e.target.checked })} /></AdminDataTable.Cell>
+                  </AdminDataTable.Row>
+                );
+              })}
+            </AdminDataTable>
           </>
         )}
       </section>

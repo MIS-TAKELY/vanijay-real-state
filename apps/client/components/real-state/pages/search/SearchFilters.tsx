@@ -13,7 +13,7 @@ import {
 } from "@repo/ui";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PROVINCES } from "../dashboard/listings/new/constants";
+import { PROVINCES } from "@repo/ui";
 
 const DISTRICT_OPTIONS = [
   { value: "any", label: "All Districts" },

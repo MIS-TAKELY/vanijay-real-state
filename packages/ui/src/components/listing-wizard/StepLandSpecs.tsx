@@ -1,19 +1,11 @@
 "use client";
 
-import {
-  cn,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Switch,
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@repo/ui";
-import { formatNPR } from "lib/api/services/properties/types";
+import { cn } from "@/lib/utils";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useMemo } from "react";
 import {
   BIGHA_PARTS,
@@ -26,6 +18,7 @@ import {
   type UnitSystem,
 } from "./constants";
 import { pricePerUnit, totalSqFt } from "./draft";
+import { formatNPR } from "./format";
 import { FieldError, type StepProps } from "./types";
 
 export function StepLandSpecs({ draft, update, errors }: StepProps) {

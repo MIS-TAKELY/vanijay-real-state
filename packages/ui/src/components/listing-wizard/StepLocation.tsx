@@ -1,20 +1,16 @@
 "use client";
 
-import type { ReverseGeocodeAddress, ReverseGeocodeResult } from "@repo/ui";
-import {
-  cn,
-  Icon,
-  Input,
-  Label,
-  LocationSearch,
-  reverseGeocode,
-  reverseGeocodeGoogle,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/ui";
+import { cn } from "@/lib/utils";
+import { Icon } from "@/components/Icon";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { LocationSearch } from "../LocationSearch";
+import { reverseGeocode } from "../reverseGeocode";
+import type {
+  ReverseGeocodeAddress,
+  ReverseGeocodeResult,
+} from "../reverseGeocode";
 import dynamic from "next/dynamic";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
@@ -28,7 +24,6 @@ import { FieldError, type StepProps } from "./types";
 
 const GOOGLE_MAPS_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY ?? "";
 
-const GOOGLE_ENDPOINT = "https://maps.googleapis.com/maps/api/geocode/json";
 const NOMINATIM_ENDPOINT = "https://nominatim.openstreetmap.org/reverse";
 
 async function reverseGeocodeBest(
@@ -40,7 +35,7 @@ async function reverseGeocodeBest(
 }
 
 const MapPicker = dynamic(
-  () => import("@repo/ui/gmap").then((m) => m.GoogleMapPicker),
+  () => import("@/components/GoogleMapPicker").then((m) => m.GoogleMapPicker),
   {
     ssr: false,
     loading: () => (
@@ -52,7 +47,12 @@ const MapPicker = dynamic(
   },
 );
 
-export function StepLocation({ draft, update, errors }: StepProps) {
+interface StepLocationProps extends StepProps {
+  /** Hide the map picker + search (e.g. admin console — no map key). */
+  showMap?: boolean;
+}
+
+export function StepLocation({ draft, update, errors, showMap = true }: StepLocationProps) {
   const selProvince = PROVINCES.find((p) => p.name === draft.province);
   const selDistrict = selProvince?.districts.find(
     (d) => d.name === draft.district,
@@ -137,7 +137,6 @@ export function StepLocation({ draft, update, errors }: StepProps) {
             controller.signal,
           );
           if (controller.signal.aborted) return;
-          console.log("result-->", result, draftRef.current, isWritable);
 
           const patch = buildLocationPatch(
             result,
@@ -247,32 +246,36 @@ export function StepLocation({ draft, update, errors }: StepProps) {
         </div>
       </div>
 
-      {/* Search (Nominatim, Nepal) — reusable <LocationSearch /> */}
-      <LocationSearch
-        onSelect={(r) => {
-          update({ latitude: r.lat, longitude: r.lng });
-          handleMapSelect([r.lat, r.lng]);
-        }}
-      />
+      {showMap ? (
+        <>
+          {/* Search (Nominatim, Nepal) — reusable <LocationSearch /> */}
+          <LocationSearch
+            onSelect={(r) => {
+              update({ latitude: r.lat, longitude: r.lng });
+              handleMapSelect([r.lat, r.lng]);
+            }}
+          />
 
-      {/* Map picker — reusable <MapPicker /> */}
-      <MapPicker
-        apiKey={GOOGLE_MAPS_API_KEY}
-        value={latLng}
-        onChange={handleMapSelect}
-        helperText={
-          resolving
-            ? "Resolving location details…"
-            : "Click anywhere on the map to drop a pin, or drag the marker to adjust."
-        }
-      />
+          {/* Map picker — reusable <MapPicker /> */}
+          <MapPicker
+            apiKey={GOOGLE_MAPS_API_KEY}
+            value={latLng}
+            onChange={handleMapSelect}
+            helperText={
+              resolving
+                ? "Resolving location details…"
+                : "Click anywhere on the map to drop a pin, or drag the marker to adjust."
+            }
+          />
 
-      {resolving && (
-        <div className="flex items-center gap-sm text-sm text-on-surface-variant">
-          <Icon name="sync" className="text-[18px] animate-spin" />
-          <span>Auto-filling address fields from the map pin…</span>
-        </div>
-      )}
+          {resolving && (
+            <div className="flex items-center gap-sm text-sm text-on-surface-variant">
+              <Icon name="sync" className="text-[18px] animate-spin" />
+              <span>Auto-filling address fields from the map pin…</span>
+            </div>
+          )}
+        </>
+      ) : null}
     </div>
   );
 }

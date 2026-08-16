@@ -1,17 +1,14 @@
 "use client";
 
-import {
-  cn,
-  Icon,
-  Input,
-  Label,
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@repo/ui";
-import { RichTextEditor } from "components/real-state/common/RichTextEditor";
-import { stripHtml } from "components/real-state/googlemap/utils";
+import { cn } from "@/lib/utils";
+import { Icon } from "@/components/Icon";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { RichTextEditor } from "./RichTextEditor";
 import { PROPERTY_TYPES } from "./constants";
 import { DESC_MAX, TITLE_MAX } from "./draft";
+import { stripHtml } from "./format";
 import { FieldError, type StepProps } from "./types";
 
 export function StepBasics({ draft, update, errors }: StepProps) {

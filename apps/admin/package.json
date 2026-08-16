@@ -4,12 +4,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
     "lint": "eslint"
   },
-    "dependencies": {
+  "dependencies": {
     "@repo/auth": "workspace:*",
     "@repo/ui": "workspace:*",
     "next": "16.2.11",

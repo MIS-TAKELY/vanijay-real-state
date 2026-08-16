@@ -69,6 +69,90 @@ export function adminVerificationQueue() {
   return apiFetch<AdminProperty[]>("/api/v1/admin/verification-queue");
 }
 
+export function adminModerateProperty(
+  id: string,
+  patch: { status?: string; adminNote?: string; isFeatured?: boolean; verificationLevel?: string },
+) {
+  return apiFetch<AdminProperty>(`/api/v1/admin/properties/${id}/moderate`, { method: "PATCH", body: patch });
+}
+
+export function adminProperty(id: string) {
+  return apiFetch<AdminPropertyDetail>(`/api/v1/admin/properties/${id}`);
+}
+
+export function adminUpdateProperty(id: string, patch: AdminPropertyPatch) {
+  return apiFetch<AdminPropertyDetail>(`/api/v1/admin/properties/${id}`, { method: "PATCH", body: patch });
+}
+
+// ---- Uploads (media / documents on the shared /api/v1/uploads endpoint) ----
+// Used by the shared listing wizard on the admin edit screen.
+
+export interface AdminUploadedAsset {
+  url: string;
+  secureUrl?: string;
+  publicId?: string;
+  originalFilename?: string;
+}
+
+async function adminUploadForm(file: File, folder: string): Promise<AdminUploadedAsset> {
+  const formData = new FormData();
+  formData.append("file", file);
+  const url = new URL(`${API_BASE}/api/v1/uploads`);
+  url.searchParams.set("folder", folder);
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 180_000);
+  let res: Response;
+  try {
+    res = await fetch(url.toString(), {
+      method: "POST",
+      body: formData,
+      credentials: "include",
+      signal: controller.signal,
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+  if (!res.ok) {
+    let details: unknown;
+    try {
+      details = await res.json();
+    } catch {
+      details = await res.text();
+    }
+    throw new ApiError(`Upload failed (${res.status})`, res.status, details);
+  }
+  return res.json() as Promise<AdminUploadedAsset>;
+}
+
+export function adminUploadFile(file: File, folder = "properties") {
+  return adminUploadForm(file, folder);
+}
+
+export async function adminUploadFiles(files: File[], folder = "properties") {
+  if (files.length === 0) return [];
+  const results: AdminUploadedAsset[] = [];
+  let lastError: unknown = null;
+  for (const file of files) {
+    try {
+      results.push(await adminUploadForm(file, folder));
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  if (results.length === 0 && lastError) throw lastError;
+  return results;
+}
+
+export async function adminDeleteUpload(publicId: string) {
+  const res = await fetch(`${API_BASE}/api/v1/uploads/${encodeURIComponent(publicId)}`, {
+    method: "DELETE",
+    credentials: "include",
+  });
+  if (!res.ok) throw new ApiError(`Delete failed (${res.status})`, res.status);
+  return res.json() as Promise<{ result: string }>;
+}
+
 export function adminDocuments() {
   return apiFetch<unknown[]>("/api/v1/admin/documents");
 }
@@ -164,6 +248,99 @@ export function kabadiDeleteItem(id: string) {
   return apiFetch<{ deleted: boolean }>("/api/v1/admin/kabadi/items/" + id, { method: "DELETE" });
 }
 
+// Analytics
+
+export interface KpiValue {
+  value: number;
+  delta: number;
+}
+
+export interface AnalyticsOverviewData {
+  views: KpiValue;
+  uniqueViewers: KpiValue;
+  searches: KpiValue;
+  inquiries: KpiValue;
+  phoneClicks: KpiValue;
+  favorites: KpiValue;
+  cartAdds: KpiValue;
+  shares: KpiValue;
+  newListings: KpiValue;
+  newUsers: KpiValue;
+}
+
+export interface FunnelStep {
+  step: string;
+  value: number;
+}
+
+export interface ActivityDay {
+  date: string;
+  views: number;
+  searches: number;
+  inquiries: number;
+  phoneClicks: number;
+  favorites: number;
+  cartAdds: number;
+  shares: number;
+  listings: number;
+  users: number;
+  questions: number;
+  answers: number;
+}
+
+export interface TopListing {
+  id: string;
+  listingCode: string;
+  title: string;
+  slug: string;
+  status: string;
+  propertyType: string;
+  askingPrice: number;
+  location: string;
+  views: number;
+  inquiries: number;
+  favorites: number;
+  phoneClicks: number;
+}
+
+export interface ListingPerformanceData {
+  top: TopListing[];
+  byType: { propertyType: string; _count: { _all: number } }[];
+  byStatus: { status: string; _count: { _all: number } }[];
+}
+
+export interface MarketPoint {
+  month: string;
+  avgAsking: number;
+  listingCount: number;
+  avgSold: number;
+  soldCount: number;
+  avgSoldPerAana: number;
+}
+
+export interface SearchInsightsData {
+  topQueries: { query: string; count: number }[];
+  topDistricts: { district: string; count: number }[];
+}
+
+export interface LeadsData {
+  byType: { type: string; _count: { _all: number } }[];
+  byStatus: { status: string; _count: { _all: number } }[];
+  byVerified: { isVerifiedLead: boolean; _count: { _all: number } }[];
+  total: number;
+}
+
+export interface GeographyData {
+  district: string;
+  views: number;
+}
+
+export interface PlatformHealthData {
+  sharesByPlatform: { platform: string; count: number }[];
+  appointmentsByStatus: { status: string; count: number }[];
+  qaActivity: { date: string; questions: number; answers: number }[];
+}
+
 // Settings
 
 export function getSettings() {
@@ -211,6 +388,87 @@ export interface AdminProperty {
   owner?: { id: string; name: string; email: string } | null;
   location?: { district?: string; municipality?: string; areaName?: string } | null;
   createdAt: string;
+}
+
+export interface AdminPropertyDetail extends AdminProperty {
+  slug: string;
+  description?: string | null;
+  verificationLevel: string;
+  pricePerAana?: string | null;
+  originalAskingPrice?: string | null;
+  roadAccessWidthFt?: number | null;
+  roadType?: string | null;
+  facing?: string | null;
+  isCornerPlot: boolean;
+  adminNote?: string | null;
+  agentId?: string | null;
+  location?: {
+    province: string;
+    district: string;
+    municipality: string;
+    wardNumber: number;
+    areaName: string;
+    addressText?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  } | null;
+  landArea?: {
+    ropani: number;
+    aana: number;
+    paisa: number;
+    daam: number;
+    bigha?: number | null;
+    katha?: number | null;
+    dhur?: number | null;
+    totalSqFt: number;
+    totalSqMeters: number;
+  } | null;
+  media?: {
+    id: string;
+    type: string;
+    url: string;
+    altText?: string | null;
+    sortOrder: number;
+    isCover: boolean;
+  }[];
+  agent?: { id: string; name: string; email: string } | null;
+}
+
+export interface AdminPropertyPatch {
+  title?: string;
+  description?: string | null;
+  propertyType?: string;
+  status?: string;
+  askingPrice?: number;
+  pricePerAana?: number | null;
+  roadAccessWidthFt?: number | null;
+  roadType?: string | null;
+  facing?: string | null;
+  isCornerPlot?: boolean;
+  isFeatured?: boolean;
+  adminNote?: string | null;
+  location?: {
+    province: string;
+    district: string;
+    municipality: string;
+    wardNumber: number;
+    areaName: string;
+    addressText?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  };
+  landArea?: {
+    ropani?: number;
+    aana?: number;
+    paisa?: number;
+    daam?: number;
+    bigha?: number | null;
+    katha?: number | null;
+    dhur?: number | null;
+    totalSqFt?: number;
+    totalSqMeters?: number;
+  };
+  media?: { url: string; altText?: string | null; type?: string; sortOrder?: number; isCover?: boolean }[];
 }
 
 export interface AdminUser {

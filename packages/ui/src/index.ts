@@ -231,6 +231,54 @@ export {
 } from "./components/ui/tooltip";
 
 /* ------------------------------------------------------------------ */
+/* Charts (TanStack Charts — reusable dashboard primitives)            */
+/* ------------------------------------------------------------------ */
+
+export {
+  CHART_THEME,
+  formatNumber,
+  formatCompact,
+  formatNpr,
+  formatMonth,
+  formatTickDate,
+} from "./components/charts/format";
+
+export { FunnelChart } from "./components/charts/FunnelChart";
+export type { FunnelStep } from "./components/charts/FunnelChart";
+
+export { ActivityChart } from "./components/charts/ActivityChart";
+export type { ActivityDay } from "./components/charts/ActivityChart";
+
+export { Donut, fromGroupBy } from "./components/charts/Donut";
+export type { DonutSlice } from "./components/charts/Donut";
+
+export { PriceTrendChart } from "./components/charts/PriceTrendChart";
+export type { MarketPoint } from "./components/charts/PriceTrendChart";
+
+export { HorizontalBars } from "./components/charts/HorizontalBars";
+
+export { SearchQueriesChart } from "./components/charts/SearchQueriesChart";
+export type { SearchInsights } from "./components/charts/SearchQueriesChart";
+
+export { InquiryCharts } from "./components/charts/InquiryCharts";
+export type { Leads } from "./components/charts/InquiryCharts";
+
+export { DistrictBarChart } from "./components/charts/DistrictBarChart";
+export type { DistrictDemand } from "./components/charts/DistrictBarChart";
+
+export { PlatformCharts } from "./components/charts/PlatformCharts";
+export type { PlatformHealth } from "./components/charts/PlatformCharts";
+
+export { TrendChart } from "./components/charts/TrendChart";
+export type { TrendPoint } from "./components/charts/TrendChart";
+
+/* ------------------------------------------------------------------ */
+/* Listing wizard (shared by the seller dashboard + admin console)     */
+/* ------------------------------------------------------------------ */
+
+export * from "./components/listing-wizard";
+
+/* ------------------------------------------------------------------ */
 /* Reusable location components                                        */
 /* ------------------------------------------------------------------ */
 

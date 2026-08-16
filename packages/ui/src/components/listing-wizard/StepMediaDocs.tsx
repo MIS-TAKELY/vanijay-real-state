@@ -1,23 +1,15 @@
 "use client";
 
-import {
-  Button,
-  cn,
-  Icon,
-  Input,
-  Label,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@repo/ui";
-import { ApiError } from "lib/api/core/client";
-import { deleteUpload, uploadFile, uploadFiles } from "lib/api/services/uploads";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { Icon } from "@/components/Icon";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useRef, useState } from "react";
-import { VideoPoster } from "components/real-state/pages/listing/VideoPoster";
+import { VideoPoster } from "./VideoPoster";
 import type { DraftDocument, DraftMedia } from "./draft";
-import type { StepProps } from "./types";
+import { getErrorMessage, type StepProps, type WizardUploads } from "./types";
 
 const DROP =
   "flex h-28 w-full items-center justify-center rounded-xl border border-dashed border-outline-variant text-on-surface-variant hover:border-primary hover:text-primary transition-colors cursor-pointer";
@@ -51,6 +43,10 @@ interface PendingUpload {
   kind: "photo" | "video" | "document";
 }
 
+interface StepMediaDocsProps extends StepProps {
+  uploads: WizardUploads;
+}
+
 /**
  * Media & Documents step.
  *
@@ -60,7 +56,7 @@ interface PendingUpload {
  * captured too. Cadastral map / ownership documents remain lightweight helpers
  * (uploaded here for review) — the verification team finalizes those records.
  */
-export function StepMediaDocs({ draft, update }: StepProps) {
+export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
   const photoInputRef = useRef<HTMLInputElement>(null);
   const videoInputRef = useRef<HTMLInputElement>(null);
   const cadastralInputRef = useRef<HTMLInputElement>(null);
@@ -115,7 +111,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
     setPending((prev) => [...prev, ...items]);
 
     try {
-      const assets = await uploadFiles(accepted, "properties");
+      const assets = await uploads.uploadFiles(accepted, "properties");
       const uploaded: DraftMedia[] = assets.map((asset) => ({
         url: asset.secureUrl || asset.url,
         publicId: asset.publicId,
@@ -124,11 +120,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
       }));
       update({ media: [...mediaRef.current, ...uploaded] });
     } catch (error) {
-      setUploadError(
-        error instanceof ApiError
-          ? error.message
-          : "Couldn't upload your photos. Check the connection and try again.",
-      );
+      setUploadError(getErrorMessage(error));
     } finally {
       finishPending(items);
       if (photoInputRef.current) photoInputRef.current.value = "";
@@ -176,7 +168,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
       // reject concurrent large uploads.
       const uploaded: DraftMedia[] = [];
       for (const file of accepted) {
-        const asset = await uploadFile(file, "properties");
+        const asset = await uploads.uploadFile(file, "properties");
         uploaded.push({
           url: asset.secureUrl || asset.url,
           publicId: asset.publicId,
@@ -186,11 +178,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
       }
       update({ media: [...mediaRef.current, ...uploaded] });
     } catch (error) {
-      setUploadError(
-        error instanceof ApiError
-          ? error.message
-          : "Couldn't upload your videos. Check the connection and try again.",
-      );
+      setUploadError(getErrorMessage(error));
     } finally {
       finishPending(items);
       if (videoInputRef.current) videoInputRef.current.value = "";
@@ -200,7 +188,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
   const removeMediaItem = (item: DraftMedia) => {
     update({ media: draft.media.filter((m) => m !== item) });
     if (item.publicId) {
-      deleteUpload(item.publicId).catch(() => {/* orphan is harmless */});
+      uploads.deleteUpload(item.publicId).catch(() => {/* orphan is harmless */});
     }
   };
 
@@ -216,7 +204,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
     setDocUploading(true);
     setUploadError(null);
     try {
-      const asset = await uploadFile(file, "documents");
+      const asset = await uploads.uploadFile(file, "documents");
       const sizeMb = Number((file.size / (1024 * 1024)).toFixed(2));
       const doc: DraftDocument = {
         type: selectedDocType,
@@ -228,11 +216,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
       update({ documents: [...draft.documents, doc] });
       setSelectedDocType("");
     } catch (error) {
-      setUploadError(
-        error instanceof ApiError
-          ? error.message
-          : "Couldn't upload the document.",
-      );
+      setUploadError(getErrorMessage(error));
     } finally {
       setDocUploading(false);
       if (docInputRef.current) docInputRef.current.value = "";
@@ -242,7 +226,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
   const removeDocument = (doc: DraftDocument) => {
     update({ documents: draft.documents.filter((d) => d !== doc) });
     if (doc.publicId) {
-      deleteUpload(doc.publicId).catch(() => {/* orphan is harmless */});
+      uploads.deleteUpload(doc.publicId).catch(() => {/* orphan is harmless */});
     }
   };
 
@@ -252,7 +236,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
     setCadastralUploading(true);
     setUploadError(null);
     try {
-      const asset = await uploadFile(file, "documents");
+      const asset = await uploads.uploadFile(file, "documents");
       const item: DraftMedia = {
         url: asset.secureUrl || asset.url,
         publicId: asset.publicId,
@@ -269,14 +253,10 @@ export function StepMediaDocs({ draft, update }: StepProps) {
         ],
       });
       if (previous?.publicId) {
-        deleteUpload(previous.publicId).catch(() => {/* orphan is harmless */});
+        uploads.deleteUpload(previous.publicId).catch(() => {/* orphan is harmless */});
       }
     } catch (error) {
-      setUploadError(
-        error instanceof ApiError
-          ? error.message
-          : "Couldn't upload the cadastral map.",
-      );
+      setUploadError(getErrorMessage(error));
     } finally {
       setCadastralUploading(false);
       if (cadastralInputRef.current) cadastralInputRef.current.value = "";
@@ -287,7 +267,7 @@ export function StepMediaDocs({ draft, update }: StepProps) {
     const item = cadastral;
     update({ media: draft.media.filter((m) => m.type !== "CADASTRAL_MAP") });
     if (item?.publicId) {
-      deleteUpload(item.publicId).catch(() => {/* orphan is harmless */});
+      uploads.deleteUpload(item.publicId).catch(() => {/* orphan is harmless */});
     }
   };
 

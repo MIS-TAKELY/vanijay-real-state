@@ -1,6 +1,11 @@
 {
   "extends": "@repo/typescript-config/react-library.json",
   "compilerOptions": {
+    // The package ships raw TS source consumed by bundler-based Next apps, so
+    // typecheck it the same way (NodeNext can't resolve the @/* paths or the
+    // CJS export maps of some deps like suneditor-react).
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]

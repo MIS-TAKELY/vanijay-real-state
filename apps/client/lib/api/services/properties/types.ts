@@ -1,4 +1,11 @@
 import { listingCoverImageUrl } from "lib/media/videoThumbnail";
+import {
+  TYPE_LABELS,
+  TYPE_GRADIENTS,
+  FALLBACK_GRADIENT,
+  formatNPR,
+  labelEnum,
+} from "@repo/ui";
 
 export interface ApiPropertyLocation {
   province: string;
@@ -139,23 +146,8 @@ export interface CardProperty {
   isVerified?: boolean;
 }
 
-export const TYPE_LABELS: Record<string, string> = {
-  RESIDENTIAL_LAND: "Residential Land",
-  COMMERCIAL_LAND: "Commercial Land",
-  AGRICULTURAL_LAND: "Agricultural Land",
-  COMMERCIAL_SPACE: "Commercial Space",
-  HERITAGE_HOME: "Heritage Home",
-  RESIDENTIAL_HOUSE: "Residential House",
-};
-
-export const TYPE_GRADIENTS: Record<string, string> = {
-  RESIDENTIAL_LAND: "from-[#A8C0A0] via-[#7A9A70] to-[#5A7A55]",
-  COMMERCIAL_LAND: "from-[#C8C0B0] via-[#A89880] to-[#887860]",
-  AGRICULTURAL_LAND: "from-[#B0C8A0] via-[#88A870] to-[#688850]",
-  COMMERCIAL_SPACE: "from-[#90A8C0] via-[#6A88A8] to-[#4A6888]",
-  HERITAGE_HOME: "from-[#C0A890] via-[#A08868] to-[#806848]",
-  RESIDENTIAL_HOUSE: "from-[#A0B8C8] via-[#7890A8] to-[#587088]",
-};
+// Presentational helpers moved to @repo/ui (shared with the admin console).
+export { TYPE_LABELS, TYPE_GRADIENTS, FALLBACK_GRADIENT, formatNPR, labelEnum };
 
 export const VERIFICATION_LABELS: Record<string, string> = {
   UNVERIFIED: "Unverified",
@@ -164,23 +156,6 @@ export const VERIFICATION_LABELS: Record<string, string> = {
   LEVEL_3_FIELD_VERIFIED: "Field Verified",
   REJECTED: "Rejected",
 };
-
-export const FALLBACK_GRADIENT = "from-[#A8C0A0] via-[#7A9A70] to-[#5A7A55]";
-
-export function formatNPR(n: number): string {
-  return `NPR ${new Intl.NumberFormat("en-US").format(n)}`;
-}
-
-export function labelEnum(
-  value: string,
-  labels: Record<string, string>,
-): string {
-  if (labels[value]) return labels[value];
-  return value
-    .replace(/_/g, " ")
-    .toLowerCase()
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
 
 export function formatLocation(loc?: ApiPropertyLocation | null): string {
   if (!loc) return "Location TBD";

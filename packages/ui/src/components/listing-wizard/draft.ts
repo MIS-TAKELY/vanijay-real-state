@@ -1,11 +1,6 @@
-import type {
-  ApiProperty,
-  CreatePropertyPayload,
-} from "lib/api/services/properties/types";
-import { stripHtml } from "components/real-state/googlemap/utils";
-import { PRICE_UNITS, type UnitSystem } from "./constants";
-
-export type { CreatePropertyPayload };
+import type { UnitSystem } from "./constants";
+import { PRICE_UNITS } from "./constants";
+import { stripHtml } from "./format";
 
 export interface DraftMedia {
   url: string;
@@ -198,7 +193,8 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
   }
 
   return errors;
-} 
+}
+
 export function validateAll(draft: ListingDraft): {
   errors: DraftErrors;
   firstInvalidStep: number | null;
@@ -210,6 +206,66 @@ export function validateAll(draft: ListingDraft): {
     }
   }
   return { errors: {}, firstInvalidStep: null };
+}
+
+/* ------------------------------------------------------------------ */
+/* Payload types — the wire shape sent to the API on create/update.    */
+/* Mirrors the API's CreatePropertyInput DTO. Enum fields stay `string` */
+/* so consumers don't depend on Prisma — the API validates and returns */
+/* 400 on bad values.                                                  */
+/* ------------------------------------------------------------------ */
+
+export interface PropertyMediaPayload {
+  type?: string; // MediaType enum (IMAGE | VIDEO_WALKTHROUGH | CADASTRAL_MAP)
+  url: string;
+  altText?: string;
+  sortOrder?: number;
+  isCover?: boolean;
+}
+
+export interface PropertyDocumentPayload {
+  type: string; // DocumentType enum
+  fileUrl: string;
+  fileName: string;
+  fileSizeMb: number;
+  isPrivate?: boolean;
+}
+
+export interface CreatePropertyPayload {
+  title: string;
+  description?: string;
+  propertyType: string; // PropertyType enum
+  askingPrice: number;
+  pricePerAana?: number;
+  roadAccessWidthFt?: number;
+  roadType?: string; // RoadType enum
+  facing?: string; // FacingDirection enum
+  isCornerPlot?: boolean;
+  landArea: {
+    ropani: number;
+    aana: number;
+    paisa?: number;
+    daam?: number;
+    bigha?: number;
+    katha?: number;
+    dhur?: number;
+    totalSqFt: number;
+    totalSqMeters: number;
+  };
+  location: {
+    province: string;
+    district: string;
+    municipality: string;
+    wardNumber: number;
+    areaName: string;
+    addressText?: string;
+    latitude?: number;
+    longitude?: number;
+  };
+  /** Uploaded gallery + video assets (Cloudinary URLs). */
+  media?: PropertyMediaPayload[];
+  /** Verification documents (Lalpurja, citizenship, tax clearance, etc.). */
+  documents?: PropertyDocumentPayload[];
 }
 
 export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
@@ -345,12 +401,64 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
   };
 }
 
+/* ------------------------------------------------------------------ */
+/* Edit-mode hydration — the shape of a property record returned by    */
+/* either the client API or the admin API. Structural subset of the    */
+/* full record: only the fields the wizard reads.                      */
+/* ------------------------------------------------------------------ */
+
+export interface WizardProperty {
+  title: string;
+  propertyType: string;
+  description?: string | null;
+  askingPrice: number | string;
+  pricePerAana?: number | string | null;
+  roadAccessWidthFt?: number | null;
+  roadType?: string | null;
+  facing?: string | null;
+  isCornerPlot: boolean;
+  location?: {
+    province?: string;
+    district?: string;
+    municipality?: string;
+    wardNumber?: number | null;
+    areaName?: string;
+    addressText?: string | null;
+    latitude?: number | null;
+    longitude?: number | null;
+  } | null;
+  landArea?: {
+    ropani?: number;
+    aana?: number;
+    paisa?: number;
+    daam?: number;
+    bigha?: number | null;
+    katha?: number | null;
+    dhur?: number | null;
+    totalSqFt?: number;
+    totalSqMeters?: number;
+  } | null;
+  media?: {
+    type?: string | null;
+    url: string;
+    altText?: string | null;
+    sortOrder?: number;
+    isCover?: boolean;
+  }[];
+  documents?: {
+    type: string;
+    fileUrl: string;
+    fileName: string;
+    fileSizeMb: number;
+  }[];
+}
+
 /**
  * Hydrate a create draft from an existing API record (used by the listing
  * wizard's edit mode). The wizard's steps read/write a `ListingDraft`, so this
  * is the bridge that lets "Edit" load the same form a property was created on.
  */
-export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
+export function listingDraftFromApiProperty(p: WizardProperty): ListingDraft {
   const location = p.location;
   const area = p.landArea;
   const usedBigha = Boolean(area && (area.bigha || area.katha || area.dhur));
@@ -358,7 +466,7 @@ export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
   const allMedia = p.media ?? [];
 
   // Uploaded videos live on Cloudinary; external URLs are anything else.
-  // ApiPropertyMedia has no publicId field, so we distinguish by URL host.
+  // WizardPropertyMedia has no publicId field, so we distinguish by URL host.
   const isUploaded = (url: string) => url.includes("res.cloudinary.com");
 
   const videoUrls = allMedia
@@ -423,11 +531,11 @@ export function listingDraftFromApiProperty(p: ApiProperty): ListingDraft {
     isCornerPlot: p.isCornerPlot,
     media,
     videoUrls,
-    documents: (p as any).documents?.map((d: any) => ({
+    documents: (p.documents ?? []).map((d) => ({
       type: d.type,
       fileUrl: d.fileUrl,
       fileName: d.fileName,
       fileSizeMb: d.fileSizeMb,
-    })) ?? [],
+    })),
   };
 }

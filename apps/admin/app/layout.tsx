@@ -18,7 +18,7 @@ export default function RootLayout({
     <html lang="en" className="light">
       <body className="min-h-screen bg-admin-bg text-on-surface antialiased">
         {children}
-        <Toaster />
+        <Toaster richColors />
       </body>
     </html>
   );

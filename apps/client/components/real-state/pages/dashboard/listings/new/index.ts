@@ -1,7 +1,57 @@
 export { ListingWizard } from "./ListingWizard";
-export { StepBasics } from "./StepBasics";
-export { StepLandSpecs } from "./StepLandSpecs";
-export { StepLocation } from "./StepLocation";
-export { StepMediaDocs } from "./StepMediaDocs";
-export { StepReview } from "./StepReview";
-export { WizardProgress } from "./WizardProgress";
+
+// The step components and draft model now live in @repo/ui (shared with the
+// admin console) — re-exported here so existing imports keep working.
+export {
+  StepBasics,
+  StepLandSpecs,
+  StepLocation,
+  StepMediaDocs,
+  StepReview,
+  WizardProgress,
+  RichTextEditor,
+  VideoPoster,
+  type ListingWizardProps,
+  type SavedListing,
+  type StepProps,
+  type WizardUploads,
+  type WizardProperty,
+  type ListingDraft,
+  type DraftErrors,
+  type DraftMedia,
+  type DraftDocument,
+  type CreatePropertyPayload,
+  INITIAL_DRAFT,
+  TITLE_MIN,
+  TITLE_MAX,
+  DESC_MAX,
+  ROAD_WIDTH_MAX_FT,
+  totalSqFt,
+  askingPriceNumber,
+  pricePerUnit,
+  formatLandAreaLabel,
+  validateStep,
+  validateAll,
+  buildCreatePayload,
+  listingDraftFromApiProperty,
+  WIZARD_STEPS,
+  PROPERTY_TYPES,
+  ROPANI_PARTS,
+  BIGHA_PARTS,
+  UNIT_SYSTEMS,
+  PRICE_UNITS,
+  PRICE_UNIT_DEFAULT,
+  ROAD_TYPES,
+  FACING_DIRECTIONS,
+  PROVINCES,
+  stripHtml,
+  formatNPR,
+  labelEnum,
+  TYPE_LABELS,
+  TYPE_GRADIENTS,
+  FALLBACK_GRADIENT,
+  deriveVideoThumbnail,
+  listingCoverImageUrl,
+  getErrorMessage,
+  FieldError,
+} from "@repo/ui";
