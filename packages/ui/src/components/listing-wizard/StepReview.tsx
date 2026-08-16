@@ -3,8 +3,11 @@
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/Icon";
 import {
+  builtUpAreaNumber,
   askingPriceNumber,
   formatLandAreaLabel,
+  isBuildingType,
+  isLandType,
   totalSqFt,
 } from "./draft";
 import {
@@ -30,6 +33,8 @@ export function StepReview({ draft }: StepProps) {
   const price = askingPriceNumber(draft);
   const sqft = totalSqFt(draft);
   const area = formatLandAreaLabel(draft);
+  const builtUp = builtUpAreaNumber(draft);
+  const isBuilding = isBuildingType(draft.propertyType);
   const photoCount = draft.media.filter(
     (m) => m.type !== "VIDEO_WALKTHROUGH" && m.type !== "CADASTRAL_MAP",
   ).length;
@@ -37,6 +42,21 @@ export function StepReview({ draft }: StepProps) {
   const locationLine = [draft.areaName.trim(), draft.district]
     .filter(Boolean)
     .join(", ");
+
+  // Land types are sold by land area; building types by built-up area (or
+  // land area when the parcel is included but no built-up area is entered).
+  const areaOk = isLandType(draft.propertyType)
+    ? sqft > 0
+    : builtUp > 0 || sqft > 0;
+  const areaHint = isBuilding
+    ? builtUp > 0
+      ? `${builtUp.toLocaleString()} sq ft built-up`
+      : sqft > 0
+        ? `${sqft.toLocaleString()} sq ft land`
+        : "missing"
+    : sqft > 0
+      ? `${sqft.toLocaleString()} sq ft`
+      : "missing";
 
   const checklist: ChecklistItem[] = [
     {
@@ -62,9 +82,9 @@ export function StepReview({ draft }: StepProps) {
       hint: locationLine || "incomplete",
     },
     {
-      label: "Land area",
-      ok: sqft > 0,
-      hint: sqft > 0 ? `${sqft.toLocaleString()} sq ft` : "missing",
+      label: isBuilding ? "Area" : "Land area",
+      ok: areaOk,
+      hint: areaHint,
     },
     {
       label: "Cadastral record (Naksa)",
@@ -75,6 +95,7 @@ export function StepReview({ draft }: StepProps) {
 
   const meta: string[] = [];
   if (area) meta.push(area);
+  if (isBuilding && builtUp > 0) meta.push(`${builtUp.toLocaleString()} sq ft built-up`);
   if (draft.facing) meta.push(`${labelEnum(draft.facing, {})} facing`);
   if (draft.roadType || draft.roadWidthFt) {
     meta.push(
@@ -87,6 +108,29 @@ export function StepReview({ draft }: StepProps) {
     );
   }
   if (draft.isCornerPlot) meta.push("Corner plot");
+
+  // Type-specific spec chips (wizard-only fields — shown as entered).
+  if (draft.propertyType === "RESIDENTIAL_HOUSE") {
+    if (draft.propertySubtype)
+      meta.push(labelEnum(draft.propertySubtype, {}));
+    if (draft.bedrooms) meta.push(`${draft.bedrooms} BHK`);
+    if (draft.bathrooms) meta.push(`${draft.bathrooms} bath`);
+  }
+  if (draft.propertyType === "COMMERCIAL_LAND" && draft.frontageFt)
+    meta.push(`${draft.frontageFt} ft frontage`);
+  if (draft.propertyType === "COMMERCIAL_SPACE") {
+    if (draft.propertySubtype) meta.push(labelEnum(draft.propertySubtype, {}));
+    if (draft.frontageFt) meta.push(`${draft.frontageFt} ft frontage`);
+  }
+  if (draft.propertyType === "AGRICULTURAL_LAND") {
+    if (draft.landClassification)
+      meta.push(labelEnum(draft.landClassification, {}));
+  }
+  if (draft.propertyType === "HERITAGE_HOME") {
+    if (draft.heritageType) meta.push(labelEnum(draft.heritageType, {}));
+    if (draft.bedrooms) meta.push(`${draft.bedrooms} bedrooms`);
+  }
+  if (draft.askingPrice && draft.isNegotiable) meta.push("Negotiable");
 
   const coverUrl = listingCoverImageUrl(draft.media);
 

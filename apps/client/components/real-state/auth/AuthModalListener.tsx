@@ -5,12 +5,19 @@ import { useEffect } from "react";
 import { useAuthModalStore } from "store/auth-modal";
 // import { useAuthModalStore } from "../../store/auth-modal";
 
+// Human-readable messages for auth errors carried over via `?error=`.
+const AUTH_ERROR_MESSAGES: Record<string, string> = {
+  "google-domain-not-allowed":
+    "This Google account's email domain isn't allowed on the customer app.",
+};
+
 /**
  * Listens for `?auth=signin` in the URL and opens the sign-in modal
  * automatically. A `?redirect=/some/path` param is captured into the auth
- * modal store so the user can be sent back after signing in. Removes the
- * query params after triggering so the modal doesn't re-open on subsequent
- * navigation.
+ * modal store so the user can be sent back after signing in, and an
+ * `?error=` code (e.g. a rejected Google sign-in) is surfaced in the modal.
+ * Removes the query params after triggering so the modal doesn't re-open on
+ * subsequent navigation.
  *
  * Place this in the root layout inside a `<Suspense>` boundary.
  */
@@ -35,6 +42,11 @@ export function AuthModalListener() {
         } catch {
           // Malformed URL — ignore.
         }
+      }
+      const error = searchParams.get("error");
+      if (error) {
+        const message = AUTH_ERROR_MESSAGES[error];
+        if (message) store.setError(message);
       }
       store.open();
       // Clean up the URL to prevent re-triggering

@@ -94,7 +94,7 @@ export class DashboardService {
         where: { userId },
         include: { property: { select: { listingCode: true, title: true } } },
         orderBy: { viewedAt: 'desc' },
-        take: 5,
+        take: 7,
       }),
       this.prisma.officerAppointment.findMany({
         where: {
@@ -120,7 +120,6 @@ export class DashboardService {
       }),
     ]);
 
-    console.log("server listing",listings)
 
     const listingSnapshots: DashboardListingSnapshot[] = listings.map((p) => ({
       id: p.id,

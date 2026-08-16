@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/Icon";
@@ -21,6 +21,11 @@ import { StepLocation } from "./StepLocation";
 import { StepMediaDocs } from "./StepMediaDocs";
 import { StepReview } from "./StepReview";
 import { WizardProgress } from "./WizardProgress";
+import {
+  clearWizardDraft,
+  loadWizardDraft,
+  saveWizardDraft,
+} from "./draft-storage";
 import type { WizardUploads } from "./types";
 
 /** Minimal shape of the saved property — enough for the success screen. */
@@ -88,6 +93,56 @@ export function ListingWizard({
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [created, setCreated] = useState<SavedListing | null>(null);
+  // True when a previously saved draft was restored from localStorage — shows
+  // the "resumed draft" banner with a "Start fresh" escape hatch.
+  const [restored, setRestored] = useState(false);
+
+  // Create mode only: edit mode is API-backed, so local drafts are ignored.
+  const isEditMode = Boolean(initialDraft);
+
+  // Latest draft/step for the unload flush (the debounced effect below would
+  // lose the final keystrokes if the tab closes before its timer fires).
+  const latest = useRef({ draft, step });
+  useEffect(() => {
+    latest.current = { draft, step };
+  }, [draft, step]);
+
+  // Restore a saved draft once on mount (create mode). Runs after hydration,
+  // so the first paint matches the server render — no hydration mismatch.
+  useEffect(() => {
+    if (isEditMode) return;
+    const saved = loadWizardDraft();
+    if (saved) {
+      setDraft(saved.draft);
+      setStep(saved.step);
+      setRestored(true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Debounced save on every draft/step change (a blur is always preceded by a
+  // change, so this covers the spec's "persist on field blur" reliably).
+  useEffect(() => {
+    if (isEditMode || created) return;
+    const timer = setTimeout(() => saveWizardDraft(draft, step), 400);
+    return () => clearTimeout(timer);
+  }, [draft, step, isEditMode, created]);
+
+  // Flush immediately when the tab is hidden or unloaded.
+  useEffect(() => {
+    if (isEditMode) return;
+    const flush = () =>
+      saveWizardDraft(latest.current.draft, latest.current.step);
+    const onVisibility = () => {
+      if (document.visibilityState === "hidden") flush();
+    };
+    window.addEventListener("pagehide", flush);
+    document.addEventListener("visibilitychange", onVisibility);
+    return () => {
+      window.removeEventListener("pagehide", flush);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [isEditMode]);
 
   // Edit mode: adopt the loaded draft when it arrives (or changes).
   useEffect(() => {
@@ -136,11 +191,23 @@ export function ListingWizard({
       const payload = buildCreatePayload(draft);
       const saved = await onSubmit(payload);
       setCreated(saved);
+      // Published — the draft is no longer in progress.
+      clearWizardDraft();
+      setRestored(false);
     } catch (error) {
       setServerError(submitErrorMessage(error));
     } finally {
       setSubmitting(false);
     }
+  };
+
+  const startFresh = () => {
+    clearWizardDraft();
+    setDraft(INITIAL_DRAFT);
+    setStep(0);
+    setErrors({});
+    setServerError(null);
+    setRestored(false);
   };
 
   if (created) {
@@ -188,11 +255,13 @@ export function ListingWizard({
               variant="outline"
               className="rounded-md"
               onClick={() => {
+                clearWizardDraft();
                 setDraft(INITIAL_DRAFT);
                 setStep(0);
                 setCreated(null);
                 setErrors({});
                 setServerError(null);
+                setRestored(false);
               }}
             >
               <Icon name="add" className="text-data-table" />
@@ -222,6 +291,21 @@ export function ListingWizard({
 
   return (
     <div className="flex flex-col rounded-2xl border border-outline-variant bg-surface p-md">
+      {restored && !created && (
+        <div className="mb-md flex items-center justify-between gap-sm rounded-lg border border-primary/30 bg-primary/5 px-sm py-2 text-sm text-on-surface">
+          <span className="flex items-center gap-1.5">
+            <Icon name="history" className="text-[16px]" />
+            Resumed your saved draft
+          </span>
+          <button
+            type="button"
+            onClick={startFresh}
+            className="shrink-0 rounded-md px-2 py-1 text-[13px] font-semibold text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+          >
+            Start fresh
+          </button>
+        </div>
+      )}
       <WizardProgress currentStep={step} />
 
       <div className="border-t border-outline-variant pt-md">

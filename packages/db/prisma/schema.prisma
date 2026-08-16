@@ -350,6 +350,83 @@ model Property {
     isCornerPlot      Boolean          @default(false)
     isFeatured        Boolean          @default(false)
 
+    // Negotiation & Partial Sale
+    isNegotiable           Boolean  @default(false)
+    minBuyableLandSqFt     Float?
+    minBuyableUnitSystem   String?  // "ROPANI" | "BIGHA" — original entry system for edit hydration
+    minBuyableRopani       Int?     @default(0)
+    minBuyableAana         Int?     @default(0)
+    minBuyablePaisa        Float?   @default(0)
+    minBuyableDaam         Float?   @default(0)
+    minBuyableBigha        Int?     @default(0)
+    minBuyableKatha        Int?     @default(0)
+    minBuyableDhur         Float?   @default(0)
+
+    // Type-specific specs — the Step 3 dynamic fields. Values are the
+    // enum-style strings the listing wizard sends (packages/ui constants),
+    // stored verbatim. Empty arrays / nulls mean "not set".
+
+    // Building specs (RESIDENTIAL_HOUSE / COMMERCIAL_SPACE / HERITAGE_HOME)
+    builtUpAreaSqFt      Float?
+    propertySubtype      String?  // HOUSE_SUBTYPES / SPACE_SUBTYPES
+    yearBuilt            Int?
+    constructionStatus   String?  // READY | UNDER_CONSTRUCTION | PRE_LAUNCH | RENOVATED | OLD_CONSTRUCTION | CORE_SHELL
+    floorNumber          Int?
+    totalFloors          Int?
+    bedrooms             Int?
+    bathrooms            Int?
+    livingRooms          Int?
+    kitchens             Int?
+    balconies            Int?
+    parking              String?  // PARKING_OPTIONS
+    furnishing           String?  // HOUSE_FURNISHING / SPACE_FURNISHING
+    houseFacing          String?  // HOUSE_FACING_OPTIONS
+    amenities            String[] @default([])
+
+    // Residential land
+    plotShape      String?  // PLOT_SHAPES
+    frontageFt     Float?
+    boundaryWall   String?  // YES | PARTIAL | NO
+    landClearance  Boolean  @default(false)
+
+    // Commercial land
+    depthFt           Float?
+    zoning            String?  // ZONING_OPTIONS
+    setbackAvailable  Boolean  @default(false)
+    setbackText       String?
+    suitableFor       String[] @default([])
+    parkingSpaces     Int?
+
+    // Agricultural land
+    landClassification   String?  // LAND_CLASSIFICATIONS
+    soilType             String?  // SOIL_TYPES
+    waterSources         String[] @default([])
+    irrigationType       String?  // IRRIGATION_TYPES
+    currentCrops         String?
+    fencing              String?  // FULL | PARTIAL | NONE
+    electricityAvailable Boolean  @default(false)
+    terrain              String?  // TERRAIN_TYPES
+    annualYield          String?
+    farmStructures       String[] @default([])
+
+    // Commercial space
+    ceilingHeightFt      Float?
+    parkingAvailable     Boolean  @default(false)
+    parkingType          String?  // SPACE_PARKING_TYPES
+    priceType            String?  // PRICE_TYPES
+    leaseAvailable       Boolean  @default(false)
+    leaseMonthlyRent     Float?
+    commercialFeatures   String[] @default([])
+    zoningLegal          String?  // ZONING_LEGAL_OPTIONS
+
+    // Heritage home
+    heritageType        String?  // HERITAGE_TYPES
+    heritageEra         String?  // HERITAGE_ERAS
+    heritageGrade       String?  // HERITAGE_GRADES
+    courtyard           String?  // COURTYARD_OPTIONS
+    traditionalFeatures String[] @default([])
+    renovationStatus    String?  // RENOVATION_STATUSES
+
     // Internal moderation note — visible to the verification/admin team only.
     adminNote String? @db.Text
 

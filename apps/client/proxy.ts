@@ -49,6 +49,14 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(signInRedirectUrl(request));
   }
 
+  // The customer-facing app is for BUYER/AGENCY-style accounts only. Admin
+  // sessions are sent back to the public site (not the sign-in flow, since the
+  // session is already valid).
+  const roles = (session.user as { role?: string[] } | null)?.role ?? [];
+  if (roles.includes("ADMIN")) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
   return NextResponse.next();
 }
 

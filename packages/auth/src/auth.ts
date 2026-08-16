@@ -1,5 +1,6 @@
-import { prisma } from "@repo/db";
+import { prisma, UserRole } from "@repo/db";
 import { betterAuth } from "better-auth";
+import { APIError, createAuthMiddleware } from "better-auth/api";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP, phoneNumber } from "better-auth/plugins";
 import "dotenv/config";
@@ -46,6 +47,43 @@ function resolveCookieDomain(): string | undefined {
 }
 
 const cookieDomain = resolveCookieDomain();
+
+/** Normalize a URL to its origin (scheme + host + port), or null if invalid. */
+function originOf(value: string | undefined): string | null {
+  if (!value) return null;
+  try {
+    return new URL(value).origin;
+  } catch {
+    return null;
+  }
+}
+
+const clientOrigin = originOf(process.env.CLIENT_URL);
+const adminOrigin = originOf(process.env.ADMIN_URL);
+
+// Google OAuth. The customer app is the only app that offers Google sign-in,
+// so this allowlist effectively gates the client: accounts whose email domain
+// is not listed are rejected. The provider callback runs server-side without
+// an Origin header, so per-app discrimination isn't possible here — the admin
+// console simply exposes no Google button. Leave GOOGLE_CLIENT_ALLOWED_DOMAINS
+// empty to allow any domain.
+const googleAllowedDomains = (process.env.GOOGLE_CLIENT_ALLOWED_DOMAINS ?? "")
+  .split(",")
+  .map((d) => d.trim().toLowerCase())
+  .filter(Boolean);
+
+/** Base64url-decode a JWT payload (Google id_token) without external deps. */
+function decodeGoogleIdToken(idToken: string): Record<string, unknown> | null {
+  try {
+    const payload = idToken.split(".")[1];
+    if (!payload) return null;
+    return JSON.parse(
+      Buffer.from(payload, "base64url").toString("utf8"),
+    ) as Record<string, unknown>;
+  } catch {
+    return null;
+  }
+}
 
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET!,
@@ -118,6 +156,49 @@ export const auth = betterAuth({
     requireEmailVerification: true,
   },
 
+  // Role policy enforced here, at the auth layer, so no session is ever
+  // created for the wrong role. The request's Origin header tells us which app
+  // the user is signing in from (client vs admin console). OAuth callbacks run
+  // server-side without an Origin header, so those are covered by the per-app
+  // route middleware (apps/client/proxy.ts, apps/admin/proxy.ts) and the API
+  // guards instead.
+  hooks: {
+    before: createAuthMiddleware(async (ctx) => {
+      if (ctx.path !== "/sign-in/email") return;
+
+      const email = (ctx.body as { email?: string } | undefined)?.email;
+      if (!email) return;
+
+      const originHeader =
+        ctx.headers?.get("origin") ?? ctx.headers?.get("referer") ?? undefined;
+      const requestOrigin = originOf(originHeader);
+      if (!requestOrigin) return; // non-browser callers -> middleware/API guards
+      const isClientApp = clientOrigin !== null && requestOrigin === clientOrigin;
+      const isAdminApp = adminOrigin !== null && requestOrigin === adminOrigin;
+      if (!isClientApp && !isAdminApp) return;
+
+      const user = await prisma.user.findUnique({
+        where: { email },
+        select: { role: true },
+      });
+      const roles = user?.role ?? [];
+      const isAdmin = roles.includes(UserRole.ADMIN);
+
+      if (isAdminApp && !isAdmin) {
+        throw new APIError("FORBIDDEN", {
+          message:
+            "This account doesn't have admin access. Please sign in with an admin account.",
+        });
+      }
+      if (isClientApp && isAdmin) {
+        throw new APIError("FORBIDDEN", {
+          message:
+            "Invalid email or password.",
+        });
+      }
+    }),
+  },
+
   plugins: [
     emailOTP({
       async sendVerificationOTP({ email, otp, type }) {
@@ -149,6 +230,36 @@ export const auth = betterAuth({
     google: {
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      // Mirrors the built-in Google getUserInfo (decodes the id_token Google
+      // returns for the "openid" scope in both the authorization-code and
+      // id-token flows) and rejects accounts whose email domain isn't on the
+      // customer-app allowlist. Returning null fails the sign-in.
+      getUserInfo: async (token) => {
+        if (!token.idToken) return null;
+        const claims = decodeGoogleIdToken(token.idToken);
+        if (!claims) return null;
+        const email = typeof claims.email === "string" ? claims.email : "";
+        if (email) {
+          const domain = email.split("@")[1]?.toLowerCase() ?? "";
+          if (
+            googleAllowedDomains.length > 0 &&
+            !googleAllowedDomains.includes(domain)
+          ) {
+            return null;
+          }
+        }
+        return {
+          user: {
+            id: String(claims.sub ?? ""),
+            name: typeof claims.name === "string" ? claims.name : undefined,
+            email: email || null,
+            image:
+              typeof claims.picture === "string" ? claims.picture : undefined,
+            emailVerified: Boolean(claims.email_verified),
+          },
+          data: claims,
+        };
+      },
     },
   },
 

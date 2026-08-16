@@ -52,7 +52,11 @@ export const TYPE_GRADIENTS: Record<string, string> = {
 export const FALLBACK_GRADIENT = "from-[#A8C0A0] via-[#7A9A70] to-[#5A7A55]";
 
 export function formatNPR(n: number): string {
-  return `NPR ${new Intl.NumberFormat("en-US").format(n)}`;
+  const hasFraction = !Number.isInteger(n);
+  return `NPR ${new Intl.NumberFormat("en-US", {
+    minimumFractionDigits: hasFraction ? 2 : 0,
+    maximumFractionDigits: 2,
+  }).format(n)}`;
 }
 
 export function labelEnum(

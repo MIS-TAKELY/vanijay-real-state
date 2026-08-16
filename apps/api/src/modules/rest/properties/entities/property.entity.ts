@@ -137,6 +137,184 @@ export class Property {
   @Field(() => Boolean)
   isFeatured!: boolean;
 
+  @Field(() => Boolean)
+  isNegotiable!: boolean;
+
+  @Field(() => Float, { nullable: true })
+  minBuyableLandSqFt?: number | null;
+
+  @Field(() => String, { nullable: true })
+  minBuyableUnitSystem?: string | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableRopani?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableAana?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  minBuyablePaisa?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  minBuyableDaam?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableBigha?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableKatha?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  minBuyableDhur?: number | null;
+
+  // Type-specific Step 3 specs (see CreatePropertyInput for value domains).
+  @Field(() => Float, { nullable: true })
+  builtUpAreaSqFt?: number | null;
+
+  @Field(() => String, { nullable: true })
+  propertySubtype?: string | null;
+
+  @Field(() => Int, { nullable: true })
+  yearBuilt?: number | null;
+
+  @Field(() => String, { nullable: true })
+  constructionStatus?: string | null;
+
+  @Field(() => Int, { nullable: true })
+  floorNumber?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  totalFloors?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  bedrooms?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  bathrooms?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  livingRooms?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  kitchens?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  balconies?: number | null;
+
+  @Field(() => String, { nullable: true })
+  parking?: string | null;
+
+  @Field(() => String, { nullable: true })
+  furnishing?: string | null;
+
+  @Field(() => String, { nullable: true })
+  houseFacing?: string | null;
+
+  @Field(() => [String], { nullable: true })
+  amenities?: string[] | null;
+
+  @Field(() => String, { nullable: true })
+  plotShape?: string | null;
+
+  @Field(() => Float, { nullable: true })
+  frontageFt?: number | null;
+
+  @Field(() => String, { nullable: true })
+  boundaryWall?: string | null;
+
+  @Field(() => Boolean)
+  landClearance!: boolean;
+
+  @Field(() => Float, { nullable: true })
+  depthFt?: number | null;
+
+  @Field(() => String, { nullable: true })
+  zoning?: string | null;
+
+  @Field(() => Boolean)
+  setbackAvailable!: boolean;
+
+  @Field(() => String, { nullable: true })
+  setbackText?: string | null;
+
+  @Field(() => [String], { nullable: true })
+  suitableFor?: string[] | null;
+
+  @Field(() => Int, { nullable: true })
+  parkingSpaces?: number | null;
+
+  @Field(() => String, { nullable: true })
+  landClassification?: string | null;
+
+  @Field(() => String, { nullable: true })
+  soilType?: string | null;
+
+  @Field(() => [String], { nullable: true })
+  waterSources?: string[] | null;
+
+  @Field(() => String, { nullable: true })
+  irrigationType?: string | null;
+
+  @Field(() => String, { nullable: true })
+  currentCrops?: string | null;
+
+  @Field(() => String, { nullable: true })
+  fencing?: string | null;
+
+  @Field(() => Boolean)
+  electricityAvailable!: boolean;
+
+  @Field(() => String, { nullable: true })
+  terrain?: string | null;
+
+  @Field(() => String, { nullable: true })
+  annualYield?: string | null;
+
+  @Field(() => [String], { nullable: true })
+  farmStructures?: string[] | null;
+
+  @Field(() => Float, { nullable: true })
+  ceilingHeightFt?: number | null;
+
+  @Field(() => Boolean)
+  parkingAvailable!: boolean;
+
+  @Field(() => String, { nullable: true })
+  parkingType?: string | null;
+
+  @Field(() => String, { nullable: true })
+  priceType?: string | null;
+
+  @Field(() => Boolean)
+  leaseAvailable!: boolean;
+
+  @Field(() => Float, { nullable: true })
+  leaseMonthlyRent?: number | null;
+
+  @Field(() => [String], { nullable: true })
+  commercialFeatures?: string[] | null;
+
+  @Field(() => String, { nullable: true })
+  zoningLegal?: string | null;
+
+  @Field(() => String, { nullable: true })
+  heritageType?: string | null;
+
+  @Field(() => String, { nullable: true })
+  heritageEra?: string | null;
+
+  @Field(() => String, { nullable: true })
+  heritageGrade?: string | null;
+
+  @Field(() => String, { nullable: true })
+  courtyard?: string | null;
+
+  @Field(() => [String], { nullable: true })
+  traditionalFeatures?: string[] | null;
+
+  @Field(() => String, { nullable: true })
+  renovationStatus?: string | null;
+
   @Field(() => String)
   ownerId!: string;
 

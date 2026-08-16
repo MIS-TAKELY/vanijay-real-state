@@ -55,6 +55,66 @@ export interface ApiProperty {
   facing?: string | null;
   isCornerPlot: boolean;
   isFeatured: boolean;
+  isNegotiable: boolean;
+  minBuyableLandSqFt?: number | null;
+  minBuyableUnitSystem?: string | null;
+  minBuyableRopani?: number | null;
+  minBuyableAana?: number | null;
+  minBuyablePaisa?: number | null;
+  minBuyableDaam?: number | null;
+  minBuyableBigha?: number | null;
+  minBuyableKatha?: number | null;
+  minBuyableDhur?: number | null;
+  // Type-specific Step 3 specs
+  builtUpAreaSqFt?: number | null;
+  propertySubtype?: string | null;
+  yearBuilt?: number | null;
+  constructionStatus?: string | null;
+  floorNumber?: number | null;
+  totalFloors?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  livingRooms?: number | null;
+  kitchens?: number | null;
+  balconies?: number | null;
+  parking?: string | null;
+  furnishing?: string | null;
+  houseFacing?: string | null;
+  amenities?: string[] | null;
+  plotShape?: string | null;
+  frontageFt?: number | null;
+  boundaryWall?: string | null;
+  landClearance?: boolean | null;
+  depthFt?: number | null;
+  zoning?: string | null;
+  setbackAvailable?: boolean | null;
+  setbackText?: string | null;
+  suitableFor?: string[] | null;
+  parkingSpaces?: number | null;
+  landClassification?: string | null;
+  soilType?: string | null;
+  waterSources?: string[] | null;
+  irrigationType?: string | null;
+  currentCrops?: string | null;
+  fencing?: string | null;
+  electricityAvailable?: boolean | null;
+  terrain?: string | null;
+  annualYield?: string | null;
+  farmStructures?: string[] | null;
+  ceilingHeightFt?: number | null;
+  parkingAvailable?: boolean | null;
+  parkingType?: string | null;
+  priceType?: string | null;
+  leaseAvailable?: boolean | null;
+  leaseMonthlyRent?: number | null;
+  commercialFeatures?: string[] | null;
+  zoningLegal?: string | null;
+  heritageType?: string | null;
+  heritageEra?: string | null;
+  heritageGrade?: string | null;
+  courtyard?: string | null;
+  traditionalFeatures?: string[] | null;
+  renovationStatus?: string | null;
   ownerId: string;
   agentId?: string | null;
   location?: ApiPropertyLocation | null;
@@ -96,11 +156,71 @@ export interface CreatePropertyPayload {
   description?: string;
   propertyType: string; // PropertyType enum
   askingPrice: number;
-  pricePerAana?: number;
+  pricePerAana?: number | null;
   roadAccessWidthFt?: number;
   roadType?: string; // RoadType enum
   facing?: string; // FacingDirection enum
   isCornerPlot?: boolean;
+  isNegotiable?: boolean;
+  minBuyableLandSqFt?: number;
+  minBuyableUnitSystem?: string;
+  minBuyableRopani?: number;
+  minBuyableAana?: number;
+  minBuyablePaisa?: number;
+  minBuyableDaam?: number;
+  minBuyableBigha?: number;
+  minBuyableKatha?: number;
+  minBuyableDhur?: number;
+  // Type-specific Step 3 specs — null/[]/false clear the field on edit.
+  builtUpAreaSqFt?: number | null;
+  propertySubtype?: string | null;
+  yearBuilt?: number | null;
+  constructionStatus?: string | null;
+  floorNumber?: number | null;
+  totalFloors?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  livingRooms?: number | null;
+  kitchens?: number | null;
+  balconies?: number | null;
+  parking?: string | null;
+  furnishing?: string | null;
+  houseFacing?: string | null;
+  amenities?: string[];
+  plotShape?: string | null;
+  frontageFt?: number | null;
+  boundaryWall?: string | null;
+  landClearance?: boolean;
+  depthFt?: number | null;
+  zoning?: string | null;
+  setbackAvailable?: boolean;
+  setbackText?: string | null;
+  suitableFor?: string[];
+  parkingSpaces?: number | null;
+  landClassification?: string | null;
+  soilType?: string | null;
+  waterSources?: string[];
+  irrigationType?: string | null;
+  currentCrops?: string | null;
+  fencing?: string | null;
+  electricityAvailable?: boolean;
+  terrain?: string | null;
+  annualYield?: string | null;
+  farmStructures?: string[];
+  ceilingHeightFt?: number | null;
+  parkingAvailable?: boolean;
+  parkingType?: string | null;
+  priceType?: string | null;
+  leaseAvailable?: boolean;
+  leaseMonthlyRent?: number | null;
+  commercialFeatures?: string[];
+  zoningLegal?: string | null;
+  heritageType?: string | null;
+  heritageEra?: string | null;
+  heritageGrade?: string | null;
+  courtyard?: string | null;
+  traditionalFeatures?: string[];
+  renovationStatus?: string | null;
   landArea: {
     ropani: number;
     aana: number;
@@ -165,6 +285,21 @@ export function formatLocation(loc?: ApiPropertyLocation | null): string {
     : place;
 }
 
+/** Format min buyable land for display, defaulting to Dhur for BIGHA system or Aana for ROPANI. */
+export function formatMinBuyableLand(p: ApiProperty): string | null {
+  if (!p.minBuyableLandSqFt) return null;
+  const sqft = p.minBuyableLandSqFt;
+  // Default display unit based on the seller's entry system
+  if (p.minBuyableUnitSystem === "BIGHA") {
+    // Convert to Dhur (1 dhur = 364.5 / 20 = 18.225 sq ft)
+    const dhur = Math.round(sqft / 18.225 * 100) / 100;
+    return `${dhur} Dhur`;
+  }
+  // ROPANI system — show in Aana (1 aana = 342.25 sq ft)
+  const aana = Math.round(sqft / 342.25 * 100) / 100;
+  return `${aana} Aana`;
+}
+
 export function formatLandArea(a?: ApiLandArea | null): string | null {
   if (!a) return null;
   if (a.bigha || a.katha || a.dhur) {
@@ -182,6 +317,17 @@ export function formatLandArea(a?: ApiLandArea | null): string | null {
   return parts.length > 0 ? parts.join(" ") : null;
 }
 
+/** The three land property types — priced per land unit (aana/ropani/bigha).
+ *  Building types (houses, apartments, heritage, commercial space) are priced
+ *  per sq.ft of built-up area, so per-aana rates are hidden for them. */
+export function isLandPropertyType(type?: string | null): boolean {
+  return (
+    type === "RESIDENTIAL_LAND" ||
+    type === "COMMERCIAL_LAND" ||
+    type === "AGRICULTURAL_LAND"
+  );
+}
+
 export function toCardProps(p: ApiProperty): CardProperty {
   const meta: string[] = [];
   const area = formatLandArea(p.landArea);
@@ -194,7 +340,13 @@ export function toCardProps(p: ApiProperty): CardProperty {
   }
   if (p.facing) meta.push(`Facing: ${labelEnum(p.facing, {})}`);
   if (p.isCornerPlot) meta.push("Corner Plot");
-  if (p.pricePerAana) meta.push(`Price/Aana: ${formatNPR(p.pricePerAana)}`);
+  if (p.isNegotiable) meta.push("Negotiable");
+  if (p.minBuyableLandSqFt) {
+    const minArea = formatMinBuyableLand(p);
+    if (minArea) meta.push(`Min: ${minArea}`);
+  }
+  if (isLandPropertyType(p.propertyType) && p.pricePerAana)
+    meta.push(`Price/Aana: ${formatNPR(p.pricePerAana)}`);
   if (p.verificationLevel && p.verificationLevel !== "UNVERIFIED") {
     meta.push(
       `Verification: ${labelEnum(p.verificationLevel, VERIFICATION_LABELS)}`,

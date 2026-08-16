@@ -64,6 +64,18 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
     if (defaultOpen) openModal();
   }, [defaultOpen, openModal]);
 
+  // Surface an auth error carried over from the URL (e.g. a Google sign-in
+  // rejected because the email domain isn't allowlisted) once the modal opens.
+  useEffect(() => {
+    if (isOpen) {
+      const err = useAuthModalStore.getState().error;
+      if (err) {
+        setError(err);
+        useAuthModalStore.getState().clearError();
+      }
+    }
+  }, [isOpen]);
+
   const completeAuth = () => {
     const redirectTo = useAuthModalStore.getState().redirect;
     closeModal();
@@ -88,9 +100,17 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
         targetPath,
         window.location.origin,
       ).toString();
+      // If the auth server rejects the Google account (e.g. email domain not
+      // on the client allowlist), send the user back here with the error
+      // visible instead of dumping them on the API's error page.
+      const errorCallbackURL = new URL(
+        "/?auth=signin&error=google-domain-not-allowed",
+        window.location.origin,
+      ).toString();
       await signIn.social({
         provider: "google",
         callbackURL,
+        errorCallbackURL,
       });
     } catch (err) {
       setError(err instanceof Error ? err.message : "Google sign-in failed");
@@ -144,6 +164,9 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
           setError(signInError.message || "Sign in failed");
           return;
         }
+        // The auth server rejects ofor the customer app
+        // (packages/auth hooks), so a successful sign-in here is always a
+        // non-admin user — the server error above surfaces otherwise.
         completeAuth();
       }
     } catch (err) {
@@ -173,10 +196,7 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
         onOpenAutoFocus={(e) => {
           if (showOtpModal) e.preventDefault();
         }}
-        // Don't dismiss on pointer/focus loss (switching browser tabs, password-manager
-        // autofill popups, OS focus changes all fire focusin/focusout), and never
-        // dismiss while the OTP verification step is in progress so an in-progress
-        // code isn't lost.
+        
         onPointerDownOutside={(e) => {
           if (showOtpModal) e.preventDefault();
         }}

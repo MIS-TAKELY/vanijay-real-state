@@ -17,6 +17,16 @@ export interface PropertyItem {
   facing?: string | null;
   isCornerPlot: boolean;
   isFeatured: boolean;
+  isNegotiable: boolean;
+  minBuyableLandSqFt?: number | null;
+  minBuyableUnitSystem?: string | null;
+  minBuyableRopani?: number | null;
+  minBuyableAana?: number | null;
+  minBuyablePaisa?: number | null;
+  minBuyableDaam?: number | null;
+  minBuyableBigha?: number | null;
+  minBuyableKatha?: number | null;
+  minBuyableDhur?: number | null;
   ownerId: string;
   agentId?: string | null;
   createdAt: string;
@@ -74,6 +84,16 @@ const SIMILAR_PROPERTIES_QUERY = `
         facing
         isCornerPlot
         isFeatured
+        isNegotiable
+        minBuyableLandSqFt
+        minBuyableUnitSystem
+        minBuyableRopani
+        minBuyableAana
+        minBuyablePaisa
+        minBuyableDaam
+        minBuyableBigha
+        minBuyableKatha
+        minBuyableDhur
         ownerId
         agentId
         createdAt
@@ -130,6 +150,16 @@ const RECENTLY_VIEWED_QUERY = `
         facing
         isCornerPlot
         isFeatured
+        isNegotiable
+        minBuyableLandSqFt
+        minBuyableUnitSystem
+        minBuyableRopani
+        minBuyableAana
+        minBuyablePaisa
+        minBuyableDaam
+        minBuyableBigha
+        minBuyableKatha
+        minBuyableDhur
         ownerId
         agentId
         createdAt
@@ -186,6 +216,16 @@ const FEATURED_PROPERTIES_QUERY = `
         facing
         isCornerPlot
         isFeatured
+        isNegotiable
+        minBuyableLandSqFt
+        minBuyableUnitSystem
+        minBuyableRopani
+        minBuyableAana
+        minBuyablePaisa
+        minBuyableDaam
+        minBuyableBigha
+        minBuyableKatha
+        minBuyableDhur
         ownerId
         agentId
         createdAt
@@ -242,6 +282,16 @@ const RECENTLY_ADDED_PROPERTIES_QUERY = `
         facing
         isCornerPlot
         isFeatured
+        isNegotiable
+        minBuyableLandSqFt
+        minBuyableUnitSystem
+        minBuyableRopani
+        minBuyableAana
+        minBuyablePaisa
+        minBuyableDaam
+        minBuyableBigha
+        minBuyableKatha
+        minBuyableDhur
         ownerId
         agentId
         createdAt

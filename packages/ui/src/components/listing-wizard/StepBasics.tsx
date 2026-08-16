@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@/components/Icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RichTextEditor } from "./RichTextEditor";
 import { PROPERTY_TYPES } from "./constants";
@@ -51,7 +52,7 @@ export function StepBasics({ draft, update, errors }: StepProps) {
           }}
           aria-label="Property type"
           variant="outline"
-          className="grid grid-cols-2 gap-sm sm:grid-cols-3 justify-start"
+          className="grid grid-cols-2 gap-sm sm:grid-cols-3 justify-start w-full "
         >
           {PROPERTY_TYPES.map((pt) => (
             <ToggleGroupItem
@@ -114,6 +115,20 @@ export function StepBasics({ draft, update, errors }: StepProps) {
             </p>
           )}
         </div>
+      </div>
+
+      {/* Price is negotiable — applies to every property type */}
+      <div className="border-t border-outline-variant pt-md">
+        <Label className="flex w-fit cursor-pointer items-center gap-sm text-sm text-on-surface transition-colors hover:text-on-surface-variant">
+          <Switch
+            checked={draft.isNegotiable}
+            onCheckedChange={(v) => update({ isNegotiable: v })}
+          />
+          Price is negotiable
+        </Label>
+        <p className="mt-xs text-[11px] leading-4 text-on-surface-variant">
+          Buyers may make offers below the asking price.
+        </p>
       </div>
     </div>
   );

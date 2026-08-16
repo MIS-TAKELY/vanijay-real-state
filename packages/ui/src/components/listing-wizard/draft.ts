@@ -1,6 +1,13 @@
-import type { UnitSystem } from "./constants";
-import { PRICE_UNITS } from "./constants";
+import {
+  APARTMENT_LIKE_SUBTYPES,
+  isBuildingType,
+  isLandType,
+  PRICE_UNITS,
+  type UnitSystem,
+} from "./constants";
 import { stripHtml } from "./format";
+
+export { isLandType, isBuildingType } from "./constants";
 
 export interface DraftMedia {
   url: string;
@@ -42,6 +49,72 @@ export interface ListingDraft {
   roadWidthFt: string;
   facing: string; // FacingDirection enum value
   isCornerPlot: boolean;
+  isNegotiable: boolean;
+  minBuyableUnitSystem: UnitSystem;
+  minBuyableUnits: Record<string, string>; // same shape as units
+
+  /* type-specific specs — Step 3 dynamic fields (wizard-only for now) */
+
+  // Residential land
+  plotShape: string;
+  frontageFt: string;
+  boundaryWall: string; // "YES" | "PARTIAL" | "NO" | ""
+  landClearance: boolean; // fenced / cleared
+
+  // Commercial land
+  depthFt: string;
+  zoning: string;
+  setbackAvailable: boolean;
+  setbackText: string; // front/back/side setback in feet
+  suitableFor: string[];
+  parkingSpaces: string; // count
+
+  // Agricultural land
+  landClassification: string;
+  soilType: string;
+  waterSources: string[];
+  irrigationType: string;
+  currentCrops: string;
+  fencing: string; // "FULL" | "PARTIAL" | "NONE" | ""
+  electricityAvailable: boolean;
+  terrain: string;
+  annualYield: string;
+  farmStructures: string[];
+
+  // Residential house / Commercial space / Heritage home (shared building specs)
+  builtUpAreaSqFt: string;
+  propertySubtype: string;
+  yearBuilt: string;
+  constructionStatus: string;
+  floorNumber: string;
+  totalFloors: string;
+  bedrooms: string;
+  bathrooms: string;
+  livingRooms: string;
+  kitchens: string;
+  balconies: string;
+  parking: string; // PARKING_OPTIONS (house/heritage)
+  furnishing: string;
+  houseFacing: string; // HOUSE_FACING_OPTIONS
+  amenities: string[];
+
+  // Commercial space only
+  ceilingHeightFt: string;
+  parkingAvailable: boolean;
+  parkingType: string;
+  priceType: string; // PRICE_TYPES
+  leaseAvailable: boolean;
+  leaseMonthlyRent: string;
+  commercialFeatures: string[];
+  zoningLegal: string;
+
+  // Heritage home only
+  heritageType: string;
+  heritageEra: string;
+  heritageGrade: string;
+  courtyard: string;
+  traditionalFeatures: string[];
+  renovationStatus: string;
 
   /* media & documents */
   media: DraftMedia[];
@@ -69,6 +142,60 @@ export const INITIAL_DRAFT: ListingDraft = {
   roadWidthFt: "",
   facing: "",
   isCornerPlot: false,
+  isNegotiable: false,
+  minBuyableUnitSystem: "ROPANI",
+  minBuyableUnits: {},
+
+  /* type-specific specs (wizard-only for now) */
+  plotShape: "",
+  frontageFt: "",
+  boundaryWall: "",
+  landClearance: false,
+  depthFt: "",
+  zoning: "",
+  setbackAvailable: false,
+  setbackText: "",
+  suitableFor: [],
+  parkingSpaces: "",
+  landClassification: "",
+  soilType: "",
+  waterSources: [],
+  irrigationType: "",
+  currentCrops: "",
+  fencing: "",
+  electricityAvailable: false,
+  terrain: "",
+  annualYield: "",
+  farmStructures: [],
+  builtUpAreaSqFt: "",
+  propertySubtype: "",
+  yearBuilt: "",
+  constructionStatus: "",
+  floorNumber: "",
+  totalFloors: "",
+  bedrooms: "",
+  bathrooms: "",
+  livingRooms: "",
+  kitchens: "",
+  balconies: "",
+  parking: "",
+  furnishing: "",
+  houseFacing: "",
+  amenities: [],
+  ceilingHeightFt: "",
+  parkingAvailable: false,
+  parkingType: "",
+  priceType: "",
+  leaseAvailable: false,
+  leaseMonthlyRent: "",
+  commercialFeatures: [],
+  zoningLegal: "",
+  heritageType: "",
+  heritageEra: "",
+  heritageGrade: "",
+  courtyard: "",
+  traditionalFeatures: [],
+  renovationStatus: "",
   media: [],
   videoUrls: [],
   documents: [],
@@ -86,26 +213,83 @@ const num = (s: string | undefined): number => {
   return Number.isFinite(n) ? n : 0;
 };
 
-export function totalSqFt(draft: ListingDraft): number {
+/** Number from a draft input, or null when the field was left empty. */
+const numberOrNull = (s: string): number | null =>
+  s.trim() === "" ? null : num(s);
+
+/** Trimmed string, or null when empty. */
+const strOrNull = (s: string): string | null =>
+  s.trim().length > 0 ? s.trim() : null;
+
+/** Exact area in sq ft (no rounding). Used for price-per-unit so rates stay
+ *  consistent with PRICE_UNITS factors (e.g. 1 daam = 342.25/16 sq ft). */
+function totalSqFtExact(draft: ListingDraft): number {
   const u = draft.units;
   if (draft.unitSystem === "ROPANI") {
     const totalAana =
       num(u.ropani) * 16 + num(u.aana) + num(u.paisa) / 4 + num(u.daam) / 16;
-    return Math.round(totalAana * 342.25);
+    return totalAana * 342.25;
   }
   const totalKatha = num(u.bigha) * 20 + num(u.katha) + num(u.dhur) / 20;
-  return Math.round(totalKatha * 364.5);
+  return totalKatha * 364.5;
+}
+
+/** Rounded area for display / payload. */
+export function totalSqFt(draft: ListingDraft): number {
+  return Math.round(totalSqFtExact(draft));
+}
+
+/** Min buyable land in sq ft (exact). Mirrors totalSqFtExact but reads minBuyableUnits. */
+function minBuyableSqFtExact(draft: ListingDraft): number {
+  const mu = draft.minBuyableUnits;
+  if (draft.minBuyableUnitSystem === "ROPANI") {
+    const totalAana =
+      num(mu.ropani) * 16 + num(mu.aana) + num(mu.paisa) / 4 + num(mu.daam) / 16;
+    return totalAana * 342.25;
+  }
+  const totalKatha = num(mu.bigha) * 20 + num(mu.katha) + num(mu.dhur) / 20;
+  return totalKatha * 364.5;
+}
+
+/** Rounded min buyable area for payload. */
+export function minBuyableSqFt(draft: ListingDraft): number {
+  return Math.round(minBuyableSqFtExact(draft));
 }
 
 export function askingPriceNumber(draft: ListingDraft): number {
   return num(draft.askingPrice);
 }
 
+/** Built-up / carpet area in sq ft (0 when unset). */
+export function builtUpAreaNumber(draft: ListingDraft): number {
+  return num(draft.builtUpAreaSqFt);
+}
+
+/**
+ * The area (sq ft, exact) that drives price-per-unit math for the current
+ * property type. Building types are priced per sq ft of built-up area when it
+ * is provided (falling back to the land area otherwise); land types always use
+ * the land area.
+ */
+function priceAreaSqFtExact(draft: ListingDraft): number {
+  if (isBuildingType(draft.propertyType)) {
+    const built = builtUpAreaNumber(draft);
+    if (built > 0) return built;
+  }
+  return totalSqFtExact(draft);
+}
+
+/**
+ * Price per unit of the given PRICE_UNITS key. Building types effectively use
+ * the "sqft"/"sqm" keys (built-up area); land types use the land units.
+ */
 export function pricePerUnit(
   draft: ListingDraft,
   unitKey: string,
 ): number | null {
-  const sqft = totalSqFt(draft);
+  // Must use exact sq ft — rounding first (e.g. 1 daam → 21 instead of
+  // 21.390625) makes totalUnits ≠ the entered land units and skews the rate.
+  const sqft = priceAreaSqFtExact(draft);
   const price = askingPriceNumber(draft);
 
   if (sqft <= 0 || price <= 0) return null;
@@ -113,7 +297,16 @@ export function pricePerUnit(
   if (!unit || unit.sqFt <= 0) return null;
   const totalUnits = sqft / unit.sqFt;
   if (totalUnits <= 0) return null;
-  return Math.round(price / totalUnits);
+  // Keep paisa-level precision (2 dp) — do not round to whole rupees.
+  return Math.round((price / totalUnits) * 100) / 100;
+}
+
+/** Price per sq ft of built-up area (building types only). */
+export function pricePerSqFt(draft: ListingDraft): number | null {
+  const area = builtUpAreaNumber(draft);
+  const price = askingPriceNumber(draft);
+  if (area <= 0 || price <= 0) return null;
+  return Math.round((price / area) * 100) / 100;
 }
 
 export function formatLandAreaLabel(draft: ListingDraft): string | null {
@@ -162,23 +355,49 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
 
   if (step === 2) {
     const u = draft.units;
-    if (totalSqFt(draft) <= 0) {
+    const hasLand = totalSqFt(draft) > 0;
+
+    // Land area: required for the three land types; optional for building
+    // types ("only if the property includes land"). Either way, sub-units at
+    // or above their parent unit silently double-count the area math.
+    if (isLandType(draft.propertyType) && !hasLand) {
       errors.units = "Enter the land area in your chosen unit system.";
-    } else if (draft.unitSystem === "ROPANI") {
-      // 1 ropani = 16 aana = 64 paisa = 256 daam — a sub-unit at or above its
-      // parent unit means the area math silently double-counts.
-      if (num(u.aana) >= 16)
-        errors.units = "Aana must be under 16 (16 aana = 1 ropani).";
-      else if (num(u.paisa) >= 4)
-        errors.units = "Paisa must be under 4 (4 paisa = 1 aana).";
-      else if (num(u.daam) >= 4)
-        errors.units = "Daam must be under 4 (4 daam = 1 paisa).";
-    } else {
-      // 1 bigha = 20 katha = 400 dhur.
-      if (num(u.katha) >= 20)
-        errors.units = "Katha must be under 20 (20 katha = 1 bigha).";
-      else if (num(u.dhur) >= 20)
-        errors.units = "Dhur must be under 20 (20 dhur = 1 katha).";
+    } else if (hasLand) {
+      if (draft.unitSystem === "ROPANI") {
+        // 1 ropani = 16 aana = 64 paisa = 256 daam.
+        if (num(u.aana) >= 16)
+          errors.units = "Aana must be under 16 (16 aana = 1 ropani).";
+        else if (num(u.paisa) >= 4)
+          errors.units = "Paisa must be under 4 (4 paisa = 1 aana).";
+        else if (num(u.daam) >= 4)
+          errors.units = "Daam must be under 4 (4 daam = 1 paisa).";
+      } else {
+        // 1 bigha = 20 katha = 400 dhur.
+        if (num(u.katha) >= 20)
+          errors.units = "Katha must be under 20 (20 katha = 1 bigha).";
+        else if (num(u.dhur) >= 20)
+          errors.units = "Dhur must be under 20 (20 dhur = 1 katha).";
+      }
+    }
+
+    // Per-type required fields (wizard-only — not yet persisted).
+    if (draft.propertyType === "COMMERCIAL_LAND" && num(draft.frontageFt) <= 0) {
+      errors.frontageFt = "Frontage is required for commercial land.";
+    }
+    if (draft.propertyType === "RESIDENTIAL_HOUSE") {
+      if (builtUpAreaNumber(draft) <= 0)
+        errors.builtUpAreaSqFt = "Enter the built-up area in sq.ft.";
+      if (
+        APARTMENT_LIKE_SUBTYPES.includes(draft.propertySubtype) &&
+        num(draft.floorNumber) <= 0
+      )
+        errors.floorNumber = "Floor number is required for apartments.";
+    }
+    if (draft.propertyType === "COMMERCIAL_SPACE") {
+      if (builtUpAreaNumber(draft) <= 0)
+        errors.builtUpAreaSqFt = "Enter the built-up area in sq.ft.";
+      if (num(draft.frontageFt) <= 0)
+        errors.frontageFt = "Frontage is required for commercial space.";
     }
 
     const roadWidth = num(draft.roadWidthFt);
@@ -236,11 +455,72 @@ export interface CreatePropertyPayload {
   description?: string;
   propertyType: string; // PropertyType enum
   askingPrice: number;
-  pricePerAana?: number;
+  pricePerAana?: number | null;
   roadAccessWidthFt?: number;
   roadType?: string; // RoadType enum
   facing?: string; // FacingDirection enum
   isCornerPlot?: boolean;
+  isNegotiable?: boolean;
+  minBuyableLandSqFt?: number;
+  minBuyableUnitSystem?: string;
+  minBuyableRopani?: number;
+  minBuyableAana?: number;
+  minBuyablePaisa?: number;
+  minBuyableDaam?: number;
+  minBuyableBigha?: number;
+  minBuyableKatha?: number;
+  minBuyableDhur?: number;
+
+  /* Type-specific Step 3 specs — always sent (null/[]/false clear on edit). */
+  builtUpAreaSqFt?: number | null;
+  propertySubtype?: string | null;
+  yearBuilt?: number | null;
+  constructionStatus?: string | null;
+  floorNumber?: number | null;
+  totalFloors?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  livingRooms?: number | null;
+  kitchens?: number | null;
+  balconies?: number | null;
+  parking?: string | null;
+  furnishing?: string | null;
+  houseFacing?: string | null;
+  amenities?: string[];
+  plotShape?: string | null;
+  frontageFt?: number | null;
+  boundaryWall?: string | null;
+  landClearance?: boolean;
+  depthFt?: number | null;
+  zoning?: string | null;
+  setbackAvailable?: boolean;
+  setbackText?: string | null;
+  suitableFor?: string[];
+  parkingSpaces?: number | null;
+  landClassification?: string | null;
+  soilType?: string | null;
+  waterSources?: string[];
+  irrigationType?: string | null;
+  currentCrops?: string | null;
+  fencing?: string | null;
+  electricityAvailable?: boolean;
+  terrain?: string | null;
+  annualYield?: string | null;
+  farmStructures?: string[];
+  ceilingHeightFt?: number | null;
+  parkingAvailable?: boolean;
+  parkingType?: string | null;
+  priceType?: string | null;
+  leaseAvailable?: boolean;
+  leaseMonthlyRent?: number | null;
+  commercialFeatures?: string[];
+  zoningLegal?: string | null;
+  heritageType?: string | null;
+  heritageEra?: string | null;
+  heritageGrade?: string | null;
+  courtyard?: string | null;
+  traditionalFeatures?: string[];
+  renovationStatus?: string | null;
   landArea: {
     ropani: number;
     aana: number;
@@ -296,9 +576,13 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
           totalSqMeters: sqm,
         };
 
-  // Price/aana is only meaningful in the Ropani system.
+  // Price per aana is a land-pricing metric: only meaningful for the land
+  // types and only in the Ropani system. Building types (houses, apartments,
+  // heritage, commercial space) are priced per sq.ft of built-up area, so a
+  // per-aana rate derived from an optional/small land parcel would be
+  // misleading (e.g. a 1-paisa parcel under an apartment → an absurd rate).
   let pricePerAana: number | undefined;
-  if (draft.unitSystem === "ROPANI") {
+  if (isLandType(draft.propertyType) && draft.unitSystem === "ROPANI") {
     const totalAana =
       num(u.ropani) * 16 + num(u.aana) + num(u.paisa) / 4 + num(u.daam) / 16;
     if (totalAana > 0) pricePerAana = Math.round(askingPrice / totalAana);
@@ -368,13 +652,96 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
     ...(stripHtml(draft.description) ? { description: draft.description.trim() } : {}),
     propertyType: draft.propertyType,
     askingPrice,
-    ...(pricePerAana && { pricePerAana }),
+    // Land types carry the computed rate; building types send an explicit
+    // null so stale values stored before the land-only rule are cleared on
+    // edit (matches the "cleared fields reset the DB" pattern in this payload).
+    ...(isLandType(draft.propertyType)
+      ? pricePerAana
+        ? { pricePerAana }
+        : {}
+      : { pricePerAana: null }),
     ...(num(draft.roadWidthFt) > 0 && {
       roadAccessWidthFt: num(draft.roadWidthFt),
     }),
     ...(draft.roadType && { roadType: draft.roadType }),
     ...(draft.facing && { facing: draft.facing }),
     isCornerPlot: draft.isCornerPlot,
+    isNegotiable: draft.isNegotiable,
+    // Min buyable land — only send if at least one unit is entered.
+    ...(() => {
+      const mu = draft.minBuyableUnits;
+      const hasMin = Object.values(mu).some((v) => num(v) > 0);
+      if (!hasMin) return {};
+      const mSqft = minBuyableSqFt(draft);
+      const mSqm = Math.round(mSqft * 0.092903);
+      return {
+        minBuyableLandSqFt: mSqft,
+        minBuyableUnitSystem: draft.minBuyableUnitSystem,
+        ...(draft.minBuyableUnitSystem === "ROPANI"
+          ? {
+              minBuyableRopani: num(mu.ropani),
+              minBuyableAana: num(mu.aana),
+              minBuyablePaisa: num(mu.paisa),
+              minBuyableDaam: num(mu.daam),
+            }
+          : {
+              minBuyableBigha: num(mu.bigha),
+              minBuyableKatha: num(mu.katha),
+              minBuyableDhur: num(mu.dhur),
+            }),
+      };
+    })(),
+    // Type-specific Step 3 specs — always included so fields cleared on edit
+    // reset to null/[]/false instead of keeping their previous value.
+    builtUpAreaSqFt: numberOrNull(draft.builtUpAreaSqFt),
+    propertySubtype: strOrNull(draft.propertySubtype),
+    yearBuilt: numberOrNull(draft.yearBuilt),
+    constructionStatus: strOrNull(draft.constructionStatus),
+    floorNumber: numberOrNull(draft.floorNumber),
+    totalFloors: numberOrNull(draft.totalFloors),
+    bedrooms: numberOrNull(draft.bedrooms),
+    bathrooms: numberOrNull(draft.bathrooms),
+    livingRooms: numberOrNull(draft.livingRooms),
+    kitchens: numberOrNull(draft.kitchens),
+    balconies: numberOrNull(draft.balconies),
+    parking: strOrNull(draft.parking),
+    furnishing: strOrNull(draft.furnishing),
+    houseFacing: strOrNull(draft.houseFacing),
+    amenities: draft.amenities,
+    plotShape: strOrNull(draft.plotShape),
+    frontageFt: numberOrNull(draft.frontageFt),
+    boundaryWall: strOrNull(draft.boundaryWall),
+    landClearance: draft.landClearance,
+    depthFt: numberOrNull(draft.depthFt),
+    zoning: strOrNull(draft.zoning),
+    setbackAvailable: draft.setbackAvailable,
+    setbackText: strOrNull(draft.setbackText),
+    suitableFor: draft.suitableFor,
+    parkingSpaces: numberOrNull(draft.parkingSpaces),
+    landClassification: strOrNull(draft.landClassification),
+    soilType: strOrNull(draft.soilType),
+    waterSources: draft.waterSources,
+    irrigationType: strOrNull(draft.irrigationType),
+    currentCrops: strOrNull(draft.currentCrops),
+    fencing: strOrNull(draft.fencing),
+    electricityAvailable: draft.electricityAvailable,
+    terrain: strOrNull(draft.terrain),
+    annualYield: strOrNull(draft.annualYield),
+    farmStructures: draft.farmStructures,
+    ceilingHeightFt: numberOrNull(draft.ceilingHeightFt),
+    parkingAvailable: draft.parkingAvailable,
+    parkingType: strOrNull(draft.parkingType),
+    priceType: strOrNull(draft.priceType),
+    leaseAvailable: draft.leaseAvailable,
+    leaseMonthlyRent: numberOrNull(draft.leaseMonthlyRent),
+    commercialFeatures: draft.commercialFeatures,
+    zoningLegal: strOrNull(draft.zoningLegal),
+    heritageType: strOrNull(draft.heritageType),
+    heritageEra: strOrNull(draft.heritageEra),
+    heritageGrade: strOrNull(draft.heritageGrade),
+    courtyard: strOrNull(draft.courtyard),
+    traditionalFeatures: draft.traditionalFeatures,
+    renovationStatus: strOrNull(draft.renovationStatus),
     landArea,
     location: {
       province: draft.province,
@@ -417,6 +784,66 @@ export interface WizardProperty {
   roadType?: string | null;
   facing?: string | null;
   isCornerPlot: boolean;
+  isNegotiable?: boolean;
+  minBuyableLandSqFt?: number | null;
+  minBuyableUnitSystem?: string | null;
+  minBuyableRopani?: number | null;
+  minBuyableAana?: number | null;
+  minBuyablePaisa?: number | null;
+  minBuyableDaam?: number | null;
+  minBuyableBigha?: number | null;
+  minBuyableKatha?: number | null;
+  minBuyableDhur?: number | null;
+  // Type-specific Step 3 specs
+  builtUpAreaSqFt?: number | null;
+  propertySubtype?: string | null;
+  yearBuilt?: number | null;
+  constructionStatus?: string | null;
+  floorNumber?: number | null;
+  totalFloors?: number | null;
+  bedrooms?: number | null;
+  bathrooms?: number | null;
+  livingRooms?: number | null;
+  kitchens?: number | null;
+  balconies?: number | null;
+  parking?: string | null;
+  furnishing?: string | null;
+  houseFacing?: string | null;
+  amenities?: string[] | null;
+  plotShape?: string | null;
+  frontageFt?: number | null;
+  boundaryWall?: string | null;
+  landClearance?: boolean | null;
+  depthFt?: number | null;
+  zoning?: string | null;
+  setbackAvailable?: boolean | null;
+  setbackText?: string | null;
+  suitableFor?: string[] | null;
+  parkingSpaces?: number | null;
+  landClassification?: string | null;
+  soilType?: string | null;
+  waterSources?: string[] | null;
+  irrigationType?: string | null;
+  currentCrops?: string | null;
+  fencing?: string | null;
+  electricityAvailable?: boolean | null;
+  terrain?: string | null;
+  annualYield?: string | null;
+  farmStructures?: string[] | null;
+  ceilingHeightFt?: number | null;
+  parkingAvailable?: boolean | null;
+  parkingType?: string | null;
+  priceType?: string | null;
+  leaseAvailable?: boolean | null;
+  leaseMonthlyRent?: number | null;
+  commercialFeatures?: string[] | null;
+  zoningLegal?: string | null;
+  heritageType?: string | null;
+  heritageEra?: string | null;
+  heritageGrade?: string | null;
+  courtyard?: string | null;
+  traditionalFeatures?: string[] | null;
+  renovationStatus?: string | null;
   location?: {
     province?: string;
     district?: string;
@@ -510,6 +937,8 @@ export function listingDraftFromApiProperty(p: WizardProperty): ListingDraft {
   const ward = location?.wardNumber ? `Ward ${location.wardNumber}` : "";
 
   return {
+    // Type-specific spec fields aren't persisted yet — hydrate from defaults.
+    ...INITIAL_DRAFT,
     title: p.title,
     propertyType: p.propertyType,
     description: p.description ?? "",
@@ -529,6 +958,69 @@ export function listingDraftFromApiProperty(p: WizardProperty): ListingDraft {
     roadWidthFt: p.roadAccessWidthFt ? String(p.roadAccessWidthFt) : "",
     facing: p.facing ?? "",
     isCornerPlot: p.isCornerPlot,
+    isNegotiable: p.isNegotiable ?? false,
+    minBuyableUnitSystem: (p.minBuyableUnitSystem === "BIGHA" ? "BIGHA" : "ROPANI") as UnitSystem,
+    minBuyableUnits: (() => {
+      const mu: Record<string, string> = {};
+      if (p.minBuyableRopani) mu.ropani = String(p.minBuyableRopani);
+      if (p.minBuyableAana) mu.aana = String(p.minBuyableAana);
+      if (p.minBuyablePaisa) mu.paisa = String(p.minBuyablePaisa);
+      if (p.minBuyableDaam) mu.daam = String(p.minBuyableDaam);
+      if (p.minBuyableBigha) mu.bigha = String(p.minBuyableBigha);
+      if (p.minBuyableKatha) mu.katha = String(p.minBuyableKatha);
+      if (p.minBuyableDhur) mu.dhur = String(p.minBuyableDhur);
+      return mu;
+    })(),
+    // Type-specific Step 3 specs (INITIAL_DRAFT defaults above, then overrides).
+    builtUpAreaSqFt: p.builtUpAreaSqFt ? String(p.builtUpAreaSqFt) : "",
+    propertySubtype: p.propertySubtype ?? "",
+    yearBuilt: p.yearBuilt ? String(p.yearBuilt) : "",
+    constructionStatus: p.constructionStatus ?? "",
+    floorNumber: p.floorNumber ? String(p.floorNumber) : "",
+    totalFloors: p.totalFloors ? String(p.totalFloors) : "",
+    bedrooms: p.bedrooms ? String(p.bedrooms) : "",
+    bathrooms: p.bathrooms ? String(p.bathrooms) : "",
+    livingRooms: p.livingRooms ? String(p.livingRooms) : "",
+    kitchens: p.kitchens ? String(p.kitchens) : "",
+    balconies: p.balconies ? String(p.balconies) : "",
+    parking: p.parking ?? "",
+    furnishing: p.furnishing ?? "",
+    houseFacing: p.houseFacing ?? "",
+    amenities: p.amenities ?? [],
+    plotShape: p.plotShape ?? "",
+    frontageFt: p.frontageFt ? String(p.frontageFt) : "",
+    boundaryWall: p.boundaryWall ?? "",
+    landClearance: p.landClearance ?? false,
+    depthFt: p.depthFt ? String(p.depthFt) : "",
+    zoning: p.zoning ?? "",
+    setbackAvailable: p.setbackAvailable ?? false,
+    setbackText: p.setbackText ?? "",
+    suitableFor: p.suitableFor ?? [],
+    parkingSpaces: p.parkingSpaces ? String(p.parkingSpaces) : "",
+    landClassification: p.landClassification ?? "",
+    soilType: p.soilType ?? "",
+    waterSources: p.waterSources ?? [],
+    irrigationType: p.irrigationType ?? "",
+    currentCrops: p.currentCrops ?? "",
+    fencing: p.fencing ?? "",
+    electricityAvailable: p.electricityAvailable ?? false,
+    terrain: p.terrain ?? "",
+    annualYield: p.annualYield ?? "",
+    farmStructures: p.farmStructures ?? [],
+    ceilingHeightFt: p.ceilingHeightFt ? String(p.ceilingHeightFt) : "",
+    parkingAvailable: p.parkingAvailable ?? false,
+    parkingType: p.parkingType ?? "",
+    priceType: p.priceType ?? "",
+    leaseAvailable: p.leaseAvailable ?? false,
+    leaseMonthlyRent: p.leaseMonthlyRent ? String(p.leaseMonthlyRent) : "",
+    commercialFeatures: p.commercialFeatures ?? [],
+    zoningLegal: p.zoningLegal ?? "",
+    heritageType: p.heritageType ?? "",
+    heritageEra: p.heritageEra ?? "",
+    heritageGrade: p.heritageGrade ?? "",
+    courtyard: p.courtyard ?? "",
+    traditionalFeatures: p.traditionalFeatures ?? [],
+    renovationStatus: p.renovationStatus ?? "",
     media,
     videoUrls,
     documents: (p.documents ?? []).map((d) => ({

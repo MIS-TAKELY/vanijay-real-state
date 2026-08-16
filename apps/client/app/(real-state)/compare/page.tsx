@@ -14,6 +14,7 @@ import {
   formatNPR,
   formatLocation,
   formatLandArea,
+  isLandPropertyType,
   labelEnum,
   toCardProps,
   TYPE_LABELS,
@@ -319,7 +320,9 @@ function ComparePageContent() {
       label: "Price / Aana",
       key: "pricePerAana",
       render: (p) =>
-        p.pricePerAana ? formatNPR(p.pricePerAana) : "\u2014",
+        isLandPropertyType(p.propertyType) && p.pricePerAana
+          ? formatNPR(p.pricePerAana)
+          : "\u2014",
     },
     {
       label: "Type",

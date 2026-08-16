@@ -80,12 +80,15 @@ export function LoginForm() {
     setLoading(true);
     try {
       const res = await signIn.email({ email, password });
-      if (!res.error) {
-        router.replace(next);
-        router.refresh();
-      } else {
+      if (res.error) {
+        // The auth server rejects non-admin accounts for the console
+        // (packages/auth hooks), so the message is surfaced as-is.
         setError(res.error.message || "Sign in failed.");
+        return;
       }
+
+      router.replace(next);
+      router.refresh();
     } catch {
       setError("Unable to reach the authentication server.");
     } finally {

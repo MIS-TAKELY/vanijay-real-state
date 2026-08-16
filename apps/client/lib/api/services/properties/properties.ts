@@ -46,6 +46,65 @@ const PROPERTY_FRAGMENT = `
     facing
     isCornerPlot
     isFeatured
+    isNegotiable
+    minBuyableLandSqFt
+    minBuyableUnitSystem
+    minBuyableRopani
+    minBuyableAana
+    minBuyablePaisa
+    minBuyableDaam
+    minBuyableBigha
+    minBuyableKatha
+    minBuyableDhur
+    builtUpAreaSqFt
+    propertySubtype
+    yearBuilt
+    constructionStatus
+    floorNumber
+    totalFloors
+    bedrooms
+    bathrooms
+    livingRooms
+    kitchens
+    balconies
+    parking
+    furnishing
+    houseFacing
+    amenities
+    plotShape
+    frontageFt
+    boundaryWall
+    landClearance
+    depthFt
+    zoning
+    setbackAvailable
+    setbackText
+    suitableFor
+    parkingSpaces
+    landClassification
+    soilType
+    waterSources
+    irrigationType
+    currentCrops
+    fencing
+    electricityAvailable
+    terrain
+    annualYield
+    farmStructures
+    ceilingHeightFt
+    parkingAvailable
+    parkingType
+    priceType
+    leaseAvailable
+    leaseMonthlyRent
+    commercialFeatures
+    zoningLegal
+    heritageType
+    heritageEra
+    heritageGrade
+    courtyard
+    traditionalFeatures
+    renovationStatus
     ownerId
     agentId
     createdAt

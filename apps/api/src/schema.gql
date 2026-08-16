@@ -55,6 +55,65 @@ type Property {
   facing: FacingDirection
   isCornerPlot: Boolean!
   isFeatured: Boolean!
+  isNegotiable: Boolean!
+  minBuyableLandSqFt: Float
+  minBuyableUnitSystem: String
+  minBuyableRopani: Int
+  minBuyableAana: Int
+  minBuyablePaisa: Float
+  minBuyableDaam: Float
+  minBuyableBigha: Int
+  minBuyableKatha: Int
+  minBuyableDhur: Float
+  builtUpAreaSqFt: Float
+  propertySubtype: String
+  yearBuilt: Int
+  constructionStatus: String
+  floorNumber: Int
+  totalFloors: Int
+  bedrooms: Int
+  bathrooms: Int
+  livingRooms: Int
+  kitchens: Int
+  balconies: Int
+  parking: String
+  furnishing: String
+  houseFacing: String
+  amenities: [String!]
+  plotShape: String
+  frontageFt: Float
+  boundaryWall: String
+  landClearance: Boolean!
+  depthFt: Float
+  zoning: String
+  setbackAvailable: Boolean!
+  setbackText: String
+  suitableFor: [String!]
+  parkingSpaces: Int
+  landClassification: String
+  soilType: String
+  waterSources: [String!]
+  irrigationType: String
+  currentCrops: String
+  fencing: String
+  electricityAvailable: Boolean!
+  terrain: String
+  annualYield: String
+  farmStructures: [String!]
+  ceilingHeightFt: Float
+  parkingAvailable: Boolean!
+  parkingType: String
+  priceType: String
+  leaseAvailable: Boolean!
+  leaseMonthlyRent: Float
+  commercialFeatures: [String!]
+  zoningLegal: String
+  heritageType: String
+  heritageEra: String
+  heritageGrade: String
+  courtyard: String
+  traditionalFeatures: [String!]
+  renovationStatus: String
   ownerId: String!
   agentId: String
   location: PropertyLocation
@@ -203,6 +262,65 @@ input CreatePropertyInput {
   facing: FacingDirection
   isCornerPlot: Boolean
   isFeatured: Boolean
+  isNegotiable: Boolean
+  minBuyableLandSqFt: Float
+  minBuyableUnitSystem: String
+  minBuyableRopani: Float
+  minBuyableAana: Float
+  minBuyablePaisa: Float
+  minBuyableDaam: Float
+  minBuyableBigha: Float
+  minBuyableKatha: Float
+  minBuyableDhur: Float
+  builtUpAreaSqFt: Float
+  propertySubtype: String
+  yearBuilt: Float
+  constructionStatus: String
+  floorNumber: Float
+  totalFloors: Float
+  bedrooms: Float
+  bathrooms: Float
+  livingRooms: Float
+  kitchens: Float
+  balconies: Float
+  parking: String
+  furnishing: String
+  houseFacing: String
+  amenities: [String!]
+  plotShape: String
+  frontageFt: Float
+  boundaryWall: String
+  landClearance: Boolean
+  depthFt: Float
+  zoning: String
+  setbackAvailable: Boolean
+  setbackText: String
+  suitableFor: [String!]
+  parkingSpaces: Float
+  landClassification: String
+  soilType: String
+  waterSources: [String!]
+  irrigationType: String
+  currentCrops: String
+  fencing: String
+  electricityAvailable: Boolean
+  terrain: String
+  annualYield: String
+  farmStructures: [String!]
+  ceilingHeightFt: Float
+  parkingAvailable: Boolean
+  parkingType: String
+  priceType: String
+  leaseAvailable: Boolean
+  leaseMonthlyRent: Float
+  commercialFeatures: [String!]
+  zoningLegal: String
+  heritageType: String
+  heritageEra: String
+  heritageGrade: String
+  courtyard: String
+  traditionalFeatures: [String!]
+  renovationStatus: String
   agentId: String
   landArea: LandAreaDetailsInput!
   location: PropertyLocationInput!
@@ -278,6 +396,65 @@ input UpdatePropertyInput {
   facing: FacingDirection
   isCornerPlot: Boolean
   isFeatured: Boolean
+  isNegotiable: Boolean
+  minBuyableLandSqFt: Float
+  minBuyableUnitSystem: String
+  minBuyableRopani: Float
+  minBuyableAana: Float
+  minBuyablePaisa: Float
+  minBuyableDaam: Float
+  minBuyableBigha: Float
+  minBuyableKatha: Float
+  minBuyableDhur: Float
+  builtUpAreaSqFt: Float
+  propertySubtype: String
+  yearBuilt: Float
+  constructionStatus: String
+  floorNumber: Float
+  totalFloors: Float
+  bedrooms: Float
+  bathrooms: Float
+  livingRooms: Float
+  kitchens: Float
+  balconies: Float
+  parking: String
+  furnishing: String
+  houseFacing: String
+  amenities: [String!]
+  plotShape: String
+  frontageFt: Float
+  boundaryWall: String
+  landClearance: Boolean
+  depthFt: Float
+  zoning: String
+  setbackAvailable: Boolean
+  setbackText: String
+  suitableFor: [String!]
+  parkingSpaces: Float
+  landClassification: String
+  soilType: String
+  waterSources: [String!]
+  irrigationType: String
+  currentCrops: String
+  fencing: String
+  electricityAvailable: Boolean
+  terrain: String
+  annualYield: String
+  farmStructures: [String!]
+  ceilingHeightFt: Float
+  parkingAvailable: Boolean
+  parkingType: String
+  priceType: String
+  leaseAvailable: Boolean
+  leaseMonthlyRent: Float
+  commercialFeatures: [String!]
+  zoningLegal: String
+  heritageType: String
+  heritageEra: String
+  heritageGrade: String
+  courtyard: String
+  traditionalFeatures: [String!]
+  renovationStatus: String
   agentId: String
   landArea: LandAreaDetailsInput
   location: PropertyLocationInput

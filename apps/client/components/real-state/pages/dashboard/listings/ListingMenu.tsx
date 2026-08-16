@@ -15,6 +15,7 @@ import type {
   ApiProperty,
   CreatePropertyPayload,
 } from "lib/api/services/properties/types";
+import { isLandPropertyType } from "lib/api/services/properties/types";
 import Link from "next/link";
 import { useState } from "react";
 import type { MyListing } from "./constants";
@@ -42,7 +43,11 @@ function toDuplicatePayload(p: ApiProperty): CreatePropertyPayload {
     ...(p.description ? { description: p.description } : {}),
     propertyType: p.propertyType,
     askingPrice: p.askingPrice,
-    ...(p.pricePerAana != null ? { pricePerAana: p.pricePerAana } : {}),
+    // Per-aana is a land-pricing metric — never carry it onto a duplicate of a
+    // building-type listing (a stale value would resurface the bogus rate).
+    ...(isLandPropertyType(p.propertyType) && p.pricePerAana != null
+      ? { pricePerAana: p.pricePerAana }
+      : {}),
     ...(p.roadAccessWidthFt != null && {
       roadAccessWidthFt: p.roadAccessWidthFt,
     }),

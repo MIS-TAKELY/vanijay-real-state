@@ -1287,6 +1287,369 @@ export const PROVINCES: Province[] = [
   },
 ];
 
+/* ------------------------------------------------------------------ */
+/* Property-type-specific specs — the dynamic fields Step 3 renders     */
+/* per property type. Values are enum-style strings ready for the      */
+/* backend pass (fields are currently wizard-only, not yet persisted). */
+/* ------------------------------------------------------------------ */
+
+export interface Option {
+  value: string;
+  label: string;
+}
+
+/** Property types that are sold by land area (units required). */
+export const LAND_PROPERTY_TYPES = [
+  "RESIDENTIAL_LAND",
+  "COMMERCIAL_LAND",
+  "AGRICULTURAL_LAND",
+];
+
+/** Property types that are sold by built-up area (building + optional land). */
+export const BUILDING_PROPERTY_TYPES = [
+  "RESIDENTIAL_HOUSE",
+  "COMMERCIAL_SPACE",
+  "HERITAGE_HOME",
+];
+
+export function isLandType(type: string): boolean {
+  return LAND_PROPERTY_TYPES.includes(type);
+}
+
+export function isBuildingType(type: string): boolean {
+  return BUILDING_PROPERTY_TYPES.includes(type);
+}
+
+/* ------------------------- residential land ------------------------- */
+
+export const PLOT_SHAPES: Option[] = [
+  { value: "RECTANGULAR", label: "Rectangular" },
+  { value: "SQUARE", label: "Square" },
+  { value: "IRREGULAR", label: "Irregular" },
+  { value: "TRIANGULAR", label: "Triangular" },
+  { value: "TRAPEZOIDAL", label: "Trapezoidal" },
+  { value: "OTHER", label: "Other" },
+];
+
+export const BOUNDARY_WALL_OPTIONS: Option[] = [
+  { value: "YES", label: "Yes" },
+  { value: "PARTIAL", label: "Partial" },
+  { value: "NO", label: "No" },
+];
+
+/* -------------------------- commercial land ------------------------- */
+
+export const ZONING_OPTIONS: Option[] = [
+  { value: "COMMERCIAL", label: "Commercial" },
+  { value: "MIXED_USE", label: "Mixed-use" },
+  { value: "INDUSTRIAL", label: "Industrial" },
+  { value: "RETAIL", label: "Retail" },
+  { value: "OFFICE", label: "Office" },
+  { value: "HOSPITALITY", label: "Hospitality" },
+  { value: "OTHER", label: "Other" },
+];
+
+export const SUITABLE_FOR_OPTIONS: Option[] = [
+  { value: "RETAIL", label: "Retail" },
+  { value: "OFFICE", label: "Office" },
+  { value: "HOTEL", label: "Hotel" },
+  { value: "RESTAURANT", label: "Restaurant" },
+  { value: "WAREHOUSE", label: "Warehouse" },
+  { value: "SHOWROOM", label: "Showroom" },
+  { value: "BANK", label: "Bank" },
+  { value: "OTHER", label: "Other" },
+];
+
+/* ------------------------- agricultural land ------------------------ */
+
+export const LAND_CLASSIFICATIONS: Option[] = [
+  { value: "IRRIGATED", label: "Irrigated" },
+  { value: "RAIN_FED", label: "Rain-fed" },
+  { value: "TERAI_FARMLAND", label: "Terai farmland" },
+  { value: "HILLSIDE_TERRACE", label: "Hillside terrace" },
+  { value: "ORCHARD", label: "Orchard" },
+  { value: "PASTURE", label: "Pasture" },
+  { value: "FOREST_WOODLOT", label: "Forest / woodlot" },
+  { value: "BARREN", label: "Barren" },
+  { value: "MIXED_USE", label: "Mixed-use" },
+];
+
+export const SOIL_TYPES: Option[] = [
+  { value: "ALLUVIAL", label: "Alluvial" },
+  { value: "SANDY_LOAM", label: "Sandy loam" },
+  { value: "CLAY", label: "Clay" },
+  { value: "SILT", label: "Silt" },
+  { value: "RED_SOIL", label: "Red soil" },
+  { value: "ROCKY", label: "Rocky" },
+  { value: "MIXED", label: "Mixed" },
+  { value: "UNKNOWN", label: "Unknown" },
+];
+
+export const WATER_SOURCES: Option[] = [
+  { value: "RIVER_STREAM", label: "River / Stream" },
+  { value: "CANAL", label: "Canal" },
+  { value: "POND", label: "Pond" },
+  { value: "WELL_BOREWELL", label: "Well / Borewell" },
+  { value: "RAINWATER", label: "Rainwater harvesting" },
+  { value: "IRRIGATION_SYSTEM", label: "Irrigation system" },
+  { value: "NONE", label: "None" },
+];
+
+export const IRRIGATION_TYPES: Option[] = [
+  { value: "FLOOD_FURROW", label: "Flood / furrow" },
+  { value: "SPRINKLER", label: "Sprinkler" },
+  { value: "DRIP", label: "Drip" },
+  { value: "MANUAL", label: "Manual" },
+  { value: "CANAL_FED", label: "Canal-fed" },
+  { value: "OTHER", label: "Other" },
+];
+
+export const TERRAIN_TYPES: Option[] = [
+  { value: "FLAT", label: "Flat" },
+  { value: "GENTLE_SLOPE", label: "Gentle slope" },
+  { value: "MODERATE_SLOPE", label: "Moderate slope" },
+  { value: "STEEP_SLOPE", label: "Steep slope" },
+  { value: "TERRACED", label: "Terraced" },
+  { value: "HILLY", label: "Hilly" },
+];
+
+export const FARM_STRUCTURES: Option[] = [
+  { value: "NONE", label: "None" },
+  { value: "SHED", label: "Shed" },
+  { value: "BARN", label: "Barn" },
+  { value: "STORAGE", label: "Storage" },
+  { value: "GREENHOUSE", label: "Greenhouse" },
+  { value: "FARMHOUSE", label: "Farmhouse" },
+  { value: "CATTLE_SHED", label: "Cattle shed" },
+  { value: "TUBE_WELL", label: "Tube well" },
+];
+
+export const FENCING_OPTIONS: Option[] = [
+  { value: "FULL", label: "Fully fenced" },
+  { value: "PARTIAL", label: "Partially fenced" },
+  { value: "NONE", label: "Unfenced" },
+];
+
+/* ------------------------- residential house ------------------------ */
+
+export const HOUSE_SUBTYPES: Option[] = [
+  { value: "INDEPENDENT_HOUSE", label: "Independent House" },
+  { value: "DUPLEX", label: "Duplex" },
+  { value: "TOWNHOUSE", label: "Townhouse" },
+  { value: "VILLA", label: "Villa" },
+  { value: "APARTMENT", label: "Apartment / Flat" },
+  { value: "STUDIO", label: "Studio" },
+  { value: "PENTHOUSE", label: "Penthouse" },
+  { value: "BUNGALOW", label: "Bungalow" },
+  { value: "ROW_HOUSE", label: "Row house" },
+];
+
+/** Subtypes where the unit sits in a multi-storey block (floor number & total floors apply). */
+export const APARTMENT_LIKE_SUBTYPES = ["APARTMENT", "STUDIO", "PENTHOUSE"];
+
+/** Subtypes that include the plot itself (corner plot toggle applies). */
+export const HOUSE_WITH_LAND_SUBTYPES = [
+  "INDEPENDENT_HOUSE",
+  "DUPLEX",
+  "TOWNHOUSE",
+  "VILLA",
+  "BUNGALOW",
+  "ROW_HOUSE",
+];
+
+export const HOUSE_CONSTRUCTION_STATUSES: Option[] = [
+  { value: "READY", label: "Ready to move" },
+  { value: "UNDER_CONSTRUCTION", label: "Under construction" },
+  { value: "PRE_LAUNCH", label: "Pre-launch" },
+  { value: "RENOVATED", label: "Renovated" },
+  { value: "OLD_CONSTRUCTION", label: "Old construction" },
+];
+
+export const PARKING_OPTIONS: Option[] = [
+  { value: "NONE", label: "None" },
+  { value: "ONE_CAR", label: "1 car" },
+  { value: "TWO_CARS", label: "2 cars" },
+  { value: "THREE_PLUS", label: "3+ cars" },
+  { value: "COVERED", label: "Covered" },
+  { value: "UNCOVERED", label: "Uncovered" },
+  { value: "STREET", label: "Street parking" },
+];
+
+export const HOUSE_FURNISHING: Option[] = [
+  { value: "UNFURNISHED", label: "Unfurnished" },
+  { value: "SEMI_FURNISHED", label: "Semi-furnished" },
+  { value: "FULLY_FURNISHED", label: "Fully furnished" },
+];
+
+export const HOUSE_AMENITIES: Option[] = [
+  { value: "GARDEN", label: "Garden / Yard" },
+  { value: "TERRACE_ROOFTOP", label: "Terrace / Rooftop access" },
+  { value: "SERVANT_QUARTER", label: "Servant quarter" },
+  { value: "STORE_ROOM", label: "Store room" },
+  { value: "PUJA_ROOM", label: "Puja room" },
+  { value: "STUDY_ROOM", label: "Study room" },
+  { value: "LAUNDRY_ROOM", label: "Laundry room" },
+  { value: "BASEMENT", label: "Basement" },
+  { value: "SOLAR_WATER_HEATER", label: "Solar water heater" },
+  { value: "WATER_SUPPLY", label: "Water supply (Municipal / Borewell)" },
+  { value: "THREE_PHASE_ELECTRICITY", label: "Electricity (3-phase)" },
+  { value: "INTERNET_FIBER", label: "Internet / Fiber ready" },
+  { value: "CABLE_TV", label: "Cable TV" },
+  { value: "SECURITY_GUARD", label: "Security guard" },
+  { value: "CCTV_INTERCOM", label: "CCTV / Intercom" },
+  { value: "GENERATOR_INVERTER", label: "Generator / Inverter" },
+  { value: "ELEVATOR", label: "Elevator" },
+  { value: "GYM", label: "Gym" },
+  { value: "SWIMMING_POOL", label: "Swimming pool" },
+  { value: "COMMUNITY_HALL", label: "Community hall" },
+  { value: "PLAY_AREA", label: "Children's play area" },
+  { value: "GAS_PIPELINE", label: "Gas pipeline" },
+  { value: "RAINWATER_HARVESTING", label: "Rainwater harvesting" },
+  { value: "EARTHQUAKE_RESISTANT", label: "Earthquake resistant" },
+  { value: "FIRE_SAFETY", label: "Fire safety equipment" },
+];
+
+/** House facing = "Same as plot" or any of the 8 directions. */
+export const HOUSE_FACING_OPTIONS: Option[] = [
+  { value: "SAME_AS_PLOT", label: "Same as plot facing" },
+  ...FACING_DIRECTIONS.map((d) => ({ value: d.value, label: d.label })),
+];
+
+/* -------------------------- commercial space ------------------------ */
+
+export const SPACE_SUBTYPES: Option[] = [
+  { value: "OFFICE_SPACE", label: "Office space" },
+  { value: "RETAIL_SHOP", label: "Retail shop" },
+  { value: "RESTAURANT", label: "Restaurant / food court" },
+  { value: "WAREHOUSE", label: "Warehouse / Godown" },
+  { value: "SHOWROOM", label: "Showroom" },
+  { value: "COWORKING", label: "Co-working space" },
+  { value: "HOTEL_MOTEL", label: "Hotel / Motel" },
+  { value: "FACTORY_INDUSTRIAL", label: "Factory / Industrial" },
+  { value: "MIXED_USE_BUILDING", label: "Mixed-use building" },
+  { value: "SHOPPING_COMPLEX", label: "Shopping complex unit" },
+  { value: "CLINIC", label: "Clinic / Diagnostic" },
+];
+
+export const SPACE_CONSTRUCTION_STATUSES: Option[] = [
+  { value: "READY", label: "Ready" },
+  { value: "UNDER_CONSTRUCTION", label: "Under construction" },
+  { value: "CORE_SHELL", label: "Core & shell" },
+  { value: "RENOVATED", label: "Renovated" },
+];
+
+export const SPACE_PARKING_TYPES: Option[] = [
+  { value: "COVERED", label: "Covered" },
+  { value: "UNCOVERED", label: "Uncovered" },
+  { value: "BASEMENT", label: "Basement" },
+  { value: "STILT", label: "Stilt" },
+];
+
+export const SPACE_FURNISHING: Option[] = [
+  { value: "BARE_SHELL", label: "Bare shell" },
+  { value: "WARM_SHELL", label: "Warm shell" },
+  { value: "UNFURNISHED", label: "Unfurnished" },
+  { value: "SEMI_FURNISHED", label: "Semi-furnished" },
+  { value: "FULLY_FURNISHED", label: "Fully furnished" },
+];
+
+export const PRICE_TYPES: Option[] = [
+  { value: "FIXED", label: "Fixed price" },
+  { value: "NEGOTIABLE", label: "Negotiable" },
+  { value: "ON_REQUEST", label: "Price on request" },
+];
+
+export const COMMERCIAL_FEATURES: Option[] = [
+  { value: "THREE_PHASE_ELECTRICITY", label: "3-phase electricity" },
+  { value: "HIGH_SPEED_INTERNET", label: "High-speed internet ready" },
+  { value: "CENTRAL_AC", label: "Central AC provision" },
+  { value: "FIRE_SAFETY_NOC", label: "Fire safety / NOC" },
+  { value: "LIFT_ELEVATOR", label: "Lift / Elevator" },
+  { value: "SECURITY_24_7", label: "24/7 security" },
+  { value: "CCTV", label: "CCTV" },
+  { value: "POWER_BACKUP", label: "Power backup" },
+  { value: "WATER_STORAGE_TANK", label: "Water storage tank" },
+  { value: "SEPTIC_TANK", label: "Septic tank" },
+  { value: "LOADING_BAY", label: "Loading / unloading bay" },
+  { value: "MEZZANINE", label: "Mezzanine floor" },
+  { value: "DISPLAY_WINDOW", label: "Display window" },
+  { value: "STORAGE_ROOM", label: "Storage room / Godown" },
+  { value: "PANTRY", label: "Pantry / Kitchenette" },
+  { value: "ATTACHED_TOILET", label: "Attached toilet" },
+  { value: "DG_SET", label: "DG set provision" },
+  { value: "VASTU", label: "Vastu compliant" },
+];
+
+export const ZONING_LEGAL_OPTIONS: Option[] = [
+  { value: "RESIDENTIAL_COMMERCIAL_MIXED", label: "Residential-commercial mixed" },
+  { value: "COMMERCIAL", label: "Commercial" },
+  { value: "INDUSTRIAL", label: "Industrial" },
+  { value: "INSTITUTIONAL", label: "Institutional" },
+  { value: "OTHER", label: "Other" },
+];
+
+/* ---------------------------- heritage home ------------------------- */
+
+export const HERITAGE_TYPES: Option[] = [
+  { value: "NEWARI_TRADITIONAL", label: "Newari traditional" },
+  { value: "MALLA_ERA", label: "Malla era" },
+  { value: "RANA_PALACE", label: "Rana palace" },
+  { value: "GORKHA_STYLE", label: "Gorkha style" },
+  { value: "BUDDHIST_MONASTERY", label: "Buddhist monastery" },
+  { value: "TERAI_HAVELI", label: "Traditional Terai haveli" },
+  { value: "OTHER", label: "Other" },
+];
+
+export const HERITAGE_ERAS: Option[] = [
+  { value: "PRE_1900", label: "Pre-1900" },
+  { value: "1900_1950", label: "1900–1950" },
+  { value: "1950_1980", label: "1950–1980" },
+  { value: "1980_2000", label: "1980–2000" },
+  { value: "UNKNOWN", label: "Unknown" },
+];
+
+export const HERITAGE_GRADES: Option[] = [
+  { value: "GRADE_I", label: "Grade I (National heritage)" },
+  { value: "GRADE_II", label: "Grade II (Provincial)" },
+  { value: "GRADE_III", label: "Grade III (Local)" },
+  { value: "UNGRADED", label: "Ungraded" },
+  { value: "UNKNOWN", label: "Unknown" },
+];
+
+export const TRADITIONAL_FEATURES: Option[] = [
+  { value: "CARVED_WOODEN_WINDOWS", label: "Carved wooden windows (Tiki-jhya)" },
+  { value: "BRICK_TIMBER_FRAME", label: "Brick-timber frame (Dhalan)" },
+  { value: "STONE_FOUNDATION", label: "Stone foundation" },
+  { value: "MUD_MORTAR", label: "Mud mortar construction" },
+  { value: "TRADITIONAL_TILED_ROOF", label: "Traditional tiled roof" },
+  { value: "TORAN_GATEWAY", label: "Toran / Gateway" },
+  { value: "STONE_SPOUT", label: "Stone spout (Dhunge dhara)" },
+  { value: "BRICK_PAVEMENT", label: "Brick pavement (Pati)" },
+  { value: "ORIGINAL_MURALS", label: "Original murals / Paintings" },
+  { value: "TRADITIONAL_STAIRCASE", label: "Traditional staircase" },
+];
+
+export const RENOVATION_STATUSES: Option[] = [
+  { value: "ORIGINAL", label: "Original / untouched" },
+  { value: "PARTIALLY_RENOVATED", label: "Partially renovated" },
+  { value: "FULLY_RENOVATED", label: "Fully renovated" },
+  { value: "RESTORED_EXPERT", label: "Restored by expert" },
+  { value: "MODERNIZED", label: "Modernized" },
+];
+
+export const COURTYARD_OPTIONS: Option[] = [
+  { value: "CENTRAL", label: "Central" },
+  { value: "SIDE", label: "Side" },
+  { value: "MULTIPLE", label: "Multiple" },
+  { value: "NONE", label: "None" },
+];
+
+export const HERITAGE_AMENITY_EXTRAS: Option[] = [
+  { value: "HERITAGE_CONSERVATION", label: "Heritage conservation status" },
+  { value: "TOURISM_HOMESTAY", label: "Tourism / homestay potential" },
+  { value: "MUSEUM_POTENTIAL", label: "Museum potential" },
+];
+
 /* ---------------------------- review checklist ------------------------- */
 
 // (REVIEW_CHECKLIST was static mock data; StepReview now builds the
