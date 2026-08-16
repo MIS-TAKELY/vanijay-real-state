@@ -8,7 +8,10 @@ const PUBLIC_PATHS = ["/login", "/_next", "/favicon.ico"];
 
 function signInRedirect(request: NextRequest) {
   const returnTo = request.nextUrl.pathname + request.nextUrl.search;
-  const url = new URL(`/login?next=${encodeURIComponent(returnTo)}`, request.url);
+  const url = new URL(
+    `/login?next=${encodeURIComponent(returnTo)}`,
+    request.url,
+  );
   return NextResponse.redirect(url);
 }
 
@@ -29,7 +32,9 @@ export async function proxy(request: NextRequest) {
     });
 
     if (!res.ok) return signInRedirect(request);
-    const session = (await res.json()) as { user?: { role?: string[] } | null } | null;
+    const session = (await res.json()) as {
+      user?: { role?: string[] } | null;
+    } | null;
     const roles = session?.user?.role ?? [];
     if (!roles.includes("ADMIN")) return signInRedirect(request);
 

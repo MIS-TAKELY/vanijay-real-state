@@ -49,10 +49,7 @@ export function FavoriteCard({
   const toggleNotify = async () => {
     setBusy(true);
     try {
-      const updated = await updateFavoriteNotify(
-        favorite.propertyId,
-        !notify,
-      );
+      const updated = await updateFavoriteNotify(favorite.propertyId, !notify);
       setNotify(updated.notifyOnPriceChange);
       onUpdated(updated);
       toast.success(

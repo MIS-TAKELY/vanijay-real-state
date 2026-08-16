@@ -14,8 +14,7 @@ export function AppointmentStatusChip({
   status,
   className,
 }: AppointmentStatusChipProps) {
-  const style =
-    APPOINTMENT_STATUS_STYLES[status] ?? DEFAULT_APPT_STATUS_STYLE;
+  const style = APPOINTMENT_STATUS_STYLES[status] ?? DEFAULT_APPT_STATUS_STYLE;
 
   return (
     <span

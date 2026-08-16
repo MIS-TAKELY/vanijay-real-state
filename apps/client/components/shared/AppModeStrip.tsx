@@ -30,7 +30,7 @@ function useHorizontalDrag(ref: React.RefObject<HTMLDivElement | null>) {
   return { onMouseDown, onMouseMove, onMouseUp, onMouseLeave };
 }
 
-function AppModeStrip() {
+function AppModeStrip({ compact = false }: { compact?: boolean }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const { onMouseDown, onMouseMove, onMouseUp, onMouseLeave } =
     useHorizontalDrag(scrollRef);
@@ -47,8 +47,69 @@ function AppModeStrip() {
     return pathname.startsWith(href);
   };
 
+  // Compact vertical list — used inside the navbar app-switcher dropdown.
+  if (compact) {
+    return (
+      <nav aria-label="Apps" className="flex flex-col gap-0.5 p-2">
+        {appModes.map((mode) => {
+          const active = isActive(mode.href);
+
+          const row = (
+            <div
+              className={[
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors duration-150",
+                active
+                  ? "bg-primary/10 text-primary"
+                  : "text-on-surface hover:bg-surface-container",
+              ].join(" ")}
+            >
+              <Icon
+                name={mode.icon}
+                filled
+                className={`w-6 shrink-0 text-[20px] ${
+                  active ? "text-primary" : "text-on-surface-variant"
+                }`}
+              />
+              <span className="text-sm font-medium">{mode.label}</span>
+              {mode.soon && (
+                <span className="ml-auto shrink-0 rounded-full bg-error/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-error">
+                  Soon
+                </span>
+              )}
+              {active && (
+                <Icon
+                  name="check"
+                  className="ml-auto text-[16px] text-primary"
+                />
+              )}
+            </div>
+          );
+
+          return (
+            <div key={mode.id}>
+              {mode.soon ? (
+                <div aria-disabled="true" className="cursor-not-allowed opacity-60">
+                  {row}
+                </div>
+              ) : (
+                <Link
+                  href={mode.href}
+                  aria-current={active ? "page" : undefined}
+                  className="block"
+                >
+                  {row}
+                </Link>
+              )}
+            </div>
+          );
+        })}
+      </nav>
+    );
+  }
+
+  // Horizontal scrollable tiles — full-width landing-page usage.
   return (
-    <section className="py-8 md:py-10 relative z-10">
+    <section className="relative z-10 py-8 md:py-10">
       <div className="max-w-container-max mx-auto px-gutter">
         <div
           ref={scrollRef}

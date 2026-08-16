@@ -30,7 +30,10 @@ export function FunnelChart({ steps }: { steps: FunnelStep[] }) {
         }),
       ],
       y: {
-        scale: () => scaleBand<string>().domain(steps.map((s) => s.step)).padding(0.28),
+        scale: () =>
+          scaleBand<string>()
+            .domain(steps.map((s) => s.step))
+            .padding(0.28),
       },
       x: {
         scale: () => scaleLinear().domain([0, maxValue]).nice(),
@@ -54,19 +57,34 @@ export function FunnelChart({ steps }: { steps: FunnelStep[] }) {
   const top = steps[0]?.value ?? 0;
   return (
     <div>
-      <Chart definition={definition} height={230} initialWidth={460} ariaLabel="Buyer engagement funnel" />
+      <Chart
+        definition={definition}
+        height={230}
+        initialWidth={460}
+        ariaLabel="Buyer engagement funnel"
+      />
       <ul className="mt-sm space-y-xs">
         {steps.map((s, i) => {
           const pctOfViews = top > 0 ? Math.round((s.value / top) * 100) : 0;
           const prev = steps[i - 1];
-          const stepConv = prev && prev.value > 0 ? Math.round((s.value / prev.value) * 100) : null;
+          const stepConv =
+            prev && prev.value > 0
+              ? Math.round((s.value / prev.value) * 100)
+              : null;
           return (
-            <li key={s.step} className="flex items-center justify-between gap-sm font-label-sm text-[12px]">
+            <li
+              key={s.step}
+              className="flex items-center justify-between gap-sm font-label-sm text-[12px]"
+            >
               <span className="text-on-surface-variant">{s.step}</span>
               <span className="mono-stat text-on-surface">
                 {formatNumber(s.value)}
-                <span className="ml-2 text-on-surface-variant">{pctOfViews}% of views</span>
-                {stepConv !== null ? <span className="ml-2 text-tertiary">{stepConv}% step</span> : null}
+                <span className="ml-2 text-on-surface-variant">
+                  {pctOfViews}% of views
+                </span>
+                {stepConv !== null ? (
+                  <span className="ml-2 text-tertiary">{stepConv}% step</span>
+                ) : null}
               </span>
             </li>
           );

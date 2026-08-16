@@ -173,7 +173,8 @@ export const auth = betterAuth({
         ctx.headers?.get("origin") ?? ctx.headers?.get("referer") ?? undefined;
       const requestOrigin = originOf(originHeader);
       if (!requestOrigin) return; // non-browser callers -> middleware/API guards
-      const isClientApp = clientOrigin !== null && requestOrigin === clientOrigin;
+      const isClientApp =
+        clientOrigin !== null && requestOrigin === clientOrigin;
       const isAdminApp = adminOrigin !== null && requestOrigin === adminOrigin;
       if (!isClientApp && !isAdminApp) return;
 
@@ -192,8 +193,7 @@ export const auth = betterAuth({
       }
       if (isClientApp && isAdmin) {
         throw new APIError("FORBIDDEN", {
-          message:
-            "Invalid email or password.",
+          message: "Invalid email or password.",
         });
       }
     }),

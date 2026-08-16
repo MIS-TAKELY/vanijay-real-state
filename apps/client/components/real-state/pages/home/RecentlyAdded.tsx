@@ -3,7 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "@repo/ui";
 import { HorizontalScrollSection } from "../../common/HorizontalScrollSection";
-import { fetchRecentlyAddedProperties, toCardPropsFromItem, type CardProperty, type PropertyItem } from "lib/api/services/properties";
+import {
+  fetchRecentlyAddedProperties,
+  toCardPropsFromItem,
+  type CardProperty,
+  type PropertyItem,
+} from "lib/api/services/properties";
 
 function RecentlyAdded() {
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -12,9 +17,14 @@ function RecentlyAdded() {
 
   const scroll = (direction: "prev" | "next") => {
     if (!scrollRef.current) return;
-    const card = scrollRef.current.querySelector("[data-card]") as HTMLElement | null;
+    const card = scrollRef.current.querySelector(
+      "[data-card]",
+    ) as HTMLElement | null;
     const cardWidth = card ? card.offsetWidth + 16 : 296;
-    scrollRef.current.scrollBy({ left: direction === "next" ? cardWidth : -cardWidth, behavior: "smooth" });
+    scrollRef.current.scrollBy({
+      left: direction === "next" ? cardWidth : -cardWidth,
+      behavior: "smooth",
+    });
   };
 
   useEffect(() => {
@@ -55,7 +65,10 @@ function RecentlyAdded() {
           </div>
           <div className="flex gap-4 overflow-x-auto pb-4 pt-2">
             {[1, 2, 3, 4].map((i) => (
-              <div key={i} className="min-w-[280px] md:min-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container" />
+              <div
+                key={i}
+                className="min-w-[280px] md:min-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container"
+              />
             ))}
           </div>
         </div>
@@ -80,10 +93,22 @@ function RecentlyAdded() {
             </h2>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="icon" aria-label="Previous" onClick={() => scroll("prev")} className="shrink-0">
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Previous"
+              onClick={() => scroll("prev")}
+              className="shrink-0"
+            >
               <Icon name="chevron_left" />
             </Button>
-            <Button variant="outline" size="icon" aria-label="Next" onClick={() => scroll("next")} className="shrink-0">
+            <Button
+              variant="outline"
+              size="icon"
+              aria-label="Next"
+              onClick={() => scroll("next")}
+              className="shrink-0"
+            >
               <Icon name="chevron_right" />
             </Button>
           </div>

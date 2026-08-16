@@ -38,23 +38,9 @@ function CategoryStrip() {
 
   if (!categoriesEnabled || categories.length === 0) return null;
 
-
   return (
-    <section className="py-10 md:py-14 relative z-10">
+    <section className="py-4 relative z-10">
       <div className="max-w-container-max mx-auto px-gutter">
-        {/* Section header */}
-        {/* <div className="flex items-end justify-between mb-6">
-          <h2 className="font-headline-md text-headline-md text-primary">
-            Browse by Category
-          </h2>
-          <Link
-            href="/"
-            className="hidden sm:inline-flex items-center gap-1 font-label-sm text-sm text-primary font-semibold hover:underline underline-offset-4"
-          >
-            See All
-            <Icon name="arrow_forward" className="text-data-table" />
-          </Link>
-        </div> */}
 
         {/* Horizontally scrollable row */}
         <div
@@ -63,7 +49,7 @@ function CategoryStrip() {
           onMouseMove={onMouseMove}
           onMouseUp={onMouseUp}
           onMouseLeave={onMouseLeave}
-          className="flex gap-4 overflow-x-auto no-scrollbar snap-x cursor-grab active:cursor-grabbing justify-center"
+          className="flex gap-4 overflow-x-auto no-scrollbar snap-x cursor-grab active:cursor-grabbing justify-center p-1"
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {categories.map((cat) => (

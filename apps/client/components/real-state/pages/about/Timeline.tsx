@@ -1,6 +1,5 @@
 import { milestones } from "constants/varibles-constants";
 
-
 export function Timeline() {
   return (
     <section className="border-b border-outline-variant bg-surface">

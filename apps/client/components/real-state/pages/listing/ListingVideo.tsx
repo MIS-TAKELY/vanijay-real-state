@@ -22,7 +22,9 @@ function youtubeVideoId(url: string): string | null {
     if (parsed.hostname === "youtu.be") {
       return parsed.pathname.slice(1) || null;
     }
-  } catch { /* ignore */ }
+  } catch {
+    /* ignore */
+  }
   return null;
 }
 
@@ -31,7 +33,9 @@ function vimeoVideoId(url: string): string | null {
     const parsed = new URL(url);
     if (!parsed.hostname.includes("vimeo.com")) return null;
     return parsed.pathname.match(/\/(\d+)/)?.[1] ?? null;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 function tiktokVideoId(url: string): string | null {
@@ -39,7 +43,9 @@ function tiktokVideoId(url: string): string | null {
     const parsed = new URL(url);
     if (!parsed.hostname.includes("tiktok.com")) return null;
     return parsed.pathname.match(/\/video\/(\d+)/)?.[1] ?? null;
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 /** Returns shortcode + post type for an Instagram URL, or null. */
@@ -55,7 +61,9 @@ function instagramInfo(
     const type: "p" | "reel" | "tv" =
       rawType === "p" ? "p" : rawType === "tv" ? "tv" : "reel";
     return { code: m[2]!, type };
-  } catch { return null; }
+  } catch {
+    return null;
+  }
 }
 
 function isDirectVideo(url: string): boolean {
@@ -70,10 +78,20 @@ function detectLinkOnly(url: string): LinkOnlyPlatform | null {
   try {
     const h = new URL(url).hostname;
     if (h.includes("twitter.com") || h.includes("x.com"))
-      return { name: "X (Twitter)", icon: "✕", gradient: "from-[#14171a] to-[#1d9bf0]" };
+      return {
+        name: "X (Twitter)",
+        icon: "✕",
+        gradient: "from-[#14171a] to-[#1d9bf0]",
+      };
     if (h.includes("facebook.com") || h.includes("fb.watch"))
-      return { name: "Facebook", icon: "f", gradient: "from-[#1877f2] to-[#0c5fcd]" };
-  } catch { /* ignore */ }
+      return {
+        name: "Facebook",
+        icon: "f",
+        gradient: "from-[#1877f2] to-[#0c5fcd]",
+      };
+  } catch {
+    /* ignore */
+  }
   return null;
 }
 
@@ -206,13 +224,7 @@ function InstagramEmbed({ url }: { url: string }) {
 }
 
 /** TikTok embed using their official /embed/v2/ endpoint. */
-function TikTokEmbed({
-  videoId,
-  title,
-}: {
-  videoId: string;
-  title: string;
-}) {
+function TikTokEmbed({ videoId, title }: { videoId: string; title: string }) {
   return (
     <div className="flex w-full justify-center overflow-hidden rounded-2xl bg-[#010101]">
       <iframe
@@ -251,7 +263,9 @@ export function ListingVideo({
   // 1. Platforms that truly cannot embed
   const linkOnly = detectLinkOnly(url);
   if (linkOnly) {
-    return <ExternalLinkCard url={url} platform={linkOnly} className={className} />;
+    return (
+      <ExternalLinkCard url={url} platform={linkOnly} className={className} />
+    );
   }
 
   // 2. Instagram — official blockquote embed
@@ -268,14 +282,20 @@ export function ListingVideo({
 
   // 4. YouTube / Vimeo — looping autoplay iframe
   const wrapperClass =
-    className ?? "aspect-video overflow-hidden rounded-2xl bg-surface-container";
+    className ??
+    "aspect-video overflow-hidden rounded-2xl bg-surface-container";
 
   const ytId = youtubeVideoId(url);
   if (ytId) {
     const params = new URLSearchParams({
-      autoplay: "1", mute: "1", loop: "1",
-      playlist: ytId, controls: "1", rel: "0",
-      modestbranding: "1", playsinline: "1",
+      autoplay: "1",
+      mute: "1",
+      loop: "1",
+      playlist: ytId,
+      controls: "1",
+      rel: "0",
+      modestbranding: "1",
+      playsinline: "1",
     });
     return (
       <div className={wrapperClass}>
@@ -295,7 +315,10 @@ export function ListingVideo({
   const vimeoId = vimeoVideoId(url);
   if (vimeoId) {
     const params = new URLSearchParams({
-      autoplay: "1", muted: "1", loop: "1", background: "0",
+      autoplay: "1",
+      muted: "1",
+      loop: "1",
+      background: "0",
     });
     return (
       <div className={wrapperClass}>

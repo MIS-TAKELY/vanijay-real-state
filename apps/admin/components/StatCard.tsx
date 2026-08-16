@@ -41,7 +41,8 @@ export function StatCard({ stat }: { stat: StatCardData }) {
       <CardContent className="pt-0">
         <div
           className={
-            "mono-stat text-3xl font-bold tracking-tight " + TONE_VALUE[stat.tone]
+            "mono-stat text-3xl font-bold tracking-tight " +
+            TONE_VALUE[stat.tone]
           }
         >
           {stat.value}

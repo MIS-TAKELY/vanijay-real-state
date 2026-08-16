@@ -33,12 +33,42 @@ export interface WizardPropertyType {
 }
 
 export const PROPERTY_TYPES: WizardPropertyType[] = [
-  { key: "RESIDENTIAL_LAND", label: "Residential Land", icon: "terrain", desc: "Plots for homes" },
-  { key: "COMMERCIAL_LAND", label: "Commercial Land", icon: "storefront", desc: "Business-zone plots" },
-  { key: "AGRICULTURAL_LAND", label: "Agricultural Land", icon: "agriculture", desc: "Farmland & orchards" },
-  { key: "RESIDENTIAL_HOUSE", label: "Residential House", icon: "home", desc: "Homes & apartments" },
-  { key: "COMMERCIAL_SPACE", label: "Commercial Space", icon: "apartment", desc: "Shops & offices" },
-  { key: "HERITAGE_HOME", label: "Heritage Home", icon: "article", desc: "Traditional property" },
+  {
+    key: "RESIDENTIAL_LAND",
+    label: "Residential Land",
+    icon: "terrain",
+    desc: "Plots for homes",
+  },
+  {
+    key: "COMMERCIAL_LAND",
+    label: "Commercial Land",
+    icon: "storefront",
+    desc: "Business-zone plots",
+  },
+  {
+    key: "AGRICULTURAL_LAND",
+    label: "Agricultural Land",
+    icon: "agriculture",
+    desc: "Farmland & orchards",
+  },
+  {
+    key: "RESIDENTIAL_HOUSE",
+    label: "Residential House",
+    icon: "home",
+    desc: "Homes & apartments",
+  },
+  {
+    key: "COMMERCIAL_SPACE",
+    label: "Commercial Space",
+    icon: "apartment",
+    desc: "Shops & offices",
+  },
+  {
+    key: "HERITAGE_HOME",
+    label: "Heritage Home",
+    icon: "article",
+    desc: "Traditional property",
+  },
 ];
 
 /* ------------------------------ land units ----------------------------- */
@@ -1581,7 +1611,10 @@ export const COMMERCIAL_FEATURES: Option[] = [
 ];
 
 export const ZONING_LEGAL_OPTIONS: Option[] = [
-  { value: "RESIDENTIAL_COMMERCIAL_MIXED", label: "Residential-commercial mixed" },
+  {
+    value: "RESIDENTIAL_COMMERCIAL_MIXED",
+    label: "Residential-commercial mixed",
+  },
   { value: "COMMERCIAL", label: "Commercial" },
   { value: "INDUSTRIAL", label: "Industrial" },
   { value: "INSTITUTIONAL", label: "Institutional" },
@@ -1617,7 +1650,10 @@ export const HERITAGE_GRADES: Option[] = [
 ];
 
 export const TRADITIONAL_FEATURES: Option[] = [
-  { value: "CARVED_WOODEN_WINDOWS", label: "Carved wooden windows (Tiki-jhya)" },
+  {
+    value: "CARVED_WOODEN_WINDOWS",
+    label: "Carved wooden windows (Tiki-jhya)",
+  },
   { value: "BRICK_TIMBER_FRAME", label: "Brick-timber frame (Dhalan)" },
   { value: "STONE_FOUNDATION", label: "Stone foundation" },
   { value: "MUD_MORTAR", label: "Mud mortar construction" },

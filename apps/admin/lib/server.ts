@@ -36,7 +36,11 @@ export function isAdmin(user?: SessionUser | null): boolean {
 }
 
 /** Server-side authenticated fetch to the admin API, forwarding the cookie. */
-export async function adminFetch<T>(cookie: string | undefined, path: string, init?: RequestInit): Promise<T> {
+export async function adminFetch<T>(
+  cookie: string | undefined,
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const res = await fetch(`${NEXT_PUBLIC_API_URL}${path}`, {
     ...init,
     headers: {

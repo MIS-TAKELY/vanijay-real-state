@@ -6,7 +6,11 @@ import type {
   MetalData,
   MetalId,
 } from "../../constants/gold/metals";
-import { METAL_SLUGS, formatChangePercent, formatPrice } from "../../constants/gold/metals";
+import {
+  METAL_SLUGS,
+  formatChangePercent,
+  formatPrice,
+} from "../../constants/gold/metals";
 
 interface TickerRibbonProps {
   metals: MetalData[];

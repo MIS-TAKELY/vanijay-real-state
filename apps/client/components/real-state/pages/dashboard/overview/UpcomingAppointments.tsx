@@ -1,16 +1,15 @@
 import { cn, Icon } from "@repo/ui";
 import { EmptyState } from "components/real-state/layout/dashboard/EmptyState";
-import {
-  DEFAULT_STATUS_STYLE,
-  STATUS_STYLES,
-} from "../constants";
+import { DEFAULT_STATUS_STYLE, STATUS_STYLES } from "../constants";
 import type { DashboardAppointment } from "lib/api/services/dashboard";
 
 interface UpcomingAppointmentsProps {
   appointments?: DashboardAppointment[];
 }
 
-export function UpcomingAppointments({ appointments }: UpcomingAppointmentsProps) {
+export function UpcomingAppointments({
+  appointments,
+}: UpcomingAppointmentsProps) {
   const items = appointments ?? [];
 
   if (items.length === 0) {

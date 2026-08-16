@@ -163,7 +163,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   // Building specs (house / space / heritage)
   if (p.builtUpAreaSqFt)
-    typeSpecs.push(["Built-up Area", `${formatNumber(p.builtUpAreaSqFt)} sq ft`]);
+    typeSpecs.push([
+      "Built-up Area",
+      `${formatNumber(p.builtUpAreaSqFt)} sq ft`,
+    ]);
   if (p.propertySubtype) typeSpecs.push(["Subtype", label(p.propertySubtype)]);
   if (p.yearBuilt) typeSpecs.push(["Year Built", String(p.yearBuilt)]);
   if (p.constructionStatus)
@@ -171,11 +174,14 @@ export default async function ListingDetailPage({ params }: PageProps) {
       "Construction Status",
       CONSTRUCTION_LABELS[p.constructionStatus] ?? label(p.constructionStatus),
     ]);
-  if (p.floorNumber != null) typeSpecs.push(["Floor Number", String(p.floorNumber)]);
-  if (p.totalFloors != null) typeSpecs.push(["Total Floors", String(p.totalFloors)]);
+  if (p.floorNumber != null)
+    typeSpecs.push(["Floor Number", String(p.floorNumber)]);
+  if (p.totalFloors != null)
+    typeSpecs.push(["Total Floors", String(p.totalFloors)]);
   if (p.bedrooms != null) typeSpecs.push(["Bedrooms", String(p.bedrooms)]);
   if (p.bathrooms != null) typeSpecs.push(["Bathrooms", String(p.bathrooms)]);
-  if (p.livingRooms != null) typeSpecs.push(["Living Rooms", String(p.livingRooms)]);
+  if (p.livingRooms != null)
+    typeSpecs.push(["Living Rooms", String(p.livingRooms)]);
   if (p.kitchens != null) typeSpecs.push(["Kitchens", String(p.kitchens)]);
   if (p.balconies != null) typeSpecs.push(["Balconies", String(p.balconies)]);
   if (p.parking) typeSpecs.push(["Parking", label(p.parking)]);
@@ -190,7 +196,8 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   // Residential land
   if (p.plotShape) typeSpecs.push(["Plot Shape", label(p.plotShape)]);
-  if (p.frontageFt) typeSpecs.push(["Frontage", `${formatNumber(p.frontageFt)} ft`]);
+  if (p.frontageFt)
+    typeSpecs.push(["Frontage", `${formatNumber(p.frontageFt)} ft`]);
   if (p.boundaryWall) typeSpecs.push(["Boundary Wall", label(p.boundaryWall)]);
   if (p.landClearance) typeSpecs.push(["Cleared / Fenced", "Yes"]);
 
@@ -198,9 +205,15 @@ export default async function ListingDetailPage({ params }: PageProps) {
   if (p.depthFt) typeSpecs.push(["Depth", `${formatNumber(p.depthFt)} ft`]);
   if (p.zoning) typeSpecs.push(["Zoning", label(p.zoning)]);
   if (p.setbackAvailable)
-    typeSpecs.push(["Setback", p.setbackText ? `Yes — ${p.setbackText}` : "Yes"]);
+    typeSpecs.push([
+      "Setback",
+      p.setbackText ? `Yes — ${p.setbackText}` : "Yes",
+    ]);
   if (p.suitableFor?.length)
-    chipGroups.push({ label: "Suitable for", values: p.suitableFor.map(label) });
+    chipGroups.push({
+      label: "Suitable for",
+      values: p.suitableFor.map(label),
+    });
   if (p.parkingSpaces != null)
     typeSpecs.push(["Parking Spaces", String(p.parkingSpaces)]);
 
@@ -209,7 +222,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
     typeSpecs.push(["Land Classification", label(p.landClassification)]);
   if (p.soilType) typeSpecs.push(["Soil Type", label(p.soilType)]);
   if (p.waterSources?.length)
-    chipGroups.push({ label: "Water Sources", values: p.waterSources.map(label) });
+    chipGroups.push({
+      label: "Water Sources",
+      values: p.waterSources.map(label),
+    });
   if (p.irrigationType) typeSpecs.push(["Irrigation", label(p.irrigationType)]);
   if (p.currentCrops) typeSpecs.push(["Current Crops", p.currentCrops]);
   if (p.fencing) typeSpecs.push(["Fencing", label(p.fencing)]);
@@ -217,7 +233,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
   if (p.terrain) typeSpecs.push(["Terrain", label(p.terrain)]);
   if (p.annualYield) typeSpecs.push(["Annual Yield", p.annualYield]);
   if (p.farmStructures?.length)
-    chipGroups.push({ label: "Farm Structures", values: p.farmStructures.map(label) });
+    chipGroups.push({
+      label: "Farm Structures",
+      values: p.farmStructures.map(label),
+    });
 
   // Commercial space
   if (p.ceilingHeightFt)
@@ -240,7 +259,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
         : "Available",
     ]);
   if (p.commercialFeatures?.length)
-    chipGroups.push({ label: "Commercial Features", values: p.commercialFeatures.map(label) });
+    chipGroups.push({
+      label: "Commercial Features",
+      values: p.commercialFeatures.map(label),
+    });
   if (p.zoningLegal) typeSpecs.push(["Zoning / Legal", label(p.zoningLegal)]);
 
   // Heritage home
@@ -249,14 +271,19 @@ export default async function ListingDetailPage({ params }: PageProps) {
   if (p.heritageGrade) typeSpecs.push(["Grade", label(p.heritageGrade)]);
   if (p.courtyard) typeSpecs.push(["Courtyard", label(p.courtyard)]);
   if (p.traditionalFeatures?.length)
-    chipGroups.push({ label: "Traditional Features", values: p.traditionalFeatures.map(label) });
-  if (p.renovationStatus) typeSpecs.push(["Renovation", label(p.renovationStatus)]);
+    chipGroups.push({
+      label: "Traditional Features",
+      values: p.traditionalFeatures.map(label),
+    });
+  if (p.renovationStatus)
+    typeSpecs.push(["Renovation", label(p.renovationStatus)]);
 
   // Partial sale / negotiation (land types)
   if (p.minBuyableLandSqFt) {
     typeSpecs.push([
       "Min Buyable Land",
-      formatMinBuyableLand(property) ?? `${formatNumber(p.minBuyableLandSqFt)} sq ft`,
+      formatMinBuyableLand(property) ??
+        `${formatNumber(p.minBuyableLandSqFt)} sq ft`,
     ]);
   }
   if (p.isNegotiable) typeSpecs.push(["Negotiable", "Yes"]);

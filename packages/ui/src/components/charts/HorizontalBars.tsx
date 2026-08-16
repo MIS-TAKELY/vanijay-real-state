@@ -39,7 +39,10 @@ export function HorizontalBars({
         }),
       ],
       y: {
-        scale: () => scaleBand<string>().domain(data.map((d) => d.label)).padding(0.25),
+        scale: () =>
+          scaleBand<string>()
+            .domain(data.map((d) => d.label))
+            .padding(0.25),
       },
       x: {
         scale: () => scaleLinear().domain([0, maxValue]).nice(),
@@ -61,18 +64,34 @@ export function HorizontalBars({
   }, [data, maxValue, color]);
 
   if (data.length === 0) {
-    return <p className="font-body-md text-body-md text-on-surface-variant">No data yet.</p>;
+    return (
+      <p className="font-body-md text-body-md text-on-surface-variant">
+        No data yet.
+      </p>
+    );
   }
 
   return (
     <div>
-      <Chart definition={definition} height={height} initialWidth={420} ariaLabel={ariaLabel ?? "Bar chart"} />
+      <Chart
+        definition={definition}
+        height={height}
+        initialWidth={420}
+        ariaLabel={ariaLabel ?? "Bar chart"}
+      />
       {showValues ? (
         <ul className="mt-sm space-y-xs">
           {data.map((d) => (
-            <li key={d.label} className="flex items-center justify-between gap-sm font-label-sm text-[12px]">
-              <span className="truncate text-on-surface-variant">{d.label}</span>
-              <span className="mono-stat shrink-0 text-on-surface">{valueFormat(d.value)}</span>
+            <li
+              key={d.label}
+              className="flex items-center justify-between gap-sm font-label-sm text-[12px]"
+            >
+              <span className="truncate text-on-surface-variant">
+                {d.label}
+              </span>
+              <span className="mono-stat shrink-0 text-on-surface">
+                {valueFormat(d.value)}
+              </span>
             </li>
           ))}
         </ul>

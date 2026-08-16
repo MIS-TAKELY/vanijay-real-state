@@ -8,7 +8,12 @@ import { scalePoint } from "@tanstack/charts/scales/point";
 import { fold } from "@tanstack/charts/transform/fold";
 import { tooltip } from "@tanstack/charts/tooltip";
 
-export type TrendPoint = { date: string; listings: number; users: number; inquiries: number };
+export type TrendPoint = {
+  date: string;
+  listings: number;
+  users: number;
+  inquiries: number;
+};
 
 const SERIES_COLORS = {
   listings: "#3456bd",
@@ -29,7 +34,10 @@ function formatTick(value: string) {
   const y = Number(value.slice(0, 4));
   const m = Number(value.slice(5, 7));
   const d = Number(value.slice(8, 10));
-  return new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }
 
 /** Multi-series 30-day activity trend rendered with TanStack Charts. */
@@ -68,7 +76,11 @@ export function TrendChart({ trend }: { trend: readonly TrendPoint[] }) {
       },
       color: {
         domain: ["listings", "users", "inquiries"],
-        range: [SERIES_COLORS.listings, SERIES_COLORS.users, SERIES_COLORS.inquiries],
+        range: [
+          SERIES_COLORS.listings,
+          SERIES_COLORS.users,
+          SERIES_COLORS.inquiries,
+        ],
       },
       svgAnimation: true,
       tooltip,
@@ -77,7 +89,11 @@ export function TrendChart({ trend }: { trend: readonly TrendPoint[] }) {
         muted: TICK_COLOR,
         grid: GRID_COLOR,
         background: "transparent",
-        palette: [SERIES_COLORS.listings, SERIES_COLORS.users, SERIES_COLORS.inquiries],
+        palette: [
+          SERIES_COLORS.listings,
+          SERIES_COLORS.users,
+          SERIES_COLORS.inquiries,
+        ],
       },
     });
   }, [trend]);
@@ -90,7 +106,10 @@ export function TrendChart({ trend }: { trend: readonly TrendPoint[] }) {
             key={key}
             className="flex items-center gap-xs font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant"
           >
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: SERIES_COLORS[key] }} />
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: SERIES_COLORS[key] }}
+            />
             {SERIES_LABELS[key]}
           </span>
         ))}

@@ -49,9 +49,9 @@ const app = await NestFactory.create(AppModule, { bodyParser: false });
 // 1) Global validation (REST DTOs + GraphQL inputs via the pipe)
 app.useGlobalPipes(
   new ValidationPipe({
-    whitelist: true,            // strip unknown properties
+    whitelist: true, // strip unknown properties
     forbidNonWhitelisted: true, // reject unknown properties
-    transform: true,            // auto-transform DTO instances
+    transform: true, // auto-transform DTO instances
   }),
 );
 
@@ -86,8 +86,8 @@ await app.listen(process.env.PORT ?? 8000);
   imports: [
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: true,                                  // ephemeral schema
-      playground: process.env.NODE_ENV !== 'production',     // gated ✅
+      autoSchemaFile: true, // ephemeral schema
+      playground: process.env.NODE_ENV !== 'production', // gated ✅
       path: '/api/v1/vanijay-real-state',
     }),
     AuthModule,
@@ -107,7 +107,6 @@ export class AppModule {}
 > 📌 For auditability, consider switching `autoSchemaFile: true` to a committed
 > file like `autoSchemaFile: 'src/schema.gql'` so schema diffs show up in PRs.
 > See [Scalability Roadmap](./scalability-roadmap.md).
-
 
 ## Project structure
 
@@ -210,14 +209,14 @@ Sets metadata that `RolesGuard` reads via `Reflector`.
 
 ## Cross-cutting concerns (current vs. recommended)
 
-| Concern | Current state | Recommended |
-| --- | --- | --- |
-| Validation | ✅ Global `ValidationPipe` in `main.ts` | Move to `APP_PIPE` for DI/testability |
-| Error handling | ❌ No global exception filter | Add `APP_FILTER` for consistent REST + GraphQL errors |
-| Logging | Nest default logger | Structured JSON logging (`nestjs-pino`) |
-| Rate limiting | ❌ None | `@nestjs/throttler` (REST + GraphQL guard) |
-| Security headers | ❌ None | `helmet` in `main.ts` |
-| Config | `process.env.*` scattered | `@nestjs/config` with validation |
-| Prisma access | Singleton import | `PrismaService` + DI (mockable) |
+| Concern          | Current state                           | Recommended                                           |
+| ---------------- | --------------------------------------- | ----------------------------------------------------- |
+| Validation       | ✅ Global `ValidationPipe` in `main.ts` | Move to `APP_PIPE` for DI/testability                 |
+| Error handling   | ❌ No global exception filter           | Add `APP_FILTER` for consistent REST + GraphQL errors |
+| Logging          | Nest default logger                     | Structured JSON logging (`nestjs-pino`)               |
+| Rate limiting    | ❌ None                                 | `@nestjs/throttler` (REST + GraphQL guard)            |
+| Security headers | ❌ None                                 | `helmet` in `main.ts`                                 |
+| Config           | `process.env.*` scattered               | `@nestjs/config` with validation                      |
+| Prisma access    | Singleton import                        | `PrismaService` + DI (mockable)                       |
 
 See the [Scalability Roadmap](./scalability-roadmap.md) for concrete steps.

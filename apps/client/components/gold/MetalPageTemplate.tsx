@@ -3,7 +3,11 @@
 import Link from "next/link";
 import { Settings2 } from "lucide-react";
 import { useMemo, useState } from "react";
-import type { CurrencyCode, MetalId, WeightUnit } from "../../constants/gold/metals";
+import type {
+  CurrencyCode,
+  MetalId,
+  WeightUnit,
+} from "../../constants/gold/metals";
 import { METAL_META, METALS_DATA } from "../../constants/gold/metals";
 import { METAL_FAQS } from "../../constants/gold/faq-data";
 import type { ContentBlock } from "../../constants/gold/content-blocks";
@@ -29,7 +33,9 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
   const { metals, loading, error, lastUpdated } = useLiveMetalPrices();
   const [currency, setCurrency] = useState<CurrencyCode>("NPR");
   const [unit, setUnit] = useState<WeightUnit>("oz");
-  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "3M" | "1Y">("1M");
+  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "3M" | "1Y">(
+    "1M",
+  );
 
   const activeMetal = useMemo(() => {
     const found = metals.find((m) => m.id === metalId);
@@ -60,11 +66,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
   return (
     <main className="flex flex-col gap-0">
       {/* Live Ticker Ribbon — clicking any metal navigates to its page */}
-      <TickerRibbon
-        metals={metals}
-        currency={currency}
-        activeId={metalId}
-      />
+      <TickerRibbon metals={metals} currency={currency} activeId={metalId} />
 
       <div className="mx-auto w-full max-w-[1280px] px-6 pt-8 pb-6 md:pt-12 md:pb-10">
         {/* Breadcrumb */}
@@ -87,21 +89,34 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
               </h1>
               {/* Live badge */}
               <span className="inline-flex items-center gap-1.5 rounded-full bg-[#34D399]/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-[#34D399]">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#34D399] animate-pulse" aria-hidden="true" />
+                <span
+                  className="h-1.5 w-1.5 rounded-full bg-[#34D399] animate-pulse"
+                  aria-hidden="true"
+                />
                 Live
               </span>
             </div>
-            <p className="text-sm text-white/40" style={{ fontFamily: "var(--font-body)" }}>
-              Track real-time {meta?.name.toLowerCase()} rates per {unit} in {currency}
+            <p
+              className="text-sm text-white/40"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              Track real-time {meta?.name.toLowerCase()} rates per {unit} in{" "}
+              {currency}
               {lastUpdated && (
-                <time dateTime={lastUpdated.toISOString()} className="ml-2 text-white/25">
+                <time
+                  dateTime={lastUpdated.toISOString()}
+                  className="ml-2 text-white/25"
+                >
                   · Updated {lastUpdated.toLocaleTimeString()}
                 </time>
               )}
             </p>
           </div>
           <div className="flex flex-wrap items-center gap-3">
-            <CurrencyToggle currency={currency} onCurrencyChange={setCurrency} />
+            <CurrencyToggle
+              currency={currency}
+              onCurrencyChange={setCurrency}
+            />
             <UnitToggle unit={unit} onUnitChange={setUnit} />
           </div>
         </div>
@@ -127,7 +142,11 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
 
         {/* Price Converter */}
         <div className="mb-10">
-          <PriceConverter metal={activeMetal} currency={currency} defaultUnit={unit} />
+          <PriceConverter
+            metal={activeMetal}
+            currency={currency}
+            defaultUnit={unit}
+          />
         </div>
 
         {/* Analytics Grid */}
@@ -165,7 +184,10 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
 
         {/* Error banner */}
         {error && (
-          <div className="rounded-lg border border-[#F87171]/20 bg-[#F87171]/5 px-4 py-3 text-sm text-[#F87171]" role="alert">
+          <div
+            className="rounded-lg border border-[#F87171]/20 bg-[#F87171]/5 px-4 py-3 text-sm text-[#F87171]"
+            role="alert"
+          >
             Live feed unavailable — showing cached quotes. {error}
           </div>
         )}

@@ -16,7 +16,7 @@ const Stat = React.forwardRef<HTMLDivElement, StatProps>(
         className={cn(
           "flex flex-col",
           align === "center" && "items-center text-center",
-          className
+          className,
         )}
         {...props}
       >
@@ -28,7 +28,7 @@ const Stat = React.forwardRef<HTMLDivElement, StatProps>(
         </span>
       </div>
     );
-  }
+  },
 );
 
 Stat.displayName = "Stat";

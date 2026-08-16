@@ -76,7 +76,10 @@ export function KabadiFooter() {
         <Separator className="mt-10 bg-kabadi-border" />
 
         <div className="flex flex-wrap items-center justify-between gap-3 pt-6 text-xs text-kabadi-muted">
-          <p>© {new Date().getFullYear()} Kabadi · Sell your scrap, get paid in cash</p>
+          <p>
+            © {new Date().getFullYear()} Kabadi · Sell your scrap, get paid in
+            cash
+          </p>
           <p>
             Indicative rates · last updated {RATES_LAST_UPDATED} · rates vary by
             condition &amp; market

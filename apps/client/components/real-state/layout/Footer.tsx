@@ -2,7 +2,11 @@ import React from "react";
 import { Button, Icon } from "@repo/ui";
 
 const footerLinks = {
-  "The Archive": ["Area Guides", "Cadastral Maps", "Verification Protocol", "Pricing Structure"],
+  "The Archive": [
+    { label: "Area Guides", href: "/area-guid" },
+    { label: "NRN", href: "/nrn-concierge" },
+    { label: "About", href: "/about" },
+  ],
   Compliance: [
     { label: "Privacy Policy", href: "#" },
     { label: "Terms of Service", href: "#" },
@@ -20,8 +24,9 @@ export function Footer() {
             Lekhaprati
           </span>
           <p className="font-body-md text-on-surface-variant text-sm leading-relaxed">
-            Nepal&apos;s first institutional land archive. Professionalizing real
-            estate through rigorous field verification and legal transparency.
+            Nepal&apos;s first institutional land archive. Professionalizing
+            real estate through rigorous field verification and legal
+            transparency.
           </p>
         </div>
 
@@ -32,11 +37,11 @@ export function Footer() {
           <div className="flex flex-col gap-sm">
             {footerLinks["The Archive"].map((link) => (
               <a
-                key={link}
+                key={link.label}
                 className="font-label-sm text-label-sm text-on-surface-variant hover:text-primary transition-colors"
-                href="#"
+                href={link.href}
               >
-                {link}
+                {link.label}
               </a>
             ))}
           </div>

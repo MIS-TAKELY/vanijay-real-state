@@ -65,7 +65,11 @@ export function PropertyHorizontalCard({
     >
       {/* Image */}
       <div className="relative aspect-[4/3] overflow-hidden">
-        <Link href={href} aria-label={`${title} — view details`} className="block h-full">
+        <Link
+          href={href}
+          aria-label={`${title} — view details`}
+          className="block h-full"
+        >
           <img
             src={image}
             alt={alt ?? title}
@@ -128,15 +132,9 @@ export function PropertyHorizontalCard({
             </span>
           )}
           {baths !== undefined && (
-            <span className="flex items-center gap-1">
-              {baths} Baths
-            </span>
+            <span className="flex items-center gap-1">{baths} Baths</span>
           )}
-          {sqft && (
-            <span className="flex items-center gap-1">
-              {sqft}
-            </span>
-          )}
+          {sqft && <span className="flex items-center gap-1">{sqft}</span>}
         </div>
 
         {/* CTA */}

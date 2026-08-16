@@ -142,7 +142,13 @@ export const DASHBOARD_STATS: DashboardStat[] = [
 /* Recent activity feed (overview §5.1 left)                          */
 /* ------------------------------------------------------------------ */
 
-export type ActivityType = "inquiry" | "document" | "pricedrop" | "appointment" | "view" | "verification";
+export type ActivityType =
+  | "inquiry"
+  | "document"
+  | "pricedrop"
+  | "appointment"
+  | "view"
+  | "verification";
 
 export interface ActivityItem {
   id: string;

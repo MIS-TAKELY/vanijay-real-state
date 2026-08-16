@@ -244,7 +244,10 @@ function minBuyableSqFtExact(draft: ListingDraft): number {
   const mu = draft.minBuyableUnits;
   if (draft.minBuyableUnitSystem === "ROPANI") {
     const totalAana =
-      num(mu.ropani) * 16 + num(mu.aana) + num(mu.paisa) / 4 + num(mu.daam) / 16;
+      num(mu.ropani) * 16 +
+      num(mu.aana) +
+      num(mu.paisa) / 4 +
+      num(mu.daam) / 16;
     return totalAana * 342.25;
   }
   const totalKatha = num(mu.bigha) * 20 + num(mu.katha) + num(mu.dhur) / 20;
@@ -381,7 +384,10 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
     }
 
     // Per-type required fields (wizard-only — not yet persisted).
-    if (draft.propertyType === "COMMERCIAL_LAND" && num(draft.frontageFt) <= 0) {
+    if (
+      draft.propertyType === "COMMERCIAL_LAND" &&
+      num(draft.frontageFt) <= 0
+    ) {
       errors.frontageFt = "Frontage is required for commercial land.";
     }
     if (draft.propertyType === "RESIDENTIAL_HOUSE") {
@@ -649,7 +655,9 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
 
   return {
     title: draft.title.trim(),
-    ...(stripHtml(draft.description) ? { description: draft.description.trim() } : {}),
+    ...(stripHtml(draft.description)
+      ? { description: draft.description.trim() }
+      : {}),
     propertyType: draft.propertyType,
     askingPrice,
     // Land types carry the computed rate; building types send an explicit
@@ -959,7 +967,9 @@ export function listingDraftFromApiProperty(p: WizardProperty): ListingDraft {
     facing: p.facing ?? "",
     isCornerPlot: p.isCornerPlot,
     isNegotiable: p.isNegotiable ?? false,
-    minBuyableUnitSystem: (p.minBuyableUnitSystem === "BIGHA" ? "BIGHA" : "ROPANI") as UnitSystem,
+    minBuyableUnitSystem: (p.minBuyableUnitSystem === "BIGHA"
+      ? "BIGHA"
+      : "ROPANI") as UnitSystem,
     minBuyableUnits: (() => {
       const mu: Record<string, string> = {};
       if (p.minBuyableRopani) mu.ropani = String(p.minBuyableRopani);

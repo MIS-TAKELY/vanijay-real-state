@@ -14,8 +14,7 @@ export function InquiryStatusChip({
   status,
   className,
 }: InquiryStatusChipProps) {
-  const style =
-    INQUIRY_STATUS_STYLES[status] ?? DEFAULT_INQUIRY_STATUS_STYLE;
+  const style = INQUIRY_STATUS_STYLES[status] ?? DEFAULT_INQUIRY_STATUS_STYLE;
 
   return (
     <span

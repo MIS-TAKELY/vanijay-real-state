@@ -19,7 +19,9 @@ describe('PropertiesResolver', () => {
     service = {
       create: jest.fn().mockResolvedValue({ id: 'p1' }),
       findOne: jest.fn().mockResolvedValue({ id: 'p1' }),
-      findFeed: jest.fn().mockResolvedValue({ items: [], nextCursor: null, hasMore: false }),
+      findFeed: jest
+        .fn()
+        .mockResolvedValue({ items: [], nextCursor: null, hasMore: false }),
     };
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -46,7 +48,9 @@ describe('PropertiesResolver', () => {
 
   it('delegates findFeed to the shared service', async () => {
     await resolver.findFeed(5, 'cursor-abc');
-    expect(service.findFeed).toHaveBeenCalledWith({ first: 5, after: 'cursor-abc' });
+    expect(service.findFeed).toHaveBeenCalledWith({
+      first: 5,
+      after: 'cursor-abc',
+    });
   });
 });
-

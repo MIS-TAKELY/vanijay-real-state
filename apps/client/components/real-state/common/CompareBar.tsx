@@ -46,7 +46,11 @@ export function CompareBar() {
           >
             Clear
           </Button>
-          <Button asChild size="sm" className="bg-primary text-on-primary hover:bg-primary/90">
+          <Button
+            asChild
+            size="sm"
+            className="bg-primary text-on-primary hover:bg-primary/90"
+          >
             <Link href={`/compare?ids=${ids}`}>
               Compare
               <Icon name="arrow_forward" className="ml-1 text-on-primary/80" />

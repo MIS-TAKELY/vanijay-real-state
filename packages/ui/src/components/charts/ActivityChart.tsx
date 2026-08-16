@@ -19,12 +19,17 @@ export interface ActivityDay {
 
 const FIELDS = ["views", "searches", "inquiries", "phoneClicks"] as const;
 
-const SERIES: { key: (typeof FIELDS)[number]; label: string; color: string }[] = [
-  { key: "views", label: "Views", color: CHART_THEME.palette[0] },
-  { key: "searches", label: "Searches", color: CHART_THEME.palette[3] },
-  { key: "inquiries", label: "Inquiries", color: CHART_THEME.palette[2] },
-  { key: "phoneClicks", label: "Phone Clicks", color: CHART_THEME.palette[1] },
-];
+const SERIES: { key: (typeof FIELDS)[number]; label: string; color: string }[] =
+  [
+    { key: "views", label: "Views", color: CHART_THEME.palette[0] },
+    { key: "searches", label: "Searches", color: CHART_THEME.palette[3] },
+    { key: "inquiries", label: "Inquiries", color: CHART_THEME.palette[2] },
+    {
+      key: "phoneClicks",
+      label: "Phone Clicks",
+      color: CHART_THEME.palette[1],
+    },
+  ];
 
 /** Multi-series area chart of daily buyer engagement (views, searches, inquiries, phone clicks). */
 export function ActivityChart({ days }: { days: ActivityDay[] }) {
@@ -81,12 +86,20 @@ export function ActivityChart({ days }: { days: ActivityDay[] }) {
             key={s.key}
             className="flex items-center gap-xs font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant"
           >
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: s.color }}
+            />
             {s.label}
           </span>
         ))}
       </div>
-      <Chart definition={definition} height={280} initialWidth={760} ariaLabel="Daily buyer engagement trend" />
+      <Chart
+        definition={definition}
+        height={280}
+        initialWidth={760}
+        ariaLabel="Daily buyer engagement trend"
+      />
     </div>
   );
 }

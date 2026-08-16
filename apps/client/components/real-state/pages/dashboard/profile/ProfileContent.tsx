@@ -32,8 +32,14 @@ export function ProfileContent() {
     <div className="flex flex-col gap-md">
       <IdentityCard profile={profile} />
       <VerificationPanel profile={profile} />
-      <DetailsForm profile={profile} onSaved={(updated) => setProfile(updated)} />
-      <CitizenshipVerification profile={profile} onSaved={(updated) => setProfile(updated)} />
+      <DetailsForm
+        profile={profile}
+        onSaved={(updated) => setProfile(updated)}
+      />
+      <CitizenshipVerification
+        profile={profile}
+        onSaved={(updated) => setProfile(updated)}
+      />
       <NotificationPreferences />
       <DangerZone />
     </div>

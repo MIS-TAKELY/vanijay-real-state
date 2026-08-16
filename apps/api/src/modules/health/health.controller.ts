@@ -4,7 +4,6 @@ import { SkipThrottle } from '@nestjs/throttler';
 import { AppHealthIndicator } from './app-health.indicator';
 import { PrismaHealthIndicator } from './prisma-health.indicator';
 
-
 @Controller('health')
 @SkipThrottle()
 export class HealthController {

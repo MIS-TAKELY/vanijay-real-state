@@ -32,7 +32,10 @@ export default async function AuditPage() {
   const cookie = (await cookies()).toString();
   let rows: AuditRow[] = [];
   try {
-    rows = await adminFetch<AuditRow[]>(cookie, "/api/v1/admin/audit-log?take=200");
+    rows = await adminFetch<AuditRow[]>(
+      cookie,
+      "/api/v1/admin/audit-log?take=200",
+    );
   } catch {
     rows = [];
   }
@@ -53,11 +56,21 @@ export default async function AuditPage() {
         >
           {rows.map((r) => (
             <AdminDataTable.Row key={r.id}>
-              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{new Date(r.createdAt).toLocaleString()}</AdminDataTable.Cell>
-              <AdminDataTable.Cell className="text-on-surface">{r.actor?.name || r.actor?.email}</AdminDataTable.Cell>
-              <AdminDataTable.Cell><ActionBadge value={r.action} /></AdminDataTable.Cell>
-              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{r.entity}</AdminDataTable.Cell>
-              <AdminDataTable.Cell className="text-on-surface-variant">{r.summary}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">
+                {new Date(r.createdAt).toLocaleString()}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface">
+                {r.actor?.name || r.actor?.email}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell>
+                <ActionBadge value={r.action} />
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">
+                {r.entity}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface-variant">
+                {r.summary}
+              </AdminDataTable.Cell>
             </AdminDataTable.Row>
           ))}
         </AdminDataTable>

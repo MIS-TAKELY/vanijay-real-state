@@ -268,8 +268,16 @@ function SatellitePlaceholder({ marker }: { marker: Marker }) {
       }}
     >
       <div style={{ fontSize: 40 }}>🛰️</div>
-      <div style={{ fontSize: 13, color: "rgba(209,250,229,0.6)", textAlign: "center", maxWidth: 300 }}>
-        Satellite view uses Google Maps native tiles. Open in Google Maps for full satellite imagery.
+      <div
+        style={{
+          fontSize: 13,
+          color: "rgba(209,250,229,0.6)",
+          textAlign: "center",
+          maxWidth: 300,
+        }}
+      >
+        Satellite view uses Google Maps native tiles. Open in Google Maps for
+        full satellite imagery.
       </div>
       <a
         href={`https://www.google.com/maps/@${marker.lat},${marker.lng},17z/data=!3m1!1e3`}
@@ -377,7 +385,8 @@ function StreetViewLauncher({
             transition: "transform 0.15s ease, box-shadow 0.15s ease",
           }}
           onMouseEnter={(e) => {
-            (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+            (e.currentTarget as HTMLElement).style.transform =
+              "translateY(-2px)";
             (e.currentTarget as HTMLElement).style.boxShadow =
               "0 10px 28px rgba(74,222,128,0.45)";
           }}
@@ -463,8 +472,7 @@ function DataTabContent({ marker }: { marker: Marker }) {
             justifyContent: "space-between",
             alignItems: "center",
             padding: "9px 18px",
-            background:
-              i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent",
+            background: i % 2 === 0 ? "rgba(255,255,255,0.02)" : "transparent",
             borderBottom: "1px solid rgba(255,255,255,0.04)",
           }}
         >

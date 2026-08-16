@@ -13,9 +13,12 @@ function HeroBannerCarousel() {
   const [isHovering, setIsHovering] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
 
-  const goTo = useCallback((index: number) => {
-    setCurrent(() => (index + heroSlides.length) % heroSlides.length);
-  }, [heroSlides.length]);
+  const goTo = useCallback(
+    (index: number) => {
+      setCurrent(() => (index + heroSlides.length) % heroSlides.length);
+    },
+    [heroSlides.length],
+  );
 
   const goNext = useCallback(() => goTo(current + 1), [current, goTo]);
   const goPrev = useCallback(() => goTo(current - 1), [current, goTo]);

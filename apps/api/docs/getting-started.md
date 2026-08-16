@@ -49,15 +49,15 @@ openssl rand -base64 32
 All env vars live in `apps/api/.env` (gitignored). `apps/api/.env.example` is the
 committed template.
 
-| Variable | Required | Description |
-| --- | --- | --- |
-| `DATABASE_URL` | ✅ | PostgreSQL connection string |
-| `BETTER_AUTH_SECRET` | ✅ | Secret for signing auth tokens (`openssl rand -base64 32`) |
-| `BETTER_AUTH_URL` | ✅ | Public URL of the API (`http://localhost:8000`) |
-| `CLIENT_URL` | ✅ | Frontend origin (used for CORS + Better Auth `trustedOrigins`) |
-| `PORT` | ❌ | API port (default `8000`) |
-| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | ⚠️ | Google OAuth. `socialProviders.google` is **always registered** in `packages/auth/src/auth.ts` with non-null assertions — if the app fails to boot, set these (or make the provider conditional in code). See [Scalability Roadmap](./scalability-roadmap.md). |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | ❌ | Real SMTP. If `SMTP_HOST` is empty, Better Auth falls back to an **Ethereal test account** and logs preview URLs to the API console (great for dev). |
+| Variable                                                                            | Required | Description                                                                                                                                                                                                                                                    |
+| ----------------------------------------------------------------------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `DATABASE_URL`                                                                      | ✅       | PostgreSQL connection string                                                                                                                                                                                                                                   |
+| `BETTER_AUTH_SECRET`                                                                | ✅       | Secret for signing auth tokens (`openssl rand -base64 32`)                                                                                                                                                                                                     |
+| `BETTER_AUTH_URL`                                                                   | ✅       | Public URL of the API (`http://localhost:8000`)                                                                                                                                                                                                                |
+| `CLIENT_URL`                                                                        | ✅       | Frontend origin (used for CORS + Better Auth `trustedOrigins`)                                                                                                                                                                                                 |
+| `PORT`                                                                              | ❌       | API port (default `8000`)                                                                                                                                                                                                                                      |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET`                                         | ⚠️       | Google OAuth. `socialProviders.google` is **always registered** in `packages/auth/src/auth.ts` with non-null assertions — if the app fails to boot, set these (or make the provider conditional in code). See [Scalability Roadmap](./scalability-roadmap.md). |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | ❌       | Real SMTP. If `SMTP_HOST` is empty, Better Auth falls back to an **Ethereal test account** and logs preview URLs to the API console (great for dev).                                                                                                           |
 
 ## 3. Set up the database
 

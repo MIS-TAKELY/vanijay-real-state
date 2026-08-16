@@ -17,7 +17,9 @@ describe('PropertiesController', () => {
     service = {
       findOne: jest.fn().mockResolvedValue({ id: 'p1' }),
       create: jest.fn().mockResolvedValue({ id: 'p1' }),
-      findFeed: jest.fn().mockResolvedValue({ items: [], nextCursor: null, hasMore: false }),
+      findFeed: jest
+        .fn()
+        .mockResolvedValue({ items: [], nextCursor: null, hasMore: false }),
     };
     const module: TestingModule = await Test.createTestingModule({
       controllers: [PropertiesController],
@@ -32,12 +34,18 @@ describe('PropertiesController', () => {
 
   it('delegates findFeed to the shared service, coercing first to a number', async () => {
     await controller.findFeed('5', 'cursor-abc');
-    expect(service.findFeed).toHaveBeenCalledWith({ first: 5, after: 'cursor-abc' });
+    expect(service.findFeed).toHaveBeenCalledWith({
+      first: 5,
+      after: 'cursor-abc',
+    });
   });
 
   it('delegates findFeed with undefined values when no query params are given', async () => {
     await controller.findFeed();
-    expect(service.findFeed).toHaveBeenCalledWith({ first: undefined, after: undefined });
+    expect(service.findFeed).toHaveBeenCalledWith({
+      first: undefined,
+      after: undefined,
+    });
   });
 
   it('delegates create to the shared service with ownerId from @CurrentUser', async () => {

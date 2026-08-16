@@ -1,5 +1,14 @@
 import {
-  Body, Controller, Delete, Get, Param, ParseEnumPipe, Patch, Post, Query, UseGuards,
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  ParseEnumPipe,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
 import { ContentPlacement, ContentSlot } from '@repo/db';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -17,23 +26,32 @@ export class CmsController {
 
   @Get('api/v1/cms/:placement')
   listItems(
-    @Param('placement', new ParseEnumPipe(ContentPlacement)) placement: ContentPlacement,
+    @Param('placement', new ParseEnumPipe(ContentPlacement))
+    placement: ContentPlacement,
     @Query('slot') slot?: ContentSlot,
   ) {
     return this.cms.listItems(placement, slot, { includeUnpublished: false });
   }
 
   @Get('api/v1/cms/static-pages')
-  listStaticPages() { return this.cms.listStaticPages(); }
+  listStaticPages() {
+    return this.cms.listStaticPages();
+  }
 
   @Get('api/v1/cms/nav')
-  listNav() { return this.cms.listNav(); }
+  listNav() {
+    return this.cms.listNav();
+  }
 
   @Get('api/v1/cms/footer')
-  listFooter() { return this.cms.listFooter(); }
+  listFooter() {
+    return this.cms.listFooter();
+  }
 
   @Get('api/v1/cms/seo')
-  listSeo() { return this.cms.listSeo(); }
+  listSeo() {
+    return this.cms.listSeo();
+  }
 
   // ---- Admin writes ----
 
@@ -41,7 +59,8 @@ export class CmsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
   adminList(
-    @Query('placement', new ParseEnumPipe(ContentPlacement)) placement: ContentPlacement,
+    @Query('placement', new ParseEnumPipe(ContentPlacement))
+    placement: ContentPlacement,
     @Query('slot') slot?: ContentSlot,
   ) {
     return this.cms.listItems(placement, slot, { includeUnpublished: true });
@@ -51,7 +70,8 @@ export class CmsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
   upsertItem(
-    @Param('placement', new ParseEnumPipe(ContentPlacement)) placement: ContentPlacement,
+    @Param('placement', new ParseEnumPipe(ContentPlacement))
+    placement: ContentPlacement,
     @Param('slot', new ParseEnumPipe(ContentSlot)) slot: ContentSlot,
     @Body() dto: UpsertContentItemDto,
     @CurrentUser('id') actorId: string,
@@ -73,7 +93,11 @@ export class CmsController {
   @Patch('api/v1/admin/cms/items/:id/publish')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
-  publish(@Param('id') id: string, @Body() body: { published: boolean }, @CurrentUser('id') actorId: string) {
+  publish(
+    @Param('id') id: string,
+    @Body() body: { published: boolean },
+    @CurrentUser('id') actorId: string,
+  ) {
     return this.cms.setPublished(actorId, id, body.published);
   }
 
@@ -81,7 +105,8 @@ export class CmsController {
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
   reorder(
-    @Param('placement', new ParseEnumPipe(ContentPlacement)) placement: ContentPlacement,
+    @Param('placement', new ParseEnumPipe(ContentPlacement))
+    placement: ContentPlacement,
     @Param('slot', new ParseEnumPipe(ContentSlot)) slot: ContentSlot,
     @Body() body: { ids: string[] },
     @CurrentUser('id') actorId: string,

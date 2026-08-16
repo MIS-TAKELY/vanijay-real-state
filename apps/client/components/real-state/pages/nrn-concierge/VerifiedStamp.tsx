@@ -16,11 +16,15 @@ export function VerifiedStamp() {
             <span className="mt-0.5 text-[9px] font-semibold tracking-[0.8px] text-tertiary">
               Lekhaprati
             </span>
-            <Icon name="verified" filled className="mt-1 text-[20px] text-tertiary" />
+            <Icon
+              name="verified"
+              filled
+              className="mt-1 text-[20px] text-tertiary"
+            />
           </div>
 
           {/* E-E-A-T content */}
-          <div >
+          <div>
             <h2 className="font-headline-md text-headline-md text-primary mb-sm">
               The Lekhaprati Verification Standard
             </h2>

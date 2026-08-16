@@ -1,6 +1,13 @@
 "use client";
 
-import { Button, Icon, Input, Stat, ToggleGroup, ToggleGroupItem } from "@repo/ui";
+import {
+  Button,
+  Icon,
+  Input,
+  Stat,
+  ToggleGroup,
+  ToggleGroupItem,
+} from "@repo/ui";
 import { useState } from "react";
 
 const CATEGORIES = [

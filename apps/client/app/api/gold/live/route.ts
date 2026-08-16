@@ -25,7 +25,8 @@ const USD_ONLY_SYMBOLS = ["BTC", "ETH", "HG"] as const;
 export const dynamic = "force-dynamic";
 
 function toNumber(value: unknown): number {
-  const n = typeof value === "number" ? value : Number.parseFloat(String(value));
+  const n =
+    typeof value === "number" ? value : Number.parseFloat(String(value));
   return Number.isFinite(n) ? n : 0;
 }
 

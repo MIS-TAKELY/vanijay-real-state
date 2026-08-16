@@ -75,7 +75,7 @@ export default async function HomePage() {
         {/* <AppModeStrip /> */}
         <CategoryStrip />
         <HeroBannerCarousel />
-        
+
         {/* <SearchBar /> */}
 
         <ListingsMarketplace />

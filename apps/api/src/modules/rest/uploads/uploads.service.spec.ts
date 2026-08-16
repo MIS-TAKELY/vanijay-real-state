@@ -63,8 +63,16 @@ describe('UploadsService', () => {
 
     const result = await service.deleteFile('properties/clip');
 
-    expect(cloudinary.delete).toHaveBeenNthCalledWith(1, 'properties/clip', 'image');
-    expect(cloudinary.delete).toHaveBeenNthCalledWith(2, 'properties/clip', 'video');
+    expect(cloudinary.delete).toHaveBeenNthCalledWith(
+      1,
+      'properties/clip',
+      'image',
+    );
+    expect(cloudinary.delete).toHaveBeenNthCalledWith(
+      2,
+      'properties/clip',
+      'video',
+    );
     expect(result).toEqual({ result: 'ok' });
   });
 });

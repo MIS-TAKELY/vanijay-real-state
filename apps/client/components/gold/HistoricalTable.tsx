@@ -2,7 +2,11 @@
 
 import { useMemo } from "react";
 import type { CurrencyCode, MetalData } from "../../constants/gold/metals";
-import { formatChange, formatPrice, getHistoricalData } from "../../constants/gold/metals";
+import {
+  formatChange,
+  formatPrice,
+  getHistoricalData,
+} from "../../constants/gold/metals";
 
 interface HistoricalTableProps {
   metal: MetalData;
@@ -10,12 +14,8 @@ interface HistoricalTableProps {
 }
 
 export function HistoricalTable({ metal, currency }: HistoricalTableProps) {
-  const anchorPrice =
-    currency === "USD" ? metal.usdPrice : metal.price;
-  const rows = useMemo(
-    () => getHistoricalData(anchorPrice),
-    [anchorPrice],
-  );
+  const anchorPrice = currency === "USD" ? metal.usdPrice : metal.price;
+  const rows = useMemo(() => getHistoricalData(anchorPrice), [anchorPrice]);
 
   return (
     <div>

@@ -1,8 +1,6 @@
 import { team } from "constants/varibles-constants";
 
 export function Leadership() {
-  
-
   return (
     <section className="border-b border-outline-variant bg-surface-container-low">
       <div className="mx-auto max-w-container-max px-gutter py-xl">

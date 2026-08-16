@@ -8,8 +8,17 @@ export async function generateMetadata(): Promise<Metadata> {
     title: seo.title,
     description: seo.description,
     keywords: seo.keywords,
-    openGraph: { title: seo.title, description: seo.description, type: "website", url: "/diamond" },
-    twitter: { card: "summary_large_image", title: seo.title, description: seo.description },
+    openGraph: {
+      title: seo.title,
+      description: seo.description,
+      type: "website",
+      url: "/diamond",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: seo.title,
+      description: seo.description,
+    },
     alternates: { canonical: "/diamond" },
     robots: { index: true, follow: true },
   };

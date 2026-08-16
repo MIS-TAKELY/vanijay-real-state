@@ -37,7 +37,9 @@ export function InquiryTabs({ active, counts, onChange }: InquiryTabsProps) {
             {tab.label}
             <span
               className={`mono-stat text-[12px] font-bold leading-none ${
-                active === tab.key ? "text-on-primary/80" : "text-on-surface-variant"
+                active === tab.key
+                  ? "text-on-primary/80"
+                  : "text-on-surface-variant"
               }`}
             >
               {count}

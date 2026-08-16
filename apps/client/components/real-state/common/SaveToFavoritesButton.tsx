@@ -47,7 +47,8 @@ export function SaveToFavoritesButton({
         if (!cancelled) setStatus(next);
       })
       .catch(() => {
-        if (!cancelled) setStatus({ isFavorite: false, notifyOnPriceChange: true });
+        if (!cancelled)
+          setStatus({ isFavorite: false, notifyOnPriceChange: true });
       });
     return () => {
       cancelled = true;
@@ -74,7 +75,9 @@ export function SaveToFavoritesButton({
       }
     } catch (error) {
       toast.error(
-        error instanceof ApiError ? error.message : "Could not update favorites",
+        error instanceof ApiError
+          ? error.message
+          : "Could not update favorites",
       );
     } finally {
       setLoading(false);

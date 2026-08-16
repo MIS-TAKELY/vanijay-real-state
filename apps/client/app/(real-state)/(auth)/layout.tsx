@@ -24,9 +24,7 @@ export default function DashboardLayout({
   // sent there after signing in.
   useEffect(() => {
     if (!isPending && !isLoggedIn) {
-      router.replace(
-        `/?auth=signin&redirect=${encodeURIComponent(pathname)}`,
-      );
+      router.replace(`/?auth=signin&redirect=${encodeURIComponent(pathname)}`);
     }
   }, [isPending, isLoggedIn, router, pathname]);
 

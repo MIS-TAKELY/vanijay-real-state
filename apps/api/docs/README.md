@@ -13,16 +13,16 @@ and the roadmap to a maximally scalable & maintainable codebase. The legacy
 
 ## 📚 Table of Contents
 
-| Doc | What it covers |
-| --- | --------------- |
-| [Getting Started](./getting-started.md) | Prerequisites, install, env vars, running the API, daily commands |
-| [Architecture](./architecture.md) | How REST + GraphQL coexist, layering, the `common/` folder, module boundaries |
-| [Module Conventions](./module-conventions.md) | Step-by-step patterns for adding REST controllers **and** GraphQL resolvers, with full working examples |
-| [Auth & RBAC](./auth-and-rbac.md) | Better Auth mounting order, `AuthGuard`, `RolesGuard`, `@CurrentUser`, `@Roles`, the `UserRole` enum |
-| [Database (Prisma)](./database.md) | Singleton client, driver adapter, migrations, using Prisma in services |
+| Doc                                             | What it covers                                                                                                                                                                                                                   |
+| ----------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [Getting Started](./getting-started.md)         | Prerequisites, install, env vars, running the API, daily commands                                                                                                                                                                |
+| [Architecture](./architecture.md)               | How REST + GraphQL coexist, layering, the `common/` folder, module boundaries                                                                                                                                                    |
+| [Module Conventions](./module-conventions.md)   | Step-by-step patterns for adding REST controllers **and** GraphQL resolvers, with full working examples                                                                                                                          |
+| [Auth & RBAC](./auth-and-rbac.md)               | Better Auth mounting order, `AuthGuard`, `RolesGuard`, `@CurrentUser`, `@Roles`, the `UserRole` enum                                                                                                                             |
+| [Database (Prisma)](./database.md)              | Singleton client, driver adapter, migrations, using Prisma in services                                                                                                                                                           |
 | [Scalability Roadmap](./scalability-roadmap.md) | ⭐ The improvement plan for the most scalable/maintainable architecture (ConfigModule, global filters/interceptors, throttler, helmet, Swagger, shared domain services, pagination, complexity limiting, testing, CI/CD, Docker) |
-| [Testing](./testing.md) | Unit (`*.spec.ts`) and e2e (`*.e2e-spec.ts`) patterns for REST + GraphQL |
-| [Troubleshooting](./troubleshooting.md) | Common pitfalls and their fixes |
+| [Testing](./testing.md)                         | Unit (`*.spec.ts`) and e2e (`*.e2e-spec.ts`) patterns for REST + GraphQL                                                                                                                                                         |
+| [Troubleshooting](./troubleshooting.md)         | Common pitfalls and their fixes                                                                                                                                                                                                  |
 
 ---
 
@@ -46,13 +46,13 @@ apps/api/
 
 ## Tech stack at a glance
 
-| Concern | Technology |
-| ------- | ---------- |
-| Framework | NestJS 11 (Express platform) |
-| GraphQL | `@nestjs/graphql` (code-first) + Apollo Server 5 |
-| REST | Native NestJS controllers |
-| ORM | Prisma 7 (`@prisma/client` + `@prisma/adapter-pg`) |
-| Auth | Better Auth (`@repo/auth`) — email/password, email OTP, Google OAuth |
-| Validation | `class-validator` + `class-transformer` |
-| Monorepo | Turborepo + pnpm workspaces (`apps/*`, `packages/*`) |
-| Runtime | Node ≥ 20 (22 LTS recommended) |
+| Concern    | Technology                                                           |
+| ---------- | -------------------------------------------------------------------- |
+| Framework  | NestJS 11 (Express platform)                                         |
+| GraphQL    | `@nestjs/graphql` (code-first) + Apollo Server 5                     |
+| REST       | Native NestJS controllers                                            |
+| ORM        | Prisma 7 (`@prisma/client` + `@prisma/adapter-pg`)                   |
+| Auth       | Better Auth (`@repo/auth`) — email/password, email OTP, Google OAuth |
+| Validation | `class-validator` + `class-transformer`                              |
+| Monorepo   | Turborepo + pnpm workspaces (`apps/*`, `packages/*`)                 |
+| Runtime    | Node ≥ 20 (22 LTS recommended)                                       |

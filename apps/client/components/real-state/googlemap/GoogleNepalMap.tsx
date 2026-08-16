@@ -349,4 +349,3 @@ function buildPinHtml(
   <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #ffffff;margin-top:-1px"></div>
 </div>`;
 }
-

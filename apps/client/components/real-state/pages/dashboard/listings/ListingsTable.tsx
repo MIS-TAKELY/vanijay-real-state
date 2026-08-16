@@ -44,7 +44,9 @@ export function ListingsTable({
             <TableHead className={cn(HEADER_CELL_CLASS, "w-10")}>
               <Checkbox
                 aria-label="Select all listings"
-                checked={someSelected && !allSelected ? "indeterminate" : allSelected}
+                checked={
+                  someSelected && !allSelected ? "indeterminate" : allSelected
+                }
                 onCheckedChange={() => onToggleAll()}
                 className="cursor-pointer"
               />

@@ -31,7 +31,8 @@ export function ListingsGate({ children }: { children: ReactNode }) {
     ? (sessionUser.role as string[])
     : [];
   const phoneVerified = sessionUser?.phoneNumberVerified === true;
-  const canAccess = phoneVerified && roles.includes("BUYER") && roles.includes("SELLER");
+  const canAccess =
+    phoneVerified && roles.includes("BUYER") && roles.includes("SELLER");
 
   if (canAccess) {
     return <>{children}</>;

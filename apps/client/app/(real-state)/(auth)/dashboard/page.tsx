@@ -28,7 +28,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const session=useSession()
+  const session = useSession();
 
   useEffect(() => {
     let cancelled = false;
@@ -58,7 +58,6 @@ export default function DashboardPage() {
   const listings: DashboardListingSnapshot[] = data?.listings ?? [];
   const activity: DashboardActivityItem[] = data?.activity ?? [];
   const appointments: DashboardAppointment[] = data?.appointments ?? [];
-
 
   return (
     <div className="flex flex-col">

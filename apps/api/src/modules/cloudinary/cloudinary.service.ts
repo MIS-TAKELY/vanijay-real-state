@@ -105,7 +105,6 @@ export class CloudinaryService {
     return { result: resource ? 'not found' : 'ok' };
   }
 
-
   async deleteMany(
     publicIds: string[],
     resourceType: 'image' | 'raw' | 'video' = 'image',
@@ -120,7 +119,6 @@ export class CloudinaryService {
 
     return { deleted: uniqueIds };
   }
-
 
   async findResource(publicId: string): Promise<CloudinaryUploadResult | null> {
     try {

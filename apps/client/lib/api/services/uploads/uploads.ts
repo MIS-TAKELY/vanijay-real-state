@@ -11,7 +11,6 @@ function endpointUrl(path: string, folder: UploadFolder): string {
   return `${url}?${sp.toString()}`;
 }
 
-
 async function uploadForm(
   path: string,
   folder: UploadFolder,

@@ -18,7 +18,7 @@ const app = await NestFactory.create(AppModule, { bodyParser: false });
 // ... ValidationPipe, CORS ...
 
 const authHandler = toNodeHandler(auth);
-app.use('/api/auth', authHandler);   // Better Auth sees the RAW body
+app.use('/api/auth', authHandler); // Better Auth sees the RAW body
 
 // AFTER the auth handler, enable JSON parsing for REST + GraphQL
 app.use(express.json());
@@ -44,7 +44,7 @@ served by the `app.use('/api/auth', authHandler)` middleware in `main.ts`.
 
 ## The `auth` instance (`packages/auth/src/auth.ts`)
 
-```ts
+````ts
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET!,
   database: prismaAdapter(prisma, { provider: 'postgresql' }),
@@ -73,7 +73,7 @@ export class AuthGuard implements CanActivate {
     return true;
   }
 }
-```
+````
 
 > ✅ Correct: a single guard protects both transports. Apply it with
 > `@UseGuards(AuthGuard)` on any REST controller or GraphQL resolver.
@@ -89,11 +89,11 @@ export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   canActivate(context: ExecutionContext): boolean {
-    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(ROLES_KEY, [
-      context.getHandler(),
-      context.getClass(),
-    ]);
-    if (!requiredRoles) return true;                 // no @Roles → allow
+    const requiredRoles = this.reflector.getAllAndOverride<UserRole[]>(
+      ROLES_KEY,
+      [context.getHandler(), context.getClass()],
+    );
+    if (!requiredRoles) return true; // no @Roles → allow
 
     const request = getRequest(context);
     const userRoles = normalizeUserRoles(request.user);
@@ -116,10 +116,10 @@ import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/role.guard';
 
 @Controller('api/example')
-@UseGuards(AuthGuard, RolesGuard)        // auth first, then RBAC
+@UseGuards(AuthGuard, RolesGuard) // auth first, then RBAC
 export class ExampleController {
   @Get()
-  @Roles('AGENCY_AGENT', 'ADMIN')         // any of these roles
+  @Roles('AGENCY_AGENT', 'ADMIN') // any of these roles
   findAll(@CurrentUser() user: { id: string }) {
     return { message: `Hello ${user.id}` };
   }
@@ -134,7 +134,9 @@ The same decorators/guards work on GraphQL resolvers:
 export class PropertiesResolver {
   @Mutation(() => Property)
   @Roles('SELLER', 'AGENCY_AGENT')
-  createProperty(@CurrentUser('id') userId: string, /* ... */) { /* ... */ }
+  createProperty(@CurrentUser('id') userId: string /* ... */) {
+    /* ... */
+  }
 }
 ```
 
@@ -148,19 +150,20 @@ A user can hold **multiple** roles (`User.role` is `UserRole[]`), and
 `RolesGuard` uses `some()` — so a user passes if they hold **at least one** of the
 required roles. For "must hold all" semantics, use the `hasAllRoles()` helper
 inside a custom guard.
-      isVerified: { type: 'boolean', required: false, defaultValue: false },
-      agreedToTerms: { type: 'boolean', required: false, defaultValue: false },
-      agencyId: { type: 'string', required: false },
-    },
-  },
-  emailAndPassword: { enabled: true, requireEmailVerification: true },
-  plugins: [emailOTP({ /* sendVerificationOTP */ expiresIn: 300 })],
-  socialProviders: {
-    google: { clientId: process.env.GOOGLE_CLIENT_ID!, clientSecret: process.env.GOOGLE_CLIENT_SECRET! },
-  },
-  trustedOrigins: [process.env.CLIENT_URL ?? 'http://localhost:3000'],
+isVerified: { type: 'boolean', required: false, defaultValue: false },
+agreedToTerms: { type: 'boolean', required: false, defaultValue: false },
+agencyId: { type: 'string', required: false },
+},
+},
+emailAndPassword: { enabled: true, requireEmailVerification: true },
+plugins: [emailOTP({ /* sendVerificationOTP */ expiresIn: 300 })],
+socialProviders: {
+google: { clientId: process.env.GOOGLE_CLIENT_ID!, clientSecret: process.env.GOOGLE_CLIENT_SECRET! },
+},
+trustedOrigins: [process.env.CLIENT_URL ?? 'http://localhost:3000'],
 });
 export type Auth = typeof auth;
+
 ```
 
 Notes:
@@ -170,3 +173,4 @@ Notes:
 - `socialProviders.google` is **always registered** with non-null assertions —
   if `GOOGLE_CLIENT_ID`/`GOOGLE_CLIENT_SECRET` are missing the app may fail to
   boot. See [Scalability Roadmap](./scalability-roadmap.md) to make it conditional.
+```

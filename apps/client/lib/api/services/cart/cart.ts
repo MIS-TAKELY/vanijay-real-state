@@ -13,10 +13,7 @@ export function fetchCartCount(): Promise<CartCount> {
 }
 
 /** Add a listing to the cart. Re-adding increments the existing quantity. */
-export function addToCart(
-  propertyId: string,
-  quantity = 1,
-): Promise<CartItem> {
+export function addToCart(propertyId: string, quantity = 1): Promise<CartItem> {
   return apiFetch<CartItem>(API_ENDPOINTS.cart.base, {
     method: "POST",
     body: { propertyId, quantity },

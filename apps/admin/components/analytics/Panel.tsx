@@ -13,10 +13,21 @@ export function Panel({
   className?: string;
 }) {
   return (
-    <div className={"admin-surface flex flex-col border border-outline-variant rounded-xl p-md " + (className ?? "")}>
+    <div
+      className={
+        "admin-surface flex flex-col border border-outline-variant rounded-xl p-md " +
+        (className ?? "")
+      }
+    >
       <div className="mb-md">
-        <h2 className="font-headline-md text-lg font-semibold text-on-surface">{title}</h2>
-        {subtitle ? <p className="font-label-sm text-[11px] text-on-surface-variant">{subtitle}</p> : null}
+        <h2 className="font-headline-md text-lg font-semibold text-on-surface">
+          {title}
+        </h2>
+        {subtitle ? (
+          <p className="font-label-sm text-[11px] text-on-surface-variant">
+            {subtitle}
+          </p>
+        ) : null}
       </div>
       <div className="min-w-0 flex-1">{children}</div>
     </div>
@@ -25,5 +36,9 @@ export function Panel({
 
 /** Muted empty-state note used when an analytics section has no data. */
 export function EmptyNote({ children }: { children: ReactNode }) {
-  return <p className="font-body-md text-body-md text-on-surface-variant">{children}</p>;
+  return (
+    <p className="font-body-md text-body-md text-on-surface-variant">
+      {children}
+    </p>
+  );
 }

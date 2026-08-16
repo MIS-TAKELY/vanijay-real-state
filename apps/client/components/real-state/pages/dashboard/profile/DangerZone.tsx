@@ -1,6 +1,19 @@
 "use client";
 
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, Button, Icon, Input, Label } from "@repo/ui";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  Button,
+  Icon,
+  Input,
+  Label,
+} from "@repo/ui";
 import { useState } from "react";
 
 export function DangerZone() {
@@ -61,7 +74,8 @@ export function DangerZone() {
 
           <div className="flex flex-col gap-xs">
             <Label>
-              Type <span className="mono-stat font-bold">DELETE</span> to confirm
+              Type <span className="mono-stat font-bold">DELETE</span> to
+              confirm
             </Label>
             <Input
               type="text"

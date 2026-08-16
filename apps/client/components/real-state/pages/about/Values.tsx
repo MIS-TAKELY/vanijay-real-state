@@ -1,7 +1,6 @@
 import { Icon } from "@repo/ui";
 import { values } from "constants/varibles-constants";
 
-
 export function Values() {
   return (
     <section className="border-b border-outline-variant bg-surface">
@@ -14,8 +13,8 @@ export function Values() {
             The Values That Guide the Archive
           </h2>
           <p className="font-body-md text-on-surface-variant leading-relaxed">
-            Four principles define every decision we make — from how we verify
-            a plot to how we publish our findings.
+            Four principles define every decision we make — from how we verify a
+            plot to how we publish our findings.
           </p>
         </div>
 

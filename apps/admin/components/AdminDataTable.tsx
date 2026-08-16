@@ -1,5 +1,13 @@
 import type { ComponentProps, ReactNode } from "react";
-import { cn, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@repo/ui";
+import {
+  cn,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@repo/ui";
 
 export interface AdminColumn {
   label: ReactNode;
@@ -29,7 +37,12 @@ const HEADER_CLASS =
   "h-auto px-md py-3 font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant";
 
 function DataRow({ className, ...props }: ComponentProps<typeof TableRow>) {
-  return <TableRow className={cn("hover:bg-surface-container/60", className)} {...props} />;
+  return (
+    <TableRow
+      className={cn("hover:bg-surface-container/60", className)}
+      {...props}
+    />
+  );
 }
 
 function DataCell({ className, ...props }: ComponentProps<typeof TableCell>) {
@@ -55,12 +68,24 @@ export const AdminDataTable = Object.assign(
     const cols = columns.map((c) => (typeof c === "string" ? { label: c } : c));
 
     return (
-      <div className={cn("admin-surface border border-outline-variant rounded-xl overflow-hidden", className)}>
+      <div
+        className={cn(
+          "admin-surface border border-outline-variant rounded-xl overflow-hidden",
+          className,
+        )}
+      >
         <Table style={minWidth ? { minWidth } : undefined}>
           <TableHeader className="border-b border-outline-variant bg-surface-container-low">
             <TableRow className="border-b border-outline-variant hover:bg-transparent">
               {cols.map((c, i) => (
-                <TableHead key={i} className={cn(HEADER_CLASS, c.align === "right" && "text-right", c.className)}>
+                <TableHead
+                  key={i}
+                  className={cn(
+                    HEADER_CLASS,
+                    c.align === "right" && "text-right",
+                    c.className,
+                  )}
+                >
                   {c.label}
                 </TableHead>
               ))}
@@ -68,17 +93,26 @@ export const AdminDataTable = Object.assign(
           </TableHeader>
           <TableBody
             aria-busy={loading || busy}
-            className={cn("transition-opacity duration-200", busy && "pointer-events-none opacity-40")}
+            className={cn(
+              "transition-opacity duration-200",
+              busy && "pointer-events-none opacity-40",
+            )}
           >
             {loading ? (
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={columns.length} className="px-md py-lg text-center text-on-surface-variant">
+                <TableCell
+                  colSpan={columns.length}
+                  className="px-md py-lg text-center text-on-surface-variant"
+                >
                   Loading…
                 </TableCell>
               </TableRow>
             ) : empty ? (
               <TableRow className="hover:bg-transparent">
-                <TableCell colSpan={columns.length} className="px-md py-lg text-center text-on-surface-variant">
+                <TableCell
+                  colSpan={columns.length}
+                  className="px-md py-lg text-center text-on-surface-variant"
+                >
                   {emptyMessage}
                 </TableCell>
               </TableRow>

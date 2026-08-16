@@ -3,7 +3,13 @@
 import { cn } from "@/lib/utils";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useMemo, type ReactNode } from "react";
@@ -100,7 +106,9 @@ function Section({
             {title}
           </h3>
           {hint && (
-            <p className="text-[11px] leading-4 text-on-surface-variant">{hint}</p>
+            <p className="text-[11px] leading-4 text-on-surface-variant">
+              {hint}
+            </p>
           )}
         </div>
       )}
@@ -175,7 +183,11 @@ function NumberField({
           }
           placeholder={placeholder}
           aria-invalid={!!error}
-          className={cn("mono-stat h-11", suffix && "pr-14", error && "border-error")}
+          className={cn(
+            "mono-stat h-11",
+            suffix && "pr-14",
+            error && "border-error",
+          )}
         />
         {suffix && (
           <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[11px] text-on-surface-variant">
@@ -205,7 +217,9 @@ function ToggleField({
         {label}
       </Label>
       {description && (
-        <p className="text-[11px] leading-4 text-on-surface-variant">{description}</p>
+        <p className="text-[11px] leading-4 text-on-surface-variant">
+          {description}
+        </p>
       )}
     </div>
   );
@@ -284,7 +298,13 @@ function UnitSystemToggle({
   );
 }
 
-function FacingField({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+function FacingField({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
   return (
     <Field label="Facing">
       <ToggleGroup
@@ -350,7 +370,10 @@ function LandAreaBlock({
   errors,
   optional = false,
   extra,
-}: StepProps & { optional?: boolean; extra?: { label: string; value: string }[] }) {
+}: StepProps & {
+  optional?: boolean;
+  extra?: { label: string; value: string }[];
+}) {
   const parts = draft.unitSystem === "ROPANI" ? ROPANI_PARTS : BIGHA_PARTS;
   const sqft = totalSqFt(draft);
   const sqm = Math.round(sqft * 0.092903);
@@ -477,7 +500,10 @@ function PriceBlock({ draft, update, errors }: StepProps) {
       ) : (
         <div className="flex flex-col gap-xs">
           <Label>Price per unit</Label>
-          <Select value={unitKey} onValueChange={(v) => update({ priceUnit: v })}>
+          <Select
+            value={unitKey}
+            onValueChange={(v) => update({ priceUnit: v })}
+          >
             <SelectTrigger className="h-11 w-full">
               <SelectValue placeholder="Select a land unit" />
             </SelectTrigger>
@@ -507,7 +533,8 @@ function PriceBlock({ draft, update, errors }: StepProps) {
 
 /** Min buyable land — only for the three land property types. */
 function MinBuyableBlock({ draft, update }: StepProps) {
-  const parts = draft.minBuyableUnitSystem === "ROPANI" ? ROPANI_PARTS : BIGHA_PARTS;
+  const parts =
+    draft.minBuyableUnitSystem === "ROPANI" ? ROPANI_PARTS : BIGHA_PARTS;
   return (
     <div className="flex flex-col gap-xs border-t border-outline-variant pt-md">
       <Section
@@ -557,7 +584,10 @@ function ResidentialLandSpecs(props: StepProps) {
     <div className="flex flex-col gap-md">
       <LandAreaBlock {...props} />
       <RoadBlock {...props} />
-      <FacingField value={draft.facing} onChange={(v) => update({ facing: v })} />
+      <FacingField
+        value={draft.facing}
+        onChange={(v) => update({ facing: v })}
+      />
       <ToggleField
         label="Corner plot"
         checked={draft.isCornerPlot}
@@ -603,7 +633,10 @@ function CommercialLandSpecs(props: StepProps) {
     <div className="flex flex-col gap-md">
       <LandAreaBlock {...props} />
       <RoadBlock {...props} />
-      <FacingField value={draft.facing} onChange={(v) => update({ facing: v })} />
+      <FacingField
+        value={draft.facing}
+        onChange={(v) => update({ facing: v })}
+      />
       <ToggleField
         label="Corner plot"
         checked={draft.isCornerPlot}
@@ -696,7 +729,10 @@ function AgriculturalLandSpecs(props: StepProps) {
         ]}
       />
       <RoadBlock {...props} />
-      <FacingField value={draft.facing} onChange={(v) => update({ facing: v })} />
+      <FacingField
+        value={draft.facing}
+        onChange={(v) => update({ facing: v })}
+      />
       <div className="grid grid-cols-1 gap-sm border-t border-outline-variant pt-md sm:grid-cols-2">
         <SelectField
           label="Land classification"
@@ -825,9 +861,12 @@ function BuildingRoomsGrid(props: StepProps) {
 
 function ResidentialHouseSpecs(props: StepProps) {
   const { draft, update } = props;
-  const isApartmentLike = APARTMENT_LIKE_SUBTYPES.includes(draft.propertySubtype);
+  const isApartmentLike = APARTMENT_LIKE_SUBTYPES.includes(
+    draft.propertySubtype,
+  );
   const includesPlot =
-    HOUSE_WITH_LAND_SUBTYPES.includes(draft.propertySubtype) && totalSqFt(draft) > 0;
+    HOUSE_WITH_LAND_SUBTYPES.includes(draft.propertySubtype) &&
+    totalSqFt(draft) > 0;
   return (
     <div className="flex flex-col gap-md">
       <LandAreaBlock {...props} optional />
@@ -900,7 +939,10 @@ function ResidentialHouseSpecs(props: StepProps) {
       </div>
       <div className="flex flex-col gap-sm border-t border-outline-variant pt-md">
         <RoadBlock {...props} />
-        <FacingField value={draft.facing} onChange={(v) => update({ facing: v })} />
+        <FacingField
+          value={draft.facing}
+          onChange={(v) => update({ facing: v })}
+        />
         {includesPlot && (
           <ToggleField
             label="Corner plot"
@@ -1006,7 +1048,10 @@ function CommercialSpaceSpecs(props: StepProps) {
       </div>
       <div className="flex flex-col gap-sm border-t border-outline-variant pt-md">
         <RoadBlock {...props} />
-        <FacingField value={draft.facing} onChange={(v) => update({ facing: v })} />
+        <FacingField
+          value={draft.facing}
+          onChange={(v) => update({ facing: v })}
+        />
         <ToggleField
           label="Corner property"
           checked={draft.isCornerPlot}
@@ -1019,7 +1064,13 @@ function CommercialSpaceSpecs(props: StepProps) {
           checked={draft.parkingAvailable}
           onChange={(v) =>
             update(
-              v ? { parkingAvailable: true } : { parkingAvailable: false, parkingSpaces: "", parkingType: "" },
+              v
+                ? { parkingAvailable: true }
+                : {
+                    parkingAvailable: false,
+                    parkingSpaces: "",
+                    parkingType: "",
+                  },
             )
           }
         />
@@ -1171,7 +1222,10 @@ function HeritageHomeSpecs(props: StepProps) {
       />
       <div className="flex flex-col gap-sm border-t border-outline-variant pt-md">
         <RoadBlock {...props} />
-        <FacingField value={draft.facing} onChange={(v) => update({ facing: v })} />
+        <FacingField
+          value={draft.facing}
+          onChange={(v) => update({ facing: v })}
+        />
         <SelectField
           label="Parking"
           value={draft.parking}

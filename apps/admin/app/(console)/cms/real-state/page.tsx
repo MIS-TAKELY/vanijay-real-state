@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Button, Icon, Input, Label, Textarea, toast, Alert } from "@repo/ui";
 import { PageHeader } from "components/ui/PageHeader";
 import { cmsListItems, cmsUpsertItem, CmsContentItem } from "lib/api";
@@ -18,16 +18,16 @@ export default function RealStateCmsPage() {
       setItems(await cmsListItems(PLACEMENT));
       setError(null);
     } catch {
-      setError("Could not load CMS items. Ensure you are signed in and the API is running.");
+      setError(
+        "Could not load CMS items. Ensure you are signed in and the API is running.",
+      );
     } finally {
       setLoading(false);
     }
   }
 
-  const loadRef = useRef(load);
-  loadRef.current = load;
   useEffect(() => {
-    loadRef.current();
+    load();
   }, []);
 
   return (
@@ -38,7 +38,9 @@ export default function RealStateCmsPage() {
         description="Manage hero copy, feature highlights, SEO snippets and slot-based content for the real-estate storefront."
       />
       <section className="mt-lg">
-        {error && <Alert className="mb-md border-error/40 text-error">{error}</Alert>}
+        {error && (
+          <Alert className="mb-md border-error/40 text-error">{error}</Alert>
+        )}
         {loading ? (
           <p className="text-on-surface-variant">Loading content…</p>
         ) : (
@@ -54,12 +56,20 @@ export default function RealStateCmsPage() {
   );
 }
 
-function CmsItemCard({ item, onChange }: { item: CmsContentItem; onChange: () => void }) {
+function CmsItemCard({
+  item,
+  onChange,
+}: {
+  item: CmsContentItem;
+  onChange: () => void;
+}) {
   const [slot, setSlot] = useState(item.slot);
   const [key, setKey] = useState(item.key);
   const [title, setTitle] = useState(item.title ?? "");
   const [body, setBody] = useState(item.body ?? "");
-  const [meta, setMeta] = useState(item.metaJson ? JSON.stringify(item.metaJson, null, 2) : "");
+  const [meta, setMeta] = useState(
+    item.metaJson ? JSON.stringify(item.metaJson, null, 2) : "",
+  );
 
   async function save() {
     try {
@@ -93,29 +103,76 @@ function CmsItemCard({ item, onChange }: { item: CmsContentItem; onChange: () =>
         <span className="inline-flex rounded-full bg-secondary-container px-2 py-0.5 font-label-sm text-[11px] font-bold uppercase tracking-widest text-primary">
           {item.placement}
         </span>
-        <h3 className="font-headline-md text-lg font-semibold text-on-surface">{slot} · {key}</h3>
+        <h3 className="font-headline-md text-lg font-semibold text-on-surface">
+          {slot} · {key}
+        </h3>
       </div>
       <div className="grid gap-md md:grid-cols-2">
         <div className="flex flex-col gap-sm">
           <div className="flex gap-sm">
-            <div className="flex-1"><Label>Slot</Label><Input value={slot} onChange={(e) => setSlot(e.target.value)} className="bg-surface" /></div>
-            <div className="flex-1"><Label>Key</Label><Input value={key} onChange={(e) => setKey(e.target.value)} className="bg-surface" /></div>
+            <div className="flex-1">
+              <Label>Slot</Label>
+              <Input
+                value={slot}
+                onChange={(e) => setSlot(e.target.value)}
+                className="bg-surface"
+              />
+            </div>
+            <div className="flex-1">
+              <Label>Key</Label>
+              <Input
+                value={key}
+                onChange={(e) => setKey(e.target.value)}
+                className="bg-surface"
+              />
+            </div>
           </div>
-          <div><Label>Title</Label><Input value={title} onChange={(e) => setTitle(e.target.value)} className="bg-surface" /></div>
+          <div>
+            <Label>Title</Label>
+            <Input
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
+              className="bg-surface"
+            />
+          </div>
         </div>
         <div className="flex flex-col gap-sm">
-          <div><Label>Body</Label><Textarea rows={3} value={body} onChange={(e) => setBody(e.target.value)} className="bg-surface" /></div>
-          <div><Label>Meta JSON</Label><Textarea rows={3} value={meta} onChange={(e) => setMeta(e.target.value)} className="bg-surface mono-stat text-xs" /></div>
+          <div>
+            <Label>Body</Label>
+            <Textarea
+              rows={3}
+              value={body}
+              onChange={(e) => setBody(e.target.value)}
+              className="bg-surface"
+            />
+          </div>
+          <div>
+            <Label>Meta JSON</Label>
+            <Textarea
+              rows={3}
+              value={meta}
+              onChange={(e) => setMeta(e.target.value)}
+              className="bg-surface mono-stat text-xs"
+            />
+          </div>
         </div>
       </div>
       <div className="mt-md flex justify-end border-t border-outline-variant pt-md">
-        <Button size="sm" onClick={save}>Save content</Button>
+        <Button size="sm" onClick={save}>
+          Save content
+        </Button>
       </div>
     </div>
   );
 }
 
-function AddCmsItem({ placement, onAdded }: { placement: string; onAdded: () => void }) {
+function AddCmsItem({
+  placement,
+  onAdded,
+}: {
+  placement: string;
+  onAdded: () => void;
+}) {
   const [slot, setSlot] = useState("");
   const [key, setKey] = useState("");
   async function add() {
@@ -123,7 +180,8 @@ function AddCmsItem({ placement, onAdded }: { placement: string; onAdded: () => 
     try {
       await cmsUpsertItem({ placement, slot: slot.trim(), key: key.trim() });
       toast.success(`Created ${slot}/${key}`);
-      setSlot(""); setKey("");
+      setSlot("");
+      setKey("");
       onAdded();
     } catch {
       toast.error("Could not create content item");
@@ -131,9 +189,27 @@ function AddCmsItem({ placement, onAdded }: { placement: string; onAdded: () => 
   }
   return (
     <div className="admin-surface border border-dashed border-outline-variant rounded-xl p-md flex flex-wrap items-end gap-sm">
-      <div className="w-40"><Label>Slot</Label><Input placeholder="hero" value={slot} onChange={(e) => setSlot(e.target.value)} className="bg-surface" /></div>
-      <div className="w-48"><Label>Key</Label><Input placeholder="headline" value={key} onChange={(e) => setKey(e.target.value)} className="bg-surface" /></div>
-      <Button size="sm" onClick={add}><Icon name="add" /> Add content</Button>
+      <div className="w-40">
+        <Label>Slot</Label>
+        <Input
+          placeholder="hero"
+          value={slot}
+          onChange={(e) => setSlot(e.target.value)}
+          className="bg-surface"
+        />
+      </div>
+      <div className="w-48">
+        <Label>Key</Label>
+        <Input
+          placeholder="headline"
+          value={key}
+          onChange={(e) => setKey(e.target.value)}
+          className="bg-surface"
+        />
+      </div>
+      <Button size="sm" onClick={add}>
+        <Icon name="add" /> Add content
+      </Button>
     </div>
   );
 }

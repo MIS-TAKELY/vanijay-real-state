@@ -41,11 +41,23 @@ export default async function AnalyticsPage() {
     }
   };
 
-  const [overview, funnel, activity, listings, market, searches, leads, geography, platform] = await Promise.all([
+  const [
+    overview,
+    funnel,
+    activity,
+    listings,
+    market,
+    searches,
+    leads,
+    geography,
+    platform,
+  ] = await Promise.all([
     call<AnalyticsOverviewData>("/api/v1/admin/analytics/overview"),
     call<FunnelStep[]>(`/api/v1/admin/analytics/funnel?days=${DAYS}`),
     call<ActivityDay[]>(`/api/v1/admin/analytics/activity?days=${DAYS}`),
-    call<ListingPerformanceData>(`/api/v1/admin/analytics/listings?days=${DAYS}`),
+    call<ListingPerformanceData>(
+      `/api/v1/admin/analytics/listings?days=${DAYS}`,
+    ),
     call<MarketPoint[]>("/api/v1/admin/analytics/market?days=365"),
     call<SearchInsightsData>(`/api/v1/admin/analytics/searches?days=${DAYS}`),
     call<LeadsData>(`/api/v1/admin/analytics/leads?days=${DAYS}`),
@@ -61,8 +73,14 @@ export default async function AnalyticsPage() {
     inquiries: a.inquiries,
   }));
 
-  const byType = (listings?.byType ?? []).map((r) => ({ key: r.propertyType.replace(/_/g, " "), value: r._count._all }));
-  const byStatus = (listings?.byStatus ?? []).map((r) => ({ key: r.status.replace(/_/g, " "), value: r._count._all }));
+  const byType = (listings?.byType ?? []).map((r) => ({
+    key: r.propertyType.replace(/_/g, " "),
+    value: r._count._all,
+  }));
+  const byStatus = (listings?.byStatus ?? []).map((r) => ({
+    key: r.status.replace(/_/g, " "),
+    value: r._count._all,
+  }));
 
   return (
     <>
@@ -75,11 +93,17 @@ export default async function AnalyticsPage() {
         <KpiCards data={overview} />
 
         <div className="grid grid-cols-1 gap-lg xl:grid-cols-3">
-          <Panel title="Buyer engagement funnel" subtitle="How far buyers get before contacting a seller">
+          <Panel
+            title="Buyer engagement funnel"
+            subtitle="How far buyers get before contacting a seller"
+          >
             <FunnelChart steps={funnel ?? []} />
           </Panel>
           <div className="xl:col-span-2">
-            <Panel title="Engagement activity" subtitle={`Daily views, searches, inquiries and phone clicks (last ${DAYS} days)`}>
+            <Panel
+              title="Engagement activity"
+              subtitle={`Daily views, searches, inquiries and phone clicks (last ${DAYS} days)`}
+            >
               <ActivityChart days={activity ?? []} />
             </Panel>
           </div>
@@ -87,7 +111,10 @@ export default async function AnalyticsPage() {
 
         <div className="grid grid-cols-1 gap-lg xl:grid-cols-3">
           <div className="xl:col-span-2">
-            <Panel title="Top listings" subtitle={`Ranked by views in the last ${DAYS} days`}>
+            <Panel
+              title="Top listings"
+              subtitle={`Ranked by views in the last ${DAYS} days`}
+            >
               <TopListingsTable listings={listings?.top ?? []} />
             </Panel>
           </div>
@@ -103,13 +130,21 @@ export default async function AnalyticsPage() {
 
         <div className="grid grid-cols-1 gap-lg xl:grid-cols-3">
           <div className="xl:col-span-2">
-            <Panel title="Market price trends" subtitle="Monthly average asking price vs actual sold price (comps)">
+            <Panel
+              title="Market price trends"
+              subtitle="Monthly average asking price vs actual sold price (comps)"
+            >
               <PriceTrendChart points={market ?? []} />
             </Panel>
           </div>
-          <Panel title="Marketplace growth" subtitle="New listings, users and inquiries per day">
+          <Panel
+            title="Marketplace growth"
+            subtitle="New listings, users and inquiries per day"
+          >
             {growth.length === 0 ? (
-              <p className="font-body-md text-body-md text-on-surface-variant">No growth data available yet.</p>
+              <p className="font-body-md text-body-md text-on-surface-variant">
+                No growth data available yet.
+              </p>
             ) : (
               <TrendChart trend={growth} />
             )}
@@ -117,18 +152,27 @@ export default async function AnalyticsPage() {
         </div>
 
         <div className="grid grid-cols-1 gap-lg xl:grid-cols-3">
-          <Panel title="Search insights" subtitle="What buyers are searching for">
+          <Panel
+            title="Search insights"
+            subtitle="What buyers are searching for"
+          >
             <SearchQueriesChart data={searches} />
           </Panel>
           <Panel title="Lead quality" subtitle="Inquiry mix and verified leads">
             <InquiryCharts data={leads} />
           </Panel>
-          <Panel title="Demand by district" subtitle="Property views by district">
+          <Panel
+            title="Demand by district"
+            subtitle="Property views by district"
+          >
             <DistrictBarChart data={geography} />
           </Panel>
         </div>
 
-        <Panel title="Platform health" subtitle="Shares, officer appointments and community Q&A">
+        <Panel
+          title="Platform health"
+          subtitle="Shares, officer appointments and community Q&A"
+        >
           <PlatformCharts data={platform} />
         </Panel>
       </section>

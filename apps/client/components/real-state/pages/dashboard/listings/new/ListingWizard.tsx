@@ -53,7 +53,9 @@ export function ListingWizard({ editSlug }: { editSlug?: string }) {
       })
       .catch((e) => {
         if (cancelled) return;
-        setLoadError(e instanceof Error ? e.message : "Failed to load listing.");
+        setLoadError(
+          e instanceof Error ? e.message : "Failed to load listing.",
+        );
         setLoading(false);
       });
     return () => {
@@ -77,7 +79,9 @@ export function ListingWizard({ editSlug }: { editSlug?: string }) {
   if (loadError) {
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
-        <p className="max-w-(--container-md) text-sm text-on-surface-variant">{loadError}</p>
+        <p className="max-w-(--container-md) text-sm text-on-surface-variant">
+          {loadError}
+        </p>
         <Button
           variant="outline"
           onClick={() => setReloadKey((k) => k + 1)}
@@ -95,7 +99,8 @@ export function ListingWizard({ editSlug }: { editSlug?: string }) {
       initialDraft={draft}
       uploads={{
         uploadFile: (file, folder) => uploadFile(file, folder as UploadFolder),
-        uploadFiles: (files, folder) => uploadFiles(files, folder as UploadFolder),
+        uploadFiles: (files, folder) =>
+          uploadFiles(files, folder as UploadFolder),
         deleteUpload,
       }}
       onSubmit={async (payload) => {

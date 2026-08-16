@@ -1,8 +1,5 @@
 import type { CSSProperties, ReactNode } from "react";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@repo/ui";
+import { SidebarInset, SidebarProvider } from "@repo/ui";
 
 import { OperationsSidebar } from "components/OperationsSidebar";
 import { OperationsTopbar } from "components/OperationsTopbar";

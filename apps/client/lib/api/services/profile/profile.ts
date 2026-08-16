@@ -10,9 +10,7 @@ export function fetchProfile(): Promise<ProfileData> {
   return apiFetch<ProfileData>(API_ENDPOINTS.profile.base);
 }
 
-export function updateProfile(
-  dto: UpdateProfileInput,
-): Promise<ProfileData> {
+export function updateProfile(dto: UpdateProfileInput): Promise<ProfileData> {
   return apiFetch<ProfileData>(API_ENDPOINTS.profile.base, {
     method: "PATCH",
     body: dto,

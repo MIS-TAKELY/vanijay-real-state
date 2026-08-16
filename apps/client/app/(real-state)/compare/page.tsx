@@ -9,7 +9,10 @@ import {
   fetchFeedPage,
   fetchPropertyBySlug,
 } from "lib/api/services/properties/properties";
-import type { ApiProperty, CardProperty } from "lib/api/services/properties/types";
+import type {
+  ApiProperty,
+  CardProperty,
+} from "lib/api/services/properties/types";
 import {
   formatNPR,
   formatLocation,
@@ -153,10 +156,7 @@ function PropertySearch({
                     </p>
                   </div>
                   {isSelected ? (
-                    <Icon
-                      name="check"
-                      className="shrink-0 text-primary"
-                    />
+                    <Icon name="check" className="shrink-0 text-primary" />
                   ) : (
                     <span className="shrink-0 text-xs font-medium text-primary">
                       Add
@@ -266,10 +266,7 @@ function ComparePageContent() {
           </Button>
         </div>
 
-        <PropertySearch
-          selectedSlugs={selectedSlugs}
-          onToggle={handleToggle}
-        />
+        <PropertySearch selectedSlugs={selectedSlugs} onToggle={handleToggle} />
 
         <div className="flex min-h-[30vh] flex-col items-center justify-center gap-4 rounded-xl border border-dashed border-outline-variant bg-surface-container/30 px-4 text-center">
           <Icon
@@ -362,8 +359,7 @@ function ComparePageContent() {
     {
       label: "Verification",
       key: "verification",
-      render: (p) =>
-        labelEnum(p.verificationLevel, VERIFICATION_LABELS),
+      render: (p) => labelEnum(p.verificationLevel, VERIFICATION_LABELS),
     },
     {
       label: "Status",
@@ -402,10 +398,7 @@ function ComparePageContent() {
       </div>
 
       {/* Inline search for adding more properties */}
-      <PropertySearch
-        selectedSlugs={selectedSlugs}
-        onToggle={handleToggle}
-      />
+      <PropertySearch selectedSlugs={selectedSlugs} onToggle={handleToggle} />
 
       <div className="overflow-x-auto rounded-xl border border-outline-variant bg-surface shadow-sm">
         <table className="w-full min-w-[600px] text-left text-sm">

@@ -5,7 +5,10 @@ export function formatNumber(n: number): string {
 }
 
 export function formatCompact(n: number): string {
-  return new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(n);
+  return new Intl.NumberFormat("en-US", {
+    notation: "compact",
+    maximumFractionDigits: 1,
+  }).format(n);
 }
 
 /** NPR amounts in lakh/crore style, e.g. रू 1.2 Cr. */
@@ -18,7 +21,10 @@ export function formatNpr(n: number): string {
 export function formatMonth(month: string): string {
   const y = Number(month.slice(0, 4));
   const m = Number(month.slice(5, 7));
-  return new Date(y, m - 1, 1).toLocaleDateString("en-US", { month: "short", year: "2-digit" });
+  return new Date(y, m - 1, 1).toLocaleDateString("en-US", {
+    month: "short",
+    year: "2-digit",
+  });
 }
 
 /** "2025-06-14" → "Jun 14" */
@@ -26,7 +32,10 @@ export function formatTickDate(value: string): string {
   const y = Number(value.slice(0, 4));
   const m = Number(value.slice(5, 7));
   const d = Number(value.slice(8, 10));
-  return new Date(y, m - 1, d).toLocaleDateString("en-US", { month: "short", day: "numeric" });
+  return new Date(y, m - 1, d).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+  });
 }
 
 /** Theme constants shared by all charts. */

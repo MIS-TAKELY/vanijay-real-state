@@ -13,9 +13,7 @@ export function AppointmentList() {
         description="Book a field verification to earn the Level 3 stamp."
         action={
           <Button asChild>
-            <Link href="/dashboard/listings">
-              Book a verification
-            </Link>
+            <Link href="/dashboard/listings">Book a verification</Link>
           </Button>
         }
       />

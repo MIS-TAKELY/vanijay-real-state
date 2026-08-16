@@ -111,7 +111,8 @@ function IconButton({
         danger
           ? "cursor-pointer hover:border-[#F87171]/40 hover:text-[#F87171]"
           : "cursor-pointer hover:border-white/20 hover:text-[#E8E6E1]",
-        disabled && "cursor-not-allowed opacity-30 hover:border-white/[0.08] hover:text-white/50",
+        disabled &&
+          "cursor-not-allowed opacity-30 hover:border-white/[0.08] hover:text-white/50",
       )}
     >
       {children}
@@ -320,7 +321,9 @@ function HeroBannerEditor() {
                 <input
                   className={inputClass}
                   value={slide.ctaPrimary}
-                  onChange={(e) => update(index, { ctaPrimary: e.target.value })}
+                  onChange={(e) =>
+                    update(index, { ctaPrimary: e.target.value })
+                  }
                   placeholder="Explore Properties"
                 />
               </Field>
@@ -370,7 +373,8 @@ function CategoriesEditor() {
 
   const edited =
     categoriesEnabled !== defaultContentState.categoriesEnabled ||
-    JSON.stringify(categories) !== JSON.stringify(defaultContentState.categories);
+    JSON.stringify(categories) !==
+      JSON.stringify(defaultContentState.categories);
 
   const update = (index: number, patch: Partial<Category>) => {
     setCategories(

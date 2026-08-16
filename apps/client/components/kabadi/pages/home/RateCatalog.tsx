@@ -53,7 +53,10 @@ export function RateCatalog() {
   }, [query, filter]);
 
   return (
-    <section id="rates" className="scroll-mt-24 border-b border-kabadi-border py-16 md:py-24">
+    <section
+      id="rates"
+      className="scroll-mt-24 border-b border-kabadi-border py-16 md:py-24"
+    >
       <div className="mx-auto px-gutter">
         {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-6">
@@ -97,7 +100,10 @@ export function RateCatalog() {
           className="mt-6 flex-wrap"
           aria-label="Filter by category"
         >
-          <ToggleGroupItem value="all" className="rounded-full px-4 font-medium">
+          <ToggleGroupItem
+            value="all"
+            className="rounded-full px-4 font-medium"
+          >
             All items
           </ToggleGroupItem>
           {KABADI_CATEGORIES.map((cat) => (
@@ -142,7 +148,9 @@ export function RateCatalog() {
                     </p>
                     <p className="mt-0.5 truncate font-label-sm text-label-sm text-kabadi-muted">
                       {item.nepali && (
-                        <span className="mr-2 text-kabadi-primary">{item.nepali}</span>
+                        <span className="mr-2 text-kabadi-primary">
+                          {item.nepali}
+                        </span>
                       )}
                       {item.note ?? categoryById(item.category).name}
                     </p>

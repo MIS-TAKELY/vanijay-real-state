@@ -146,7 +146,9 @@ export function MyListings() {
   if (error && listings.length === 0) {
     return (
       <div className="flex flex-col items-center gap-md rounded-2xl border border-outline-variant bg-surface p-xl text-center">
-        <p className="max-w-(--container-md) text-sm text-on-surface-variant">{error}</p>
+        <p className="max-w-(--container-md) text-sm text-on-surface-variant">
+          {error}
+        </p>
         <Button
           variant="outline"
           onClick={() => void load()}

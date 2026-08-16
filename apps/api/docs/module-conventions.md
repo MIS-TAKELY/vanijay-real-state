@@ -109,7 +109,7 @@ import { PropertiesResolver } from './properties.resolver';
 @Module({
   controllers: [PropertiesController],
   providers: [PropertiesResolver, PropertiesService],
-  exports: [PropertiesService],   // other modules can reuse the domain logic
+  exports: [PropertiesService], // other modules can reuse the domain logic
 })
 export class PropertiesModule {}
 ```
@@ -122,7 +122,9 @@ import { PropertiesModule } from './modules/properties/properties.module';
 
 @Module({
   imports: [
-    GraphQLModule.forRoot<ApolloDriverConfig>({ /* ... */ }),
+    GraphQLModule.forRoot<ApolloDriverConfig>({
+      /* ... */
+    }),
     // AuthModule,
     PropertiesModule,
   ],
@@ -131,14 +133,23 @@ import { PropertiesModule } from './modules/properties/properties.module';
 export class AppModule {}
 ```
 
-
 ---
 
 ## 4) REST controller (transport adapter)
 
 ```ts
 // modules/properties/properties.controller.ts
-import { Controller, Get, Post, Patch, Delete, Body, Param, Query, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Delete,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { AuthGuard } from 'src/common/guards/auth.guard';
@@ -154,7 +165,10 @@ export class PropertiesController {
 
   @Get()
   findAll(@Query('take') take?: number, @Query('skip') skip?: number) {
-    return this.properties.findAll({ take: take ? Number(take) : 20, skip: skip ? Number(skip) : 0 });
+    return this.properties.findAll({
+      take: take ? Number(take) : 20,
+      skip: skip ? Number(skip) : 0,
+    });
   }
 
   @Get(':id')
@@ -164,13 +178,19 @@ export class PropertiesController {
 
   @Post()
   @Roles('SELLER', 'AGENCY_AGENT', 'ADMIN')
-  create(@Body() input: CreatePropertyInput, @CurrentUser('id') ownerId: string) {
+  create(
+    @Body() input: CreatePropertyInput,
+    @CurrentUser('id') ownerId: string,
+  ) {
     return this.properties.create(input, ownerId);
   }
 
   @Patch(':id')
   @Roles('SELLER', 'AGENCY_AGENT', 'ADMIN')
-  update(@Param('id') id: string, @Body() input: Omit<UpdatePropertyInput, 'id'>) {
+  update(
+    @Param('id') id: string,
+    @Body() input: Omit<UpdatePropertyInput, 'id'>,
+  ) {
     return this.properties.update({ id, ...input });
   }
 
@@ -192,7 +212,13 @@ the GraphQL `@InputType` as a REST DTO by also annotating it with
 ```ts
 // modules/properties/dto/create-property.input.ts
 import { InputType, Field } from '@nestjs/graphql';
-import { IsNotEmpty, IsString, IsNumber, IsOptional, IsEnum } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsNumber,
+  IsOptional,
+  IsEnum,
+} from 'class-validator';
 import { PropertyType } from '@repo/db';
 
 @InputType()
@@ -273,8 +299,12 @@ export class PropertiesResolver {
   constructor(private readonly properties: PropertiesService) {}
 
   @Query(() => [Property], { name: 'properties' })
-  findAll(@Args('take', { type: () => Int, nullable: true, defaultValue: 20 }) take?: number,
-          @Args('skip', { type: () => Int, nullable: true, defaultValue: 0 }) skip?: number) {
+  findAll(
+    @Args('take', { type: () => Int, nullable: true, defaultValue: 20 })
+    take?: number,
+    @Args('skip', { type: () => Int, nullable: true, defaultValue: 0 })
+    skip?: number,
+  ) {
     return this.properties.findAll({ take, skip });
   }
 
@@ -285,8 +315,10 @@ export class PropertiesResolver {
 
   @Mutation(() => Property)
   @Roles('SELLER', 'AGENCY_AGENT', 'ADMIN')
-  createProperty(@Args('createPropertyInput') input: CreatePropertyInput,
-                 @CurrentUser('id') ownerId: string) {
+  createProperty(
+    @Args('createPropertyInput') input: CreatePropertyInput,
+    @CurrentUser('id') ownerId: string,
+  ) {
     return this.properties.create(input, ownerId);
   }
 
@@ -309,10 +341,10 @@ export class PropertiesResolver {
 ```ts
 GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
-  autoSchemaFile: true,                                  // ephemeral schema
-  playground: process.env.NODE_ENV !== 'production',     // gated ✅
+  autoSchemaFile: true, // ephemeral schema
+  playground: process.env.NODE_ENV !== 'production', // gated ✅
   path: '/api/v1/vanijay-real-state',
-})
+});
 ```
 
 - `autoSchemaFile: true` keeps the schema ephemeral. For **auditability**, switch

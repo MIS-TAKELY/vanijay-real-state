@@ -156,8 +156,7 @@ export function Sidebar({
                 }}
                 onMouseEnter={(e) => {
                   if (!isActive) {
-                    e.currentTarget.style.background =
-                      "rgba(255,255,255,0.04)";
+                    e.currentTarget.style.background = "rgba(255,255,255,0.04)";
                   }
                 }}
                 onMouseLeave={(e) => {
@@ -252,9 +251,7 @@ export function Sidebar({
         >
           Nepal · {markers.length} locations
         </span>
-      
       </div>
     </div>
   );
 }
-

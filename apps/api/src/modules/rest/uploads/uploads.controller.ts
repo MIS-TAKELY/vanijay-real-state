@@ -44,7 +44,9 @@ function resolveFolder(value?: string): UploadFolder {
 }
 
 function assertFileSize(file: UploadedFileType) {
-  const isVideo = (VIDEO_MIMETYPES as readonly string[]).includes(file.mimetype);
+  const isVideo = (VIDEO_MIMETYPES as readonly string[]).includes(
+    file.mimetype,
+  );
   const maxBytes = isVideo ? VIDEO_MAX_FILE_SIZE : DEFAULT_MAX_FILE_SIZE;
   if (file.size > maxBytes) {
     throw new BadRequestException(

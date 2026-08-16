@@ -10,7 +10,10 @@ interface CurrencyToggleProps {
 
 const CURRENCIES: CurrencyCode[] = ["NPR", "USD", "EUR", "GBP", "INR", "CNY"];
 
-export function CurrencyToggle({ currency, onCurrencyChange }: CurrencyToggleProps) {
+export function CurrencyToggle({
+  currency,
+  onCurrencyChange,
+}: CurrencyToggleProps) {
   return (
     <div
       className="flex shrink-0 flex-wrap gap-0.5 rounded-full border border-white/[0.08] p-0.5"

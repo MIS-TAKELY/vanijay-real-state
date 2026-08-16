@@ -103,7 +103,8 @@ const serviceSchema = {
         itemOffered: {
           "@type": "Service",
           name: "Escrow Settlement",
-          description: "Secure escrow and title transfer completion with legal representation.",
+          description:
+            "Secure escrow and title transfer completion with legal representation.",
         },
       },
     ],

@@ -1,7 +1,13 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Icon } from "@/components/Icon";
@@ -88,7 +94,9 @@ export function ListingWizard({
   footerExtra,
 }: ListingWizardProps) {
   const [step, setStep] = useState(0);
-  const [draft, setDraft] = useState<ListingDraft>(initialDraft ?? INITIAL_DRAFT);
+  const [draft, setDraft] = useState<ListingDraft>(
+    initialDraft ?? INITIAL_DRAFT,
+  );
   const [errors, setErrors] = useState<DraftErrors>({});
   const [serverError, setServerError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);

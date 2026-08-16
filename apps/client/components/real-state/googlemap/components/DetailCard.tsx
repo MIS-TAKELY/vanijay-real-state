@@ -335,8 +335,7 @@ export function DetailCard({
           fontWeight: 700,
           fontFamily: "'Public Sans', sans-serif",
           color: "#0d1a14",
-          background:
-            "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)",
+          background: "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)",
           border: "none",
           borderRadius: 8,
           cursor: "pointer",

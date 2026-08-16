@@ -144,7 +144,7 @@ export function SearchBar() {
           >
             <Icon
               name="search"
-              className="shrink-0 text-on-surface-variant text-[18px]"
+              className="shrink-0 text-[18px]"
             />
             <Input
               type="text"
@@ -166,14 +166,14 @@ export function SearchBar() {
               }
               placeholder="Search properties by location or keyword..."
               autoComplete="off"
-              className="h-9 border-0 bg-transparent text-sm shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
+              className="h-9 border-0 bg-none text-sm shadow-none focus-visible:ring-0"
             />
             {query && (
               <button
                 type="button"
                 onClick={clearQuery}
                 aria-label="Clear search"
-                className="-mr-1.5 flex size-8 shrink-0 items-center justify-center rounded-full text-on-surface-variant/60 transition-colors duration-150 hover:bg-surface-container hover:text-on-surface active:bg-surface-container-high"
+                className="-mr-1.5 flex size-8 shrink-0 items-center justify-center rounded-full transition-colors duration-150 hover:bg-surface-container hover:text-on-surface active:bg-surface-container-high"
               >
                 <Icon name="close" className="text-[16px]" />
               </button>
@@ -231,10 +231,9 @@ export function SearchBar() {
                 <li role="presentation">
                   <p className="px-3 py-1.5 text-[10px] text-on-surface-variant/60">
                     <kbd className="font-sans font-medium">↑</kbd>{" "}
-                    <kbd className="font-sans font-medium">↓</kbd> to navigate
-                    · <kbd className="font-sans font-medium">Enter</kbd> to
-                    select · <kbd className="font-sans font-medium">Esc</kbd>{" "}
-                    to close
+                    <kbd className="font-sans font-medium">↓</kbd> to navigate ·{" "}
+                    <kbd className="font-sans font-medium">Enter</kbd> to select
+                    · <kbd className="font-sans font-medium">Esc</kbd> to close
                   </p>
                 </li>
               </ul>

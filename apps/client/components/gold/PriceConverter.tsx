@@ -20,14 +20,22 @@ interface PriceConverterProps {
   defaultUnit?: WeightUnit;
 }
 
-export function PriceConverter({ metal, currency, defaultUnit }: PriceConverterProps) {
+export function PriceConverter({
+  metal,
+  currency,
+  defaultUnit,
+}: PriceConverterProps) {
   const [amount, setAmount] = useState<string>("1");
   const [unit, setUnit] = useState<WeightUnit>(defaultUnit ?? "gram");
 
   const numericAmount = parseFloat(amount) || 0;
   // metal.usdPrice is in USD per metal.unit (e.g. USD/oz for gold, USD/lb for copper)
   const usdPriceInNativeUnit = metal.usdPrice;
-  const pricePerSelectedUnit = convertUnit(usdPriceInNativeUnit, metal.unit, unit);
+  const pricePerSelectedUnit = convertUnit(
+    usdPriceInNativeUnit,
+    metal.unit,
+    unit,
+  );
   const totalUsd = pricePerSelectedUnit * numericAmount;
   const totalInCurrency = convertCurrency(totalUsd, currency);
 
@@ -88,7 +96,10 @@ export function PriceConverter({ metal, currency, defaultUnit }: PriceConverterP
         </div>
 
         <div className="flex-1 min-w-[150px]">
-          <span className="mb-1.5 block text-xs uppercase tracking-wider text-white/30" style={{ fontFamily: "var(--font-body)" }}>
+          <span
+            className="mb-1.5 block text-xs uppercase tracking-wider text-white/30"
+            style={{ fontFamily: "var(--font-body)" }}
+          >
             Value in {currency}
           </span>
           <div
@@ -105,9 +116,13 @@ export function PriceConverter({ metal, currency, defaultUnit }: PriceConverterP
         </div>
       </div>
 
-      <p className="mt-3 text-xs text-white/25" style={{ fontFamily: "var(--font-body)" }}>
+      <p
+        className="mt-3 text-xs text-white/25"
+        style={{ fontFamily: "var(--font-body)" }}
+      >
         Based on live {metal.name} spot price of{" "}
-        {formatConvertedPrice(metal.usdPrice, currency, "oz", metal.unit)} per {metal.unit}
+        {formatConvertedPrice(metal.usdPrice, currency, "oz", metal.unit)} per{" "}
+        {metal.unit}
       </p>
     </section>
   );

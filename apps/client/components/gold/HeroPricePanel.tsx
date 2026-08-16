@@ -1,10 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import type {
-  CurrencyCode,
-  MetalData,
-} from "../../constants/gold/metals";
+import type { CurrencyCode, MetalData } from "../../constants/gold/metals";
 import { METAL_SLUGS } from "../../constants/gold/metals";
 import {
   formatChange,

@@ -33,16 +33,16 @@
 
 ## Tech Stack
 
-| Concern            | Technology                                                              |
-| ------------------ | ----------------------------------------------------------------------- |
-| Framework          | NestJS 11 (Express platform)                                            |
-| GraphQL            | `@nestjs/graphql` (code-first) + Apollo Server 5                        |
-| REST               | Native NestJS controllers                                               |
-| ORM                | Prisma 7 (`@prisma/client` + `@prisma/adapter-pg`)                      |
-| Auth               | Better Auth (`@repo/auth`) — email/password, email OTP, Google OAuth    |
-| Validation         | `class-validator` + `class-transformer`                                 |
-| Monorepo           | Turborepo + pnpm workspaces (`apps/*`, `packages/*`)                    |
-| Runtime            | Node ≥ 20 (Prisma 7 & Apollo 5 require it)                              |
+| Concern    | Technology                                                           |
+| ---------- | -------------------------------------------------------------------- |
+| Framework  | NestJS 11 (Express platform)                                         |
+| GraphQL    | `@nestjs/graphql` (code-first) + Apollo Server 5                     |
+| REST       | Native NestJS controllers                                            |
+| ORM        | Prisma 7 (`@prisma/client` + `@prisma/adapter-pg`)                   |
+| Auth       | Better Auth (`@repo/auth`) — email/password, email OTP, Google OAuth |
+| Validation | `class-validator` + `class-transformer`                              |
+| Monorepo   | Turborepo + pnpm workspaces (`apps/*`, `packages/*`)                 |
+| Runtime    | Node ≥ 20 (Prisma 7 & Apollo 5 require it)                           |
 
 ---
 
@@ -120,16 +120,16 @@ The server starts on `PORT` (default **8000**).
 
 All env vars live in `apps/api/.env`. Reference table:
 
-| Variable                | Required | Description                                            |
-| ----------------------- | -------- | ------------------------------------------------------ |
-| `DATABASE_URL`          | ✅       | PostgreSQL connection string                            |
-| `BETTER_AUTH_SECRET`    | ✅       | Secret for signing auth tokens (`openssl rand -base64 32`) |
-| `BETTER_AUTH_URL`       | ✅       | Public URL of the API (`http://localhost:8000`)         |
-| `CLIENT_URL`            | ✅       | Frontend origin (used for CORS + trusted origins)       |
-| `PORT`                  | ❌       | API port (default `8000`)                               |
-| `GOOGLE_CLIENT_ID`      | ⚠️       | Google OAuth. Currently `socialProviders.google` is **always registered** in `packages/auth/src/auth.ts` with non-null assertions — if the app fails to boot, set these (or make the provider conditional in code) |
-| `GOOGLE_CLIENT_SECRET`  | ⚠️       | Google OAuth secret (same caveat as above)              |
-| `SMTP_HOST` / `SMTP_*`  | ❌       | Real SMTP. If empty, Better Auth falls back to an **Ethereal test account** and logs preview URLs (great for dev). |
+| Variable               | Required | Description                                                                                                                                                                                                        |
+| ---------------------- | -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `DATABASE_URL`         | ✅       | PostgreSQL connection string                                                                                                                                                                                       |
+| `BETTER_AUTH_SECRET`   | ✅       | Secret for signing auth tokens (`openssl rand -base64 32`)                                                                                                                                                         |
+| `BETTER_AUTH_URL`      | ✅       | Public URL of the API (`http://localhost:8000`)                                                                                                                                                                    |
+| `CLIENT_URL`           | ✅       | Frontend origin (used for CORS + trusted origins)                                                                                                                                                                  |
+| `PORT`                 | ❌       | API port (default `8000`)                                                                                                                                                                                          |
+| `GOOGLE_CLIENT_ID`     | ⚠️       | Google OAuth. Currently `socialProviders.google` is **always registered** in `packages/auth/src/auth.ts` with non-null assertions — if the app fails to boot, set these (or make the provider conditional in code) |
+| `GOOGLE_CLIENT_SECRET` | ⚠️       | Google OAuth secret (same caveat as above)                                                                                                                                                                         |
+| `SMTP_HOST` / `SMTP_*` | ❌       | Real SMTP. If empty, Better Auth falls back to an **Ethereal test account** and logs preview URLs (great for dev).                                                                                                 |
 
 ---
 
@@ -170,7 +170,7 @@ pnpm test:cov       # coverage
 Key design decisions already in place:
 
 - **One application** serves both REST and GraphQL — no separate servers, no duplicated services.
-- **Feature modules** are separated by API style (`modules/rest/*` vs `modules/graphql/*`) but **share services** when the domain is the same (e.g. a `properties` service can be consumed by a REST controller *and* a GraphQL resolver).
+- **Feature modules** are separated by API style (`modules/rest/*` vs `modules/graphql/*`) but **share services** when the domain is the same (e.g. a `properties` service can be consumed by a REST controller _and_ a GraphQL resolver).
 - **Shared request abstraction** — `common/get-request.ts` normalizes access to the underlying Express request for both HTTP and GraphQL contexts, which is what lets guards and decorators work across both layers.
 - **Auth is mounted outside Nest** in `main.ts` (Better Auth's node handler) so it receives the **raw body** before Nest's JSON parser runs.
 
@@ -257,7 +257,7 @@ modules/rest/<name>/
 import { YourModule } from './modules/rest/your/your.module';
 
 @Module({
-  imports: [YourModule, /* ... */],
+  imports: [YourModule /* ... */],
 })
 export class AppModule {}
 ```
@@ -381,9 +381,7 @@ export class PropertiesResolver {
   }
 
   @Mutation(() => Property)
-  createProperty(
-    @Args('createPropertyInput') input: CreatePropertyInput,
-  ) {
+  createProperty(@Args('createPropertyInput') input: CreatePropertyInput) {
     // delegate to a shared service
   }
 }
@@ -398,10 +396,10 @@ Same as REST — import the module in `app.module.ts`.
 ```ts
 GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
-  autoSchemaFile: true,   // ✅ schema generated in-memory (no file to commit)
-  playground: process.env.NODE_ENV !== 'production',   // ✅ already gated
+  autoSchemaFile: true, // ✅ schema generated in-memory (no file to commit)
+  playground: process.env.NODE_ENV !== 'production', // ✅ already gated
   path: '/api/v1/vanijay-real-state',
-})
+});
 ```
 
 - `autoSchemaFile: true` keeps the schema ephemeral. For **auditability**, switch
@@ -425,7 +423,7 @@ In `main.ts` the app is created with `bodyParser: false`, then:
 
 ```ts
 const authHandler = toNodeHandler(auth);
-app.use('/api/auth', authHandler);   // Better Auth must see the RAW body
+app.use('/api/auth', authHandler); // Better Auth must see the RAW body
 
 // after the auth handler, enable JSON parsing for everything else
 app.use(express.json());
@@ -532,9 +530,9 @@ export class PropertiesService {
 ```ts
 app.useGlobalPipes(
   new ValidationPipe({
-    whitelist: true,            // strip unknown properties
+    whitelist: true, // strip unknown properties
     forbidNonWhitelisted: true, // reject unknown properties in strict APIs
-    transform: true,            // auto-transform DTO instances
+    transform: true, // auto-transform DTO instances
   }),
 );
 ```
@@ -623,15 +621,15 @@ it('creates a property via GraphQL', () => {
 
 ## Common Pitfalls
 
-| Pitfall | Fix |
-| ------- | --- |
-| `body missing` errors in GraphQL/REST | `express.json()` must run after the Better Auth handler; keep `bodyParser: false` + manual `express.json()` (current `main.ts` already does this correctly). |
-| `AuthGuard` doesn't work on GraphQL resolvers | Use a guard that calls `getRequest(context)` (see [Authentication](#authentication--authorization)). |
-| Playground/SDL in production | Gate `playground` on `NODE_ENV`, disable introspection in prod. |
-| `UserRole[]` vs Better Auth `role` mismatch | Already aligned: `additionalFields` uses `type: "string[]"`; `RolesGuard` normalizes both shapes via `normalizeUserRoles()`. |
-| Prisma client recreated on hot-reload | Always import the singleton from `@repo/db` (already handled via `globalForPrisma`). |
-| GraphQL schema changes not visible in git | Switch `autoSchemaFile` to a committed `.gql` file for PR review. |
-| `class-validator` decorators ignored | Ensure `ValidationPipe({ transform: true })` is registered. |
+| Pitfall                                       | Fix                                                                                                                                                          |
+| --------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `body missing` errors in GraphQL/REST         | `express.json()` must run after the Better Auth handler; keep `bodyParser: false` + manual `express.json()` (current `main.ts` already does this correctly). |
+| `AuthGuard` doesn't work on GraphQL resolvers | Use a guard that calls `getRequest(context)` (see [Authentication](#authentication--authorization)).                                                         |
+| Playground/SDL in production                  | Gate `playground` on `NODE_ENV`, disable introspection in prod.                                                                                              |
+| `UserRole[]` vs Better Auth `role` mismatch   | Already aligned: `additionalFields` uses `type: "string[]"`; `RolesGuard` normalizes both shapes via `normalizeUserRoles()`.                                 |
+| Prisma client recreated on hot-reload         | Always import the singleton from `@repo/db` (already handled via `globalForPrisma`).                                                                         |
+| GraphQL schema changes not visible in git     | Switch `autoSchemaFile` to a committed `.gql` file for PR review.                                                                                            |
+| `class-validator` decorators ignored          | Ensure `ValidationPipe({ transform: true })` is registered.                                                                                                  |
 
 ---
 

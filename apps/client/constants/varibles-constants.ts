@@ -436,44 +436,100 @@ export interface Category {
 
 export const heroSlides: HeroSlide[] = [
   {
-    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&h=900&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600&h=900&fit=crop",
     headline: "Find Your Dream Property",
-    subheadline: "Explore thousands of verified listings across the country. From luxury villas to cozy apartments, your perfect home awaits.",
+    subheadline:
+      "Explore thousands of verified listings across the country. From luxury villas to cozy apartments, your perfect home awaits.",
     ctaPrimary: "Explore Properties",
     ctaSecondary: "List Your Property",
   },
   {
-    image: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&h=900&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1600&h=900&fit=crop",
     headline: "Luxury Living Redefined",
-    subheadline: "Discover premium properties in the most sought-after neighborhoods. Verified listings, transparent pricing, seamless experience.",
+    subheadline:
+      "Discover premium properties in the most sought-after neighborhoods. Verified listings, transparent pricing, seamless experience.",
     ctaPrimary: "Explore Properties",
     ctaSecondary: "List Your Property",
   },
   {
-    image: "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1600&h=900&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=1600&h=900&fit=crop",
     headline: "Smart Investments Start Here",
-    subheadline: "Access detailed market insights, virtual tours, and direct owner contacts. Make informed decisions with confidence.",
+    subheadline:
+      "Access detailed market insights, virtual tours, and direct owner contacts. Make informed decisions with confidence.",
     ctaPrimary: "Explore Properties",
     ctaSecondary: "List Your Property",
   },
 ];
 
 export const categories: Category[] = [
-  { name: "Apartments", image: "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=200&fit=crop" },
-  { name: "Villas", image: "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=200&h=200&fit=crop" },
-  { name: "Land", image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop" },
-  { name: "Commercial", image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=200&fit=crop" },
-  { name: "Rentals", image: "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop" },
-  { name: "Farm Houses", image: "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=200&h=200&fit=crop" },
-  { name: "Plots", image: "https://images.unsplash.com/photo-1449156493391-d2cfa28e468b?w=200&h=200&fit=crop" },
-  { name: "Offices", image: "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=200&h=200&fit=crop" },
+  {
+    name: "Apartments",
+    image:
+      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=200&fit=crop",
+  },
+  {
+    name: "Villas",
+    image:
+      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=200&h=200&fit=crop",
+  },
+  {
+    name: "Land",
+    image:
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop",
+  },
+  {
+    name: "Commercial",
+    image:
+      "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=200&fit=crop",
+  },
+  {
+    name: "Rentals",
+    image:
+      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop",
+  },
+  {
+    name: "Farm Houses",
+    image:
+      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=200&h=200&fit=crop",
+  },
+  {
+    name: "Plots",
+    image:
+      "https://images.unsplash.com/photo-1449156493391-d2cfa28e468b?w=200&h=200&fit=crop",
+  },
+  {
+    name: "Offices",
+    image:
+      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=200&h=200&fit=crop",
+  },
 ];
 
 export const appModes = [
-  { id: "real-state", label: "Properties", icon: "domain", href: "/", soon: false },
+  {
+    id: "real-state",
+    label: "Properties",
+    icon: "domain",
+    href: "/",
+    soon: false,
+  },
   { id: "Scrape", label: "Scrape", icon: "sell", href: "/scrape", soon: false },
-  { id: "gold", label: "Metal prices", icon: "Podium", href: "/gold", soon: false },
-  { id: "construction", label: "Construction", icon: "storefront", href: "/construction", soon: true },
+  {
+    id: "gold",
+    label: "Metal prices",
+    icon: "Podium",
+    href: "/gold",
+    soon: false,
+  },
+  {
+    id: "construction",
+    label: "Construction",
+    icon: "storefront",
+    href: "/construction",
+    soon: true,
+  },
 ];
 
 export const about_stats = [

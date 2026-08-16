@@ -10,7 +10,10 @@ import {
   Icon,
   toast,
 } from "@repo/ui";
-import { createProperty, updatePropertyStatus } from "lib/api/services/properties";
+import {
+  createProperty,
+  updatePropertyStatus,
+} from "lib/api/services/properties";
 import type {
   ApiProperty,
   CreatePropertyPayload,
@@ -28,15 +31,15 @@ interface ListingMenuProps {
 
 /** Rebuild a create payload from an existing listing (for "Duplicate"). */
 function toDuplicatePayload(p: ApiProperty): CreatePropertyPayload {
-  const media: NonNullable<CreatePropertyPayload["media"]> = (p.media ?? []).map(
-    (m) => ({
-      type: "IMAGE",
-      url: m.url,
-      ...(m.altText ? { altText: m.altText } : {}),
-      sortOrder: m.sortOrder,
-      isCover: m.isCover,
-    }),
-  );
+  const media: NonNullable<CreatePropertyPayload["media"]> = (
+    p.media ?? []
+  ).map((m) => ({
+    type: "IMAGE",
+    url: m.url,
+    ...(m.altText ? { altText: m.altText } : {}),
+    sortOrder: m.sortOrder,
+    isCover: m.isCover,
+  }));
 
   return {
     title: `${p.title} (Copy)`,
@@ -84,7 +87,9 @@ function toDuplicatePayload(p: ApiProperty): CreatePropertyPayload {
           ...(p.location.addressText
             ? { addressText: p.location.addressText }
             : {}),
-          ...(p.location.latitude != null ? { latitude: p.location.latitude } : {}),
+          ...(p.location.latitude != null
+            ? { latitude: p.location.latitude }
+            : {}),
           ...(p.location.longitude != null
             ? { longitude: p.location.longitude }
             : {}),

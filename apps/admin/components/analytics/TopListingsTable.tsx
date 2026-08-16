@@ -16,7 +16,11 @@ const STATUS_STYLE: Record<string, string> = {
 /** Top-performing listings by views, with engagement metrics for the period. */
 export function TopListingsTable({ listings }: { listings: TopListing[] }) {
   if (listings.length === 0) {
-    return <p className="font-body-md text-body-md text-on-surface-variant">No listing views recorded yet.</p>;
+    return (
+      <p className="font-body-md text-body-md text-on-surface-variant">
+        No listing views recorded yet.
+      </p>
+    );
   }
 
   return (
@@ -35,28 +39,41 @@ export function TopListingsTable({ listings }: { listings: TopListing[] }) {
     >
       {listings.map((row, i) => (
         <AdminDataTable.Row key={row.id}>
-          <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{i + 1}</AdminDataTable.Cell>
+          <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">
+            {i + 1}
+          </AdminDataTable.Cell>
           <AdminDataTable.Cell>
             <p className="font-medium text-on-surface">{row.title}</p>
             <p className="mono-stat text-[11px] text-on-surface-variant">
               {row.listingCode} · {formatNpr(row.askingPrice)}
             </p>
           </AdminDataTable.Cell>
-          <AdminDataTable.Cell className="text-on-surface-variant">{row.location}</AdminDataTable.Cell>
+          <AdminDataTable.Cell className="text-on-surface-variant">
+            {row.location}
+          </AdminDataTable.Cell>
           <AdminDataTable.Cell>
             <span
               className={
                 "inline-flex rounded px-1.5 py-0.5 font-label-sm mono-stat text-[10px] font-bold uppercase tracking-widest " +
-                (STATUS_STYLE[row.status] ?? "bg-surface-container text-on-surface-variant")
+                (STATUS_STYLE[row.status] ??
+                  "bg-surface-container text-on-surface-variant")
               }
             >
               {row.status.replace(/_/g, " ")}
             </span>
           </AdminDataTable.Cell>
-          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">{formatNumber(row.views)}</AdminDataTable.Cell>
-          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">{formatNumber(row.inquiries)}</AdminDataTable.Cell>
-          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">{formatNumber(row.favorites)}</AdminDataTable.Cell>
-          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">{formatNumber(row.phoneClicks)}</AdminDataTable.Cell>
+          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">
+            {formatNumber(row.views)}
+          </AdminDataTable.Cell>
+          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">
+            {formatNumber(row.inquiries)}
+          </AdminDataTable.Cell>
+          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">
+            {formatNumber(row.favorites)}
+          </AdminDataTable.Cell>
+          <AdminDataTable.Cell className="mono-stat text-right text-on-surface">
+            {formatNumber(row.phoneClicks)}
+          </AdminDataTable.Cell>
         </AdminDataTable.Row>
       ))}
     </AdminDataTable>

@@ -157,8 +157,8 @@ export function Calculator() {
                     Rs {formatNepaliNumber(estimate)}
                   </p>
                   <p className="mt-1 font-label-sm text-label-sm text-kabadi-muted">
-                    {quantity} {unitLabel} × Rs{" "}
-                    {formatNepaliNumber(item.rate)}/{item.unit}
+                    {quantity} {unitLabel} × Rs {formatNepaliNumber(item.rate)}/
+                    {item.unit}
                   </p>
                 </AlertDescription>
               </Alert>

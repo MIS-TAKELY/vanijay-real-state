@@ -54,8 +54,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   platinum: {
-    title:
-      "Live Platinum Price Today | Real-Time Platinum Rates | Malpoth",
+    title: "Live Platinum Price Today | Real-Time Platinum Rates | Malpoth",
     description:
       "Track live platinum prices with real-time updates. Rarer than gold, critical for automotive and hydrogen technology.",
     keywords: [
@@ -75,8 +74,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   palladium: {
-    title:
-      "Live Palladium Price Today | Real-Time Palladium Rates | Malpoth",
+    title: "Live Palladium Price Today | Real-Time Palladium Rates | Malpoth",
     description:
       "Track live palladium prices. Essential for emissions control, supply concentrated in Russia and South Africa.",
     keywords: [
@@ -96,8 +94,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   bitcoin: {
-    title:
-      "Live Bitcoin Price Today | Real-Time BTC Rate | Malpoth",
+    title: "Live Bitcoin Price Today | Real-Time BTC Rate | Malpoth",
     description:
       "Track live Bitcoin prices with real-time updates. Digital gold with a hard supply cap of 21 million coins.",
     keywords: [
@@ -118,8 +115,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   ethereum: {
-    title:
-      "Live Ethereum Price Today | Real-Time ETH Rate | Malpoth",
+    title: "Live Ethereum Price Today | Real-Time ETH Rate | Malpoth",
     description:
       "Track live Ethereum prices. Programmable money powering smart contracts, DeFi, and the largest app ecosystem in crypto.",
     keywords: [
@@ -139,8 +135,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   copper: {
-    title:
-      "Live Copper Price Today | Real-Time Copper Rates | Malpoth",
+    title: "Live Copper Price Today | Real-Time Copper Rates | Malpoth",
     description:
       "Track live copper prices. The industrial metal of electrification — wiring, motors, and clean energy grids.",
     keywords: [
@@ -182,8 +177,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   steel: {
-    title:
-      "Live Steel Price Today | Real-Time Steel Rates Per Ton | Malpoth",
+    title: "Live Steel Price Today | Real-Time Steel Rates Per Ton | Malpoth",
     description:
       "Track live steel prices per ton. The backbone of modern infrastructure reflecting global construction demand.",
     keywords: [

@@ -4,7 +4,6 @@ import { AppHealthIndicator } from './app-health.indicator';
 import { HealthController } from './health.controller';
 import { PrismaHealthIndicator } from './prisma-health.indicator';
 
-
 @Module({
   imports: [TerminusModule],
   controllers: [HealthController],

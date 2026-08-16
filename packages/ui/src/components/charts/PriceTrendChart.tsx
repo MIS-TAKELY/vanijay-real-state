@@ -16,14 +16,22 @@ export interface MarketPoint {
 }
 
 const SERIES = [
-  { key: "avgAsking", label: "Avg Asking Price", color: CHART_THEME.palette[0] },
+  {
+    key: "avgAsking",
+    label: "Avg Asking Price",
+    color: CHART_THEME.palette[0],
+  },
   { key: "avgSold", label: "Avg Sold Price", color: CHART_THEME.palette[2] },
 ] as const;
 
 /** Monthly market trend: average asking price vs actual sold price (comps). */
 export function PriceTrendChart({ points }: { points: MarketPoint[] }) {
   const definition = useMemo(() => {
-    const rows = points.map((p) => ({ month: p.month, avgAsking: p.avgAsking, avgSold: p.avgSold }));
+    const rows = points.map((p) => ({
+      month: p.month,
+      avgAsking: p.avgAsking,
+      avgSold: p.avgSold,
+    }));
     const folded = fold(rows, {
       fields: ["avgAsking", "avgSold"],
       as: { key: "series", value: "value" },
@@ -71,7 +79,11 @@ export function PriceTrendChart({ points }: { points: MarketPoint[] }) {
   }, [points]);
 
   if (points.length === 0) {
-    return <p className="font-body-md text-body-md text-on-surface-variant">No price data yet. Seed sold records to see comps.</p>;
+    return (
+      <p className="font-body-md text-body-md text-on-surface-variant">
+        No price data yet. Seed sold records to see comps.
+      </p>
+    );
   }
 
   return (
@@ -82,12 +94,20 @@ export function PriceTrendChart({ points }: { points: MarketPoint[] }) {
             key={s.key}
             className="flex items-center gap-xs font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant"
           >
-            <span className="h-2.5 w-2.5 rounded-full" style={{ backgroundColor: s.color }} />
+            <span
+              className="h-2.5 w-2.5 rounded-full"
+              style={{ backgroundColor: s.color }}
+            />
             {s.label}
           </span>
         ))}
       </div>
-      <Chart definition={definition} height={280} initialWidth={640} ariaLabel="Monthly asking vs sold price trend" />
+      <Chart
+        definition={definition}
+        height={280}
+        initialWidth={640}
+        ariaLabel="Monthly asking vs sold price trend"
+      />
     </div>
   );
 }

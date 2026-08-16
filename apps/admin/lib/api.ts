@@ -17,7 +17,11 @@ export class ApiError extends Error {
 
 export async function apiFetch<T>(
   path: string,
-  opts: { method?: string; body?: unknown; query?: Record<string, string | number | undefined> } = {},
+  opts: {
+    method?: string;
+    body?: unknown;
+    query?: Record<string, string | number | undefined>;
+  } = {},
 ): Promise<T> {
   const { method = "GET", body, query } = opts;
   const url = new URL(`${API_BASE}${path}`);
@@ -44,7 +48,11 @@ export async function apiFetch<T>(
     } catch {
       details = await res.text();
     }
-    throw new ApiError(`API ${method} ${path} failed (${res.status})`, res.status, details);
+    throw new ApiError(
+      `API ${method} ${path} failed (${res.status})`,
+      res.status,
+      details,
+    );
   }
   return res.json() as Promise<T>;
 }
@@ -59,10 +67,23 @@ export function adminAuditLog(take = 100) {
   return apiFetch<AuditRow[]>("/api/v1/admin/audit-log", { query: { take } });
 }
 
-export function adminProperties(params: { search?: string; status?: string; take?: number; skip?: number }) {
-  return apiFetch<{ items: AdminProperty[]; total: number }>("/api/v1/admin/properties", {
-    query: { search: params.search, status: params.status, take: params.take, skip: params.skip },
-  });
+export function adminProperties(params: {
+  search?: string;
+  status?: string;
+  take?: number;
+  skip?: number;
+}) {
+  return apiFetch<{ items: AdminProperty[]; total: number }>(
+    "/api/v1/admin/properties",
+    {
+      query: {
+        search: params.search,
+        status: params.status,
+        take: params.take,
+        skip: params.skip,
+      },
+    },
+  );
 }
 
 export function adminVerificationQueue() {
@@ -71,9 +92,17 @@ export function adminVerificationQueue() {
 
 export function adminModerateProperty(
   id: string,
-  patch: { status?: string; adminNote?: string; isFeatured?: boolean; verificationLevel?: string },
+  patch: {
+    status?: string;
+    adminNote?: string;
+    isFeatured?: boolean;
+    verificationLevel?: string;
+  },
 ) {
-  return apiFetch<AdminProperty>(`/api/v1/admin/properties/${id}/moderate`, { method: "PATCH", body: patch });
+  return apiFetch<AdminProperty>(`/api/v1/admin/properties/${id}/moderate`, {
+    method: "PATCH",
+    body: patch,
+  });
 }
 
 export function adminProperty(id: string) {
@@ -81,7 +110,10 @@ export function adminProperty(id: string) {
 }
 
 export function adminUpdateProperty(id: string, patch: AdminPropertyPatch) {
-  return apiFetch<AdminPropertyDetail>(`/api/v1/admin/properties/${id}`, { method: "PATCH", body: patch });
+  return apiFetch<AdminPropertyDetail>(`/api/v1/admin/properties/${id}`, {
+    method: "PATCH",
+    body: patch,
+  });
 }
 
 // ---- Uploads (media / documents on the shared /api/v1/uploads endpoint) ----
@@ -94,7 +126,10 @@ export interface AdminUploadedAsset {
   originalFilename?: string;
 }
 
-async function adminUploadForm(file: File, folder: string): Promise<AdminUploadedAsset> {
+async function adminUploadForm(
+  file: File,
+  folder: string,
+): Promise<AdminUploadedAsset> {
   const formData = new FormData();
   formData.append("file", file);
   const url = new URL(`${API_BASE}/api/v1/uploads`);
@@ -145,10 +180,13 @@ export async function adminUploadFiles(files: File[], folder = "properties") {
 }
 
 export async function adminDeleteUpload(publicId: string) {
-  const res = await fetch(`${API_BASE}/api/v1/uploads/${encodeURIComponent(publicId)}`, {
-    method: "DELETE",
-    credentials: "include",
-  });
+  const res = await fetch(
+    `${API_BASE}/api/v1/uploads/${encodeURIComponent(publicId)}`,
+    {
+      method: "DELETE",
+      credentials: "include",
+    },
+  );
   if (!res.ok) throw new ApiError(`Delete failed (${res.status})`, res.status);
   return res.json() as Promise<{ result: string }>;
 }
@@ -168,24 +206,42 @@ export function cmsList(placement: string, slot?: string, admin = true) {
   return apiFetch<CmsItem[]>(base, { query: { placement, slot } });
 }
 
-export function cmsUpsert(placement: string, slot: string, item: Record<string, unknown>) {
-  return apiFetch<CmsItem>(`/api/v1/admin/cms/${placement}/${slot}`, { method: "POST", body: item });
+export function cmsUpsert(
+  placement: string,
+  slot: string,
+  item: Record<string, unknown>,
+) {
+  return apiFetch<CmsItem>(`/api/v1/admin/cms/${placement}/${slot}`, {
+    method: "POST",
+    body: item,
+  });
 }
 
 export function cmsUpdate(id: string, patch: Record<string, unknown>) {
-  return apiFetch<CmsItem>(`/api/v1/admin/cms/items/${id}`, { method: "PATCH", body: patch });
+  return apiFetch<CmsItem>(`/api/v1/admin/cms/items/${id}`, {
+    method: "PATCH",
+    body: patch,
+  });
 }
 
 export function cmsPublish(id: string, published: boolean) {
-  return apiFetch<CmsItem>(`/api/v1/admin/cms/items/${id}/publish`, { method: "PATCH", body: { published } });
+  return apiFetch<CmsItem>(`/api/v1/admin/cms/items/${id}/publish`, {
+    method: "PATCH",
+    body: { published },
+  });
 }
 
 export function cmsReorder(placement: string, slot: string, ids: string[]) {
-  return apiFetch<CmsItem[]>(`/api/v1/admin/cms/${placement}/${slot}/reorder`, { method: "POST", body: { ids } });
+  return apiFetch<CmsItem[]>(`/api/v1/admin/cms/${placement}/${slot}/reorder`, {
+    method: "POST",
+    body: { ids },
+  });
 }
 
 export function cmsDelete(id: string) {
-  return apiFetch<{ deleted: boolean }>(`/api/v1/admin/cms/items/${id}`, { method: "DELETE" });
+  return apiFetch<{ deleted: boolean }>(`/api/v1/admin/cms/items/${id}`, {
+    method: "DELETE",
+  });
 }
 
 // Convenience wrappers used by the CMS admin pages.
@@ -219,33 +275,62 @@ export function goldMetals() {
 }
 
 export function goldUpsertMetal(metal: Record<string, unknown>) {
-  return apiFetch<MetalConfig>("/api/v1/admin/gold/metals", { method: "POST", body: metal });
+  return apiFetch<MetalConfig>("/api/v1/admin/gold/metals", {
+    method: "POST",
+    body: metal,
+  });
 }
 
-export function goldSetFaqs(slug: string, faqs: { question: string; answer: string; sortOrder?: number }[]) {
-  return apiFetch<unknown[]>("/api/v1/admin/gold/metals/" + slug + "/faqs", { method: "POST", body: { faqs } });
+export function goldSetFaqs(
+  slug: string,
+  faqs: { question: string; answer: string; sortOrder?: number }[],
+) {
+  return apiFetch<unknown[]>("/api/v1/admin/gold/metals/" + slug + "/faqs", {
+    method: "POST",
+    body: { faqs },
+  });
 }
 
-export function goldSetOverride(o: { metalSlug: string; ask?: number; bid?: number; unit?: string; currency?: string; note?: string }) {
-  return apiFetch<unknown>("/api/v1/admin/gold/overrides", { method: "POST", body: o });
+export function goldSetOverride(o: {
+  metalSlug: string;
+  ask?: number;
+  bid?: number;
+  unit?: string;
+  currency?: string;
+  note?: string;
+}) {
+  return apiFetch<unknown>("/api/v1/admin/gold/overrides", {
+    method: "POST",
+    body: o,
+  });
 }
 
 // Kabadi
 
 export function kabadiCategories(admin = true) {
-  return apiFetch<KabadiCategory[]>((admin ? "/api/v1/admin/kabadi/categories" : "/api/v1/kabadi/categories"));
+  return apiFetch<KabadiCategory[]>(
+    admin ? "/api/v1/admin/kabadi/categories" : "/api/v1/kabadi/categories",
+  );
 }
 
 export function kabadiUpsertItem(item: Record<string, unknown>) {
-  return apiFetch<unknown>("/api/v1/admin/kabadi/items", { method: "POST", body: item });
+  return apiFetch<unknown>("/api/v1/admin/kabadi/items", {
+    method: "POST",
+    body: item,
+  });
 }
 
 export function kabadiSetRates(items: Record<string, unknown>[]) {
-  return apiFetch<unknown[]>("/api/v1/admin/kabadi/items/bulk", { method: "POST", body: { items } });
+  return apiFetch<unknown[]>("/api/v1/admin/kabadi/items/bulk", {
+    method: "POST",
+    body: { items },
+  });
 }
 
 export function kabadiDeleteItem(id: string) {
-  return apiFetch<{ deleted: boolean }>("/api/v1/admin/kabadi/items/" + id, { method: "DELETE" });
+  return apiFetch<{ deleted: boolean }>("/api/v1/admin/kabadi/items/" + id, {
+    method: "DELETE",
+  });
 }
 
 // Analytics
@@ -348,7 +433,10 @@ export function getSettings() {
 }
 
 export function updateSettings(data: Record<string, unknown>) {
-  return apiFetch<Record<string, unknown>>("/api/v1/admin/settings", { method: "PUT", body: data });
+  return apiFetch<Record<string, unknown>>("/api/v1/admin/settings", {
+    method: "PUT",
+    body: data,
+  });
 }
 
 // Updates the admin's own account email directly in the database.
@@ -394,7 +482,11 @@ export interface AdminProperty {
   askingPrice: string;
   isFeatured: boolean;
   owner?: { id: string; name: string; email: string } | null;
-  location?: { district?: string; municipality?: string; areaName?: string } | null;
+  location?: {
+    district?: string;
+    municipality?: string;
+    areaName?: string;
+  } | null;
   createdAt: string;
 }
 
@@ -596,7 +688,13 @@ export interface AdminPropertyPatch {
     totalSqFt?: number;
     totalSqMeters?: number;
   };
-  media?: { url: string; altText?: string | null; type?: string; sortOrder?: number; isCover?: boolean }[];
+  media?: {
+    url: string;
+    altText?: string | null;
+    type?: string;
+    sortOrder?: number;
+    isCover?: boolean;
+  }[];
 }
 
 export interface AdminUser {

@@ -1,5 +1,15 @@
 "use client";
-import { Button, Icon, Input, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui";
+import {
+  Button,
+  Icon,
+  Input,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui";
 
 export function ProcessAndBooking() {
   const steps = [
@@ -150,7 +160,10 @@ export function ProcessAndBooking() {
                 </Label>
                 <div className="flex gap-2">
                   <Select>
-                    <SelectTrigger id="walkthrough-time" className="h-11 flex-1">
+                    <SelectTrigger
+                      id="walkthrough-time"
+                      className="h-11 flex-1"
+                    >
                       <SelectValue placeholder="09:00 NPT" />
                     </SelectTrigger>
                     <SelectContent>

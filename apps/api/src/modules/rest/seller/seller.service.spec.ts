@@ -11,7 +11,10 @@ describe('SellerService', () => {
         SellerService,
         {
           provide: PrismaClient,
-          useValue: { user: { findUnique: jest.fn() }, $transaction: jest.fn() },
+          useValue: {
+            user: { findUnique: jest.fn() },
+            $transaction: jest.fn(),
+          },
         },
       ],
     }).compile();

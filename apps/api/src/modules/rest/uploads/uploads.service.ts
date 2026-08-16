@@ -36,7 +36,9 @@ export class UploadsService {
     return this.deleteWithFallback(publicId);
   }
 
-  private async deleteWithFallback(publicId: string): Promise<{ result: string }> {
+  private async deleteWithFallback(
+    publicId: string,
+  ): Promise<{ result: string }> {
     const asImage = await this.cloudinary.delete(publicId, 'image');
     if (asImage.result === 'ok') return asImage;
     return this.cloudinary.delete(publicId, 'video');

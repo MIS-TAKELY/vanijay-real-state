@@ -7,16 +7,13 @@ import {
   Recycle,
   Refrigerator,
 } from "lucide-react";
-import {
-  Card,
-  CardAction,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@repo/ui";
+import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@repo/ui";
 import { formatRate, KABADI_CATEGORIES, KABADI_ITEMS } from "lib/kabadi/rates";
 
-const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
+const CATEGORY_ICONS: Record<
+  string,
+  React.ComponentType<{ className?: string }>
+> = {
   newspaper: Newspaper,
   recycling: Recycle,
   hammer: Hammer,
@@ -48,8 +45,7 @@ export function CategoryGrid() {
               (i) => i.category === cat.id && i.popular,
             );
             const sample =
-              samples[0] ??
-              KABADI_ITEMS.find((i) => i.category === cat.id);
+              samples[0] ?? KABADI_ITEMS.find((i) => i.category === cat.id);
 
             return (
               <a key={cat.id} href="#rates" className="group block">

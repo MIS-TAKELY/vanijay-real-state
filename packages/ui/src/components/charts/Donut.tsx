@@ -25,7 +25,11 @@ export function Donut({
 }) {
   const total = data.reduce((sum, d) => sum + d.value, 0);
   const keys = data.map((d) => d.key);
-  const range = data.map((_, i) => CHART_THEME.palette[i % CHART_THEME.palette.length] ?? CHART_THEME.palette[0]);
+  const range = data.map(
+    (_, i) =>
+      CHART_THEME.palette[i % CHART_THEME.palette.length] ??
+      CHART_THEME.palette[0],
+  );
 
   const definition = useMemo(() => {
     const slices = pie(data, { value: "value" });
@@ -51,21 +55,36 @@ export function Donut({
   }, [data, keys, range]);
 
   if (data.length === 0) {
-    return <p className="font-body-md text-body-md text-on-surface-variant">No data yet.</p>;
+    return (
+      <p className="font-body-md text-body-md text-on-surface-variant">
+        No data yet.
+      </p>
+    );
   }
 
   return (
     <div>
-      <Chart definition={definition} height={height} initialWidth={280} ariaLabel={ariaLabel ?? "Donut chart"} />
+      <Chart
+        definition={definition}
+        height={height}
+        initialWidth={280}
+        ariaLabel={ariaLabel ?? "Donut chart"}
+      />
       <ul className="mt-sm space-y-xs">
         {data.map((d) => {
           const pct = total > 0 ? Math.round((d.value / total) * 100) : 0;
           return (
-            <li key={d.key} className="flex items-center justify-between gap-sm font-label-sm text-[12px]">
+            <li
+              key={d.key}
+              className="flex items-center justify-between gap-sm font-label-sm text-[12px]"
+            >
               <span className="flex min-w-0 items-center gap-xs text-on-surface-variant">
                 <span
                   className="h-2.5 w-2.5 shrink-0 rounded-full"
-                  style={{ backgroundColor: range[keys.indexOf(d.key)] ?? CHART_THEME.palette[0] }}
+                  style={{
+                    backgroundColor:
+                      range[keys.indexOf(d.key)] ?? CHART_THEME.palette[0],
+                  }}
                 />
                 <span className="truncate">{d.key.replace(/_/g, " ")}</span>
               </span>
@@ -82,6 +101,8 @@ export function Donut({
 }
 
 /** Build donut slices from Prisma group-by rows. */
-export function fromGroupBy<T extends { key: string; _count: { _all: number } }>(rows: T[]): DonutSlice[] {
+export function fromGroupBy<
+  T extends { key: string; _count: { _all: number } },
+>(rows: T[]): DonutSlice[] {
   return rows.map((r) => ({ key: r.key, value: r._count._all }));
 }

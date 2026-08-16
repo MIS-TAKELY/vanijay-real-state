@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button, Icon, Input, toast } from "@repo/ui";
 import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
@@ -23,10 +23,8 @@ export default function UsersPage() {
     }
   }, [q]);
 
-  const loadRef = useRef(load);
-  loadRef.current = load;
   useEffect(() => {
-    const t = setTimeout(loadRef.current, 300);
+    const t = setTimeout(load, 300);
     return () => clearTimeout(t);
   }, [load]);
 
@@ -35,7 +33,10 @@ export default function UsersPage() {
       ? user.role.filter((r) => r !== role)
       : [...user.role, role];
     try {
-      await apiFetch(`/api/v1/admin/users/${user.id}/roles`, { method: "PATCH", body: { roles: next } });
+      await apiFetch(`/api/v1/admin/users/${user.id}/roles`, {
+        method: "PATCH",
+        body: { roles: next },
+      });
       toast.success(`Updated roles for ${user.name}`);
       load();
     } catch {
@@ -70,19 +71,38 @@ export default function UsersPage() {
             <AdminDataTable.Row key={u.id}>
               <AdminDataTable.Cell className="font-medium text-on-surface">
                 <div className="flex items-center gap-sm">
-                  {u.image ? <img src={u.image} alt="" className="h-7 w-7 rounded-full" /> : <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-on-primary text-xs font-bold">{u.name.charAt(0)}</span>}
+                  {u.image ? (
+                    <img
+                      src={u.image}
+                      alt=""
+                      className="h-7 w-7 rounded-full"
+                    />
+                  ) : (
+                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-on-primary text-xs font-bold">
+                      {u.name.charAt(0)}
+                    </span>
+                  )}
                   {u.name}
                 </div>
               </AdminDataTable.Cell>
-              <AdminDataTable.Cell className="text-on-surface-variant">{u.email}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface-variant">
+                {u.email}
+              </AdminDataTable.Cell>
               <AdminDataTable.Cell>
                 <div className="flex flex-wrap gap-1">
                   {u.role.map((r) => (
-                    <span key={r} className="inline-flex rounded-full bg-surface-container px-2 py-0.5 font-label-sm text-[11px] font-semibold text-on-surface-variant">{r}</span>
+                    <span
+                      key={r}
+                      className="inline-flex rounded-full bg-surface-container px-2 py-0.5 font-label-sm text-[11px] font-semibold text-on-surface-variant"
+                    >
+                      {r}
+                    </span>
                   ))}
                 </div>
               </AdminDataTable.Cell>
-              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{new Date(u.createdAt).toLocaleDateString()}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">
+                {new Date(u.createdAt).toLocaleDateString()}
+              </AdminDataTable.Cell>
               <AdminDataTable.Cell>
                 <div className="flex gap-xs">
                   {["ADMIN", "SELLER", "VERIFIER"].map((role) => (

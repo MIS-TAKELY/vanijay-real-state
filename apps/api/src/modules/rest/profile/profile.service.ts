@@ -23,12 +23,8 @@ export class ProfileService {
 
     if (!user) throw new NotFoundException('User not found');
 
-    const frontDoc = user.documents.find(
-      (d) => d.type === 'CITIZENSHIP_FRONT',
-    );
-    const backDoc = user.documents.find(
-      (d) => d.type === 'CITIZENSHIP_BACK',
-    );
+    const frontDoc = user.documents.find((d) => d.type === 'CITIZENSHIP_FRONT');
+    const backDoc = user.documents.find((d) => d.type === 'CITIZENSHIP_BACK');
 
     const verificationLevel = this.computeVerificationLevel(
       user.emailVerified,
@@ -171,10 +167,7 @@ export class ProfileService {
     isFieldVerified?: boolean,
   ): 0 | 1 | 2 | 3 {
     if (!emailVerified || !phoneVerified) return 0;
-    if (
-      frontStatus === 'VERIFIED' &&
-      backStatus === 'VERIFIED'
-    ) {
+    if (frontStatus === 'VERIFIED' && backStatus === 'VERIFIED') {
       if (isFieldVerified) return 3;
       return 2;
     }

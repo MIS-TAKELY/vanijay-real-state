@@ -1,4 +1,10 @@
-import { IsDateString, IsIn, IsOptional, IsString, IsUrl } from 'class-validator';
+import {
+  IsDateString,
+  IsIn,
+  IsOptional,
+  IsString,
+  IsUrl,
+} from 'class-validator';
 
 export class UpsertCitizenshipDocDto {
   @IsIn(['CITIZENSHIP_FRONT', 'CITIZENSHIP_BACK'])

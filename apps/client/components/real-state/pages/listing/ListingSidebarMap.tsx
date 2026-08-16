@@ -56,7 +56,7 @@ export function ListingSidebarMap({
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 18,
-        attribution: '&copy; OpenStreetMap',
+        attribution: "&copy; OpenStreetMap",
       }).addTo(map);
 
       L.marker([latitude, longitude])

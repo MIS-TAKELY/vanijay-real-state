@@ -196,7 +196,6 @@ const SignIn = ({ trigger, defaultOpen = false }: SignInModalProps) => {
         onOpenAutoFocus={(e) => {
           if (showOtpModal) e.preventDefault();
         }}
-        
         onPointerDownOutside={(e) => {
           if (showOtpModal) e.preventDefault();
         }}

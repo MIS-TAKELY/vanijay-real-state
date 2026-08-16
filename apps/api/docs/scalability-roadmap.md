@@ -46,7 +46,9 @@ pnpm --filter api add @nestjs/config zod
 import { z } from 'zod';
 
 export const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  NODE_ENV: z
+    .enum(['development', 'test', 'production'])
+    .default('development'),
   PORT: z.coerce.number().default(8000),
   CLIENT_URL: z.string().url(),
   DATABASE_URL: z.string().url(),
@@ -87,7 +89,6 @@ boot — `zod.parse` fails fast with a clear message if a var is missing.
 but **cannot be injected/mocked** in tests and bypasses DI. Prefer `APP_*`
 providers in a module so they're part of the Nest context:
 
-
 ## 3. Global exception filter — consistent errors for REST + GraphQL
 
 Nest's default error shape differs between REST (HTTP exceptions → JSON) and
@@ -95,28 +96,40 @@ GraphQL (`ApolloError` → `errors[]`). Normalize both:
 
 ```ts
 // src/common/filters/global-exception.filter.ts
-import { Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import {
+  Catch,
+  ExceptionFilter,
+  HttpException,
+  HttpStatus,
+  Logger,
+} from '@nestjs/common';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
   private readonly logger = new Logger(GlobalExceptionFilter.name);
 
   catch(exception: unknown, host: ArgumentsHost) {
-    this.logger.error(exception instanceof Error ? exception.stack : String(exception));
+    this.logger.error(
+      exception instanceof Error ? exception.stack : String(exception),
+    );
 
     // GraphQL: rethrow so Apollo packages it into errors[] uniformly
     if (host.getType<'http' | 'graphql'>() === 'graphql') {
-      throw exception instanceof Error ? exception : new Error(String(exception));
+      throw exception instanceof Error
+        ? exception
+        : new Error(String(exception));
     }
 
     // REST: respond with a consistent JSON shape
     const res = host.switchToHttp().getResponse();
-    const status = exception instanceof HttpException
-      ? exception.getStatus()
-      : HttpStatus.INTERNAL_SERVER_ERROR;
-    const message = exception instanceof HttpException
-      ? exception.getResponse()
-      : 'Internal server error';
+    const status =
+      exception instanceof HttpException
+        ? exception.getStatus()
+        : HttpStatus.INTERNAL_SERVER_ERROR;
+    const message =
+      exception instanceof HttpException
+        ? exception.getResponse()
+        : 'Internal server error';
     res.status(status).json({ statusCode: status, message });
   }
 }
@@ -138,7 +151,10 @@ pnpm --filter api add nestjs-pino pino-http pino-pretty
 // src/main.ts
 import { Logger as PinoLogger } from 'nestjs-pino';
 
-const app = await NestFactory.create(AppModule, { bodyParser: false, bufferLogs: true });
+const app = await NestFactory.create(AppModule, {
+  bodyParser: false,
+  bufferLogs: true,
+});
 app.useLogger(app.get(PinoLogger));
 ```
 
@@ -183,6 +199,7 @@ app.use(helmet());
 ```
 
 Set HSTS, CSP, and other safe defaults. Combine with the existing CORS config.
+
 ```ts
 // src/common/common.module.ts
 import { Module } from '@nestjs/common';
@@ -193,7 +210,14 @@ import { LoggingInterceptor } from './interceptors/logging.interceptor';
 
 @Module({
   providers: [
-    { provide: APP_PIPE, useValue: new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }) },
+    {
+      provide: APP_PIPE,
+      useValue: new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    },
     { provide: APP_FILTER, useClass: GlobalExceptionFilter },
     { provide: APP_INTERCEPTOR, useClass: LoggingInterceptor },
   ],
@@ -203,7 +227,6 @@ export class CommonModule {}
 
 Import `CommonModule` once in `AppModule`. In e2e tests the test app now gets the
 same globals automatically (no need to re-register them manually).
-
 
 ## 7. Prisma as an injectable service
 
@@ -216,11 +239,19 @@ import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from '@repo/db';
 
 @Injectable()
-export class PrismaService extends PrismaClient implements OnModuleInit, OnModuleDestroy {
-  async onModuleInit() { await this.$connect(); }
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
+  async onModuleInit() {
+    await this.$connect();
+  }
 
   async enableShutdownHooks(app: import('@nestjs/core').INestApplication) {
-    process.on('beforeExit', async () => { await this.$disconnect(); await app.close(); });
+    process.on('beforeExit', async () => {
+      await this.$disconnect();
+      await app.close();
+    });
   }
 }
 ```
@@ -257,8 +288,14 @@ For cross-cutting mutations across multiple Prisma models, use transactions:
 
 ```ts
 await this.prisma.$transaction(async (tx) => {
-  const property = await tx.property.create({ data: { /* ... */ } });
-  await tx.propertyViewLog.create({ data: { propertyId: property.id, /* ... */ } });
+  const property = await tx.property.create({
+    data: {
+      /* ... */
+    },
+  });
+  await tx.propertyViewLog.create({
+    data: { propertyId: property.id /* ... */ },
+  });
   return property;
 });
 ```
@@ -377,10 +414,12 @@ export class HealthController {
   @Get()
   @HealthCheck()
   check() {
-    return this.health.check([async () => {
-      await this.prisma.$queryRaw`SELECT 1`;
-      return { prisma: { status: 'up' } };
-    }]);
+    return this.health.check([
+      async () => {
+        await this.prisma.$queryRaw`SELECT 1`;
+        return { prisma: { status: 'up' } };
+      },
+    ]);
   }
 }
 ```

@@ -37,7 +37,11 @@ export function ListingMapsButton({ location }: ListingMapsButtonProps) {
       >
         <Icon name="map" className="text-[16px]" aria-hidden />
         View map
-        <Icon name="open_in_new" className="text-[14px] opacity-80" aria-hidden />
+        <Icon
+          name="open_in_new"
+          className="text-[14px] opacity-80"
+          aria-hidden
+        />
       </a>
     </Button>
   );

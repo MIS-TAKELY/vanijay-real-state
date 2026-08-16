@@ -7,28 +7,32 @@
 export function stripHtml(input?: string | null): string {
   if (!input) return "";
 
-  return input
-    // Replace block-level tags and line breaks with spaces so words don't merge together
-    .replace(/<(\/p|p|\/div|div|\/li|li|\/h[1-6]|h[1-6]|br\s*\/?)>/gi, " ")
-    // Remove all remaining HTML tags
-    .replace(/<[^>]+>/g, "")
-    // Decode common named HTML entities
-    .replace(/&amp;/g, "&")
-    .replace(/&lt;/g, "<")
-    .replace(/&gt;/g, ">")
-    .replace(/&quot;/g, '"')
-    .replace(/&#39;/g, "'")
-    .replace(/&apos;/g, "'")
-    .replace(/&nbsp;/g, " ")
-    // Decode numeric decimal entities (e.g. &#8217;)
-    .replace(/&#(\d+);/g, (_, code) => String.fromCharCode(parseInt(code, 10)))
-    // Decode numeric hex entities (e.g. &#x27;)
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, code) =>
-      String.fromCharCode(parseInt(code, 16)),
-    )
-    // Collapse multiple whitespaces and newlines
-    .replace(/\s+/g, " ")
-    .trim();
+  return (
+    input
+      // Replace block-level tags and line breaks with spaces so words don't merge together
+      .replace(/<(\/p|p|\/div|div|\/li|li|\/h[1-6]|h[1-6]|br\s*\/?)>/gi, " ")
+      // Remove all remaining HTML tags
+      .replace(/<[^>]+>/g, "")
+      // Decode common named HTML entities
+      .replace(/&amp;/g, "&")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&apos;/g, "'")
+      .replace(/&nbsp;/g, " ")
+      // Decode numeric decimal entities (e.g. &#8217;)
+      .replace(/&#(\d+);/g, (_, code) =>
+        String.fromCharCode(parseInt(code, 10)),
+      )
+      // Decode numeric hex entities (e.g. &#x27;)
+      .replace(/&#x([0-9a-fA-F]+);/g, (_, code) =>
+        String.fromCharCode(parseInt(code, 16)),
+      )
+      // Collapse multiple whitespaces and newlines
+      .replace(/\s+/g, " ")
+      .trim()
+  );
 }
 
 export const TYPE_LABELS: Record<string, string> = {

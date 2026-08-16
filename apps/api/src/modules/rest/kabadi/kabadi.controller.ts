@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { AuthGuard } from 'src/common/guards/auth.guard';
@@ -12,13 +21,17 @@ export class KabadiController {
 
   // Public
   @Get('api/v1/kabadi/categories')
-  listPublic() { return this.kabadi.listCategories(false); }
+  listPublic() {
+    return this.kabadi.listCategories(false);
+  }
 
   // Admin
   @Get('api/v1/admin/kabadi/categories')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
-  listAdmin() { return this.kabadi.listCategories(true); }
+  listAdmin() {
+    return this.kabadi.listCategories(true);
+  }
 
   @Post('api/v1/admin/kabadi/categories')
   @UseGuards(AuthGuard, RolesGuard)
@@ -30,7 +43,11 @@ export class KabadiController {
   @Patch('api/v1/admin/kabadi/categories/:id/publish')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
-  publishCategory(@Param('id') id: string, @Body() body: { published: boolean }, @CurrentUser('id') actorId: string) {
+  publishCategory(
+    @Param('id') id: string,
+    @Body() body: { published: boolean },
+    @CurrentUser('id') actorId: string,
+  ) {
     return this.kabadi.setCategoryPublished(actorId, id, body.published);
   }
 
@@ -51,7 +68,11 @@ export class KabadiController {
   @Patch('api/v1/admin/kabadi/items/:id/publish')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')
-  publishItem(@Param('id') id: string, @Body() body: { published: boolean }, @CurrentUser('id') actorId: string) {
+  publishItem(
+    @Param('id') id: string,
+    @Body() body: { published: boolean },
+    @CurrentUser('id') actorId: string,
+  ) {
     return this.kabadi.setItemPublished(actorId, id, body.published);
   }
 

@@ -63,11 +63,21 @@ export default async function DocumentsPage() {
         >
           {rows.map((d) => (
             <AdminDataTable.Row key={d.id}>
-              <AdminDataTable.Cell className="font-medium text-on-surface">{d.type}</AdminDataTable.Cell>
-              <AdminDataTable.Cell className="text-on-surface-variant">{d.fileName || d.id.slice(0, 8)}</AdminDataTable.Cell>
-              <AdminDataTable.Cell><DocBadge value={d.status || "unknown"} /></AdminDataTable.Cell>
-              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{new Date(d.createdAt).toLocaleDateString()}</AdminDataTable.Cell>
-              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">{d.expiresAt ? new Date(d.expiresAt).toLocaleDateString() : "—"}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="font-medium text-on-surface">
+                {d.type}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface-variant">
+                {d.fileName || d.id.slice(0, 8)}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell>
+                <DocBadge value={d.status || "unknown"} />
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">
+                {new Date(d.createdAt).toLocaleDateString()}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">
+                {d.expiresAt ? new Date(d.expiresAt).toLocaleDateString() : "—"}
+              </AdminDataTable.Cell>
             </AdminDataTable.Row>
           ))}
         </AdminDataTable>

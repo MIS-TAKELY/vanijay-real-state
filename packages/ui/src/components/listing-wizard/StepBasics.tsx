@@ -105,7 +105,9 @@ export function StepBasics({ draft, update, errors }: StepProps) {
           onChange={(html) => update({ description: html })}
           placeholder="Describe the plot, access, nearby facilities, and verification highlights…"
           aria-invalid={!!errors.description || isDescOverLimit}
-          className={cn((errors.description || isDescOverLimit) && "border-error")}
+          className={cn(
+            (errors.description || isDescOverLimit) && "border-error",
+          )}
         />
         <div className="flex items-start justify-between gap-sm min-h-[18px]">
           <FieldError message={errors.description} />

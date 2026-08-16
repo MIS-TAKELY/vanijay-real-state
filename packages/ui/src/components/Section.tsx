@@ -31,11 +31,22 @@ const sectionVariants = cva("py-xl relative z-10", {
 });
 
 interface SectionProps
-  extends React.HTMLAttributes<HTMLElement>,
+  extends
+    React.HTMLAttributes<HTMLElement>,
     VariantProps<typeof sectionVariants> {}
 
 const Section = React.forwardRef<HTMLElement, SectionProps>(
-  ({ bg = "surface", border = "none", z = true, className, children, ...props }, ref) => {
+  (
+    {
+      bg = "surface",
+      border = "none",
+      z = true,
+      className,
+      children,
+      ...props
+    },
+    ref,
+  ) => {
     return (
       <section
         ref={ref}
@@ -45,7 +56,7 @@ const Section = React.forwardRef<HTMLElement, SectionProps>(
         {children}
       </section>
     );
-  }
+  },
 );
 
 Section.displayName = "Section";

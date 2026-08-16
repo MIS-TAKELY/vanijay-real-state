@@ -7,7 +7,12 @@ import type { AnalyticsOverviewData } from "lib/api";
 
 const KPI_META: Record<
   keyof AnalyticsOverviewData,
-  { label: string; icon: string; tone: StatCardData["tone"]; format?: (n: number) => string }
+  {
+    label: string;
+    icon: string;
+    tone: StatCardData["tone"];
+    format?: (n: number) => string;
+  }
 > = {
   views: { label: "Property Views", icon: "visibility", tone: "primary" },
   uniqueViewers: { label: "Unique Viewers", icon: "groups", tone: "surface" },
@@ -26,17 +31,24 @@ export function KpiCards({ data }: { data?: AnalyticsOverviewData }) {
   if (!data) {
     return (
       <p className="font-body-md text-body-md text-on-surface-variant">
-        No analytics data available yet. Start the API and seed data to see KPIs.
+        No analytics data available yet. Start the API and seed data to see
+        KPIs.
       </p>
     );
   }
 
-  const cards: StatCardData[] = (Object.keys(KPI_META) as (keyof AnalyticsOverviewData)[]).map((key) => {
+  const cards: StatCardData[] = (
+    Object.keys(KPI_META) as (keyof AnalyticsOverviewData)[]
+  ).map((key) => {
     const meta = KPI_META[key];
     const kpi = data[key];
-    const value = meta.format ? meta.format(kpi.value) : formatNumber(kpi.value);
+    const value = meta.format
+      ? meta.format(kpi.value)
+      : formatNumber(kpi.value);
     const hint =
-      kpi.delta === 0 ? "no change vs prev 30d" : `${kpi.delta > 0 ? "↑" : "↓"} ${Math.abs(kpi.delta)}% vs prev 30d`;
+      kpi.delta === 0
+        ? "no change vs prev 30d"
+        : `${kpi.delta > 0 ? "↑" : "↓"} ${Math.abs(kpi.delta)}% vs prev 30d`;
     return { label: meta.label, value, hint, icon: meta.icon, tone: meta.tone };
   });
 

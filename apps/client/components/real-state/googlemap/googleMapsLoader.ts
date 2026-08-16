@@ -58,7 +58,7 @@ export function loadGoogleMaps(apiKey: string): Promise<any | null> {
     script.async = true;
     script.defer = true;
     script.src = `https://maps.googleapis.com/maps/api/js?key=${encodeURIComponent(
-      apiKey
+      apiKey,
     )}&callback=${CALLBACK_NAME}&loading=async`;
     script.onerror = () => {
       loadPromise = null;

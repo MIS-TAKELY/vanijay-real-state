@@ -5,7 +5,9 @@ import { RegisterSellerDto } from './dto/register-seller.dto';
 @Injectable()
 export class SellerService {
   constructor(private readonly prisma: PrismaClient) {}
-  async isPhoneRegistered(phoneNumber: string): Promise<{ registered: boolean }> {
+  async isPhoneRegistered(
+    phoneNumber: string,
+  ): Promise<{ registered: boolean }> {
     const count = await this.prisma.user.count({
       where: { phoneNumber },
     });
@@ -39,6 +41,4 @@ export class SellerService {
       }),
     ]);
   }
-
-  
 }

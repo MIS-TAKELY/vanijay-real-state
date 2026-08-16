@@ -108,11 +108,15 @@ export default function ListingsPage() {
     const prev = row.status;
     // Optimistic update — apply immediately so the row never flickers or the
     // table never blanks while the request is in flight.
-    setRows((rs) => rs.map((r) => (r.id === row.id ? { ...r, status: next } : r)));
+    setRows((rs) =>
+      rs.map((r) => (r.id === row.id ? { ...r, status: next } : r)),
+    );
     setSavingId(row.id);
     try {
       const updated = await adminModerateProperty(row.id, { status: next });
-      setRows((rs) => rs.map((r) => (r.id === row.id ? { ...r, status: updated.status } : r)));
+      setRows((rs) =>
+        rs.map((r) => (r.id === row.id ? { ...r, status: updated.status } : r)),
+      );
       // If a status filter is active and the row no longer matches it, drop it
       // from the current view instead of forcing a full reload.
       if (status && status !== next) {
@@ -120,9 +124,13 @@ export default function ListingsPage() {
         setRows((rs) => rs.filter((r) => r.id !== row.id));
         if (skip > 0 && rows.length <= 1) setSkip(Math.max(0, skip - take));
       }
-      toast.success(`${row.listingCode} → ${STATUS_LABEL[next] ?? next.replaceAll("_", " ")}`);
+      toast.success(
+        `${row.listingCode} → ${STATUS_LABEL[next] ?? next.replaceAll("_", " ")}`,
+      );
     } catch {
-      setRows((rs) => rs.map((r) => (r.id === row.id ? { ...r, status: prev } : r)));
+      setRows((rs) =>
+        rs.map((r) => (r.id === row.id ? { ...r, status: prev } : r)),
+      );
       toast.error("Failed to update status");
     } finally {
       setSavingId(null);
@@ -134,7 +142,7 @@ export default function ListingsPage() {
       <PageHeader
         icon="list_alt"
         title="Listings"
-        description={`${total} properties — ${status ? STATUS_LABEL[status] ?? status.replaceAll("_", " ").toLowerCase() : "all statuses"}`}
+        description={`${total} properties — ${status ? (STATUS_LABEL[status] ?? status.replaceAll("_", " ").toLowerCase()) : "all statuses"}`}
       />
 
       <section className="mt-lg">
@@ -142,7 +150,10 @@ export default function ListingsPage() {
           <Input
             placeholder="Search by title, code, or location…"
             value={search}
-            onChange={(e) => { setSearch(e.target.value); setSkip(0); }}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setSkip(0);
+            }}
             className="w-full max-w-xs bg-surface"
           />
           <div className="flex flex-wrap items-center gap-xs">
@@ -152,7 +163,10 @@ export default function ListingsPage() {
                 <button
                   key={opt.value}
                   type="button"
-                  onClick={() => { setStatus(opt.value); setSkip(0); }}
+                  onClick={() => {
+                    setStatus(opt.value);
+                    setSkip(0);
+                  }}
                   className={cn(
                     "font-label-sm mono-stat text-[11px] font-bold uppercase tracking-widest rounded-full px-3 py-1.5 transition-colors",
                     active
@@ -166,7 +180,10 @@ export default function ListingsPage() {
             })}
           </div>
           {loading && rows.length > 0 && (
-            <Loader2 className="size-4 animate-spin text-on-surface-variant" aria-hidden="true" />
+            <Loader2
+              className="size-4 animate-spin text-on-surface-variant"
+              aria-hidden="true"
+            />
           )}
         </div>
 
@@ -186,12 +203,19 @@ export default function ListingsPage() {
               title={`Edit ${r.title}`}
             >
               <AdminDataTable.Cell className="whitespace-normal font-medium text-on-surface">
-                <Link href={`/listings/${r.id}`} className="underline-offset-2 hover:underline">
+                <Link
+                  href={`/listings/${r.id}`}
+                  className="underline-offset-2 hover:underline"
+                >
                   {r.title}
                 </Link>
               </AdminDataTable.Cell>
-              <AdminDataTable.Cell className="text-on-surface-variant">{r.propertyType}</AdminDataTable.Cell>
-              <AdminDataTable.Cell className="mono-stat text-on-surface">{r.askingPrice}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface-variant">
+                {r.propertyType}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="mono-stat text-on-surface">
+                {r.askingPrice}
+              </AdminDataTable.Cell>
               <AdminDataTable.Cell onClick={(e) => e.stopPropagation()}>
                 <Select
                   value={r.status}
@@ -204,13 +228,27 @@ export default function ListingsPage() {
                     className="h-7 w-[150px] border-outline-variant text-[11px] font-semibold"
                   >
                     <SelectValue placeholder="Status" />
-                    {savingId === r.id && <Loader2 className="size-3.5 animate-spin text-on-surface-variant" aria-hidden="true" />}
+                    {savingId === r.id && (
+                      <Loader2
+                        className="size-3.5 animate-spin text-on-surface-variant"
+                        aria-hidden="true"
+                      />
+                    )}
                   </SelectTrigger>
                   <SelectContent align="start">
                     {STATUS_OPTIONS.filter((o) => o.value).map((opt) => (
-                      <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className="text-xs"
+                      >
                         <span className="flex items-center gap-2">
-                          <span className={cn("size-2 rounded-full", STATUS_DOT[opt.value])} />
+                          <span
+                            className={cn(
+                              "size-2 rounded-full",
+                              STATUS_DOT[opt.value],
+                            )}
+                          />
                           {opt.label}
                         </span>
                       </SelectItem>
@@ -218,7 +256,9 @@ export default function ListingsPage() {
                   </SelectContent>
                 </Select>
               </AdminDataTable.Cell>
-              <AdminDataTable.Cell className="text-on-surface-variant">{r.owner?.name || "—"}</AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface-variant">
+                {r.owner?.name || "—"}
+              </AdminDataTable.Cell>
               <AdminDataTable.Cell className="mono-stat text-[12px] text-on-surface-variant">
                 {new Date(r.createdAt).toLocaleDateString()}
               </AdminDataTable.Cell>
@@ -234,24 +274,42 @@ export default function ListingsPage() {
             <div className="flex flex-wrap items-center gap-sm">
               <Select
                 value={String(take)}
-                onValueChange={(v) => { setTake(Number(v)); setSkip(0); }}
+                onValueChange={(v) => {
+                  setTake(Number(v));
+                  setSkip(0);
+                }}
               >
-                <SelectTrigger size="sm" className="h-8 border-outline-variant text-xs">
+                <SelectTrigger
+                  size="sm"
+                  className="h-8 border-outline-variant text-xs"
+                >
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent align="end">
                   {PAGE_SIZES.map((n) => (
-                    <SelectItem key={n} value={String(n)} className="text-xs">{n} / page</SelectItem>
+                    <SelectItem key={n} value={String(n)} className="text-xs">
+                      {n} / page
+                    </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
               <div className="flex items-center gap-xs">
-                <Button variant="outline" size="sm" disabled={skip === 0} onClick={() => setSkip(Math.max(0, skip - take))}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={skip === 0}
+                  onClick={() => setSkip(Math.max(0, skip - take))}
+                >
                   ← Prev
                 </Button>
                 {pages.map((p, i) =>
                   p === "…" ? (
-                    <span key={`ellipsis-${i}`} className="px-1 text-on-surface-variant">…</span>
+                    <span
+                      key={`ellipsis-${i}`}
+                      className="px-1 text-on-surface-variant"
+                    >
+                      …
+                    </span>
                   ) : (
                     <button
                       key={p}
@@ -268,7 +326,12 @@ export default function ListingsPage() {
                     </button>
                   ),
                 )}
-                <Button variant="outline" size="sm" disabled={skip + take >= total} onClick={() => setSkip(skip + take)}>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={skip + take >= total}
+                  onClick={() => setSkip(skip + take)}
+                >
                   Next →
                 </Button>
               </div>

@@ -65,7 +65,9 @@ export function useLiveMetalPrices(): {
         setError(null);
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load live prices");
+      setError(
+        err instanceof Error ? err.message : "Failed to load live prices",
+      );
     } finally {
       setLoading(false);
     }

@@ -1,9 +1,21 @@
 "use client";
 
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger, Button, Icon, Label, Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@repo/ui";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Button,
+  Icon,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@repo/ui";
 
 export function EligibilityAndDocs() {
-
   const documents = [
     {
       id: "nrn",

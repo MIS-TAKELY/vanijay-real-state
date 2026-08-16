@@ -39,7 +39,7 @@ export const API_ENDPOINTS = {
       `/api/${API_VERSION}/cart/${encodeURIComponent(propertyId)}`,
   },
 
-    auth: {
+  auth: {
     base: `/api/auth`,
     signUpEmail: `/api/auth/sign-up/email`,
     signInEmail: `/api/auth/sign-in/email`,

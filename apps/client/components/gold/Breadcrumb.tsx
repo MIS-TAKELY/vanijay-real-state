@@ -10,10 +10,18 @@ interface BreadcrumbProps {
 export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
-      <ol className="flex flex-wrap items-center gap-1 text-xs text-white/40" style={{ fontFamily: "var(--font-body)" }}>
+      <ol
+        className="flex flex-wrap items-center gap-1 text-xs text-white/40"
+        style={{ fontFamily: "var(--font-body)" }}
+      >
         {items.map((item, i) => (
           <li key={i} className="flex items-center gap-1">
-            {i > 0 && <ChevronRight className="h-3 w-3 text-white/20" aria-hidden="true" />}
+            {i > 0 && (
+              <ChevronRight
+                className="h-3 w-3 text-white/20"
+                aria-hidden="true"
+              />
+            )}
             {item.href ? (
               <Link
                 href={item.href}
@@ -22,7 +30,9 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
                 {item.label}
               </Link>
             ) : (
-              <span className="text-white/60" aria-current="page">{item.label}</span>
+              <span className="text-white/60" aria-current="page">
+                {item.label}
+              </span>
             )}
           </li>
         ))}

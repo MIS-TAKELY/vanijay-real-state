@@ -10,10 +10,7 @@ import {
 } from "@repo/ui";
 import Link from "next/link";
 import { EmptyState } from "components/real-state/layout/dashboard/EmptyState";
-import {
-  DEFAULT_STATUS_STYLE,
-  STATUS_STYLES,
-} from "../constants";
+import { DEFAULT_STATUS_STYLE, STATUS_STYLES } from "../constants";
 import type { DashboardListingSnapshot } from "lib/api/services/dashboard";
 
 interface ListingsSnapshotProps {

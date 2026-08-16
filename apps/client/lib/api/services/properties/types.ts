@@ -292,11 +292,11 @@ export function formatMinBuyableLand(p: ApiProperty): string | null {
   // Default display unit based on the seller's entry system
   if (p.minBuyableUnitSystem === "BIGHA") {
     // Convert to Dhur (1 dhur = 364.5 / 20 = 18.225 sq ft)
-    const dhur = Math.round(sqft / 18.225 * 100) / 100;
+    const dhur = Math.round((sqft / 18.225) * 100) / 100;
     return `${dhur} Dhur`;
   }
   // ROPANI system — show in Aana (1 aana = 342.25 sq ft)
-  const aana = Math.round(sqft / 342.25 * 100) / 100;
+  const aana = Math.round((sqft / 342.25) * 100) / 100;
   return `${aana} Aana`;
 }
 

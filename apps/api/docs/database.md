@@ -6,13 +6,13 @@ the same singleton Prisma client.
 
 ## Where things live
 
-| File | Purpose |
-| --- | --- |
-| `packages/db/prisma/schema.prisma` | The Prisma schema (models, enums, relations) |
-| `packages/db/src/index.ts` | Singleton `prisma` client + re-exports `@prisma/client` types |
-| `packages/db/src/client.ts` | Alternate client entry (same singleton pattern) |
-| `packages/db/prisma/migrations/` | Applied migrations |
-| `packages/db/prisma.config.ts` | Prisma CLI config |
+| File                               | Purpose                                                       |
+| ---------------------------------- | ------------------------------------------------------------- |
+| `packages/db/prisma/schema.prisma` | The Prisma schema (models, enums, relations)                  |
+| `packages/db/src/index.ts`         | Singleton `prisma` client + re-exports `@prisma/client` types |
+| `packages/db/src/client.ts`        | Alternate client entry (same singleton pattern)               |
+| `packages/db/prisma/migrations/`   | Applied migrations                                            |
+| `packages/db/prisma.config.ts`     | Prisma CLI config                                             |
 
 ## The singleton client
 

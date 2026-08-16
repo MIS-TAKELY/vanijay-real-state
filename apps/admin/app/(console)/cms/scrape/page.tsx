@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Alert, Button, Icon, Input, toast } from "@repo/ui";
 import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
@@ -43,16 +43,16 @@ export default function ScrapeCmsPage() {
       setItems(flat);
       setError(null);
     } catch {
-      setError("Could not load kabadi rates. Ensure you are signed in and the API is running.");
+      setError(
+        "Could not load kabadi rates. Ensure you are signed in and the API is running.",
+      );
     } finally {
       setLoading(false);
     }
   }
 
-  const loadRef = useRef(load);
-  loadRef.current = load;
   useEffect(() => {
-    loadRef.current();
+    load();
   }, []);
 
   const filtered = useMemo(() => {
@@ -63,15 +63,29 @@ export default function ScrapeCmsPage() {
   function setRow(indexInFiltered: number, patch: Partial<EditableItem>) {
     const target = filtered[indexInFiltered];
     if (!target) return;
-    setItems((prev) => prev.map((i) => (i.id ? i.id === target.id : i.name === target.name) ? { ...i, ...patch } : i));
+    setItems((prev) =>
+      prev.map((i) =>
+        (i.id ? i.id === target.id : i.name === target.name)
+          ? { ...i, ...patch }
+          : i,
+      ),
+    );
   }
 
   async function saveAll() {
     setSaving(true);
     try {
-      await kabadiSetRates(filtered.map((i) => ({
-        id: i.id, categoryId: i.categoryId, name: i.name, unit: i.unit, rate: Number(i.rate), popular: i.popular, published: i.published,
-      })));
+      await kabadiSetRates(
+        filtered.map((i) => ({
+          id: i.id,
+          categoryId: i.categoryId,
+          name: i.name,
+          unit: i.unit,
+          rate: Number(i.rate),
+          popular: i.popular,
+          published: i.published,
+        })),
+      );
       toast.success(`Saved ${filtered.length} rates`);
     } catch {
       toast.error("Save failed");
@@ -86,23 +100,47 @@ export default function ScrapeCmsPage() {
         icon="recycling"
         title="Scrape / Kabadi Rates"
         description="Manage scrap categories and per-kg / per-piece buy rates shown on the client."
-        actions={<Button size="sm" disabled={saving} onClick={saveAll}>{saving ? "Saving…" : "Save all"}</Button>}
+        actions={
+          <Button size="sm" disabled={saving} onClick={saveAll}>
+            {saving ? "Saving…" : "Save all"}
+          </Button>
+        }
       />
       <section className="mt-lg">
-        {error && <Alert className="mb-md border-error/40 text-error">{error}</Alert>}
+        {error && (
+          <Alert className="mb-md border-error/40 text-error">{error}</Alert>
+        )}
         {loading ? (
           <p className="text-on-surface-variant">Loading rates…</p>
         ) : (
           <>
             <div className="mb-md flex flex-wrap gap-xs">
-              <FilterChip active={filter === "all"} onClick={() => setFilter("all")}>All</FilterChip>
+              <FilterChip
+                active={filter === "all"}
+                onClick={() => setFilter("all")}
+              >
+                All
+              </FilterChip>
               {cats.map((c) => (
-                <FilterChip key={c.slug} active={filter === c.slug} onClick={() => setFilter(c.slug)}>{c.name}</FilterChip>
+                <FilterChip
+                  key={c.slug}
+                  active={filter === c.slug}
+                  onClick={() => setFilter(c.slug)}
+                >
+                  {c.name}
+                </FilterChip>
               ))}
             </div>
             <AdminDataTable
               minWidth={640}
-              columns={["Item", "Category", "Unit", "Rate (NPR)", "Popular", "Published"]}
+              columns={[
+                "Item",
+                "Category",
+                "Unit",
+                "Rate (NPR)",
+                "Popular",
+                "Published",
+              ]}
               empty={filtered.length === 0}
               emptyMessage="No rates for this filter."
             >
@@ -110,17 +148,56 @@ export default function ScrapeCmsPage() {
                 const cat = cats.find((c) => c.id === item.categoryId);
                 return (
                   <AdminDataTable.Row key={item.id ?? item.name}>
-                    <AdminDataTable.Cell className="py-2"><Input value={item.name} onChange={(e) => setRow(idx, { name: e.target.value })} className="h-9 bg-surface" /></AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2 text-on-surface-variant">{cat?.name}</AdminDataTable.Cell>
                     <AdminDataTable.Cell className="py-2">
-                      <select value={item.unit} onChange={(e) => setRow(idx, { unit: e.target.value as "KG" | "PIECE" })} className="h-9 rounded-md border border-outline bg-surface px-2 text-sm">
+                      <Input
+                        value={item.name}
+                        onChange={(e) => setRow(idx, { name: e.target.value })}
+                        className="h-9 bg-surface"
+                      />
+                    </AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2 text-on-surface-variant">
+                      {cat?.name}
+                    </AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2">
+                      <select
+                        value={item.unit}
+                        onChange={(e) =>
+                          setRow(idx, {
+                            unit: e.target.value as "KG" | "PIECE",
+                          })
+                        }
+                        className="h-9 rounded-md border border-outline bg-surface px-2 text-sm"
+                      >
                         <option value="KG">KG</option>
                         <option value="PIECE">Piece</option>
                       </select>
                     </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2"><Input type="number" value={item.rate} onChange={(e) => setRow(idx, { rate: e.target.value })} className="h-9 w-28 bg-surface mono-stat" /></AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2"><input type="checkbox" checked={item.popular} onChange={(e) => setRow(idx, { popular: e.target.checked })} /></AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2"><input type="checkbox" checked={item.published} onChange={(e) => setRow(idx, { published: e.target.checked })} /></AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2">
+                      <Input
+                        type="number"
+                        value={item.rate}
+                        onChange={(e) => setRow(idx, { rate: e.target.value })}
+                        className="h-9 w-28 bg-surface mono-stat"
+                      />
+                    </AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2">
+                      <input
+                        type="checkbox"
+                        checked={item.popular}
+                        onChange={(e) =>
+                          setRow(idx, { popular: e.target.checked })
+                        }
+                      />
+                    </AdminDataTable.Cell>
+                    <AdminDataTable.Cell className="py-2">
+                      <input
+                        type="checkbox"
+                        checked={item.published}
+                        onChange={(e) =>
+                          setRow(idx, { published: e.target.checked })
+                        }
+                      />
+                    </AdminDataTable.Cell>
                   </AdminDataTable.Row>
                 );
               })}
@@ -132,9 +209,26 @@ export default function ScrapeCmsPage() {
   );
 }
 
-function FilterChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+function FilterChip({
+  active,
+  onClick,
+  children,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
   return (
-    <button type="button" onClick={onClick} className={"inline-flex cursor-pointer rounded-full px-3 py-1.5 font-label-sm text-[11px] font-bold uppercase tracking-widest transition-colors " + (active ? "bg-primary text-on-primary" : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high")}>
+    <button
+      type="button"
+      onClick={onClick}
+      className={
+        "inline-flex cursor-pointer rounded-full px-3 py-1.5 font-label-sm text-[11px] font-bold uppercase tracking-widest transition-colors " +
+        (active
+          ? "bg-primary text-on-primary"
+          : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high")
+      }
+    >
       {children}
     </button>
   );

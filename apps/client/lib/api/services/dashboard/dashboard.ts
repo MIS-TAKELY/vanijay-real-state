@@ -1,5 +1,5 @@
-import { apiFetch } from '../../core/client';
-import { API_ENDPOINTS } from '../../core/endpoints';
+import { apiFetch } from "../../core/client";
+import { API_ENDPOINTS } from "../../core/endpoints";
 
 export interface DashboardStats {
   activeListings: number;
@@ -20,7 +20,7 @@ export interface DashboardListingSnapshot {
 
 export interface DashboardActivityItem {
   id: string;
-  type: 'inquiry' | 'view' | 'appointment' | 'verification';
+  type: "inquiry" | "view" | "appointment" | "verification";
   message: string;
   timestamp: string;
   relative: string;

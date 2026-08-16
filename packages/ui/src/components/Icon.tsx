@@ -93,7 +93,8 @@ import {
   TriangleAlert,
   UserCog,
   Video,
-  Podium ,  X,
+  Podium,
+  X,
   ZoomIn,
 } from "lucide-react";
 import React from "react";
@@ -234,7 +235,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   alarm: Clock,
   article: FileText,
   help_outline: HelpCircle,
-  Podium:Podium
+  Podium: Podium,
 };
 
 const FALLBACK: LucideIcon = HelpCircle;

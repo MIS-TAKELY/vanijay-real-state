@@ -45,7 +45,11 @@ export function OperationsTopbar() {
 
       {/* Center: global search */}
       <div className="max-w-(--container-xl) flex-1">
-        <form onSubmit={(e) => e.preventDefault()} role="search" className="relative">
+        <form
+          onSubmit={(e) => e.preventDefault()}
+          role="search"
+          className="relative"
+        >
           <label htmlFor="admin-search" className="sr-only">
             Search listings and documents
           </label>
@@ -84,7 +88,9 @@ export function OperationsTopbar() {
               <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-headline-md font-bold text-on-primary">
                 {isPending ? "…" : initial}
               </span>
-              <span className="hidden sm:inline">{isPending ? "Loading" : displayName}</span>
+              <span className="hidden sm:inline">
+                {isPending ? "Loading" : displayName}
+              </span>
               <Icon name="chevron_down" className="text-[18px]" />
             </Button>
           </DropdownMenuTrigger>

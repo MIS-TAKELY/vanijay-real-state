@@ -77,7 +77,11 @@ export function StepReview({ draft }: StepProps) {
     {
       label: "Location",
       ok: Boolean(
-        draft.province && draft.district && draft.municipality && draft.ward && draft.areaName.trim(),
+        draft.province &&
+        draft.district &&
+        draft.municipality &&
+        draft.ward &&
+        draft.areaName.trim(),
       ),
       hint: locationLine || "incomplete",
     },
@@ -95,7 +99,8 @@ export function StepReview({ draft }: StepProps) {
 
   const meta: string[] = [];
   if (area) meta.push(area);
-  if (isBuilding && builtUp > 0) meta.push(`${builtUp.toLocaleString()} sq ft built-up`);
+  if (isBuilding && builtUp > 0)
+    meta.push(`${builtUp.toLocaleString()} sq ft built-up`);
   if (draft.facing) meta.push(`${labelEnum(draft.facing, {})} facing`);
   if (draft.roadType || draft.roadWidthFt) {
     meta.push(
@@ -111,8 +116,7 @@ export function StepReview({ draft }: StepProps) {
 
   // Type-specific spec chips (wizard-only fields — shown as entered).
   if (draft.propertyType === "RESIDENTIAL_HOUSE") {
-    if (draft.propertySubtype)
-      meta.push(labelEnum(draft.propertySubtype, {}));
+    if (draft.propertySubtype) meta.push(labelEnum(draft.propertySubtype, {}));
     if (draft.bedrooms) meta.push(`${draft.bedrooms} BHK`);
     if (draft.bathrooms) meta.push(`${draft.bathrooms} bath`);
   }

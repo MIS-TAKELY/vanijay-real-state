@@ -5,7 +5,13 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@/components/Icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useRef, useState } from "react";
 import { VideoPoster } from "./VideoPoster";
 import type { DraftDocument, DraftMedia } from "./draft";
@@ -24,9 +30,20 @@ const MAX_PHOTOS = 20;
 const MAX_VIDEOS = 5;
 const MAX_DOCUMENTS = 10;
 const MAX_VIDEO_BYTES = 50 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
+const ACCEPTED_IMAGE_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/avif",
+];
 const ACCEPTED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
-const ACCEPTED_DOC_TYPES = ["application/pdf", "image/jpeg", "image/png", "image/webp"];
+const ACCEPTED_DOC_TYPES = [
+  "application/pdf",
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+];
 
 const DOCUMENT_TYPE_OPTIONS = [
   { value: "LALPURJA", label: "Lalpurja (Land Ownership)" },
@@ -71,7 +88,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
   const photos = draft.media.filter(
     (m) => m.type !== "VIDEO_WALKTHROUGH" && m.type !== "CADASTRAL_MAP",
   );
-  const uploadedVideos = draft.media.filter((m) => m.type === "VIDEO_WALKTHROUGH");
+  const uploadedVideos = draft.media.filter(
+    (m) => m.type === "VIDEO_WALKTHROUGH",
+  );
   // Naksa (cadastral map) lives in draft.media so it's saved with the listing.
   const cadastral = draft.media.find((m) => m.type === "CADASTRAL_MAP") ?? null;
   const mediaRef = useRef(draft.media);
@@ -188,7 +207,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
   const removeMediaItem = (item: DraftMedia) => {
     update({ media: draft.media.filter((m) => m !== item) });
     if (item.publicId) {
-      uploads.deleteUpload(item.publicId).catch(() => {/* orphan is harmless */});
+      uploads.deleteUpload(item.publicId).catch(() => {
+        /* orphan is harmless */
+      });
     }
   };
 
@@ -226,7 +247,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
   const removeDocument = (doc: DraftDocument) => {
     update({ documents: draft.documents.filter((d) => d !== doc) });
     if (doc.publicId) {
-      uploads.deleteUpload(doc.publicId).catch(() => {/* orphan is harmless */});
+      uploads.deleteUpload(doc.publicId).catch(() => {
+        /* orphan is harmless */
+      });
     }
   };
 
@@ -253,7 +276,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
         ],
       });
       if (previous?.publicId) {
-        uploads.deleteUpload(previous.publicId).catch(() => {/* orphan is harmless */});
+        uploads.deleteUpload(previous.publicId).catch(() => {
+          /* orphan is harmless */
+        });
       }
     } catch (error) {
       setUploadError(getErrorMessage(error));
@@ -267,7 +292,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
     const item = cadastral;
     update({ media: draft.media.filter((m) => m.type !== "CADASTRAL_MAP") });
     if (item?.publicId) {
-      uploads.deleteUpload(item.publicId).catch(() => {/* orphan is harmless */});
+      uploads.deleteUpload(item.publicId).catch(() => {
+        /* orphan is harmless */
+      });
     }
   };
 
@@ -279,7 +306,8 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
           <span className="font-label-sm text-[13px] font-semibold text-on-surface">
             Photos & Videos{" "}
             <span className="font-normal text-on-surface-variant">
-              ({photos.length}/{MAX_PHOTOS} photos, {uploadedVideos.length}/{MAX_VIDEOS} videos)
+              ({photos.length}/{MAX_PHOTOS} photos, {uploadedVideos.length}/
+              {MAX_VIDEOS} videos)
             </span>
           </span>
           {photos.length > 0 ? (
@@ -309,7 +337,10 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
         <div className="grid grid-cols-2 gap-sm sm:grid-cols-4">
           {/* Uploaded photos */}
           {photos.map((photo, i) => (
-            <div key={photo.publicId ?? `${photo.url}-${i}`} className="relative">
+            <div
+              key={photo.publicId ?? `${photo.url}-${i}`}
+              className="relative"
+            >
               <div className="relative h-28 w-full overflow-hidden rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -338,11 +369,17 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
 
           {/* Uploaded videos */}
           {uploadedVideos.map((video, i) => (
-            <div key={video.publicId ?? `${video.url}-v-${i}`} className="relative">
+            <div
+              key={video.publicId ?? `${video.url}-v-${i}`}
+              className="relative"
+            >
               <div className="relative h-28 w-full overflow-hidden rounded-xl bg-surface-container">
                 <VideoPoster url={video.url} alt={video.altText ?? "Video"} />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/25">
-                  <Icon name="play_circle" className="text-[28px] text-white drop-shadow-md" />
+                  <Icon
+                    name="play_circle"
+                    className="text-[28px] text-white drop-shadow-md"
+                  />
                 </div>
                 <Button
                   type="button"
@@ -372,20 +409,27 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
                   className="h-full w-full object-cover opacity-60"
                 />
               ) : (
-                <VideoPoster url={p.objectUrl} alt={p.name} className="opacity-60" />
+                <VideoPoster
+                  url={p.objectUrl}
+                  alt={p.name}
+                  className="opacity-60"
+                />
               )}
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-surface/40">
                 <Icon
                   name="progress_activity"
                   className="animate-spin text-[22px] text-primary"
                 />
-                <span className="text-[10px] text-on-surface-variant">Uploading…</span>
+                <span className="text-[10px] text-on-surface-variant">
+                  Uploading…
+                </span>
               </div>
             </div>
           ))}
 
           {/* Add photo button */}
-          {photos.length + pending.filter((p) => p.kind === "photo").length < MAX_PHOTOS && (
+          {photos.length + pending.filter((p) => p.kind === "photo").length <
+            MAX_PHOTOS && (
             <Button
               type="button"
               variant="outline"
@@ -400,7 +444,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
           )}
 
           {/* Add video button */}
-          {uploadedVideos.length + pending.filter((p) => p.kind === "video").length < MAX_VIDEOS && (
+          {uploadedVideos.length +
+            pending.filter((p) => p.kind === "video").length <
+            MAX_VIDEOS && (
             <Button
               type="button"
               variant="outline"
@@ -410,7 +456,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
               <span className="flex flex-col items-center gap-xs">
                 <Icon name="videocam" className="text-[28px]" />
                 <span className="text-[12px]">Add video</span>
-                <span className="text-[10px] text-on-surface-variant">MP4 / WebM, max 50 MB</span>
+                <span className="text-[10px] text-on-surface-variant">
+                  MP4 / WebM, max 50 MB
+                </span>
               </span>
             </Button>
           )}
@@ -422,7 +470,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
         <div className="flex items-center justify-between">
           <Label>
             Video walkthroughs{" "}
-            <span className="font-normal text-on-surface-variant">(optional)</span>
+            <span className="font-normal text-on-surface-variant">
+              (optional)
+            </span>
           </Label>
           <Button
             type="button"
@@ -438,8 +488,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
 
         {draft.videoUrls.length === 0 && (
           <p className="text-[12px] text-on-surface-variant">
-            No videos added. Add YouTube, Vimeo, TikTok, Instagram, or X (Twitter) links.
-            Social media links (TikTok, Instagram, X) open in a new tab.
+            No videos added. Add YouTube, Vimeo, TikTok, Instagram, or X
+            (Twitter) links. Social media links (TikTok, Instagram, X) open in a
+            new tab.
           </p>
         )}
 
@@ -567,14 +618,24 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             type="button"
             variant="outline"
             onClick={() => cadastralInputRef.current?.click()}
-            className={cn(DROP, "h-auto flex-col gap-1 py-md border-outline-variant")}
+            className={cn(
+              DROP,
+              "h-auto flex-col gap-1 py-md border-outline-variant",
+            )}
           >
             <Icon name="map" className="text-[28px]" />
-            <span className="text-[13px] font-medium">Cadastral map (Naksa)</span>
-            <span className="text-[11px] text-on-surface-variant">PDF / image, max 10MB</span>
+            <span className="text-[13px] font-medium">
+              Cadastral map (Naksa)
+            </span>
+            <span className="text-[11px] text-on-surface-variant">
+              PDF / image, max 10MB
+            </span>
             {cadastralUploading ? (
               <span className="flex items-center gap-1 text-[12px] text-primary">
-                <Icon name="progress_activity" className="animate-spin text-[14px]" />
+                <Icon
+                  name="progress_activity"
+                  className="animate-spin text-[14px]"
+                />
                 Uploading…
               </span>
             ) : null}
@@ -588,7 +649,8 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             </span>
           </Label>
           <p className="text-[11px] text-on-surface-variant">
-            Lalpurja, citizenship, tax clearance — reviewed during verification. PDF or image, max 10 MB each.
+            Lalpurja, citizenship, tax clearance — reviewed during verification.
+            PDF or image, max 10 MB each.
           </p>
 
           <input
@@ -615,12 +677,19 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             <Button
               type="button"
               variant="outline"
-              disabled={!selectedDocType || docUploading || draft.documents.length >= MAX_DOCUMENTS}
+              disabled={
+                !selectedDocType ||
+                docUploading ||
+                draft.documents.length >= MAX_DOCUMENTS
+              }
               onClick={() => docInputRef.current?.click()}
               className="shrink-0"
             >
               {docUploading ? (
-                <Icon name="progress_activity" className="animate-spin text-[16px]" />
+                <Icon
+                  name="progress_activity"
+                  className="animate-spin text-[16px]"
+                />
               ) : (
                 <Icon name="upload_file" className="text-[16px]" />
               )}
@@ -631,15 +700,22 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
           {draft.documents.length > 0 && (
             <div className="flex flex-col gap-1.5 mt-1">
               {draft.documents.map((doc, i) => {
-                const label = DOCUMENT_TYPE_OPTIONS.find((o) => o.value === doc.type)?.label ?? doc.type;
+                const label =
+                  DOCUMENT_TYPE_OPTIONS.find((o) => o.value === doc.type)
+                    ?.label ?? doc.type;
                 return (
                   <div
                     key={doc.publicId ?? `${doc.fileUrl}-${i}`}
                     className="flex items-center gap-2 rounded-lg border border-outline-variant bg-surface-container px-3 py-2"
                   >
-                    <Icon name="description" className="text-[18px] text-on-surface-variant shrink-0" />
+                    <Icon
+                      name="description"
+                      className="text-[18px] text-on-surface-variant shrink-0"
+                    />
                     <div className="flex-1 min-w-0">
-                      <p className="truncate text-[12px] font-medium text-on-surface">{label}</p>
+                      <p className="truncate text-[12px] font-medium text-on-surface">
+                        {label}
+                      </p>
                       <p className="truncate text-[11px] text-on-surface-variant">
                         {doc.fileName} · {doc.fileSizeMb} MB
                       </p>

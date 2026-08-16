@@ -42,7 +42,8 @@ export function RichTextContent({
           !isExpanded && needsTruncation && "overflow-hidden",
         )}
         style={{
-          maxHeight: !isExpanded && needsTruncation ? `${maxHeight}px` : undefined,
+          maxHeight:
+            !isExpanded && needsTruncation ? `${maxHeight}px` : undefined,
         }}
         dangerouslySetInnerHTML={{ __html: html }}
       />

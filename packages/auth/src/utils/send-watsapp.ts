@@ -1,5 +1,3 @@
-
-
 const MAX_RETRIES = 2;
 const RETRY_DELAY_MS = 5000;
 
@@ -13,9 +11,7 @@ export async function sendWhatsAppMessage(
   const gatewayUrl = process.env.WHATSAPP_API_URL ?? FALLBACK_GATEWAY_URL;
 
   if (!gatewayUrl) {
-    console.warn(
-      "[WhatsApp] WHATSAPP_API_URL not configured, skipping send",
-    );
+    console.warn("[WhatsApp] WHATSAPP_API_URL not configured, skipping send");
     return;
   }
 

@@ -9,7 +9,9 @@ export interface SearchInsights {
 
 /** Top search queries (ranked horizontal bars). */
 export function SearchQueriesChart({ data }: { data?: SearchInsights }) {
-  const queries = (data?.topQueries ?? []).slice(0, 8).map((q) => ({ label: q.query || "(empty)", value: q.count }));
+  const queries = (data?.topQueries ?? [])
+    .slice(0, 8)
+    .map((q) => ({ label: q.query || "(empty)", value: q.count }));
   return (
     <HorizontalBars
       data={queries}

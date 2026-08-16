@@ -15,16 +15,39 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
   const low52w = usdPrice * 0.78;
   const avgVolume = Math.round(usdPrice * 450);
   const volatility = (metal.volatility * 100).toFixed(1);
-  const sentiment = metal.changePercent > 0.5 ? "Bullish" : metal.changePercent < -0.5 ? "Bearish" : "Neutral";
-  const sentimentColor = sentiment === "Bullish" ? "#34D399" : sentiment === "Bearish" ? "#F87171" : "#A8A9AD";
+  const sentiment =
+    metal.changePercent > 0.5
+      ? "Bullish"
+      : metal.changePercent < -0.5
+        ? "Bearish"
+        : "Neutral";
+  const sentimentColor =
+    sentiment === "Bullish"
+      ? "#34D399"
+      : sentiment === "Bearish"
+        ? "#F87171"
+        : "#A8A9AD";
 
   const stats = [
-    { label: "52W High", value: formatPrice(convertCurrency(high52w, currency), currency) },
-    { label: "52W Low", value: formatPrice(convertCurrency(low52w, currency), currency) },
-    { label: "Avg Volume", value: `${avgVolume.toLocaleString()} ${metal.unit}` },
+    {
+      label: "52W High",
+      value: formatPrice(convertCurrency(high52w, currency), currency),
+    },
+    {
+      label: "52W Low",
+      value: formatPrice(convertCurrency(low52w, currency), currency),
+    },
+    {
+      label: "Avg Volume",
+      value: `${avgVolume.toLocaleString()} ${metal.unit}`,
+    },
     { label: "Volatility", value: `${volatility}%` },
     { label: "Market Sentiment", value: sentiment, color: sentimentColor },
-    { label: "24h Change", value: `${metal.changePercent >= 0 ? "+" : ""}${metal.changePercent.toFixed(2)}%`, color: metal.changePercent >= 0 ? "#34D399" : "#F87171" },
+    {
+      label: "24h Change",
+      value: `${metal.changePercent >= 0 ? "+" : ""}${metal.changePercent.toFixed(2)}%`,
+      color: metal.changePercent >= 0 ? "#34D399" : "#F87171",
+    },
   ];
 
   return (
@@ -67,7 +90,10 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
 
       {/* 52-week range visual bar */}
       <div className="mt-4 rounded-xl border border-white/[0.06] bg-[#1A1D23] p-4">
-        <div className="flex items-center justify-between text-xs text-white/30 mb-2" style={{ fontFamily: "var(--font-body)" }}>
+        <div
+          className="flex items-center justify-between text-xs text-white/30 mb-2"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
           <span>52W Low</span>
           <span className="uppercase tracking-wider">52-Week Range</span>
           <span>52W High</span>
@@ -89,10 +115,19 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
             }}
           />
         </div>
-        <div className="flex items-center justify-between mt-2 text-xs font-medium" style={{ fontFamily: "var(--font-mono)" }}>
-          <span className="text-white/40">{formatPrice(convertCurrency(low52w, currency), currency)}</span>
-          <span style={{ color: metal.accentColor }}>{formatPrice(convertCurrency(usdPrice, currency), currency)}</span>
-          <span className="text-white/40">{formatPrice(convertCurrency(high52w, currency), currency)}</span>
+        <div
+          className="flex items-center justify-between mt-2 text-xs font-medium"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
+          <span className="text-white/40">
+            {formatPrice(convertCurrency(low52w, currency), currency)}
+          </span>
+          <span style={{ color: metal.accentColor }}>
+            {formatPrice(convertCurrency(usdPrice, currency), currency)}
+          </span>
+          <span className="text-white/40">
+            {formatPrice(convertCurrency(high52w, currency), currency)}
+          </span>
         </div>
       </div>
     </section>

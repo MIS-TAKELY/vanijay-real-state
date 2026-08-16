@@ -11,7 +11,7 @@ import { encodeCursor } from 'src/common/pagination';
  */
 describe('PropertiesService', () => {
   let service: PropertiesService;
-let prisma: {
+  let prisma: {
     property: {
       findMany: jest.Mock;
       findFirst: jest.Mock;
@@ -22,7 +22,7 @@ let prisma: {
     };
   };
 
-const row = {
+  const row = {
     id: 'p1',
     listingCode: 'PROP-123-ABC',
     slug: 'my-house-abc',
@@ -69,7 +69,9 @@ const row = {
 
   it('findOne throws NotFoundException when no LIVE listing matches the slug/id', async () => {
     prisma.property.findFirst.mockResolvedValueOnce(null);
-    await expect(service.findOne('missing')).rejects.toBeInstanceOf(NotFoundException);
+    await expect(service.findOne('missing')).rejects.toBeInstanceOf(
+      NotFoundException,
+    );
   });
 
   it('findOne looks up a LIVE property by slug OR id', async () => {
@@ -130,9 +132,9 @@ const row = {
 
   it('update checks existence before updating', async () => {
     prisma.property.findUnique.mockResolvedValueOnce(null);
-    await expect(service.update({ id: 'x', title: 'new' })).rejects.toBeInstanceOf(
-      NotFoundException,
-    );
+    await expect(
+      service.update({ id: 'x', title: 'new' }),
+    ).rejects.toBeInstanceOf(NotFoundException);
     expect(prisma.property.update).not.toHaveBeenCalled();
   });
 
@@ -150,8 +152,12 @@ const row = {
 
   it('remove checks existence before deleting', async () => {
     await service.remove('p1');
-    expect(prisma.property.findUnique).toHaveBeenCalledWith({ where: { id: 'p1' } });
-    expect(prisma.property.delete).toHaveBeenCalledWith({ where: { id: 'p1' } });
+    expect(prisma.property.findUnique).toHaveBeenCalledWith({
+      where: { id: 'p1' },
+    });
+    expect(prisma.property.delete).toHaveBeenCalledWith({
+      where: { id: 'p1' },
+    });
   });
 
   // ---- keyset (cursor) pagination: findFeed ----

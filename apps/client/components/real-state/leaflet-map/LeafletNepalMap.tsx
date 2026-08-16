@@ -372,7 +372,10 @@ export default function LeafletNepalMap({
             letterSpacing: "0.02em",
           }}
         >
-          <option value="all" style={{ background: "#0d1a14", color: "#4ade80" }}>
+          <option
+            value="all"
+            style={{ background: "#0d1a14", color: "#4ade80" }}
+          >
             📍 All Nepal
           </option>
           <option
@@ -381,7 +384,10 @@ export default function LeafletNepalMap({
           >
             Kathmandu Valley
           </option>
-          <option value="Pokhara" style={{ background: "#0d1a14", color: "#4ade80" }}>
+          <option
+            value="Pokhara"
+            style={{ background: "#0d1a14", color: "#4ade80" }}
+          >
             Pokhara Region
           </option>
           <option
@@ -390,10 +396,16 @@ export default function LeafletNepalMap({
           >
             Central & Terai
           </option>
-          <option value="Eastern" style={{ background: "#0d1a14", color: "#4ade80" }}>
+          <option
+            value="Eastern"
+            style={{ background: "#0d1a14", color: "#4ade80" }}
+          >
             Eastern Nepal
           </option>
-          <option value="Western" style={{ background: "#0d1a14", color: "#4ade80" }}>
+          <option
+            value="Western"
+            style={{ background: "#0d1a14", color: "#4ade80" }}
+          >
             Western Nepal
           </option>
         </select>
@@ -448,8 +460,7 @@ export default function LeafletNepalMap({
               background: "transparent",
               color: "#4ade80",
               border: "none",
-              borderBottom:
-                i === 0 ? "1px solid rgba(74,222,128,0.2)" : "none",
+              borderBottom: i === 0 ? "1px solid rgba(74,222,128,0.2)" : "none",
               fontSize: 20,
               fontWeight: 600,
               cursor: "pointer",
@@ -479,7 +490,7 @@ export default function LeafletNepalMap({
             width: "70%",
             height: 1,
             background: "rgba(74,222,128,0.2)",
-            
+
             margin: "1px 0",
           }}
         />

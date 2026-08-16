@@ -23,7 +23,9 @@ interface VerificationQueueTableProps {
   rows?: VerificationRow[];
 }
 
-export function VerificationQueueTable({ rows = VERIFICATION_QUEUE }: VerificationQueueTableProps) {
+export function VerificationQueueTable({
+  rows = VERIFICATION_QUEUE,
+}: VerificationQueueTableProps) {
   return (
     <div className="overflow-x-auto">
       <Table className="table-fixed">
@@ -36,7 +38,9 @@ export function VerificationQueueTable({ rows = VERIFICATION_QUEUE }: Verificati
             <TableHead className={HEADER_CLASS}>Level</TableHead>
             <TableHead className={HEADER_CLASS}>Status</TableHead>
             <TableHead className={HEADER_CLASS}>Pending</TableHead>
-                        <TableHead className={"text-right " + HEADER_CLASS}>Actions</TableHead>
+            <TableHead className={"text-right " + HEADER_CLASS}>
+              Actions
+            </TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -67,7 +71,9 @@ export function VerificationQueueTable({ rows = VERIFICATION_QUEUE }: Verificati
                 <span
                   className={
                     "mono-stat text-data-table font-medium " +
-                    (row.daysPending > 3 ? "text-tertiary" : "text-on-surface-variant")
+                    (row.daysPending > 3
+                      ? "text-tertiary"
+                      : "text-on-surface-variant")
                   }
                 >
                   {row.daysPending}d

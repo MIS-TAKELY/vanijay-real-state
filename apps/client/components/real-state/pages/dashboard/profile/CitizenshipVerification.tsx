@@ -44,7 +44,8 @@ export function CitizenshipVerification({
     const file = input.current?.files?.[0];
     if (!file) return;
 
-    const setUploading = side === "CITIZENSHIP_FRONT" ? setFrontUploading : setBackUploading;
+    const setUploading =
+      side === "CITIZENSHIP_FRONT" ? setFrontUploading : setBackUploading;
     setUploading(true);
     setError(null);
     setSuccess(null);
@@ -52,11 +53,17 @@ export function CitizenshipVerification({
     try {
       const asset = await uploadFile(file, "identity");
       await submitCitizenshipDoc({ type: side, fileUrl: asset.secureUrl });
-      setSuccess(`${side === "CITIZENSHIP_FRONT" ? "Front" : "Back"} side uploaded successfully.`);
+      setSuccess(
+        `${side === "CITIZENSHIP_FRONT" ? "Front" : "Back"} side uploaded successfully.`,
+      );
       // Clear the input so the same file can be re-selected
       if (input.current) input.current.value = "";
     } catch (err) {
-      setError(err instanceof Error ? err.message : `Failed to upload ${side === "CITIZENSHIP_FRONT" ? "front" : "back"} side`);
+      setError(
+        err instanceof Error
+          ? err.message
+          : `Failed to upload ${side === "CITIZENSHIP_FRONT" ? "front" : "back"} side`,
+      );
     } finally {
       setUploading(false);
     }
@@ -76,7 +83,11 @@ export function CitizenshipVerification({
       onSaved?.(updated);
       setSuccess("Citizenship details saved.");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to save citizenship details");
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to save citizenship details",
+      );
     } finally {
       setSaving(false);
     }
@@ -156,7 +167,10 @@ export function CitizenshipVerification({
           >
             {saving ? (
               <>
-                <Icon name="progress_activity" className="animate-spin text-data-table" />
+                <Icon
+                  name="progress_activity"
+                  className="animate-spin text-data-table"
+                />
                 Saving…
               </>
             ) : (
@@ -183,12 +197,17 @@ export function CitizenshipVerification({
           <Button
             type="button"
             variant="outline"
-            disabled={frontUploading || profile.citizenshipStatus === "verified"}
+            disabled={
+              frontUploading || profile.citizenshipStatus === "verified"
+            }
             onClick={() => frontRef.current?.click()}
             className="flex w-full flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer h-auto"
           >
             {frontUploading ? (
-              <Icon name="progress_activity" className="animate-spin text-data-price" />
+              <Icon
+                name="progress_activity"
+                className="animate-spin text-data-price"
+              />
             ) : (
               <Icon name="upload_file" className="text-data-price" />
             )}
@@ -216,7 +235,10 @@ export function CitizenshipVerification({
             className="flex w-full flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer h-auto"
           >
             {backUploading ? (
-              <Icon name="progress_activity" className="animate-spin text-data-price" />
+              <Icon
+                name="progress_activity"
+                className="animate-spin text-data-price"
+              />
             ) : (
               <Icon name="upload_file" className="text-data-price" />
             )}
@@ -228,12 +250,8 @@ export function CitizenshipVerification({
         </div>
       </div>
 
-      {error && (
-        <p className="mt-sm text-[12px] text-destructive">{error}</p>
-      )}
-      {success && (
-        <p className="mt-sm text-[12px] text-primary">{success}</p>
-      )}
+      {error && <p className="mt-sm text-[12px] text-destructive">{error}</p>}
+      {success && <p className="mt-sm text-[12px] text-primary">{success}</p>}
     </div>
   );
 }

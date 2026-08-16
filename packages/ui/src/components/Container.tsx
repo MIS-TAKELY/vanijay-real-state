@@ -14,14 +14,14 @@ const Container = React.forwardRef<HTMLDivElement, ContainerProps>(
         className={cn(
           "max-w-[1280px] mx-auto",
           padding && "px-gutter",
-          className
+          className,
         )}
         {...props}
       >
         {children}
       </div>
     );
-  }
+  },
 );
 
 Container.displayName = "Container";

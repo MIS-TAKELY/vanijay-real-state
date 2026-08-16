@@ -20,7 +20,6 @@ import {
   RoadType,
 } from '@repo/db';
 
-
 @InputType()
 class LandAreaDetailsInput {
   @Field(() => Number)

@@ -13,7 +13,7 @@ const TREND_COLORS: Record<string, string> = {
 
 export function getTrendColor(
   trend: Trend,
-  tier: Marker["tier"] = "standard"
+  tier: Marker["tier"] = "standard",
 ): string {
   if (trend === "up") {
     const key = `up_${tier}`;
@@ -45,4 +45,3 @@ export function truncateText(text: string, maxLength = 120): string {
   if (!text || text.length <= maxLength) return text;
   return `${text.slice(0, maxLength).trim()}…`;
 }
-

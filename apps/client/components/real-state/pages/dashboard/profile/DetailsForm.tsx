@@ -68,9 +68,7 @@ export function DetailsForm({ profile, onSaved }: DetailsFormProps) {
         </div>
       </div>
 
-      {error && (
-        <p className="mt-sm text-[12px] text-destructive">{error}</p>
-      )}
+      {error && <p className="mt-sm text-[12px] text-destructive">{error}</p>}
 
       <div className="mt-md flex justify-end">
         <Button
@@ -81,7 +79,10 @@ export function DetailsForm({ profile, onSaved }: DetailsFormProps) {
         >
           {saving ? (
             <>
-              <Icon name="progress_activity" className="animate-spin text-data-table" />
+              <Icon
+                name="progress_activity"
+                className="animate-spin text-data-table"
+              />
               Saving…
             </>
           ) : (

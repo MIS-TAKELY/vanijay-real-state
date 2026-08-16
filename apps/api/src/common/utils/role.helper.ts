@@ -12,7 +12,9 @@ type RolesUser = {
  * - user.role as an array
  * - user.role as a single string (legacy data)
  */
-export function normalizeUserRoles(user: RolesUser | null | undefined): UserRole[] {
+export function normalizeUserRoles(
+  user: RolesUser | null | undefined,
+): UserRole[] {
   if (!user) return [];
 
   const raw = user.roles ?? user.role;

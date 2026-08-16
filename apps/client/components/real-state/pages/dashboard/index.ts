@@ -2,7 +2,6 @@ export * from "./listings";
 
 export * from "./overview";
 
-
 export * from "./saved-searches";
 
 export * from "./favorites";

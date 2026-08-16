@@ -8,7 +8,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "../ui/button";
 
-export function sign_up  () {
+export function sign_up() {
   return (
     <Dialog>
       <DialogTrigger>
@@ -25,6 +25,4 @@ export function sign_up  () {
       </DialogContent>
     </Dialog>
   );
-};
-
-
+}

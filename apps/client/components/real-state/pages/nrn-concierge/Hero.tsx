@@ -93,9 +93,7 @@ export function Hero() {
                 </Link>
               </Button>
               <Button asChild size="lg" variant="outline">
-                <Link href="#process">
-                  See How It Works
-                </Link>
+                <Link href="#process">See How It Works</Link>
               </Button>
             </div>
           </div>

@@ -71,7 +71,7 @@ export class CartService {
             propertyId: dto.propertyId,
             quantity,
           },
-                });
+        });
 
     await this.analytics.trackCartAdd(dto.propertyId);
 

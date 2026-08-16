@@ -87,23 +87,24 @@ export const DEFAULT_INQUIRY_STATUS_STYLE: InquiryStatusStyle = {
   label: "—",
 };
 
-export const INQUIRY_STATUS_STYLES: Record<InquiryStatus, InquiryStatusStyle> = {
-  OPEN: {
-    dot: "bg-[#b45309]",
-    chip: "bg-[#b45309]/10 text-[#b45309]",
-    label: "Open",
-  },
-  IN_NEGOTIATION: {
-    dot: "bg-primary",
-    chip: "bg-primary/10 text-primary",
-    label: "Negotiating",
-  },
-  CLOSED: {
-    dot: "bg-on-surface-variant",
-    chip: "bg-surface-container text-on-surface-variant",
-    label: "Closed",
-  },
-};
+export const INQUIRY_STATUS_STYLES: Record<InquiryStatus, InquiryStatusStyle> =
+  {
+    OPEN: {
+      dot: "bg-[#b45309]",
+      chip: "bg-[#b45309]/10 text-[#b45309]",
+      label: "Open",
+    },
+    IN_NEGOTIATION: {
+      dot: "bg-primary",
+      chip: "bg-primary/10 text-primary",
+      label: "Negotiating",
+    },
+    CLOSED: {
+      dot: "bg-on-surface-variant",
+      chip: "bg-surface-container text-on-surface-variant",
+      label: "Closed",
+    },
+  };
 
 /* ------------------------------------------------------------------ */
 /* Tabs                                                                */
@@ -126,7 +127,8 @@ export const RECEIVED_INQUIRIES: Inquiry[] = [
     personName: "Sujan Maharjan",
     isVerifiedLead: true,
     propertyCode: "LOT-442-BHA",
-    message: "Is the road access paved all the way to the plot? Can we visit this weekend?",
+    message:
+      "Is the road access paved all the way to the plot? Can we visit this weekend?",
     date: "10:42 AM",
     thread: [
       {
@@ -152,7 +154,8 @@ export const RECEIVED_INQUIRIES: Inquiry[] = [
     personName: "Anita Gurung",
     isVerifiedLead: true,
     propertyCode: "KTM-209",
-    message: "Can you share EMI estimates for a 15-year term at 10% on NPR 5 Cr?",
+    message:
+      "Can you share EMI estimates for a 15-year term at 10% on NPR 5 Cr?",
     date: "Yesterday",
     thread: [
       {
@@ -171,7 +174,8 @@ export const RECEIVED_INQUIRIES: Inquiry[] = [
     personName: "Ramesh K.C.",
     isVerifiedLead: false,
     propertyCode: "IMD-073",
-    message: "What is the status of the Lalpurja verification? Any disputes on this plot?",
+    message:
+      "What is the status of the Lalpurja verification? Any disputes on this plot?",
     date: "2d ago",
     thread: [
       {
@@ -190,7 +194,8 @@ export const RECEIVED_INQUIRIES: Inquiry[] = [
     personName: "Prakash Shrestha",
     isVerifiedLead: true,
     propertyCode: "LAL-318",
-    message: "Could you arrange a video walkthrough of the heritage home interior?",
+    message:
+      "Could you arrange a video walkthrough of the heritage home interior?",
     date: "1w ago",
     thread: [
       {
@@ -219,7 +224,8 @@ export const SENT_INQUIRIES: Inquiry[] = [
     personName: "Bhaisepati Land Owner",
     isVerifiedLead: true,
     propertyCode: "LOT-442-BHA",
-    message: "Following up on the boundary measurement — has the surveyor confirmed the corners?",
+    message:
+      "Following up on the boundary measurement — has the surveyor confirmed the corners?",
     date: "3h ago",
     thread: [
       {
@@ -238,7 +244,8 @@ export const SENT_INQUIRIES: Inquiry[] = [
     personName: "Durbar Marg Agent",
     isVerifiedLead: true,
     propertyCode: "KTM-209",
-    message: "The buyer is open to NPR 8.2 Cr with a 30-day escrow. Can we draft the offer?",
+    message:
+      "The buyer is open to NPR 8.2 Cr with a 30-day escrow. Can we draft the offer?",
     date: "1d ago",
     thread: [
       {
@@ -258,4 +265,3 @@ export const SENT_INQUIRIES: Inquiry[] = [
     ],
   },
 ];
-

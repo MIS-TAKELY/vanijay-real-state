@@ -9,7 +9,6 @@ interface VerificationPanelProps {
   profile: ProfileData;
 }
 
-
 export function VerificationPanel({ profile }: VerificationPanelProps) {
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">

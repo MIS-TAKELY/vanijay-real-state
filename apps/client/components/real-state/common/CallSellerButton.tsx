@@ -38,7 +38,9 @@ export function CallSellerButton({
       });
     } catch (error) {
       toast.error(
-        error instanceof ApiError ? error.message : "Could not load seller contact",
+        error instanceof ApiError
+          ? error.message
+          : "Could not load seller contact",
       );
     } finally {
       setLoading(false);

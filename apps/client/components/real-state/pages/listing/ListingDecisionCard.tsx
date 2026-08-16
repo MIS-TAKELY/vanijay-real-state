@@ -34,8 +34,7 @@ function PricePerUnitSelect({
   totalSqFt: number;
 }) {
   const [unit, setUnit] = useState("dhur");
-  const current =
-    LAND_UNITS.find((u) => u.key === unit) ?? LAND_UNITS[0]!;
+  const current = LAND_UNITS.find((u) => u.key === unit) ?? LAND_UNITS[0]!;
   const perUnit = Math.round((price * current.sqFt) / totalSqFt);
   return (
     <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-on-surface-variant">
@@ -96,8 +95,6 @@ export function ListingDecisionCard({
         )}
       </div>
 
-     
-
       {/* Embedded map — location is the product */}
       {hasCoordinates && (
         <div className="overflow-hidden rounded-md border border-outline-variant">
@@ -118,8 +115,6 @@ export function ListingDecisionCard({
           </Link>
         </div>
       )}
-
-  
 
       {/* CTAs */}
       <div className="flex flex-col gap-2">
@@ -159,8 +154,8 @@ export function ListingDecisionCard({
       {/* Verification notice */}
       {!verified && (
         <p className="rounded-md bg-surface-container p-3 text-xs leading-5 text-on-surface-variant">
-          This listing has not completed verification yet. Independently
-          confirm ownership documents (Lalpurja) before any payment.
+          This listing has not completed verification yet. Independently confirm
+          ownership documents (Lalpurja) before any payment.
         </p>
       )}
     </div>

@@ -8,7 +8,9 @@ export class SettingsService {
   constructor(private readonly prisma: PrismaClient) {}
 
   async getConfig() {
-    const row = await this.prisma.siteConfig.findUnique({ where: { key: MAIN_KEY } });
+    const row = await this.prisma.siteConfig.findUnique({
+      where: { key: MAIN_KEY },
+    });
     return row?.data ?? null;
   }
 
@@ -19,8 +21,18 @@ export class SettingsService {
       update: { data: data as any },
     });
     try {
-      await this.prisma.adminAuditLog.create({ data: { actorId, action: 'update', entity: 'site_config', entityId: row.id, summary: 'Updated site settings' } });
-    } catch { /* no-op */ }
+      await this.prisma.adminAuditLog.create({
+        data: {
+          actorId,
+          action: 'update',
+          entity: 'site_config',
+          entityId: row.id,
+          summary: 'Updated site settings',
+        },
+      });
+    } catch {
+      /* no-op */
+    }
     return row.data;
   }
 }

@@ -92,7 +92,11 @@ export const LISTING_TABLE_COLUMNS: ListingTableColumn[] = [
   { key: "verified", label: "Verified", cellClassName: "hidden lg:table-cell" },
   { key: "price", label: "Asking Price" },
   { key: "views", label: "Views", cellClassName: "hidden sm:table-cell" },
-  { key: "inquiries", label: "Inquiries", cellClassName: "hidden sm:table-cell" },
+  {
+    key: "inquiries",
+    label: "Inquiries",
+    cellClassName: "hidden sm:table-cell",
+  },
   { key: "updated", label: "Updated", cellClassName: "hidden md:table-cell" },
 ];
 
@@ -167,6 +171,5 @@ export const VERIFICATION_STAMP_LABELS: Record<string, string> = {
  * Edit (opens the creation wizard in edit mode), View public page (live
  * listings only), Mark sold, Duplicate, and Archive — each backed by the
  * properties API. The action labels/icons live in `ListingMenu` directly so
-  * they can reflect per-action pending states.
+ * they can reflect per-action pending states.
  */
-

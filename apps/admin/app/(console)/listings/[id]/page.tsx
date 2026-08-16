@@ -71,9 +71,15 @@ function Field({
 }) {
   return (
     <div className={cn("flex flex-col gap-xs", className)}>
-      <Label className="font-label-sm text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant">{label}</Label>
+      <Label className="font-label-sm text-[11px] font-semibold uppercase tracking-widest text-on-surface-variant">
+        {label}
+      </Label>
       {children}
-      {hint ? <p className="font-label-sm text-[11px] text-on-surface-variant">{hint}</p> : null}
+      {hint ? (
+        <p className="font-label-sm text-[11px] text-on-surface-variant">
+          {hint}
+        </p>
+      ) : null}
     </div>
   );
 }
@@ -89,22 +95,37 @@ function ModerationCard({
   return (
     <div className="mt-md flex flex-col gap-md rounded-2xl border border-outline-variant bg-surface p-md">
       <div>
-        <h3 className="font-headline-md text-base font-semibold text-on-surface">Moderation</h3>
+        <h3 className="font-headline-md text-base font-semibold text-on-surface">
+          Moderation
+        </h3>
         <p className="text-[12px] text-on-surface-variant">
-          Status, visibility and the internal note — saved together with the content below.
+          Status, visibility and the internal note — saved together with the
+          content below.
         </p>
       </div>
       <div className="grid grid-cols-1 gap-md sm:grid-cols-2">
         <Field label="Status">
-          <Select value={value.status} onValueChange={(v) => onChange({ ...value, status: v })}>
+          <Select
+            value={value.status}
+            onValueChange={(v) => onChange({ ...value, status: v })}
+          >
             <SelectTrigger className="h-11 bg-surface">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {STATUS_OPTIONS.map((opt) => (
-                <SelectItem key={opt.value} value={opt.value} className="text-xs">
+                <SelectItem
+                  key={opt.value}
+                  value={opt.value}
+                  className="text-xs"
+                >
                   <span className="flex items-center gap-2">
-                    <span className={cn("size-2 rounded-full", STATUS_DOT[opt.value])} />
+                    <span
+                      className={cn(
+                        "size-2 rounded-full",
+                        STATUS_DOT[opt.value],
+                      )}
+                    />
                     {opt.label}
                   </span>
                 </SelectItem>
@@ -121,7 +142,10 @@ function ModerationCard({
           <Label htmlFor="mod-featured">Featured on homepage</Label>
         </div>
       </div>
-      <Field label="Admin note" hint="Visible only to the admin and verification teams.">
+      <Field
+        label="Admin note"
+        hint="Visible only to the admin and verification teams."
+      >
         <Textarea
           rows={3}
           value={value.adminNote}
@@ -184,7 +208,9 @@ export default function EditListingPage() {
     return (
       <div className="admin-surface mt-lg border border-outline-variant rounded-xl p-md">
         <p className="text-on-surface">Property not found.</p>
-        <p className="mt-xs text-on-surface-variant">It may have been deleted, or the link is incorrect.</p>
+        <p className="mt-xs text-on-surface-variant">
+          It may have been deleted, or the link is incorrect.
+        </p>
         <Button asChild variant="outline" size="sm" className="mt-md">
           <Link href="/listings">Back to listings</Link>
         </Button>
@@ -201,13 +227,21 @@ export default function EditListingPage() {
       />
 
       <div className="mt-sm flex flex-wrap items-center gap-sm">
-        <Button asChild variant="ghost" size="sm" className="-ml-2 text-on-surface-variant">
+        <Button
+          asChild
+          variant="ghost"
+          size="sm"
+          className="-ml-2 text-on-surface-variant"
+        >
           <Link href="/listings">
             <ChevronLeft className="size-4" aria-hidden="true" />
             Back to listings
           </Link>
         </Button>
-        <Badge variant="outline" className="bg-surface-container text-on-surface-variant font-label-sm text-[11px] font-semibold">
+        <Badge
+          variant="outline"
+          className="bg-surface-container text-on-surface-variant font-label-sm text-[11px] font-semibold"
+        >
           {property.status.replaceAll("_", " ")}
         </Badge>
         <span className="font-label-sm text-[11px] text-on-surface-variant">

@@ -6,7 +6,6 @@ interface WizardProgressProps {
   currentStep: number;
 }
 
-
 export function WizardProgress({ currentStep }: WizardProgressProps) {
   return (
     <ol className="flex items-center gap-xs overflow-x-auto no-scrollbar mb-md p-1">

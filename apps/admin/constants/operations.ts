@@ -65,10 +65,34 @@ export interface StatCardData {
 }
 
 export const OPERATIONS_STATS: StatCardData[] = [
-  { label: "Pending Verification", value: "87", hint: "+12 in 24h", icon: "schedule", tone: "tertiary" },
-  { label: "Field Verifications", value: "24", hint: "5 overdue", icon: "verified", tone: "amber" },
-  { label: "Disputed Plots", value: "9", hint: "3 flagged today", icon: "warning", tone: "secondary" },
-  { label: "Active in Archive", value: "1,842", hint: "↑ 6% this month", icon: "list_alt", tone: "primary" },
+  {
+    label: "Pending Verification",
+    value: "87",
+    hint: "+12 in 24h",
+    icon: "schedule",
+    tone: "tertiary",
+  },
+  {
+    label: "Field Verifications",
+    value: "24",
+    hint: "5 overdue",
+    icon: "verified",
+    tone: "amber",
+  },
+  {
+    label: "Disputed Plots",
+    value: "9",
+    hint: "3 flagged today",
+    icon: "warning",
+    tone: "secondary",
+  },
+  {
+    label: "Active in Archive",
+    value: "1,842",
+    hint: "↑ 6% this month",
+    icon: "list_alt",
+    tone: "primary",
+  },
 ];
 
 export interface VerificationRow {

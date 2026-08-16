@@ -152,7 +152,8 @@ export class PropertiesService {
       if (seen.has(key)) return;
       seen.add(key);
       const lower = clean.toLowerCase();
-      const rank = lower === needleLower ? 0 : lower.startsWith(needleLower) ? 1 : 2;
+      const rank =
+        lower === needleLower ? 0 : lower.startsWith(needleLower) ? 1 : 2;
       candidates.push({ value: clean, label: clean, type, rank });
     };
 

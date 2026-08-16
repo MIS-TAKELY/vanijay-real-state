@@ -1,8 +1,19 @@
 "use client";
 
 import { signOut, useSession } from "@repo/auth/client";
-import { Button, DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, Icon } from "@repo/ui";
+import {
+  Button,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Icon,
+  Input,
+} from "@repo/ui";
 import SignIn from "components/real-state/modals/SignIn";
+import { AppModeStrip } from "components/shared/AppModeStrip";
 import { navLinks } from "constants/varibles-constants";
 import { LogOut, User, ChevronDown } from "lucide-react";
 import Link from "next/link";
@@ -11,9 +22,40 @@ import { useEffect, useState } from "react";
 import { useAuthModalStore } from "store/auth-modal";
 import { useCartStore } from "store/cart";
 
+const searchForm = (
+  <form
+    action="/search"
+    role="search"
+    className="flex h-9 items-center gap-1.5 rounded-xl border border-outline-variant bg-surface pl-2.5 pr-1.5 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-primary/25"
+  >
+    <Icon
+      name="search"
+      aria-hidden="true"
+      className="shrink-0 text-[14px] text-on-surface-variant"
+    />
+    <Input
+      type="search"
+      name="q"
+      aria-label="Search properties"
+      placeholder="Search properties or locations…"
+      className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
+    />
+    <Button
+      type="submit"
+      variant="ghost"
+      size="icon-sm"
+      aria-label="Search"
+      className="shrink-0 rounded-lg text-on-surface-variant hover:bg-primary/10 hover:text-primary cursor-pointer"
+    >
+      <Icon name="search" className="text-[14px]" />
+    </Button>
+  </form>
+);
+
 export function Navbar() {
   const { data: session, isPending } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const pathname = usePathname();
   const { open: openAuth } = useAuthModalStore();
   const cartCount = useCartStore((state) => state.count);
@@ -66,22 +108,46 @@ export function Navbar() {
   return (
     <header className="w-full top-0 sticky z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
       <nav className="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-16 sm:h-20">
-        {/* Logo */}
-        <Link
-          href="/"
-          className="flex items-center gap-2.5 group"
-          aria-label="Lekhaprati home"
-        >
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-on-primary shadow-sm transition-transform group-hover:scale-105">
-            <Icon name="domain" filled className="text-[22px]" />
-          </span>
-          <span className="font-display-lg text-headline-md text-primary font-bold tracking-tight">
-            Lekhaprati
-          </span>
-        </Link>
+        {/* Logo (links home) + app switcher chevron */}
+        <div className="flex items-center gap-1">
+          <Link
+            href="/"
+            className="group flex items-center gap-2.5"
+            aria-label="Lekhaprati home"
+          >
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-on-primary shadow-sm transition-transform group-hover:scale-105">
+              <Icon name="domain" filled className="text-[22px]" />
+            </span>
+            <span className="font-display-lg text-headline-md text-primary font-bold tracking-tight">
+              Lekhaprati
+            </span>
+          </Link>
+
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Switch app"
+                className="h-9 w-9 rounded-full bg-primary text-on-primary shadow-sm ring-2 ring-surface transition-all duration-200 hover:scale-105 hover:bg-primary/90 hover:shadow-md data-[state=open]:rotate-180 cursor-pointer"
+              >
+                <ChevronDown className="size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              className="w-[300px] overflow-hidden p-0 sm:w-[340px]"
+            >
+              <p className="px-4 pt-3 font-label-sm text-label-sm font-semibold uppercase tracking-widest text-on-surface-variant">
+                Switch app
+              </p>
+              <AppModeStrip compact />
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
 
         {/* Desktop nav links */}
-        <div className="hidden md:flex items-center gap-x-1">
+        {/* <div className="hidden md:flex items-center gap-x-1">
           {navLinks.map((item) => (
             <Link
               href={item.href}
@@ -98,6 +164,11 @@ export function Navbar() {
               />
             </Link>
           ))}
+        </div> */}
+
+        {/* Desktop search bar */}
+        <div className="hidden flex-1 justify-center xl:flex">
+          <div className="w-full max-w-md">{searchForm}</div>
         </div>
 
         {/* Right cluster */}
@@ -201,6 +272,21 @@ export function Navbar() {
             )}
           </div>
 
+          {/* Search toggle (below xl) */}
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+            aria-label={mobileSearchOpen ? "Close search" : "Open search"}
+            aria-expanded={mobileSearchOpen}
+            className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
+          >
+            <Icon
+              name={mobileSearchOpen ? "close" : "search"}
+              className="text-[24px]"
+            />
+          </Button>
+
           {/* Mobile hamburger */}
           <Button
             variant="ghost"
@@ -217,6 +303,13 @@ export function Navbar() {
           </Button>
         </div>
       </nav>
+
+      {/* Search bar (below xl) */}
+      {mobileSearchOpen && (
+        <div className="border-t border-outline-variant bg-surface/95 px-gutter py-3 xl:hidden">
+          <div className="mx-auto max-w-container-max">{searchForm}</div>
+        </div>
+      )}
 
       {/* Mobile panel */}
       {mobileOpen && (

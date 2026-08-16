@@ -355,20 +355,22 @@ export function toCardPropsFromItem(p: PropertyItem): CardProperty {
 
 export async function fetchTrendingPropertiesGraphql(
   limit = 10,
-  period = '7d',
+  period = "7d",
 ): Promise<PropertyListResponse> {
   const data = await gqlRequest<{ trendingProperties: { items: any[] } }>(
     TRENDING_PROPERTIES_QUERY,
     { limit, period },
   );
-  
+
   return {
     items: data.trendingProperties.items.map((item: any) => ({
       ...item,
       // Trending returns `propertyId` (the real DB id) instead of `id` —
       // normalize here so consumers can rely on the `PropertyItem` contract.
       id: item.propertyId ?? item.id,
-      media: item.imageUrl ? [{ url: item.imageUrl, isCover: true, sortOrder: 0 }] : [],
+      media: item.imageUrl
+        ? [{ url: item.imageUrl, isCover: true, sortOrder: 0 }]
+        : [],
     })),
     total: data.trendingProperties.items.length,
   };
@@ -388,10 +390,9 @@ export async function fetchSimilarProperties(
 export async function fetchRecentlyViewedProperties(
   limit = 10,
 ): Promise<PropertyListResponse> {
-  const data = await gqlRequest<{ recentlyViewedProperties: PropertyListResponse }>(
-    RECENTLY_VIEWED_QUERY,
-    { limit },
-  );
+  const data = await gqlRequest<{
+    recentlyViewedProperties: PropertyListResponse;
+  }>(RECENTLY_VIEWED_QUERY, { limit });
   return data.recentlyViewedProperties;
 }
 
@@ -408,9 +409,8 @@ export async function fetchFeaturedProperties(
 export async function fetchRecentlyAddedProperties(
   limit = 10,
 ): Promise<PropertyListResponse> {
-  const data = await gqlRequest<{ recentlyAddedProperties: PropertyListResponse }>(
-    RECENTLY_ADDED_PROPERTIES_QUERY,
-    { limit },
-  );
+  const data = await gqlRequest<{
+    recentlyAddedProperties: PropertyListResponse;
+  }>(RECENTLY_ADDED_PROPERTIES_QUERY, { limit });
   return data.recentlyAddedProperties;
 }

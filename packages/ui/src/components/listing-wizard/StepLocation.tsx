@@ -4,7 +4,13 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@/components/Icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { LocationSearch } from "../LocationSearch";
 import { reverseGeocode } from "../reverseGeocode";
 import type {
@@ -52,7 +58,12 @@ interface StepLocationProps extends StepProps {
   showMap?: boolean;
 }
 
-export function StepLocation({ draft, update, errors, showMap = true }: StepLocationProps) {
+export function StepLocation({
+  draft,
+  update,
+  errors,
+  showMap = true,
+}: StepLocationProps) {
   const selProvince = PROVINCES.find((p) => p.name === draft.province);
   const selDistrict = selProvince?.districts.find(
     (d) => d.name === draft.district,

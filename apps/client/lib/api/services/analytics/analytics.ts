@@ -1,5 +1,5 @@
-import { apiFetch } from '../../core/client';
-import { API_ENDPOINTS } from '../../core/endpoints';
+import { apiFetch } from "../../core/client";
+import { API_ENDPOINTS } from "../../core/endpoints";
 
 export interface TrendingProperty {
   propertyId: string;
@@ -26,19 +26,25 @@ export async function fetchTrendingProperties(
     limit: limit || 10,
   };
   if (period) query.period = period;
-  return apiFetch<TrendingPropertiesResponse>(API_ENDPOINTS.analytics.trending, { query });
+  return apiFetch<TrendingPropertiesResponse>(
+    API_ENDPOINTS.analytics.trending,
+    { query },
+  );
 }
 
 export async function trackPropertyView(propertyId: string): Promise<void> {
   await apiFetch(API_ENDPOINTS.analytics.trackView(propertyId), {
-    method: 'POST',
+    method: "POST",
     skipServerCookies: true,
   });
 }
 
-export async function trackPropertyShare(propertyId: string, platform: string): Promise<void> {
+export async function trackPropertyShare(
+  propertyId: string,
+  platform: string,
+): Promise<void> {
   await apiFetch(API_ENDPOINTS.analytics.trackShare(propertyId), {
-    method: 'POST',
+    method: "POST",
     body: { platform },
   });
 }
@@ -46,18 +52,25 @@ export async function trackPropertyShare(propertyId: string, platform: string): 
 export interface SellerContact {
   name: string | null;
   phoneNumber: string;
-  via: 'AGENT' | 'OWNER';
+  via: "AGENT" | "OWNER";
 }
 
-export async function fetchSellerContact(propertyId: string): Promise<SellerContact | null> {
-  return apiFetch<SellerContact | null>(API_ENDPOINTS.analytics.sellerContact(propertyId), {
-    skipServerCookies: true,
-  });
+export async function fetchSellerContact(
+  propertyId: string,
+): Promise<SellerContact | null> {
+  return apiFetch<SellerContact | null>(
+    API_ENDPOINTS.analytics.sellerContact(propertyId),
+    {
+      skipServerCookies: true,
+    },
+  );
 }
 
-export async function trackPropertyPhoneClick(propertyId: string): Promise<void> {
+export async function trackPropertyPhoneClick(
+  propertyId: string,
+): Promise<void> {
   await apiFetch<void>(API_ENDPOINTS.analytics.trackPhoneClick(propertyId), {
-    method: 'POST',
+    method: "POST",
     skipServerCookies: true,
   });
 }

@@ -35,33 +35,34 @@ Lekhaprati is an **archive**, not a listing feed. The visual language borrows fr
 
 Semantic tokens (Tailwind theme tokens, defined in `globals.css`):
 
-| Token | Hex | Usage |
-|---|---|---|
-| `primary` | `#244530` | Deep forest green. Primary buttons, active nav, verified accents |
-| `primary-container` | `#3b5d46` | Hover fills, selected states |
-| `on-primary` | `#ffffff` | Text on primary |
-| `secondary` | `#54615a` | Muted green-grey. Secondary text, subtle icons |
-| `secondary-container` | `#d8e6dc` | Soft green fills — info banners, badges, selected rows |
-| `tertiary` | `#7d1118` | Deep vermillion. Verification stamps, urgent badges, price drops |
-| `tertiary-container` | `#9e2b2c` | Hover state for tertiary elements |
-| `error` | `#ba1a1a` | Form errors, destructive confirmations |
-| `error-container` | `#ffdad6` | Error banners, rejected document chips |
-| `surface` | `#fbf9f4` | Main background — warm paper white |
-| `surface-container-low` | `#f5f3ee` | Alternate sections |
-| `surface-container` | `#f0eee9` | Cards, chips, input fills |
-| `surface-container-high` | `#eae8e3` | Hover states on list rows |
-| `surface-container-highest` | `#e4e2dd` | Dividers on dark, pressed states |
-| `on-surface` | `#1b1c19` | Primary text |
-| `on-surface-variant` | `#424842` | Secondary text, captions |
-| `outline` | `#727972` | Input borders (resting) |
-| `outline-variant` | `#c2c8c0` | Card borders, dividers |
-| `background` | `#fbf9f4` | Page background |
-| `inverse-surface` | `#30312e` | Tooltips, toast backgrounds |
-| `inverse-on-surface` | `#f2f1ec` | Text on inverse surfaces |
+| Token                       | Hex       | Usage                                                            |
+| --------------------------- | --------- | ---------------------------------------------------------------- |
+| `primary`                   | `#244530` | Deep forest green. Primary buttons, active nav, verified accents |
+| `primary-container`         | `#3b5d46` | Hover fills, selected states                                     |
+| `on-primary`                | `#ffffff` | Text on primary                                                  |
+| `secondary`                 | `#54615a` | Muted green-grey. Secondary text, subtle icons                   |
+| `secondary-container`       | `#d8e6dc` | Soft green fills — info banners, badges, selected rows           |
+| `tertiary`                  | `#7d1118` | Deep vermillion. Verification stamps, urgent badges, price drops |
+| `tertiary-container`        | `#9e2b2c` | Hover state for tertiary elements                                |
+| `error`                     | `#ba1a1a` | Form errors, destructive confirmations                           |
+| `error-container`           | `#ffdad6` | Error banners, rejected document chips                           |
+| `surface`                   | `#fbf9f4` | Main background — warm paper white                               |
+| `surface-container-low`     | `#f5f3ee` | Alternate sections                                               |
+| `surface-container`         | `#f0eee9` | Cards, chips, input fills                                        |
+| `surface-container-high`    | `#eae8e3` | Hover states on list rows                                        |
+| `surface-container-highest` | `#e4e2dd` | Dividers on dark, pressed states                                 |
+| `on-surface`                | `#1b1c19` | Primary text                                                     |
+| `on-surface-variant`        | `#424842` | Secondary text, captions                                         |
+| `outline`                   | `#727972` | Input borders (resting)                                          |
+| `outline-variant`           | `#c2c8c0` | Card borders, dividers                                           |
+| `background`                | `#fbf9f4` | Page background                                                  |
+| `inverse-surface`           | `#30312e` | Tooltips, toast backgrounds                                      |
+| `inverse-on-surface`        | `#f2f1ec` | Text on inverse surfaces                                         |
 
 **Semantic color rules:**
+
 - 🟢 Green (`primary` family): verified, live, success, "go" actions
-- 🔴 Vermillion (`tertiary` family): verification stamps, price-drop flags, heritage signatures — *never* used for errors
+- 🔴 Vermillion (`tertiary` family): verification stamps, price-drop flags, heritage signatures — _never_ used for errors
 - 🔴 Red (`error` family): failures, rejections, destructive actions only
 - Amber `#b45309` (utility): pending states, expiring documents, draft status
 
@@ -69,31 +70,32 @@ Semantic tokens (Tailwind theme tokens, defined in `globals.css`):
 
 Three font families, loaded via Google Fonts + local Geist fallbacks:
 
-| Role | Font | Size / Weight | Usage |
-|---|---|---|---|
-| **Display** | Fraunces (serif) | 48px/700, tight tracking | Hero headlines, page titles |
-| **Headline** | Fraunces (serif) | 28px/500–600 | Section headers, card titles, property titles |
-| **Body Large** | Public Sans | 18px/400 | Intro paragraphs, feature descriptions |
-| **Body** | Public Sans | 15px/400 | Default UI text, descriptions |
-| **Label** | Public Sans | 13px/600 | Buttons, chips, form labels, uppercase tracking `0.6px` |
-| **Data/Price** | IBM Plex Mono | 16–32px/500 | Prices (`NPR 2,45,00,000`), plot IDs, areas, listing codes, table cells |
+| Role           | Font             | Size / Weight            | Usage                                                                   |
+| -------------- | ---------------- | ------------------------ | ----------------------------------------------------------------------- |
+| **Display**    | Fraunces (serif) | 48px/700, tight tracking | Hero headlines, page titles                                             |
+| **Headline**   | Fraunces (serif) | 28px/500–600             | Section headers, card titles, property titles                           |
+| **Body Large** | Public Sans      | 18px/400                 | Intro paragraphs, feature descriptions                                  |
+| **Body**       | Public Sans      | 15px/400                 | Default UI text, descriptions                                           |
+| **Label**      | Public Sans      | 13px/600                 | Buttons, chips, form labels, uppercase tracking `0.6px`                 |
+| **Data/Price** | IBM Plex Mono    | 16–32px/500              | Prices (`NPR 2,45,00,000`), plot IDs, areas, listing codes, table cells |
 
 **Type rules:**
+
 - All prices, listing codes (`LOT-442-BHA`), land areas (`0-4-0-0 Ropani`), and phone numbers render in **IBM Plex Mono** — data must feel copied from a ledger.
 - Headlines in **Fraunces** with `font-feature-settings: "ss01"` for editorial character.
 - Never center body copy; headlines may center only in hero sections.
 
 ## 1.4 Spacing & Layout
 
-| Token | Value | Usage |
-|---|---|---|
-| `xs` | 4px | Icon gaps, inline badges |
-| `sm` | 12px | Chip padding, tight stack |
-| `base` | 8px | Base grid unit |
-| `md` | 24px | Card padding, section gaps |
-| `lg` | 48px | Section vertical rhythm |
-| `xl` | 80px | Page section separators |
-| `gutter` | 24px | Horizontal page padding |
+| Token           | Value  | Usage                       |
+| --------------- | ------ | --------------------------- |
+| `xs`            | 4px    | Icon gaps, inline badges    |
+| `sm`            | 12px   | Chip padding, tight stack   |
+| `base`          | 8px    | Base grid unit              |
+| `md`            | 24px   | Card padding, section gaps  |
+| `lg`            | 48px   | Section vertical rhythm     |
+| `xl`            | 80px   | Page section separators     |
+| `gutter`        | 24px   | Horizontal page padding     |
 | `container-max` | 1280px | Max content width, centered |
 
 **Grid**: 12-column on desktop (`≥1024px`), 8-column on tablet, 4-column on mobile. Card grids: 3-col → 2-col → 1-col.
@@ -122,34 +124,34 @@ Components live in `packages/ui` and app-level `components/`. Each entry: anatom
 
 ## 2.1 Buttons
 
-| Variant | Style | Usage |
-|---|---|---|
-| **Primary** | `bg-primary text-on-primary rounded-md`, hover `bg-primary/90`, h-11 | Main CTAs: "View Details", "Submit", "Save" |
-| **Secondary** | `border border-outline-variant text-on-surface`, hover `border-primary text-primary` | Alternative actions: "Add to Cart", "Cancel" |
-| **Tertiary/Stamp** | `.verification-stamp` style | Verification badges — not clickable by default |
-| **Ghost** | `text-on-surface-variant hover:text-primary hover:bg-surface-container` | Nav items, quiet actions |
-| **Destructive** | `bg-error text-on-error` | Delete, reject — always paired with confirm dialog |
-| **Icon button** | `h-10 w-10 rounded-lg`, icon centered | Hamburger, close, map controls |
+| Variant            | Style                                                                                | Usage                                              |
+| ------------------ | ------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| **Primary**        | `bg-primary text-on-primary rounded-md`, hover `bg-primary/90`, h-11                 | Main CTAs: "View Details", "Submit", "Save"        |
+| **Secondary**      | `border border-outline-variant text-on-surface`, hover `border-primary text-primary` | Alternative actions: "Add to Cart", "Cancel"       |
+| **Tertiary/Stamp** | `.verification-stamp` style                                                          | Verification badges — not clickable by default     |
+| **Ghost**          | `text-on-surface-variant hover:text-primary hover:bg-surface-container`              | Nav items, quiet actions                           |
+| **Destructive**    | `bg-error text-on-error`                                                             | Delete, reject — always paired with confirm dialog |
+| **Icon button**    | `h-10 w-10 rounded-lg`, icon centered                                                | Hamburger, close, map controls                     |
 
 States: `hover` (color shift ≤200ms), `focus-visible` (`ring-2 ring-primary/40`), `disabled` (`opacity-50 cursor-not-allowed`), `loading` (spinner replaces label, width locked).
 
 ## 2.2 Badges & Chips
 
-| Badge | Style | Meaning |
-|---|---|---|
-| **Verified Archive** | `bg-surface/95 text-tertiary`, `verified` filled icon, uppercase 10px | Level 2+ doc-verified listing |
-| **Field Verified** | `bg-primary text-on-primary` | Level 3 — surveyor visited |
-| **Pending** | `bg-[#b45309]/10 text-[#b45309]` | Under verification |
-| **Price Drop** | `bg-tertiary text-on-tertiary`, `trending_down` icon | askingPrice < originalAskingPrice |
-| **Draft** | `bg-surface-container-high text-on-surface-variant` | Unpublished |
-| **Status chips** | Colored dot + 13px label | Inquiry/document/appointment statuses (see §8.3) |
-| **Filter chip** | `rounded-full border px-3 py-1.5`, `×` when active | Search filter tags |
+| Badge                | Style                                                                 | Meaning                                          |
+| -------------------- | --------------------------------------------------------------------- | ------------------------------------------------ |
+| **Verified Archive** | `bg-surface/95 text-tertiary`, `verified` filled icon, uppercase 10px | Level 2+ doc-verified listing                    |
+| **Field Verified**   | `bg-primary text-on-primary`                                          | Level 3 — surveyor visited                       |
+| **Pending**          | `bg-[#b45309]/10 text-[#b45309]`                                      | Under verification                               |
+| **Price Drop**       | `bg-tertiary text-on-tertiary`, `trending_down` icon                  | askingPrice < originalAskingPrice                |
+| **Draft**            | `bg-surface-container-high text-on-surface-variant`                   | Unpublished                                      |
+| **Status chips**     | Colored dot + 13px label                                              | Inquiry/document/appointment statuses (see §8.3) |
+| **Filter chip**      | `rounded-full border px-3 py-1.5`, `×` when active                    | Search filter tags                               |
 
 ## 2.3 Form Inputs
 
 - **Text input**: `h-11 rounded-md border border-outline bg-surface px-3`, focus `border-primary ring-2 ring-primary/20`, label 13px/600 above, error text 13px `text-error` below with `error` icon.
 - **Select / Combobox**: same chrome; district/municipality selects are cascaded (province → district → municipality → ward).
-- **Land area input group**: three inline numeric inputs (Ropani / Aana / Paisa) *or* (Bigha / Katha / Dhur) with a system toggle; auto-computed `totalSqFt` shown read-only in mono.
+- **Land area input group**: three inline numeric inputs (Ropani / Aana / Paisa) _or_ (Bigha / Katha / Dhur) with a system toggle; auto-computed `totalSqFt` shown read-only in mono.
 - **File upload**: dashed `outline-variant` dropzone, `upload_file` icon 48px, accepted types + 10MB cap noted; after upload → file row with name, size (mono), progress bar, `delete` icon button.
 - **OTP input**: 6 individual cells, `w-11 h-12`, mono font, auto-advance, paste splits across cells.
 - **Toggle**: pill 44×24, `bg-primary` when on — used for alert frequencies, `notifyOnPriceChange`.
@@ -157,6 +159,7 @@ States: `hover` (color shift ≤200ms), `focus-visible` (`ring-2 ring-primary/40
 ## 2.4 Cards
 
 **Property Card** (exists — `PropertyCard.tsx`):
+
 ```
 ┌────────────────────────────┐
 │ [cover img 192px, hover zoom]│
@@ -172,6 +175,7 @@ States: `hover` (color shift ≤200ms), `focus-visible` (`ring-2 ring-primary/40
 │ [Add to Cart] [View Details]│
 └────────────────────────────┘
 ```
+
 Hover: `-translate-y-1`, border → `primary/40`, shadow-lg. Radius `rounded-2xl`.
 
 **Stat card** (dashboards): label 13px uppercase, value IBM Plex Mono 32px, delta chip (`+12%` green / `-3%` tertiary), sparkline optional.
@@ -279,7 +283,7 @@ The primary discovery surface. Server-hydrated grid with client-side keyset pagi
 - **SSR seed:** `page.tsx` pre-fetches `PAGE_SIZE` items via GraphQL; passed as `initialItems`/`initialNextCursor`/`initialHasMore`. If the SSR fetch throws, a centered error + "Try again" button (`variant="outline"`, `border-outline-variant`) renders.
 - **Grid:** `mx-auto grid … sm:grid-cols-2 lg:grid-cols-3 gap-md`. Each tile → `PropertyCard` (§2.2): image/gradient thumb with a top-left `verification-stamp` "Verified" badge, location line, title, mono price, meta bullets, and a [View Details] primary + favorite + add-to-cart row.
 - **Pagination:** `Pagination` component at the base — keyset cursor (`after: nextCursor`), `hasMore` guard, `loading` swaps the button to a spinner, "You've reached the end of the listings." when exhausted.
-- **States:** `loading && items.length === 0` → `FeedSkeleton` (3-col `animate-pulse` cards); empty after load → centered "No listings available right now."; inline error banner (`text-on-surface-variant`) only when items already exist but a *later* page failed.
+- **States:** `loading && items.length === 0` → `FeedSkeleton` (3-col `animate-pulse` cards); empty after load → centered "No listings available right now."; inline error banner (`text-on-surface-variant`) only when items already exist but a _later_ page failed.
 
 ### §3.1.6 Marketplace Carousels — `ListingsMarketplace.tsx`
 
@@ -287,7 +291,7 @@ Two back-to-back `HorizontalScrollSection` strips (see §2.1) that share the reu
 
 - **Left pane (Trending):** fetches `fetchTrendingPropertiesGraphql(10, "7d")` → section titled "Trending Now" with `accent="trending"` (left border `border-l-destructive` pink). Cards carry a `"HOT"` badge.
 - **Right pane (Featured):** fetches `fetchFeaturedProperties(10)` → section titled "Featured Properties" with `accent="default"`.
-- **Concurrency:** both async reads fire in parallel inside one `useEffect`; `loading` is true until *both* settle; each section renders only when its own `items.length > 0` (so a slow trending query never blocks featured from appearing).
+- **Concurrency:** both async reads fire in parallel inside one `useEffect`; `loading` is true until _both_ settle; each section renders only when its own `items.length > 0` (so a slow trending query never blocks featured from appearing).
 - **Header (reused):** eyebrow + `font-headline-md` title + "View All" link (`href="/listings"`) + prev/next icon-buttons (`Button variant="outline" size="icon"`). Scroll pans by card width via `scrollByCard`.
 
 ### §3.1.7 Recently Viewed — `RecentlyViewed.tsx`
@@ -319,8 +323,8 @@ Far-converting dark CTA anchored to the page bottom.
 
 Inventory of the patterns that recur across the home page (most are shared with the dashboard and listings pages — see §2 for component-level rules).
 
-1. **`HorizontalScrollSection` (compound carousel)** — a single composable that owns the header (eyebrow + `font-headline-md` title + "View All" link + prev/next icon-buttons), the `snap-x` scroll rail, and delegates card rendering via the `cardVariant` prop (`"horizontal"` → slim `PropertyHorizontalCard`, `"common"` → rich `PropertyCard`). All home-page rails use `cardVariant="common"` so Recently Viewed, Trending, Featured, and Similar render the *same* card as the listings feed. Consumed by `ListingsMarketplace`, `RecentlyViewed`, `FeaturedListings`, and `SimilarProperties`. The `accent` prop (`"default" | "primary-left" | "trending"`) flips the left-border colour and the section background — no per-consumer header markup is duplicated.
-2. **Skeleton-while-loading** — every data-driven section renders `animate-pulse` placeholders (`min-w-[280px] md:min-w-[320px] h-[460px]`, `bg-surface-container`) sized to the common card geometry before content paints. After load, empty states *collapse to `null`* (Recently Viewed, Featured, Marketplace sections) or render explicit copy only for the feed grid ("No listings available right now.").
+1. **`HorizontalScrollSection` (compound carousel)** — a single composable that owns the header (eyebrow + `font-headline-md` title + "View All" link + prev/next icon-buttons), the `snap-x` scroll rail, and delegates card rendering via the `cardVariant` prop (`"horizontal"` → slim `PropertyHorizontalCard`, `"common"` → rich `PropertyCard`). All home-page rails use `cardVariant="common"` so Recently Viewed, Trending, Featured, and Similar render the _same_ card as the listings feed. Consumed by `ListingsMarketplace`, `RecentlyViewed`, `FeaturedListings`, and `SimilarProperties`. The `accent` prop (`"default" | "primary-left" | "trending"`) flips the left-border colour and the section background — no per-consumer header markup is duplicated.
+2. **Skeleton-while-loading** — every data-driven section renders `animate-pulse` placeholders (`min-w-[280px] md:min-w-[320px] h-[460px]`, `bg-surface-container`) sized to the common card geometry before content paints. After load, empty states _collapse to `null`_ (Recently Viewed, Featured, Marketplace sections) or render explicit copy only for the feed grid ("No listings available right now.").
 3. **SSR seed + client pagination** — the feed uses the server to resolve the first page (SEO-friendly HTML, no client `await`), then hands a cursor to the client for `loadMore`. `PropertyFeed` keeps `items`, `nextCursor`, `hasMore`, `loading`, `error` in **local component state** — no global store — because the feed is read-once per mount.
 4. **Parallel fetch + per-section gating** — `ListingsMarketplace` fires two async reads in one `useEffect` and renders each section independently once its own data resolves, so a slow trending query never blocks featured content from appearing. Every async effect uses the `cancelled` flag to avoid setting state after unmount.
 5. **Lazy boundary** — `NepalmapWrapper` is the only `next/dynamic` + `ssr:false` component; its loading fallback is a tinted block that occupies the same `clamp` height, so layout doesn't jump when the map hydrates.
@@ -333,11 +337,13 @@ Inventory of the patterns that recur across the home page (most are shared with 
 **Layout**: filter sidebar left (280px, sticky, collapsible on mobile into slide-over) + results grid right.
 
 **Results Header** (`ResultsHeader.tsx`):
+
 - Row 1: Breadcrumb (Home / Listings / {District}), result count mono ("247 parcels"), sort select [Newest | Price ↑ | Price ↓ | Area | Verified first].
 - Row 2: active filter chips with `×`, "Clear all" ghost, "Save search & alert" button (bell icon — opens frequency popover: Instant / Daily digest / Off → creates `SavedSearch`).
 - View toggle: [Grid | List | Map-split].
 
 **Search Filters** (`SearchFilters.tsx`) — accordion groups:
+
 1. **Location**: Province → District → Municipality → Ward cascaded selects; area-name text field.
 2. **Price**: min–max mono inputs + histogram slider (listing counts per bracket).
 3. **Land Area**: unit system toggle (Ropani/Bigha), min–max Aana (or Katha) sliders.
@@ -357,13 +363,15 @@ Apply is instant (no Apply button); filter count badge on mobile filter button.
 ## 3.3 Property Detail `/listings/[slug]`
 
 **Above the fold**:
+
 - Breadcrumb + listing code chip (`LOT-442-BHA`) + status badge + `.verification-stamp` (if L2+, rotated, absolute over gallery corner).
 - Title (Fraunces 32px), location line with `location_on` icon: "Bhaisepati, Lalitpur — Ward 10" +Province.
 - **Gallery**: main image 16:9 (rounded-2xl), thumbnail strip below (5 visible, scroll), count badge "1/12", badges on main: [Video walkthrough ▶] [Cadastral map] toggles overlay the corresponding media type. Lightbox on click with keyboard nav.
 
 **Two-column body** (content 65% / sticky sidebar 35%):
 
-*Left column*:
+_Left column_:
+
 1. **Key specs strip** — 6-cell grid, each: icon + label 11px uppercase + mono value: Area `0-4-0-0 Ropani (2,196 sqft)` · Facing `South` · Road `20 ft Pitched` · Type `Residential Land` · Corner `Yes` · Price/Aana `NPR 61,25,000`.
 2. **Description** — prose, 18px leading relaxed.
 3. **Location & Map** — embedded Leaflet (300px), parcel boundary polygon if `parcelBoundary` exists; address text; ward/district chips; "Street-view style photos" opens StreetViewModal.
@@ -375,7 +383,8 @@ Apply is instant (no Apply button); filter count badge on mobile filter button.
 6. **Sold-price comps** — if sale records exist nearby: mini table of 3–5 comparable sales (area, sold price/aana mono, sold date), powering a small trend sparkline.
 7. **Q&A on this listing** — questions scoped to property; ask box (auth-gated); answers show author badge (Owner / Agent / Verified Broker).
 
-*Right sidebar (sticky, top-24)*:
+_Right sidebar (sticky, top-24)_:
+
 - **Price card**: asking price mono 32px primary, price/aana beneath, price-drop chip if applicable (original struck through), updated date.
 - CTAs stacked: [Request Video Walkthrough] primary · [WhatsApp Seller] `secondary` with brand icon · [EMI Calculator] ghost with `calculate` icon → expands inline calculator (loan amount, rate %, years → monthly EMI mono).
 - **Agent/Owner card**: avatar, name, role badge ("Verified Agent" / "Owner" / agency name with seat count), response-time mono stat, [Call] [Message] icon buttons revealing contact after auth.
@@ -406,7 +415,7 @@ Apply is instant (no Apply button); filter count badge on mobile filter button.
 - **Stats**: mono counters row. **Leadership**: avatar cards, role in mono caps.
 - **CTA**: "List with the archive" + "Browse verified listings".
 
-## 3.7 Community Q&A `/questions` *(new page)*
+## 3.7 Community Q&A `/questions` _(new page)_
 
 - Header: "Ask the Broker" + [Ask a Question] primary.
 - Category tabs: All / Legal / Financing / NRN / Area Specific / General (from `QuestionCategory`).
@@ -443,6 +452,7 @@ Auth is modal-first (Zustand `auth-modal` store + `AuthModalListener`), powered 
 ## 4.4 Auth-Gate Pattern
 
 Any protected action (favorite, save search, list property, ask question, request walkthrough, WhatsApp reveal) when logged out:
+
 1. Opens Sign In modal with context banner: "Sign in to save this listing" (icon + listing title).
 2. After auth, the original action completes automatically (pending-action queue in store).
 
@@ -460,8 +470,8 @@ Sidebar sections: **Overview** · **My Listings** · **Document Vault** · **Sav
 - **Verification banner** (if not L2): amber banner — "Complete number verification to list property" [Verify Number →] .
 - **Stat cards row** (4): Active listings · Total views (30d) · Open inquiries · Saved-search matches (7d) — each mono value + delta chip.
 - **Two-col below**:
-  - *Left*: **Recent activity feed** — mixed timeline (inquiry received, document verified, price-drop on a favorite, appointment scheduled), icon dots by type, mono timestamps, relative "2h ago".
-  - *Right*: **My listings snapshot** mini-table (thumb, code, status chip, views mono, [Manage]) + **Upcoming appointments** card list (date block mono, property code, officer name, status chip).
+  - _Left_: **Recent activity feed** — mixed timeline (inquiry received, document verified, price-drop on a favorite, appointment scheduled), icon dots by type, mono timestamps, relative "2h ago".
+  - _Right_: **My listings snapshot** mini-table (thumb, code, status chip, views mono, [Manage]) + **Upcoming appointments** card list (date block mono, property code, officer name, status chip).
 
 ## 5.2 My Listings `/dashboard/listings`
 
@@ -478,7 +488,7 @@ Sidebar sections: **Overview** · **My Listings** · **Document Vault** · **Sav
 **Step 1 — Basics**: title (char counter), property type select (6 cards with icons), description rich textarea, asking price (mono NPR input + auto price/aana preview chip).
 **Step 2 — Location**: cascaded Province/District/Municipality/Ward selects, area name, address text, **pin-drop Leaflet map** (drag marker, reverse-geocoded address preview).
 **Step 3 — Land & Specs**: unit-system toggle (Ropani-Aana-Paisa-Daam | Bigha-Katha-Dhur), numeric inputs with live `totalSqFt`/`totalSqMeters` conversion card; road type select, road width ft, facing compass picker, corner-plot toggle.
-**Step 4 — Media & Documents**: image uploader (drag-sort grid, first = cover badge, alt-text fields, 20 max), optional video-walkthrough URL, cadastral map upload; **document attach** — pick from Document Vault *or* upload new (typed: Lalpurja/Tax Clearance/Naksa…) with `isPrivate` default-on toggle explained.
+**Step 4 — Media & Documents**: image uploader (drag-sort grid, first = cover badge, alt-text fields, 20 max), optional video-walkthrough URL, cadastral map upload; **document attach** — pick from Document Vault _or_ upload new (typed: Lalpurja/Tax Clearance/Naksa…) with `isPrivate` default-on toggle explained.
 **Step 5 — Review & Submit**: full preview mirroring public detail page, checklist sidebar (✓ photos ≥5, ✓ Lalpurja attached, ⚠ field verification optional), [Save Draft] secondary + [Submit for Verification] primary → status `UNDER_VERIFICATION`, toast + redirect to listing manage view.
 
 ### 5.2.2 Listing Manage `/dashboard/listings/[id]`
@@ -499,10 +509,12 @@ Sidebar sections: **Overview** · **My Listings** · **Document Vault** · **Sav
 ## 5.4 Saved Searches & Favorites
 
 **Saved Searches** `/dashboard/saved-searches`:
+
 - Card list: label ("Land under 5 Aana, Ward 6, Pokhara"), filter summary chips, **match count** mono, frequency toggle (Instant/Daily/Off segmented), [Run now] ghost → results page with filters applied, `...` (Rename / Duplicate / Delete).
 - New matches since last visit: primary dot badge.
 
 **Favorites** `/dashboard/favorites`:
+
 - Property card grid (same as public cards) + per-card: `notifyOnPriceChange` toggle, price-drop chip if dropped since save, remove heart.
 - Empty: "Save listings to track price drops."
 

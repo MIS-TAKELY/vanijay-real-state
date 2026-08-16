@@ -8,7 +8,7 @@ export function PropertyViewTracker({ propertyId }: { propertyId: string }) {
     // Track view once on mount
     trackPropertyView(propertyId).catch(() => {
       // Silently fail - analytics should not break the UI
-      console.log("tracking fail")
+      console.log("tracking fail");
     });
   }, [propertyId]);
 

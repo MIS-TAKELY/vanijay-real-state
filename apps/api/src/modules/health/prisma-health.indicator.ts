@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { HealthIndicator, type HealthIndicatorResult } from '@nestjs/terminus';
 import { PrismaClient } from '@repo/db';
 
-
 @Injectable()
 export class PrismaHealthIndicator extends HealthIndicator {
   constructor(private readonly prisma: PrismaClient) {

@@ -124,9 +124,8 @@ export const NOTIFICATION_ROWS: NotificationRow[] = [
 export const NOTIFICATION_CHANNELS = ["in_app", "email"] as const;
 export type NotificationChannel = (typeof NOTIFICATION_CHANNELS)[number];
 
-export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> = {
-  in_app: "In-app",
-  email: "Email",
-};
-
-
+export const NOTIFICATION_CHANNEL_LABELS: Record<NotificationChannel, string> =
+  {
+    in_app: "In-app",
+    email: "Email",
+  };

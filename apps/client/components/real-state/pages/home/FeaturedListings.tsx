@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { HorizontalScrollSection } from "../../common/HorizontalScrollSection";
-import { fetchFeaturedProperties, toCardPropsFromItem, type CardProperty, type PropertyItem } from "lib/api/services/properties";
+import {
+  fetchFeaturedProperties,
+  toCardPropsFromItem,
+  type CardProperty,
+  type PropertyItem,
+} from "lib/api/services/properties";
 
 function mapToCardProps(p: PropertyItem): CardProperty {
   return { ...toCardPropsFromItem(p), badge: "FEATURED" };
@@ -44,7 +49,10 @@ export function FeaturedListings() {
           </div>
           <div className="flex gap-4 overflow-x-auto pb-4 pt-2">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="min-w-[280px] md:min-w-[320px] max-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container" />
+              <div
+                key={i}
+                className="min-w-[280px] md:min-w-[320px] max-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container"
+              />
             ))}
           </div>
         </div>

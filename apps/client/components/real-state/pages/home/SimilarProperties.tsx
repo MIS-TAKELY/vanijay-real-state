@@ -2,7 +2,12 @@
 
 import { useEffect, useState } from "react";
 import { HorizontalScrollSection } from "../../common/HorizontalScrollSection";
-import { fetchSimilarProperties, toCardPropsFromItem, type CardProperty, type PropertyItem } from "lib/api/services/properties";
+import {
+  fetchSimilarProperties,
+  toCardPropsFromItem,
+  type CardProperty,
+  type PropertyItem,
+} from "lib/api/services/properties";
 
 function mapToCardProps(p: PropertyItem): CardProperty {
   return toCardPropsFromItem(p);
@@ -14,7 +19,7 @@ export function SimilarProperties({ propertyId }: { propertyId: string }) {
 
   useEffect(() => {
     if (!propertyId) return;
-    
+
     let cancelled = false;
     setLoading(true);
     fetchSimilarProperties(propertyId, 10)

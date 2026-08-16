@@ -88,7 +88,8 @@ export async function reverseGeocodeGoogle(
       latlng: `${lat},${lng}`,
       key: apiKey,
       language,
-      result_type: "street_address|premise|route|sublocality|locality|administrative_area_level_1",
+      result_type:
+        "street_address|premise|route|sublocality|locality|administrative_area_level_1",
     });
     res = await fetch(`${endpoint}?${params.toString()}`, { signal });
   } catch (err) {

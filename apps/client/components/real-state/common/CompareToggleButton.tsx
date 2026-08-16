@@ -12,7 +12,11 @@ interface CompareToggleButtonProps {
   className?: string;
 }
 
-export function CompareToggleButton({ property, iconOnly = false, className }: CompareToggleButtonProps) {
+export function CompareToggleButton({
+  property,
+  iconOnly = false,
+  className,
+}: CompareToggleButtonProps) {
   const { add, remove, isSelected, items } = useCompareStore();
   const selected = isSelected(property.id);
   const atMax = items.length >= MAX_COMPARE_ITEMS;
@@ -51,7 +55,7 @@ export function CompareToggleButton({ property, iconOnly = false, className }: C
           (selected
             ? "bg-primary/15 text-primary hover:bg-primary/25"
             : "text-on-surface-variant"),
-        (!selected && atMax) && "cursor-not-allowed opacity-40",
+        !selected && atMax && "cursor-not-allowed opacity-40",
       )}
     >
       <Icon

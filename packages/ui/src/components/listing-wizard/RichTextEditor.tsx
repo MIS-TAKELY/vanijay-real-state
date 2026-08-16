@@ -38,7 +38,8 @@ export function RichTextEditor({
     <div
       className={cn(
         "suneditor-wrapper rounded-xl border border-outline-variant bg-surface overflow-hidden transition-all focus-within:border-primary focus-within:ring-2 focus-within:ring-primary/20",
-        ariaInvalid && "border-error focus-within:border-error focus-within:ring-error/20",
+        ariaInvalid &&
+          "border-error focus-within:border-error focus-within:ring-error/20",
         className,
       )}
       id={id ? `${id}-wrapper` : undefined}

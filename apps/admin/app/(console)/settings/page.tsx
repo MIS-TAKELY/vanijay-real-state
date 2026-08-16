@@ -1,9 +1,24 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button, Input, Label, Textarea, toast, Icon, Eye, EyeOff, Skeleton } from "@repo/ui";
+import {
+  Button,
+  Input,
+  Label,
+  Textarea,
+  toast,
+  Icon,
+  Eye,
+  EyeOff,
+  Skeleton,
+} from "@repo/ui";
 import { PageHeader } from "components/ui/PageHeader";
-import { ApiError, adminUpdateEmail, getSettings, updateSettings } from "lib/api";
+import {
+  ApiError,
+  adminUpdateEmail,
+  getSettings,
+  updateSettings,
+} from "lib/api";
 import { useSession } from "@repo/auth/client";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
@@ -59,7 +74,10 @@ function PasswordInput({
 function FieldError({ message }: { message: string }) {
   if (!message) return null;
   return (
-    <p role="alert" className="flex items-center gap-1.5 text-xs text-destructive">
+    <p
+      role="alert"
+      className="flex items-center gap-1.5 text-xs text-destructive"
+    >
       <Icon name="error" className="text-[14px] shrink-0" />
       {message}
     </p>
@@ -93,13 +111,15 @@ export default function SettingsPage() {
 
   // Seed the editable fields + profile display from the session once it loads.
   // The functional updates keep any optimistic value set after a save.
+  /* eslint-disable react-hooks/set-state-in-effect -- seed editable fields from session */
   useEffect(() => {
     if (!user) return;
     setNameValue((v) => (v === "" && user.name ? user.name : v));
     setEmailValue((v) => (v === "" && user.email ? user.email : v));
     setDisplayName((d) => d ?? user.name ?? "");
     setDisplayEmail((d) => d ?? user.email ?? "");
-  }, [user]);
+  }, [user?.name, user?.email]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   useEffect(() => {
     (async () => {
@@ -172,8 +192,13 @@ export default function SettingsPage() {
       toast.success("Email updated successfully");
       void refetch();
     } catch (error) {
-      const detail = error instanceof ApiError ? (error.details as { message?: string } | undefined)?.message : undefined;
-      setEmailError(typeof detail === "string" ? detail : "Failed to update email");
+      const detail =
+        error instanceof ApiError
+          ? (error.details as { message?: string } | undefined)?.message
+          : undefined;
+      setEmailError(
+        typeof detail === "string" ? detail : "Failed to update email",
+      );
     } finally {
       setEmailSaving(false);
     }
@@ -260,8 +285,12 @@ export default function SettingsPage() {
               <Icon name="manage_accounts" className="text-[18px]" />
             </span>
             <div>
-              <h2 className="text-base font-semibold text-on-surface leading-tight">Admin Account</h2>
-              <p className="text-[11px] text-on-surface-variant">Manage your profile and credentials</p>
+              <h2 className="text-base font-semibold text-on-surface leading-tight">
+                Admin Account
+              </h2>
+              <p className="text-[11px] text-on-surface-variant">
+                Manage your profile and credentials
+              </p>
             </div>
           </div>
 
@@ -273,14 +302,21 @@ export default function SettingsPage() {
                   {(displayName || user.name || "A").charAt(0).toUpperCase()}
                 </span>
                 <div>
-                  <p className="font-semibold text-on-surface">{displayName || user.name}</p>
-                  <p className="mt-0.5 text-xs text-on-surface-variant">{displayEmail || user.email}</p>
+                  <p className="font-semibold text-on-surface">
+                    {displayName || user.name}
+                  </p>
+                  <p className="mt-0.5 text-xs text-on-surface-variant">
+                    {displayEmail || user.email}
+                  </p>
                 </div>
               </div>
 
               {/* Display name section */}
               <div className="px-6 py-5">
-                <Label htmlFor="admin-name" className="mb-3 block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                <Label
+                  htmlFor="admin-name"
+                  className="mb-3 block text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
+                >
                   Display Name
                 </Label>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -299,10 +335,18 @@ export default function SettingsPage() {
                     />
                     <FieldError message={nameError ?? ""} />
                   </div>
-                  <Button size="sm" disabled={nameSaving} className="w-fit shrink-0" onClick={updateName}>
+                  <Button
+                    size="sm"
+                    disabled={nameSaving}
+                    className="w-fit shrink-0"
+                    onClick={updateName}
+                  >
                     {nameSaving ? (
                       <>
-                        <Icon name="progress_activity" className="animate-spin" />
+                        <Icon
+                          name="progress_activity"
+                          className="animate-spin"
+                        />
                         Saving…
                       </>
                     ) : (
@@ -314,7 +358,10 @@ export default function SettingsPage() {
 
               {/* Email section */}
               <div className="px-6 py-5">
-                <Label htmlFor="admin-email" className="mb-3 block text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                <Label
+                  htmlFor="admin-email"
+                  className="mb-3 block text-xs font-semibold uppercase tracking-wider text-on-surface-variant"
+                >
                   Email Address
                 </Label>
                 <div className="flex flex-col gap-3 sm:flex-row sm:items-start">
@@ -338,10 +385,18 @@ export default function SettingsPage() {
                       Your admin account email is updated immediately.
                     </p>
                   </div>
-                  <Button size="sm" disabled={emailSaving} className="w-fit shrink-0" onClick={updateEmail}>
+                  <Button
+                    size="sm"
+                    disabled={emailSaving}
+                    className="w-fit shrink-0"
+                    onClick={updateEmail}
+                  >
                     {emailSaving ? (
                       <>
-                        <Icon name="progress_activity" className="animate-spin" />
+                        <Icon
+                          name="progress_activity"
+                          className="animate-spin"
+                        />
                         Updating…
                       </>
                     ) : (
@@ -388,10 +443,18 @@ export default function SettingsPage() {
                     }}
                   />
                   <FieldError message={pwError ?? ""} />
-                  <Button size="sm" disabled={pwSaving} className="mt-1 w-fit" onClick={changePassword}>
+                  <Button
+                    size="sm"
+                    disabled={pwSaving}
+                    className="mt-1 w-fit"
+                    onClick={changePassword}
+                  >
                     {pwSaving ? (
                       <>
-                        <Icon name="progress_activity" className="animate-spin" />
+                        <Icon
+                          name="progress_activity"
+                          className="animate-spin"
+                        />
                         Changing…
                       </>
                     ) : (
@@ -402,7 +465,9 @@ export default function SettingsPage() {
               </div>
             </div>
           ) : (
-            <p className="px-6 py-5 text-sm text-on-surface-variant">Loading user info…</p>
+            <p className="px-6 py-5 text-sm text-on-surface-variant">
+              Loading user info…
+            </p>
           )}
         </div>
 
@@ -414,36 +479,57 @@ export default function SettingsPage() {
               <Icon name="tune" className="text-[18px]" />
             </span>
             <div>
-              <h2 className="text-base font-semibold text-on-surface leading-tight">Platform Configuration</h2>
-              <p className="text-[11px] text-on-surface-variant">Global settings for the platform</p>
+              <h2 className="text-base font-semibold text-on-surface leading-tight">
+                Platform Configuration
+              </h2>
+              <p className="text-[11px] text-on-surface-variant">
+                Global settings for the platform
+              </p>
             </div>
           </div>
 
           <div className="divide-y divide-outline-variant/60">
             <div className="grid gap-5 px-6 py-5 sm:grid-cols-2">
               <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Platform Name</Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  Platform Name
+                </Label>
                 <Input
                   value={String(settings.platformName ?? "Lekhaprati")}
-                  onChange={(e) => setSettings({ ...settings, platformName: e.target.value })}
+                  onChange={(e) =>
+                    setSettings({ ...settings, platformName: e.target.value })
+                  }
                   disabled={saving}
                   className="bg-surface"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Support Email</Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  Support Email
+                </Label>
                 <Input
-                  value={String(settings.supportEmail ?? "hello@lekhaprati.com")}
-                  onChange={(e) => setSettings({ ...settings, supportEmail: e.target.value })}
+                  value={String(
+                    settings.supportEmail ?? "hello@lekhaprati.com",
+                  )}
+                  onChange={(e) =>
+                    setSettings({ ...settings, supportEmail: e.target.value })
+                  }
                   disabled={saving}
                   className="bg-surface"
                 />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Default Currency</Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  Default Currency
+                </Label>
                 <Input
                   value={String(settings.defaultCurrency ?? "NPR")}
-                  onChange={(e) => setSettings({ ...settings, defaultCurrency: e.target.value })}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      defaultCurrency: e.target.value,
+                    })
+                  }
                   disabled={saving}
                   className="w-32 bg-surface"
                 />
@@ -451,15 +537,24 @@ export default function SettingsPage() {
             </div>
             <div className="px-6 py-5">
               <div className="flex flex-col gap-1.5">
-                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">Maintenance Notice</Label>
+                <Label className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
+                  Maintenance Notice
+                </Label>
                 <Textarea
                   rows={3}
                   value={String(settings.maintenanceNotice ?? "")}
-                  onChange={(e) => setSettings({ ...settings, maintenanceNotice: e.target.value })}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      maintenanceNotice: e.target.value,
+                    })
+                  }
                   disabled={saving}
                   className="max-w-2xl bg-surface"
                 />
-                <p className="text-[11px] text-on-surface-variant">Displayed to users when the platform is under maintenance.</p>
+                <p className="text-[11px] text-on-surface-variant">
+                  Displayed to users when the platform is under maintenance.
+                </p>
               </div>
             </div>
             <div className="flex items-center justify-end gap-3 bg-surface-container-low/50 px-6 py-4">

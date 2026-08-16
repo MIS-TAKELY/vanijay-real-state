@@ -129,7 +129,11 @@ export function ListingGallery({
                     : "text-on-surface-variant hover:text-on-surface",
                 )}
               >
-                <Icon name="photo_library" className="text-[16px]" aria-hidden />
+                <Icon
+                  name="photo_library"
+                  className="text-[16px]"
+                  aria-hidden
+                />
                 Photos
                 <span className="tabular-nums">({images.length})</span>
               </button>
@@ -195,7 +199,8 @@ export function ListingGallery({
               <>
                 <Icon name="map" className="text-[16px]" />
                 <span className="tabular-nums">
-                  {cadastralMaps.length} naksa{cadastralMaps.length === 1 ? "" : "s"}
+                  {cadastralMaps.length} naksa
+                  {cadastralMaps.length === 1 ? "" : "s"}
                 </span>
               </>
             )}
@@ -296,9 +301,7 @@ export function ListingGallery({
                 Instagram Reels and TikTok, etc.). */}
             <ListingVideo
               url={activeVideo.url}
-              title={
-                activeVideo.altText ?? `${title} — video walkthrough`
-              }
+              title={activeVideo.altText ?? `${title} — video walkthrough`}
             />
           </div>
 
@@ -467,7 +470,7 @@ export function ListingGallery({
           <div className="mb-3 flex items-center justify-between text-surface">
             <p className="text-sm font-medium tabular-nums">
               {lightboxImageSrc
-                ? lightboxCaption ?? "Naksa (Cadastral Map)"
+                ? (lightboxCaption ?? "Naksa (Cadastral Map)")
                 : `${activeImage + 1} of ${images.length} photos`}
             </p>
             <Button
@@ -530,7 +533,9 @@ export function ListingGallery({
                   aria-current={idx === activeImage ? "true" : undefined}
                   className={cn(
                     "aspect-video overflow-hidden rounded-md transition-all",
-                    idx === activeImage ? "ring-2 ring-primary" : "opacity-70 hover:opacity-100",
+                    idx === activeImage
+                      ? "ring-2 ring-primary"
+                      : "opacity-70 hover:opacity-100",
                   )}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}

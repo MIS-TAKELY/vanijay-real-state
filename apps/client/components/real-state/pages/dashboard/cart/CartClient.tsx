@@ -55,9 +55,7 @@ export function CartClient({ initialItems }: CartClientProps) {
     try {
       const updated = await updateCartQuantity(item.propertyId, quantity);
       setItems((prev) =>
-        prev.map((row) =>
-          row.propertyId === item.propertyId ? updated : row,
-        ),
+        prev.map((row) => (row.propertyId === item.propertyId ? updated : row)),
       );
       void refreshCount();
     } catch (error) {

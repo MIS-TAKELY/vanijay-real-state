@@ -70,7 +70,10 @@ For resolvers/controllers, provide the service as a fake:
 const module = await Test.createTestingModule({
   providers: [
     PropertiesResolver,
-    { provide: PropertiesService, useValue: { findAll: jest.fn().mockResolvedValue([]) } },
+    {
+      provide: PropertiesService,
+      useValue: { findAll: jest.fn().mockResolvedValue([]) },
+    },
   ],
 }).compile();
 ```
@@ -94,13 +97,23 @@ describe('Properties (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
-    const module = await Test.createTestingModule({ imports: [AppModule] }).compile();
+    const module = await Test.createTestingModule({
+      imports: [AppModule],
+    }).compile();
     app = module.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
-  afterEach(async () => { await app.close(); });
+  afterEach(async () => {
+    await app.close();
+  });
 
   it('GET /', () =>
     request(app.getHttpServer()).get('/').expect(200).expect('Hello World!'));

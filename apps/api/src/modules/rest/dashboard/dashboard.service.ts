@@ -120,7 +120,6 @@ export class DashboardService {
       }),
     ]);
 
-
     const listingSnapshots: DashboardListingSnapshot[] = listings.map((p) => ({
       id: p.id,
       listingCode: p.listingCode,
