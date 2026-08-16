@@ -108,6 +108,36 @@ export class PropertyResponse {
   @Field(() => Boolean)
   isFeatured!: boolean;
 
+  @Field(() => Boolean)
+  isNegotiable!: boolean;
+
+  @Field(() => Float, { nullable: true })
+  minBuyableLandSqFt?: number | null;
+
+  @Field(() => String, { nullable: true })
+  minBuyableUnitSystem?: string | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableRopani?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableAana?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  minBuyablePaisa?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  minBuyableDaam?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableBigha?: number | null;
+
+  @Field(() => Int, { nullable: true })
+  minBuyableKatha?: number | null;
+
+  @Field(() => Float, { nullable: true })
+  minBuyableDhur?: number | null;
+
   @Field(() => String)
   ownerId!: string;
 

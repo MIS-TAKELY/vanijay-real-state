@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { Alert, Badge, Button, Icon, Input, toast } from "@repo/ui";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { Alert, Button, Icon, Input, toast } from "@repo/ui";
 import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
 import { kabadiCategories, kabadiSetRates, KabadiCategory } from "lib/api";
@@ -49,8 +49,10 @@ export default function ScrapeCmsPage() {
     }
   }
 
+  const loadRef = useRef(load);
+  loadRef.current = load;
   useEffect(() => {
-    load();
+    loadRef.current();
   }, []);
 
   const filtered = useMemo(() => {

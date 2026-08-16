@@ -470,10 +470,10 @@ export const categories: Category[] = [
 ];
 
 export const appModes = [
-  { id: "real-state", label: "Browse Properties", icon: "domain", href: "/", soon: false },
-  { id: "kabadi", label: "Sell Kabadi", icon: "sell", href: "/scrape", soon: false },
-  { id: "gold", label: "Know gold prices", icon: "Podium", href: "/gold", soon: false },
-  { id: "construction", label: "Buy Construction Products", icon: "storefront", href: "/construction", soon: true },
+  { id: "real-state", label: "Properties", icon: "domain", href: "/", soon: false },
+  { id: "Scrape", label: "Scrape", icon: "sell", href: "/scrape", soon: false },
+  { id: "gold", label: "Metal prices", icon: "Podium", href: "/gold", soon: false },
+  { id: "construction", label: "Construction", icon: "storefront", href: "/construction", soon: true },
 ];
 
 export const about_stats = [

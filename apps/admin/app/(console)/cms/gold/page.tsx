@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Icon, Input, Label, Switch, Textarea, toast, Alert } from "@repo/ui";
 import { PageHeader } from "components/ui/PageHeader";
 import { goldMetals, goldSetOverride, goldUpsertMetal, MetalConfig } from "lib/api";
@@ -22,8 +22,10 @@ export default function GoldCmsPage() {
     }
   }
 
+  const loadRef = useRef(load);
+  loadRef.current = load;
   useEffect(() => {
-    load();
+    loadRef.current();
   }, []);
 
   return (

@@ -54,7 +54,7 @@ function HeroBannerCarousel() {
 
   return (
     <section
-      className="relative w-full h-[70vh] min-h-[480px] max-h-[720px] overflow-hidden"
+      className="relative w-full h-[50vh] min-h-[480px] max-h-[720px] overflow-hidden"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >

@@ -11,8 +11,17 @@ import {
 /** Maximum selection-set nesting permitted in a single GraphQL operation. */
 export const MAX_GRAPHQL_DEPTH = 10;
 
-/** Maximum computed query complexity permitted in a single GraphQL operation. */
-export const MAX_GRAPHQL_COMPLEXITY = 50;
+/**
+ * Maximum computed query complexity permitted in a single GraphQL operation.
+ *
+ * The public list queries (featured / similar / recently-viewed / recently-
+ * added) inline every card field (~53 fields). Fragment-based queries
+ * (propertiesFeed, property) are under-counted here because fragment spreads
+ * aren't expanded by the naive field counter, so 100 leaves comfortable
+ * headroom for legitimate first-party queries while still blocking abusive
+ * inline queries.
+ */
+export const MAX_GRAPHQL_COMPLEXITY = 100;
 
 /**
  * Field-count complexity validation rule.

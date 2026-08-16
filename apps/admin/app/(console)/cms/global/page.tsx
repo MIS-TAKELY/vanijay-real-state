@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Button, Icon, Input, Label, Textarea, toast, Alert } from "@repo/ui";
 import { PageHeader } from "components/ui/PageHeader";
 import { cmsListItems, cmsUpsertItem, CmsContentItem } from "lib/api";
@@ -24,8 +24,10 @@ export default function GlobalCmsPage() {
     }
   }
 
+  const loadRef = useRef(load);
+  loadRef.current = load;
   useEffect(() => {
-    load();
+    loadRef.current();
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, Icon, Input, toast } from "@repo/ui";
 import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
@@ -23,8 +23,10 @@ export default function UsersPage() {
     }
   }, [q]);
 
+  const loadRef = useRef(load);
+  loadRef.current = load;
   useEffect(() => {
-    const t = setTimeout(load, 300);
+    const t = setTimeout(loadRef.current, 300);
     return () => clearTimeout(t);
   }, [load]);
 

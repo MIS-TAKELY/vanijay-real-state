@@ -1,9 +1,9 @@
 "use client";
-import { useState, useRef } from "react";
-import Link from "next/link";
 import { Icon } from "@repo/ui";
-import { usePathname } from "next/navigation";
 import { appModes } from "constants/varibles-constants";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useRef, useState } from "react";
 
 function useHorizontalDrag(ref: React.RefObject<HTMLDivElement | null>) {
   const [isDragging, setIsDragging] = useState(false);
@@ -50,14 +50,6 @@ function AppModeStrip() {
   return (
     <section className="py-8 md:py-10 relative z-10">
       <div className="max-w-container-max mx-auto px-gutter">
-        {/* Section header */}
-        <div className="flex items-end justify-between mb-6">
-          <h2 className="font-headline-md text-headline-md text-primary">
-            Explore by Purpose
-          </h2>
-        </div>
-
-        {/* Horizontally scrollable row */}
         <div
           ref={scrollRef}
           onMouseDown={onMouseDown}
@@ -103,7 +95,10 @@ function AppModeStrip() {
                 className="group flex flex-col items-center gap-3 min-w-[88px] snap-start"
               >
                 {mode.soon ? (
-                  <div aria-disabled="true" className="opacity-60 cursor-not-allowed">
+                  <div
+                    aria-disabled="true"
+                    className="opacity-60 cursor-not-allowed"
+                  >
                     {tile}
                   </div>
                 ) : (

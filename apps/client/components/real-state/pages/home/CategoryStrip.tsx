@@ -43,7 +43,7 @@ function CategoryStrip() {
     <section className="py-10 md:py-14 relative z-10">
       <div className="max-w-container-max mx-auto px-gutter">
         {/* Section header */}
-        <div className="flex items-end justify-between mb-6">
+        {/* <div className="flex items-end justify-between mb-6">
           <h2 className="font-headline-md text-headline-md text-primary">
             Browse by Category
           </h2>
@@ -54,7 +54,7 @@ function CategoryStrip() {
             See All
             <Icon name="arrow_forward" className="text-data-table" />
           </Link>
-        </div>
+        </div> */}
 
         {/* Horizontally scrollable row */}
         <div

@@ -218,6 +218,16 @@ type PropertyResponse {
   facing: String
   isCornerPlot: Boolean!
   isFeatured: Boolean!
+  isNegotiable: Boolean!
+  minBuyableLandSqFt: Float
+  minBuyableUnitSystem: String
+  minBuyableRopani: Int
+  minBuyableAana: Int
+  minBuyablePaisa: Float
+  minBuyableDaam: Float
+  minBuyableBigha: Int
+  minBuyableKatha: Int
+  minBuyableDhur: Float
   ownerId: String!
   agentId: String
   location: PropertyLocation

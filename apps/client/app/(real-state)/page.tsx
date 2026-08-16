@@ -66,26 +66,27 @@ export default async function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <main className="flex flex-col">
-        <HeroBannerCarousel />
         <div
           className="mx-auto w-full max-w-container-max px-gutter"
           aria-hidden="true"
         >
           <div className="h-px w-full bg-outline-variant/60" />
         </div>
-        <AppModeStrip />
+        {/* <AppModeStrip /> */}
         <CategoryStrip />
+        <HeroBannerCarousel />
+        
+        {/* <SearchBar /> */}
+
+        <ListingsMarketplace />
+        <RecentlyAdded />
+        <RecentlyViewed />
         <section className="py-10 md:py-14 relative z-10">
           <div className="">
             <NepalmapWrapper height="clamp(420px, 52vh, 620px)" />
           </div>
         </section>
-        <SearchBar />
-
-        <ListingsMarketplace />
-        <RecentlyAdded />
-        <RecentlyViewed />
-        <CallToActionBanner />
+        {/* <CallToActionBanner /> */}
       </main>
     </>
   );
