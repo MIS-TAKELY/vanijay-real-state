@@ -1,20 +1,34 @@
+import type { CSSProperties, ReactNode } from "react";
+import {
+  SidebarInset,
+  SidebarProvider,
+} from "@repo/ui";
+
 import { OperationsSidebar } from "components/OperationsSidebar";
 import { OperationsTopbar } from "components/OperationsTopbar";
 
 export default function ConsoleLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+}: Readonly<{ children: ReactNode }>) {
   return (
-    <div className="flex min-h-screen">
+    <SidebarProvider
+      className="h-svh overflow-hidden"
+      style={
+        {
+          "--sidebar-width": "16rem",
+          "--sidebar-width-icon": "3rem",
+        } as CSSProperties
+      }
+    >
       <OperationsSidebar />
-      <div className="flex-1 overflow-x-hidden">
+      <SidebarInset className="min-w-0 overflow-hidden bg-admin-bg">
         <OperationsTopbar />
-        <main className="overflow-y-auto">
-          <div className="max-w-container-max mx-auto px-gutter py-md">
+        <div className="flex-1 overflow-y-auto">
+          <div className="mx-auto max-w-container-max px-gutter py-md">
             {children}
           </div>
-        </main>
-      </div>
-    </div>
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

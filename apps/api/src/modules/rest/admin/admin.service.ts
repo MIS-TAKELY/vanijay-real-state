@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient } from '@repo/db';
 
 /**
@@ -467,6 +467,35 @@ export class AdminService {
     await this.prisma.user.update({ where: { id: userId }, data: { role: roles as any } });
     await this.audit(actorId, 'role_change', 'user', userId, `Set roles to ${roles.join(', ')}`);
     return this.prisma.user.findUnique({ where: { id: userId }, include: { profile: true } });
+  }
+
+  /**
+   * Admin changes their own account email directly in the database.
+   * The two-step Better Auth email-verification flow is not used here because
+   * it depends on the operator receiving and clicking confirmation links —
+   * for an authenticated ADMIN session, an immediate update is expected.
+   */
+  async updateAccountEmail(actorId: string, newEmail: string) {
+    const email = String(newEmail ?? '').trim().toLowerCase();
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      throw new BadRequestException('Please enter a valid email address');
+    }
+    const me = await this.prisma.user.findUnique({ where: { id: actorId } });
+    if (!me) throw new NotFoundException('User not found');
+    if (me.email.toLowerCase() === email) {
+      throw new BadRequestException('New email is the same as the current email');
+    }
+    const existing = await this.prisma.user.findUnique({ where: { email } });
+    if (existing) {
+      throw new BadRequestException('That email is already in use by another account');
+    }
+    const updated = await this.prisma.user.update({
+      where: { id: actorId },
+      data: { email },
+      select: { id: true, name: true, email: true, role: true },
+    });
+    await this.audit(actorId, 'email_change', 'user', actorId, `Changed own email to ${email}`);
+    return updated;
   }
 
   async auditLog(take = 100) {

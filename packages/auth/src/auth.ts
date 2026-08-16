@@ -4,6 +4,10 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { emailOTP, phoneNumber } from "better-auth/plugins";
 import "dotenv/config";
 import { emailOtpVerificationOtp } from "./utils/mail-templates/email-otp-verification";
+import {
+  changeEmailConfirmation,
+  changeEmailVerification,
+} from "./utils/mail-templates/change-email";
 import { sendEmail } from "./utils/send-mail";
 import { sendWhatsAppMessage } from "./utils/send-watsapp";
 
@@ -82,6 +86,30 @@ export const auth = betterAuth({
         type: "string",
         required: false,
       },
+    },
+    changeEmail: {
+      enabled: true,
+      // Two-step flow: confirm at the current address, then verify the new one.
+      sendChangeEmailConfirmation: async ({ user, newEmail, url }) => {
+        await sendEmail(
+          user.email,
+          "Approve your email change",
+          changeEmailConfirmation(url, newEmail),
+        );
+      },
+    },
+  },
+
+  emailVerification: {
+    // Keep sign-up verification on the existing email-OTP flow.
+    sendOnSignUp: false,
+    // Used by the change-email flow to verify the new address.
+    sendVerificationEmail: async ({ user, url }) => {
+      await sendEmail(
+        user.email,
+        "Verify your new email",
+        changeEmailVerification(url),
+      );
     },
   },
 

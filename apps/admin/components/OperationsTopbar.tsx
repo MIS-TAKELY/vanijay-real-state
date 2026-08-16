@@ -11,19 +11,16 @@ import {
   DropdownMenuTrigger,
   Icon,
   Input,
-  Sheet,
-  SheetContent,
-  SheetTrigger,
+  SidebarTrigger,
 } from "@repo/ui";
 
-import { AdminNavList } from "components/AdminNavList";
 import { useSession, signOut } from "@repo/auth/client";
 
 /**
- * Topbar: mobile nav trigger + global search + staff user menu.
+ * Topbar: sidebar toggle + global search + staff user menu.
  *
- * The mobile drawer reuses <AdminNavList /> so the desktop and mobile nav are
- * guaranteed to stay in sync.
+ * Desktop collapse and mobile drawer are both driven by SidebarTrigger /
+ * SidebarProvider — no separate Sheet needed.
  */
 export function OperationsTopbar() {
   const router = useRouter();
@@ -33,52 +30,21 @@ export function OperationsTopbar() {
   const email = user?.email || "admin@lekhaprati.com";
   const initial = displayName.charAt(0).toUpperCase();
   return (
-    <header className="sticky top-0 z-20 flex h-14 items-center justify-between gap-md border-b border-outline-variant bg-surface/90 px-md backdrop-blur-md">
-      {/* Left: mobile menu + condensed brand */}
+    <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between gap-md border-b border-outline-variant bg-surface/90 px-md backdrop-blur-md">
+      {/* Left: collapse/open sidebar + condensed brand */}
       <div className="flex items-center gap-sm">
-        <Sheet>
-          <SheetTrigger asChild>
-            <Button
-              variant="ghost"
-              size="icon-sm"
-              aria-label="Open navigation"
-              className="text-on-surface-variant hover:bg-surface-container hover:text-on-surface md:hidden"
-            >
-              <span className="flex flex-col gap-0.5 h-4 w-5 justify-center">
-                <span className="block h-0.5 w-5 rounded bg-current" />
-                <span className="block h-0.5 w-5 rounded bg-current" />
-                <span className="block h-0.5 w-3 rounded bg-current" />
-              </span>
-            </Button>
-          </SheetTrigger>
-          <SheetContent
-            side="left"
-            className="w-[--sidebar-w] border-r border-outline-variant p-0 bg-primary text-on-primary"
-          >
-            <div className="flex h-16 items-center gap-3 border-b border-primary-container px-md">
-              <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-on-primary/10">
-                <Icon
-                  name="account_balance"
-                  className="text-[20px] text-on-primary"
-                />
-              </span>
-              <span className="font-headline-md text-headline-md text-on-primary font-bold tracking-tight">
-                Lekhaprati
-              </span>
-            </div>
-            <div className="py-md">
-              <AdminNavList compact />
-            </div>
-          </SheetContent>
-        </Sheet>
+        <SidebarTrigger
+          aria-label="Toggle navigation"
+          className="text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
+        />
 
-        <span className="hidden sm:block font-headline-md text-headline-md text-on-surface font-bold">
+        <span className="hidden font-headline-md text-headline-md font-bold text-on-surface sm:block">
           Operations Console
         </span>
       </div>
 
       {/* Center: global search */}
-      <div className="flex-1 max-w-(--container-xl)">
+      <div className="max-w-(--container-xl) flex-1">
         <form onSubmit={(e) => e.preventDefault()} role="search" className="relative">
           <label htmlFor="admin-search" className="sr-only">
             Search listings and documents
@@ -115,7 +81,7 @@ export function OperationsTopbar() {
               size="sm"
               className="gap-sm rounded-lg px-sm py-1.5 text-sm font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-on-primary font-headline-md font-bold">
+              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-primary font-headline-md font-bold text-on-primary">
                 {isPending ? "…" : initial}
               </span>
               <span className="hidden sm:inline">{isPending ? "Loading" : displayName}</span>
@@ -154,4 +120,3 @@ export function OperationsTopbar() {
     </header>
   );
 }
-

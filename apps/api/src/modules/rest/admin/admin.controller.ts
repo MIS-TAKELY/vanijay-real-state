@@ -52,6 +52,11 @@ export class AdminController {
     return this.admin.setUserRole(actorId, id, body.roles);
   }
 
+  @Patch('account/email')
+  updateEmail(@Body() body: { newEmail: string }, @CurrentUser('id') actorId: string) {
+    return this.admin.updateAccountEmail(actorId, body?.newEmail ?? '');
+  }
+
   @Get('audit-log')
   auditLog(@Query('take') take?: string) { return this.admin.auditLog(take ? Number(take) : 100); }
 

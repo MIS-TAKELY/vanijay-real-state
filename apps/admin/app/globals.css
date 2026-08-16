@@ -74,6 +74,16 @@
   --color-destructive-foreground: #ffffff;
   --color-foreground: #1b1c19;
 
+  /* ===== shadcn sidebar (forest green rail) ===== */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
   /* ===== radius scale ===== */
   --radius-sm: 4px;
   --radius-md: 8px;
@@ -118,6 +128,18 @@
   --max-width-md: 28rem;
   --max-width-lg: 32rem;
   --max-width-xl: 36rem;
+}
+
+:root {
+  /* Forest green ops sidebar — matches brand primary rail */
+  --sidebar: #244530;
+  --sidebar-foreground: #ffffff;
+  --sidebar-primary: #ffffff;
+  --sidebar-primary-foreground: #244530;
+  --sidebar-accent: #3b5d46;
+  --sidebar-accent-foreground: #ffffff;
+  --sidebar-border: #3b5d46;
+  --sidebar-ring: #aad0b3;
 }
 
 /* ===== base ===== */
@@ -199,6 +221,19 @@ html { font-size: 16px; }
 
 .admin-bg { background-color: var(--surface-container-low); }
 .admin-surface { background-color: var(--surface); }
+
+/* Neutralize browser autofill yellow so inputs match the admin surface */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus {
+  -webkit-text-fill-color: var(--on-surface);
+  caret-color: var(--on-surface);
+  box-shadow: 0 0 0 1000px var(--surface) inset;
+  transition: background-color 99999s ease-out;
+}
 
 /* ===== SunEditor customizations (shared RichTextEditor in @repo/ui) ===== */
 .suneditor-wrapper .sun-editor {

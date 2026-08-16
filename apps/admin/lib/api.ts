@@ -351,6 +351,14 @@ export function updateSettings(data: Record<string, unknown>) {
   return apiFetch<Record<string, unknown>>("/api/v1/admin/settings", { method: "PUT", body: data });
 }
 
+// Updates the admin's own account email directly in the database.
+export function adminUpdateEmail(newEmail: string) {
+  return apiFetch<{ id: string; name: string; email: string; role: string[] }>(
+    "/api/v1/admin/account/email",
+    { method: "PATCH", body: { newEmail } },
+  );
+}
+
 // ---- Types ----
 
 export interface AdminOverview {
