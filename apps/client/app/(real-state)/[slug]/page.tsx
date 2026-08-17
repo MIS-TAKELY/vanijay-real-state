@@ -329,7 +329,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 href="/search"
                 className="transition-colors hover:text-primary"
               >
-                Listings
+                {labelEnum(property.subCategory, TYPE_LABELS)}
               </Link>
             </li>
             <li aria-hidden className="flex items-center">
@@ -363,11 +363,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
             {property.isFeatured && (
               <Badge variant="destructive">Featured</Badge>
             )}
-            {property.listingCode && (
-              <span className="mono-stat text-xs text-on-surface-variant">
-                {property.listingCode}
-              </span>
-            )}
+            
           </div>
 
           {/* Title + Location */}
@@ -384,7 +380,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
           </div>
 
           {/* Key facts — the essentials at a glance, without reading the table */}
-          {keyFacts.length > 0 && (
+          {/* {keyFacts.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {keyFacts.map(([label, value]) => (
                 <div
@@ -400,7 +396,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 </div>
               ))}
             </div>
-          )}
+          )} */}
         </header>
 
         <div className="grid gap-5 lg:grid-cols-3">
