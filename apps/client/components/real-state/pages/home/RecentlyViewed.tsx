@@ -55,10 +55,11 @@ function RecentlyViewed() {
         <div className="max-w-container-max mx-auto px-gutter">
           <div className="flex items-end justify-between mb-6">
             <div>
-              <p className="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">
+              <p className="mb-2 flex items-center gap-2.5 font-label-sm text-[11px] uppercase tracking-[0.18em] text-gold-deep font-bold">
+                <span className="h-px w-7 bg-gold" aria-hidden />
                 Your browsing history
               </p>
-              <h2 className="font-headline-md text-headline-md text-primary">
+              <h2 className="font-headline-md text-headline-md text-navy font-bold tracking-tight">
                 Recently Viewed
               </h2>
             </div>
@@ -96,7 +97,7 @@ function RecentlyViewed() {
           <div className="flex items-center gap-4">
             <a
               href="#"
-              className="font-label-sm text-sm text-on-surface-variant hover:text-primary transition-colors"
+              className="font-label-sm text-sm text-on-surface-variant hover:text-gold-deep transition-colors"
             >
               Clear History
             </a>

@@ -24,8 +24,8 @@ export function UpcomingAppointments({
 
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
-      <h3 className="font-headline-md text-base font-semibold text-on-surface mb-md flex items-center gap-xs">
-        <Icon name="event" className="text-[20px] text-on-surface-variant" />
+      <h3 className="mb-md flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+        <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
         Upcoming Appointments
       </h3>
 
@@ -39,7 +39,7 @@ export function UpcomingAppointments({
             >
               {/* date block */}
               <div className="flex w-14 shrink-0 flex-col items-center justify-center rounded-lg border border-outline-variant bg-surface py-1.5">
-                <span className="mono-stat text-lg font-bold text-on-surface leading-none">
+                <span className="mono-stat text-lg font-bold text-navy leading-none">
                   {appt.day}
                 </span>
                 <span className="font-label-sm text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">

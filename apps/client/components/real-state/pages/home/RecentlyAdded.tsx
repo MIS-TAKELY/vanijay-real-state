@@ -55,10 +55,11 @@ function RecentlyAdded() {
         <div className="max-w-container-max mx-auto px-gutter">
           <div className="flex items-end justify-between mb-6">
             <div>
-              <p className="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">
+              <p className="mb-2 flex items-center gap-2.5 font-label-sm text-[11px] uppercase tracking-[0.18em] text-gold-deep font-bold">
+                <span className="h-px w-7 bg-gold" aria-hidden />
                 Fresh on the market
               </p>
-              <h2 className="font-headline-md text-headline-md text-primary">
+              <h2 className="font-headline-md text-headline-md text-navy font-bold tracking-tight">
                 Recently Added
               </h2>
             </div>

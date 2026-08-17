@@ -70,8 +70,8 @@ export const APPOINTMENT_STATUS_STYLES: Record<
   ApptStatusStyle
 > = {
   REQUESTED: {
-    dot: "bg-[#b45309]",
-    chip: "bg-[#b45309]/10 text-[#b45309]",
+    dot: "bg-gold",
+    chip: "bg-gold/10 text-gold-deep",
     label: "Requested",
   },
   SCHEDULED: {

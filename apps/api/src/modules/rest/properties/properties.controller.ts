@@ -29,6 +29,13 @@ export class PropertiesController {
     });
   }
 
+  // NOTE: must be registered before @Get(':id') so Express doesn't treat
+  // "sitemap" as a property id.
+  @Get('sitemap')
+  findSitemapSlugs() {
+    return this.properties.findSitemapSlugs();
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.properties.findOne(id);

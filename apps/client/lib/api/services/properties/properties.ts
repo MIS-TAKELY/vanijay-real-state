@@ -36,7 +36,8 @@ const PROPERTY_FRAGMENT = `
     slug
     title
     description
-    propertyType
+    mainCategory
+    subCategory
     status
     verificationLevel
     askingPrice

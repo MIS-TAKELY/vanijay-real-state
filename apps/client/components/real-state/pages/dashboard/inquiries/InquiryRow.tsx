@@ -35,7 +35,7 @@ export function InquiryRow({ inquiry, expanded, onToggle }: InquiryRowProps) {
               <Icon
                 name="verified"
                 filled
-                className="shrink-0 text-[14px] text-primary"
+                className="shrink-0 text-[14px] text-gold"
               />
             ) : null}
           </div>

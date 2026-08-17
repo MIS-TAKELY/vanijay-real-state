@@ -22,7 +22,7 @@ export function DetailCard({
   const cleanDesc = stripHtml(m.description);
   const listingUrl =
     m.id && m.id.length > 5
-      ? `/listing/${m.id}`
+      ? `/${m.id}`
       : `/search?q=${encodeURIComponent(m.area)}`;
 
   return (
@@ -66,7 +66,7 @@ export function DetailCard({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          color: "rgba(209,250,229,0.7)",
+          color: "rgba(232,217,168,0.7)",
           fontSize: 13,
         }}
       >
@@ -113,7 +113,7 @@ export function DetailCard({
             style={{
               fontSize: 9,
               fontWeight: 700,
-              color: "#4ade80",
+              color: "#c9a227",
               border: "1px solid rgba(74,222,128,0.4)",
               borderRadius: 4,
               padding: "1px 5px",
@@ -138,7 +138,7 @@ export function DetailCard({
           style={{
             fontSize: 20,
             fontWeight: 800,
-            color: "#4ade80",
+            color: "#c9a227",
             fontFamily: "'IBM Plex Mono', monospace",
           }}
         >
@@ -150,7 +150,7 @@ export function DetailCard({
           style={{
             fontSize: 11,
             fontWeight: 700,
-            color: m.trend === "up" ? "#f87171" : "rgba(209,250,229,0.6)",
+            color: m.trend === "up" ? "#f87171" : "rgba(232,217,168,0.6)",
             display: "flex",
             alignItems: "center",
             gap: 3,
@@ -170,7 +170,7 @@ export function DetailCard({
         <p
           style={{
             fontSize: 11.5,
-            color: "rgba(209,250,229,0.7)",
+            color: "rgba(232,217,168,0.7)",
             lineHeight: 1.4,
             marginBottom: 8,
             display: "-webkit-box",
@@ -212,7 +212,7 @@ export function DetailCard({
                 fontWeight: 700,
                 textTransform: "uppercase",
                 letterSpacing: "0.07em",
-                color: "rgba(209,250,229,0.4)",
+                color: "rgba(232,217,168,0.4)",
                 marginBottom: 2,
               }}
             >
@@ -222,7 +222,7 @@ export function DetailCard({
               style={{
                 fontSize: 12,
                 fontWeight: 700,
-                color: "#d1fae5",
+                color: "#e8d9a8",
                 fontFamily: "'IBM Plex Mono', monospace",
               }}
             >
@@ -246,7 +246,7 @@ export function DetailCard({
             style={{
               fontSize: 9.5,
               fontWeight: 700,
-              color: "#86efac",
+              color: "#a8bfd9",
               background: "rgba(74,222,128,0.12)",
               border: "1px solid rgba(74,222,128,0.2)",
               padding: "2px 6px",
@@ -290,7 +290,7 @@ export function DetailCard({
             fontSize: 10.5,
             fontWeight: 700,
             fontFamily: "'Public Sans', sans-serif",
-            color: "#86efac",
+            color: "#a8bfd9",
             background: "rgba(36,69,48,0.6)",
             border: "1px solid rgba(74,222,128,0.3)",
             borderRadius: 6,
@@ -334,8 +334,8 @@ export function DetailCard({
           fontSize: 11.5,
           fontWeight: 700,
           fontFamily: "'Public Sans', sans-serif",
-          color: "#0d1a14",
-          background: "linear-gradient(135deg, #4ade80 0%, #22c55e 100%)",
+          color: "#0a2540",
+          background: "linear-gradient(135deg, #c9a227 0%, #8a6d1d 100%)",
           border: "none",
           borderRadius: 8,
           cursor: "pointer",

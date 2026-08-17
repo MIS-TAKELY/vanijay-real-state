@@ -45,7 +45,8 @@ type Property {
   slug: String!
   title: String!
   description: String
-  propertyType: PropertyType!
+  mainCategory: MainCategory!
+  subCategory: SubCategory!
   status: PropertyStatus!
   verificationLevel: VerificationStatus!
   askingPrice: Float!
@@ -123,13 +124,39 @@ type Property {
   updatedAt: DateTime!
 }
 
-enum PropertyType {
+enum MainCategory {
+  RESIDENTIAL
+  COMMERCIAL
+  INDUSTRIAL
+  LAND
+  INSTITUTIONAL_SPECIALIZED
+}
+
+enum SubCategory {
+  HOUSE
+  APARTMENT_FLAT
+  TOWNHOUSE
+  ROOM
+  RESIDENTIAL_BUILDING
+  OFFICE
+  RETAIL_SPACE
+  RESTAURANT_CAFE
+  HOSPITALITY
+  COMMERCIAL_BUILDING
+  WAREHOUSE_GODOWN
+  FACTORY_MANUFACTURING
+  LOGISTICS_DISTRIBUTION
+  WORKSHOP
+  INDUSTRIAL_BUILDING
   RESIDENTIAL_LAND
   COMMERCIAL_LAND
   AGRICULTURAL_LAND
-  COMMERCIAL_SPACE
-  HERITAGE_HOME
-  RESIDENTIAL_HOUSE
+  INDUSTRIAL_LAND
+  DEVELOPMENT_LAND
+  HEALTHCARE
+  EDUCATION
+  INSTITUTIONAL
+  COMMUNITY
 }
 
 enum PropertyStatus {
@@ -208,7 +235,8 @@ type PropertyResponse {
   slug: String!
   title: String!
   description: String
-  propertyType: String!
+  mainCategory: String!
+  subCategory: String!
   status: String!
   verificationLevel: String!
   askingPrice: Float!
@@ -264,7 +292,8 @@ type Mutation {
 input CreatePropertyInput {
   title: String!
   description: String
-  propertyType: PropertyType!
+  mainCategory: MainCategory!
+  subCategory: SubCategory!
   askingPrice: Float!
   pricePerAana: Float
   roadAccessWidthFt: Float
@@ -398,7 +427,8 @@ enum DocumentType {
 input UpdatePropertyInput {
   title: String
   description: String
-  propertyType: PropertyType
+  mainCategory: MainCategory
+  subCategory: SubCategory
   askingPrice: Float
   pricePerAana: Float
   roadAccessWidthFt: Float

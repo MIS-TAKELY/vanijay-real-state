@@ -12,7 +12,8 @@ import { PrismaClient } from '@repo/db';
 export interface UpdatePropertyAdminInput {
   title?: string;
   description?: string;
-  propertyType?: string;
+  mainCategory?: string;
+  subCategory?: string;
   status?: string;
   askingPrice?: number;
   pricePerAana?: number;
@@ -460,7 +461,7 @@ export class AdminService {
         take: 10,
       }),
       this.prisma.property.groupBy({
-        by: ['propertyType'],
+        by: ['mainCategory'],
         _count: { _all: true },
       }),
       this.prisma.property.groupBy({ by: ['status'], _count: { _all: true } }),
@@ -477,7 +478,8 @@ export class AdminService {
               title: true,
               slug: true,
               status: true,
-              propertyType: true,
+              mainCategory: true,
+              subCategory: true,
               askingPrice: true,
               location: {
                 select: { district: true, municipality: true, areaName: true },
@@ -525,7 +527,8 @@ export class AdminService {
         title: p.title,
         slug: p.slug,
         status: p.status,
-        propertyType: p.propertyType,
+        mainCategory: p.mainCategory,
+        subCategory: p.subCategory,
         askingPrice: Number(p.askingPrice),
         location: p.location
           ? `${p.location.areaName || p.location.municipality}, ${p.location.district}`
@@ -869,7 +872,7 @@ export class AdminService {
       ];
     }
     if (params.status) where.status = params.status;
-    if (params.type) where.propertyType = params.type;
+    if (params.type) where.mainCategory = params.type;
     const [items, total] = await Promise.all([
       this.prisma.property.findMany({
         where,

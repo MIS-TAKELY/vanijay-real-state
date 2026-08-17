@@ -41,7 +41,7 @@ async function getTransport() {
 
 export async function sendEmail(to: string, subject: string, html: string) {
   const transport = await getTransport();
-  const from = process.env.SMTP_FROM ?? '"Lekhaprati" <noreply@lekhaprati.com>';
+  const from = process.env.SMTP_FROM ?? '"MALPOTH" <noreply@lekhaprati.com>';
   const info = await transport.sendMail({ from, to, subject, html });
 
   // Log Ethereal preview link when in dev mode

@@ -9,12 +9,12 @@ export function StatCard({ stat }: StatCardProps) {
   const positive = stat.deltaPositive ?? false;
 
   return (
-    <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant bg-surface p-md">
+    <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant border-t-2 border-t-gold/40 bg-surface p-md shadow-sm">
       <div className="flex items-center justify-between">
-        <span className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+        <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
           {stat.label}
         </span>
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-surface-container text-on-surface-variant">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-navy text-gold shadow-sm">
           <Icon name={stat.icon} className="text-body-lg" />
         </span>
       </div>

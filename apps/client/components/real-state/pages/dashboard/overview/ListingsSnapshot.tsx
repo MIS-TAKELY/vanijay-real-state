@@ -29,7 +29,7 @@ export function ListingsSnapshot({ listings }: ListingsSnapshotProps) {
         action={
           <Link
             href="/dashboard/listings/new"
-            className="inline-flex items-center gap-1 rounded-md bg-primary text-on-primary px-4 py-2 text-sm font-medium hover:bg-primary/90 transition-colors"
+            className="inline-flex items-center gap-1 rounded-md bg-gold text-on-gold px-4 py-2 text-sm font-medium hover:bg-gold/90 transition-colors"
           >
             <Icon name="add" className="text-data-table" />
             List your first property
@@ -42,16 +42,13 @@ export function ListingsSnapshot({ listings }: ListingsSnapshotProps) {
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
       <div className="flex items-center justify-between mb-sm">
-        <h3 className="font-headline-md text-base font-semibold text-on-surface flex items-center gap-xs">
-          <Icon
-            name="list_alt"
-            className="text-[20px] text-on-surface-variant"
-          />
+        <h3 className="flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+          <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
           My Listings
         </h3>
         <Link
           href="/my-listings"
-          className="font-label-sm text-label-sm text-primary font-medium hover:underline inline-flex items-center gap-0.5"
+          className="font-label-sm text-label-sm text-gold-deep font-medium hover:underline inline-flex items-center gap-0.5"
         >
           View all
           <Icon name="arrow_forward" className="text-[14px]" />

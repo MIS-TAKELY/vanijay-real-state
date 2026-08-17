@@ -412,7 +412,7 @@ export const milestones = [
   {
     year: "2024",
     title: "Public Launch",
-    desc: "Lekhaprati goes live as a public-trust archive. First 74 districts indexed; 12,000+ cadastral-cleared listings published.",
+    desc: "MALPOTH goes live as a public-trust archive. First 74 districts indexed; 12,000+ cadastral-cleared listings published.",
   },
   {
     year: "2025",
@@ -464,21 +464,18 @@ export const heroSlides: HeroSlide[] = [
   },
 ];
 
+export interface HierarchicalCategory {
+  mainCategory: string;
+  label: string;
+  image: string;
+  subCategories: { key: string; label: string }[];
+}
+
 export const categories: Category[] = [
   {
-    name: "Apartments",
+    name: "Residential",
     image:
-      "https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?w=200&h=200&fit=crop",
-  },
-  {
-    name: "Villas",
-    image:
-      "https://images.unsplash.com/photo-1613977257363-707ba9348227?w=200&h=200&fit=crop",
-  },
-  {
-    name: "Land",
-    image:
-      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop",
+      "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=200&h=200&fit=crop",
   },
   {
     name: "Commercial",
@@ -486,24 +483,81 @@ export const categories: Category[] = [
       "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=200&fit=crop",
   },
   {
-    name: "Rentals",
+    name: "Industrial",
     image:
-      "https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?w=200&h=200&fit=crop",
+      "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=200&h=200&fit=crop",
   },
   {
-    name: "Farm Houses",
+    name: "Land",
     image:
-      "https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=200&h=200&fit=crop",
+      "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop",
   },
   {
-    name: "Plots",
+    name: "Institutional",
     image:
-      "https://images.unsplash.com/photo-1449156493391-d2cfa28e468b?w=200&h=200&fit=crop",
+      "https://images.unsplash.com/photo-1562774053-701939374585?w=200&h=200&fit=crop",
+  },
+];
+
+export const HIERARCHICAL_CATEGORIES: HierarchicalCategory[] = [
+  {
+    mainCategory: "RESIDENTIAL",
+    label: "Residential",
+    image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=200&h=200&fit=crop",
+    subCategories: [
+      { key: "HOUSE", label: "House" },
+      { key: "APARTMENT_FLAT", label: "Apartment / Flat" },
+      { key: "TOWNHOUSE", label: "Townhouse" },
+      { key: "ROOM", label: "Room" },
+      { key: "RESIDENTIAL_BUILDING", label: "Residential Building" },
+    ],
   },
   {
-    name: "Offices",
-    image:
-      "https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=200&h=200&fit=crop",
+    mainCategory: "COMMERCIAL",
+    label: "Commercial",
+    image: "https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=200&fit=crop",
+    subCategories: [
+      { key: "OFFICE", label: "Office" },
+      { key: "RETAIL_SPACE", label: "Retail Space" },
+      { key: "RESTAURANT_CAFE", label: "Restaurant / Caf\u00e9" },
+      { key: "HOSPITALITY", label: "Hospitality" },
+      { key: "COMMERCIAL_BUILDING", label: "Commercial Building" },
+    ],
+  },
+  {
+    mainCategory: "INDUSTRIAL",
+    label: "Industrial",
+    image: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=200&h=200&fit=crop",
+    subCategories: [
+      { key: "WAREHOUSE_GODOWN", label: "Warehouse / Godown" },
+      { key: "FACTORY_MANUFACTURING", label: "Factory / Manufacturing" },
+      { key: "LOGISTICS_DISTRIBUTION", label: "Logistics / Distribution" },
+      { key: "WORKSHOP", label: "Workshop" },
+      { key: "INDUSTRIAL_BUILDING", label: "Industrial Building" },
+    ],
+  },
+  {
+    mainCategory: "LAND",
+    label: "Land",
+    image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop",
+    subCategories: [
+      { key: "RESIDENTIAL_LAND", label: "Residential Land" },
+      { key: "COMMERCIAL_LAND", label: "Commercial Land" },
+      { key: "AGRICULTURAL_LAND", label: "Agricultural Land" },
+      { key: "INDUSTRIAL_LAND", label: "Industrial Land" },
+      { key: "DEVELOPMENT_LAND", label: "Development Land" },
+    ],
+  },
+  {
+    mainCategory: "INSTITUTIONAL_SPECIALIZED",
+    label: "Institutional & Specialized",
+    image: "https://images.unsplash.com/photo-1562774053-701939374585?w=200&h=200&fit=crop",
+    subCategories: [
+      { key: "HEALTHCARE", label: "Healthcare" },
+      { key: "EDUCATION", label: "Education" },
+      { key: "INSTITUTIONAL", label: "Institutional" },
+      { key: "COMMUNITY", label: "Community" },
+    ],
   },
 ];
 

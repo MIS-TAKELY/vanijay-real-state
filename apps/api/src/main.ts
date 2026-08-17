@@ -14,15 +14,12 @@ async function bootstrap() {
   });
   app.useLogger(app.get(Logger));
 
-  // Build the list of allowed CORS origins from env vars so every
-  // front-end app (client + admin) can talk to the API.
-  // You can also override the whole list with ALLOWED_ORIGINS (comma-separated).
   const corsOrigins =
     process.env.ALLOWED_ORIGINS?.split(',')
       .map((o) => o.trim())
       .filter(Boolean) ??
-    [process.env.CLIENT_URL ?? 'https://malpoth.com', process.env.ADMIN_URL]
-      .map((o) => o?.trim()) // trim in case env values have stray spaces
+    [process.env.CLIENT_URL, process.env.ADMIN_URL]
+      .map((o) => o?.trim()) 
       .filter(Boolean);
 
   app.enableCors({

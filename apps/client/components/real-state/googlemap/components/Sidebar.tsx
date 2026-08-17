@@ -55,7 +55,7 @@ export function Sidebar({
             style={{
               fontSize: 12,
               fontWeight: 800,
-              color: "#4ade80",
+              color: "#c9a227",
               letterSpacing: "0.05em",
               textTransform: "uppercase",
             }}
@@ -65,7 +65,7 @@ export function Sidebar({
           <div
             style={{
               fontSize: 10,
-              color: "rgba(209,250,229,0.45)",
+              color: "rgba(232,217,168,0.45)",
               marginTop: 1,
             }}
           >
@@ -88,7 +88,7 @@ export function Sidebar({
               style={{
                 fontSize: 9,
                 fontWeight: 700,
-                color: "rgba(209,250,229,0.45)",
+                color: "rgba(232,217,168,0.45)",
                 textTransform: "uppercase",
                 letterSpacing: "0.05em",
               }}
@@ -109,7 +109,7 @@ export function Sidebar({
             style={{
               padding: "48px 16px",
               textAlign: "center",
-              color: "rgba(209,250,229,0.4)",
+              color: "rgba(232,217,168,0.4)",
               fontSize: 13,
             }}
           >
@@ -150,7 +150,7 @@ export function Sidebar({
                     ? "rgba(74,222,128,0.12)"
                     : "transparent",
                   borderLeft: isActive
-                    ? "3px solid #4ade80"
+                    ? "3px solid #c9a227"
                     : "3px solid transparent",
                   transition: "all 0.15s ease",
                 }}
@@ -177,7 +177,7 @@ export function Sidebar({
                     style={{
                       fontSize: 15,
                       fontWeight: 800,
-                      color: isActive ? "#4ade80" : "#fafafa",
+                      color: isActive ? "#c9a227" : "#fafafa",
                       fontFamily: "'IBM Plex Mono', monospace",
                     }}
                   >
@@ -216,7 +216,7 @@ export function Sidebar({
                       style={{
                         fontSize: 10,
                         fontWeight: 600,
-                        color: "#4ade80",
+                        color: "#c9a227",
                         background: "rgba(34, 197, 94, 0.15)",
                         padding: "2px 8px",
                         borderRadius: 4,
@@ -245,7 +245,7 @@ export function Sidebar({
         <span
           style={{
             fontSize: 11,
-            color: "rgba(209,250,229,0.45)",
+            color: "rgba(232,217,168,0.45)",
             letterSpacing: "0.03em",
           }}
         >

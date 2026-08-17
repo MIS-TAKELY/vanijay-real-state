@@ -7,16 +7,17 @@ import {
   Timeline,
   Values,
 } from "components/real-state/pages/about";
+import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
-const PAGE_URL = "https://lekhaprati.com/about";
+const PAGE_URL = `${SITE_URL}/about`;
 
 export const metadata: Metadata = {
-  title: "About Lekhaprati | Nepal's Verified Land & Property Archive",
+  title: "About MALPOTH | Nepal's Verified Land & Property Archive",
   description:
-    "Lekhaprati is Nepal's first institutional land archive. Learn how we eliminate title disputes through rigorous field verification, cadastral cross-referencing, and legal transparency.",
+    "MALPOTH is Nepal's first institutional land archive. Learn how we eliminate title disputes through rigorous field verification, cadastral cross-referencing, and legal transparency.",
   keywords: [
-    "about Lekhaprati",
+    "about MALPOTH",
     "Nepal land archive",
     "verified property Nepal",
     "land title verification",
@@ -27,16 +28,16 @@ export const metadata: Metadata = {
     canonical: "/about",
   },
   openGraph: {
-    title: "About Lekhaprati | Nepal's Verified Land & Property Archive",
+    title: "About MALPOTH | Nepal's Verified Land & Property Archive",
     description:
       "Nepal's first institutional land archive. Professionalizing real estate through rigorous field verification and legal transparency.",
     url: PAGE_URL,
-    siteName: "Lekhaprati",
+    siteName: "MALPOTH",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About Lekhaprati | Nepal's Verified Land & Property Archive",
+    title: "About MALPOTH | Nepal's Verified Land & Property Archive",
     description:
       "Nepal's first institutional land archive — rigorous field verification, cadastral cross-referencing, zero title disputes.",
   },
@@ -46,8 +47,8 @@ export const metadata: Metadata = {
 const organizationSchema = {
   "@context": "https://schema.org",
   "@type": "Organization",
-  name: "Lekhaprati",
-  url: "https://lekhaprati.com",
+  name: "MALPOTH",
+  url: SITE_URL,
   description:
     "Nepal's first institutional land archive. Professionalizing real estate through rigorous field verification and legal transparency.",
   foundingDate: "2024",
@@ -68,10 +69,10 @@ const organizationSchema = {
 const aboutPageSchema = {
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  name: "About Lekhaprati — Nepal's Land Archive",
+  name: "About MALPOTH — Nepal's Land Archive",
   description:
-    "Learn how Lekhaprati eliminates title disputes through field verification, cadastral cross-referencing, and legal transparency.",
-  mainEntity: { "@type": "Organization", name: "Lekhaprati" },
+    "Learn how MALPOTH eliminates title disputes through field verification, cadastral cross-referencing, and legal transparency.",
+  mainEntity: { "@type": "Organization", name: "MALPOTH" },
 };
 
 const breadcrumbSchema = {
@@ -82,7 +83,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://lekhaprati.com",
+      item: SITE_URL,
     },
     {
       "@type": "ListItem",

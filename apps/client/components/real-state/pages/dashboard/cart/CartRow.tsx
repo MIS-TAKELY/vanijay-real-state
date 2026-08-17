@@ -20,12 +20,12 @@ export function CartRow({ item, busy, onQuantity, onRemove }: CartRowProps) {
   if (!property) return null;
 
   const cover = property.media?.find((m) => m.isCover) ?? property.media?.[0];
-  const gradient = TYPE_GRADIENTS[property.propertyType] ?? FALLBACK_GRADIENT;
+  const gradient = TYPE_GRADIENTS[property.subCategory] ?? FALLBACK_GRADIENT;
 
   return (
-    <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant bg-surface p-sm sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant border-t-2 border-t-gold/40 bg-surface p-sm shadow-sm transition-shadow hover:shadow-md sm:flex-row sm:items-center">
       <Link
-        href={`/listing/${property.slug}`}
+        href={`/${property.slug}`}
         className="relative block h-28 w-full shrink-0 overflow-hidden rounded-xl sm:h-20 sm:w-28"
       >
         {cover ? (
@@ -42,7 +42,7 @@ export function CartRow({ item, busy, onQuantity, onRemove }: CartRowProps) {
 
       <div className="min-w-0 flex-1">
         <Link
-          href={`/listing/${property.slug}`}
+          href={`/${property.slug}`}
           className="block truncate text-sm font-semibold text-on-surface hover:text-primary"
         >
           {property.title}
@@ -50,7 +50,7 @@ export function CartRow({ item, busy, onQuantity, onRemove }: CartRowProps) {
         <p className="mt-0.5 truncate text-xs text-on-surface-variant">
           {formatLocation(property.location)} · {property.listingCode}
         </p>
-        <p className="mono-stat mt-1 text-sm font-semibold text-primary">
+        <p className="mono-stat mt-1 text-sm font-semibold text-gold-deep">
           {formatNPR(property.askingPrice)}
         </p>
       </div>

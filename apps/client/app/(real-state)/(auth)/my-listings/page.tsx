@@ -11,7 +11,10 @@ export default function MyListingsPage() {
         title="My Listings"
         description="Manage your verified property archive — drafts, live listings and sold records."
         action={
-          <Button asChild>
+          <Button
+            asChild
+            className="bg-gold text-on-gold shadow-sm hover:bg-gold/90"
+          >
             <Link href="/my-listings/new">
               <Icon name="add" className="text-data-table" />
               New Listing

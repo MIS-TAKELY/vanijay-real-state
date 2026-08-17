@@ -76,21 +76,26 @@ function HeroBannerCarousel() {
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${slide.image})` }}
           />
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent" />
+          {/* Gradient overlay — navy-tinted to echo the brand roundel */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/85 via-navy/45 to-navy/5" />
+          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy-deep/70 to-transparent" />
           {/* Content */}
           <div className="relative z-20 flex items-center h-full max-w-container-max mx-auto px-gutter">
-            <div className="text-white">
+            <div className="text-white max-w-2xl">
+              <p className="mb-4 flex items-center gap-3 font-label-sm text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
+                <span className="h-px w-8 bg-gold/70" aria-hidden />
+                Nepal&apos;s Verified Land Archive
+              </p>
               <h1 className="font-display-lg text-display-lg leading-tight mb-4">
                 {slide.headline}
               </h1>
-              <p className="font-body-lg text-white/80 leading-relaxed mb-8">
+              <p className="font-body-lg text-white/85 leading-relaxed mb-8">
                 {slide.subheadline}
               </p>
               <div className="flex flex-wrap gap-3">
                 <Button
                   size="lg"
-                  className="shadow-lg"
+                  className="bg-gold text-on-gold shadow-lg shadow-navy-deep/30 hover:bg-gold/90"
                   onClick={() => router.push("/")}
                 >
                   {slide.ctaPrimary}
@@ -98,7 +103,7 @@ function HeroBannerCarousel() {
                 <Button
                   size="lg"
                   variant="outline"
-                  className="border-white/30 text-white hover:bg-white/10 shadow-lg"
+                  className="border-white/40 text-white hover:border-gold/70 hover:bg-white/10 shadow-lg"
                   onClick={() => router.push("/nrn-concierge")}
                 >
                   {slide.ctaSecondary}
@@ -109,7 +114,7 @@ function HeroBannerCarousel() {
         </div>
       ))}
 
-      {/* Dot indicators */}
+      {/* Dot indicators — gold for the active slide */}
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
         {heroSlides.map((_, index) => (
           <button
@@ -117,7 +122,7 @@ function HeroBannerCarousel() {
             onClick={() => goTo(index)}
             className={`h-2 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
               index === current
-                ? "w-8 bg-white"
+                ? "w-8 bg-gold"
                 : "w-2 bg-white/50 hover:bg-white/80"
             }`}
             aria-label={`Go to slide ${index + 1}`}
@@ -128,7 +133,7 @@ function HeroBannerCarousel() {
       {/* Arrow navigation - desktop only */}
       <button
         onClick={goPrev}
-        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-30 size-12 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm border border-white/10 opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:bg-black/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+        className="hidden md:flex absolute left-4 top-1/2 -translate-y-1/2 z-30 size-12 items-center justify-center rounded-full bg-navy-deep/30 text-white backdrop-blur-sm border border-white/15 opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:border-gold/60 hover:bg-navy-deep/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
         aria-label="Previous slide"
         style={{ opacity: isHovering ? 1 : undefined }}
       >
@@ -136,7 +141,7 @@ function HeroBannerCarousel() {
       </button>
       <button
         onClick={goNext}
-        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-30 size-12 items-center justify-center rounded-full bg-black/20 text-white backdrop-blur-sm border border-white/10 opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:bg-black/40 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
+        className="hidden md:flex absolute right-4 top-1/2 -translate-y-1/2 z-30 size-12 items-center justify-center rounded-full bg-navy-deep/30 text-white backdrop-blur-sm border border-white/15 opacity-0 hover:opacity-100 focus:opacity-100 transition-opacity duration-200 hover:border-gold/60 hover:bg-navy-deep/60 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50"
         aria-label="Next slide"
         style={{ opacity: isHovering ? 1 : undefined }}
       >

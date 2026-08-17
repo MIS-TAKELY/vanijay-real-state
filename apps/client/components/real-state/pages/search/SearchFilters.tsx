@@ -209,7 +209,7 @@ export function SearchFilters() {
         <form
           aria-label="Filter property search results"
           onSubmit={handleSubmit}
-          className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-outline-variant bg-surface px-3 py-2 shadow-sm transition-shadow duration-200 focus-within:ring-2 focus-within:ring-primary/20"
+          className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-outline-variant bg-surface px-3 py-2 shadow-sm transition-[box-shadow,border-color] duration-200 focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/30"
         >
           {/* Search */}
           <div className="flex min-w-[180px] flex-1 items-center gap-2">
@@ -249,7 +249,7 @@ export function SearchFilters() {
             <Select value={type} onValueChange={handleTypeChange}>
               <SelectTrigger
                 id="filter-type"
-                className={`h-9 w-full border-0 bg-transparent text-xs px-2 shadow-none focus-visible:ring-0 ${type !== "all" ? "font-medium text-primary" : ""}`}
+                className={`h-9 w-full border-0 bg-transparent text-xs px-2 shadow-none focus-visible:ring-0 ${type !== "all" ? "font-medium text-gold-deep" : ""}`}
               >
                 <SelectValue placeholder="Type" />
               </SelectTrigger>
@@ -271,7 +271,7 @@ export function SearchFilters() {
             <Select value={price} onValueChange={handlePriceChange}>
               <SelectTrigger
                 id="filter-price"
-                className={`h-9 w-full border-0 bg-transparent px-2 text-xs shadow-none focus-visible:ring-0 ${price !== "any" ? "font-medium text-primary" : ""}`}
+                className={`h-9 w-full border-0 bg-transparent px-2 text-xs shadow-none focus-visible:ring-0 ${price !== "any" ? "font-medium text-gold-deep" : ""}`}
               >
                 <SelectValue placeholder="Price" />
               </SelectTrigger>
@@ -297,7 +297,7 @@ export function SearchFilters() {
               options={DISTRICT_OPTIONS}
               placeholder="District"
               searchPlaceholder="Search districts…"
-              triggerClassName={`h-9 w-full border-0 bg-transparent px-2  text-xs shadow-none focus-visible:ring-0 ${district !== "any" ? "font-medium text-primary" : ""}`}
+              triggerClassName={`h-9 w-full border-0 bg-transparent px-2  text-xs shadow-none focus-visible:ring-0 ${district !== "any" ? "font-medium text-gold-deep" : ""}`}
             />
           </div>
 

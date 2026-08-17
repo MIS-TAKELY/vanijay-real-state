@@ -15,9 +15,10 @@ import { Type } from 'class-transformer';
 import {
   DocumentType,
   FacingDirection,
+  MainCategory,
   MediaType,
-  PropertyType,
   RoadType,
+  SubCategory,
 } from '@repo/db';
 
 @InputType()
@@ -197,9 +198,13 @@ export class CreatePropertyInput {
   // @MaxLength(5000)
   description?: string;
 
-  @Field(() => PropertyType)
-  @IsEnum(PropertyType)
-  propertyType!: PropertyType;
+  @Field(() => MainCategory)
+  @IsEnum(MainCategory)
+  mainCategory!: MainCategory;
+
+  @Field(() => SubCategory)
+  @IsEnum(SubCategory)
+  subCategory!: SubCategory;
 
   @Field(() => Number)
   @IsNumber()

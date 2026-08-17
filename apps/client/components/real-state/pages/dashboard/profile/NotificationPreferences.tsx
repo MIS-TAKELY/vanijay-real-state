@@ -44,7 +44,8 @@ export function NotificationPreferences() {
 
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
-      <h2 className="mb-md font-headline-md text-base font-semibold text-on-surface">
+      <h2 className="mb-md flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+        <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
         Notification Preferences
       </h2>
 
@@ -52,11 +53,11 @@ export function NotificationPreferences() {
         <Table className="w-full min-w-[420px]">
           <TableHeader>
             <TableRow>
-              <TableHead className="w-full text-left font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant" />
+              <TableHead className="w-full text-left font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep" />
               {NOTIFICATION_CHANNELS.map((channel) => (
                 <TableHead
                   key={channel}
-                  className="px-sm pb-sm text-center font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant"
+                  className="px-sm pb-sm text-center font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep"
                 >
                   {NOTIFICATION_CHANNEL_LABELS[channel]}
                 </TableHead>

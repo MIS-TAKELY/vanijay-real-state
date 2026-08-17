@@ -27,7 +27,8 @@ export interface DraftDocument {
 export interface ListingDraft {
   /* basics */
   title: string;
-  propertyType: string; // PropertyType enum value (e.g. RESIDENTIAL_LAND)
+  mainCategory: string; // MainCategory enum value (e.g. RESIDENTIAL)
+  subCategory: string; // SubCategory enum value (e.g. HOUSE)
   description: string;
   askingPrice: string; // user-typed, may contain commas/spaces
   priceUnit: string;
@@ -124,7 +125,8 @@ export interface ListingDraft {
 
 export const INITIAL_DRAFT: ListingDraft = {
   title: "",
-  propertyType: "RESIDENTIAL_LAND",
+  mainCategory: "",
+  subCategory: "",
   description: "",
   askingPrice: "",
   priceUnit: "",
@@ -275,7 +277,7 @@ export function builtUpAreaNumber(draft: ListingDraft): number {
  * the land area.
  */
 function priceAreaSqFtExact(draft: ListingDraft): number {
-  if (isBuildingType(draft.propertyType)) {
+  if (isBuildingType(draft.subCategory)) {
     const built = builtUpAreaNumber(draft);
     if (built > 0) return built;
   }
@@ -338,7 +340,8 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
       errors.title = `Give the listing at least ${TITLE_MIN} characters.`;
     else if (title.length > TITLE_MAX)
       errors.title = `Keep the title under ${TITLE_MAX} characters.`;
-    if (!draft.propertyType) errors.propertyType = "Pick a property type.";
+    if (!draft.mainCategory || !draft.subCategory)
+      errors.subCategory = "Pick a property category and type.";
 
     const plainDesc = stripHtml(draft.description);
     if (plainDesc.length > DESC_MAX) {
@@ -363,7 +366,7 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
     // Land area: required for the three land types; optional for building
     // types ("only if the property includes land"). Either way, sub-units at
     // or above their parent unit silently double-count the area math.
-    if (isLandType(draft.propertyType) && !hasLand) {
+    if (isLandType(draft.subCategory) && !hasLand) {
       errors.units = "Enter the land area in your chosen unit system.";
     } else if (hasLand) {
       if (draft.unitSystem === "ROPANI") {
@@ -384,26 +387,45 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
     }
 
     // Per-type required fields (wizard-only — not yet persisted).
+    // Now using subCategory for granular validation.
+    const sub = draft.subCategory;
     if (
-      draft.propertyType === "COMMERCIAL_LAND" &&
+      (sub === "COMMERCIAL_LAND" || sub === "RETAIL_SPACE") &&
       num(draft.frontageFt) <= 0
     ) {
-      errors.frontageFt = "Frontage is required for commercial land.";
+      errors.frontageFt = "Frontage is required for commercial land/retail.";
     }
-    if (draft.propertyType === "RESIDENTIAL_HOUSE") {
+    if (
+      sub === "HOUSE" ||
+      sub === "APARTMENT_FLAT" ||
+      sub === "TOWNHOUSE" ||
+      sub === "RESIDENTIAL_BUILDING"
+    ) {
       if (builtUpAreaNumber(draft) <= 0)
         errors.builtUpAreaSqFt = "Enter the built-up area in sq.ft.";
       if (
-        APARTMENT_LIKE_SUBTYPES.includes(draft.propertySubtype) &&
+        (sub === "APARTMENT_FLAT" || sub === "TOWNHOUSE") &&
         num(draft.floorNumber) <= 0
       )
-        errors.floorNumber = "Floor number is required for apartments.";
+        errors.floorNumber = "Floor number is required for apartments/townhouses.";
     }
-    if (draft.propertyType === "COMMERCIAL_SPACE") {
+    if (
+      sub === "OFFICE" ||
+      sub === "RETAIL_SPACE" ||
+      sub === "RESTAURANT_CAFE" ||
+      sub === "HOSPITALITY" ||
+      sub === "COMMERCIAL_BUILDING"
+    ) {
       if (builtUpAreaNumber(draft) <= 0)
         errors.builtUpAreaSqFt = "Enter the built-up area in sq.ft.";
-      if (num(draft.frontageFt) <= 0)
-        errors.frontageFt = "Frontage is required for commercial space.";
+    }
+    if (
+      sub === "WAREHOUSE_GODOWN" ||
+      sub === "FACTORY_MANUFACTURING" ||
+      sub === "INDUSTRIAL_BUILDING"
+    ) {
+      if (builtUpAreaNumber(draft) <= 0)
+        errors.builtUpAreaSqFt = "Enter the built-up area in sq.ft.";
     }
 
     const roadWidth = num(draft.roadWidthFt);
@@ -459,7 +481,8 @@ export interface PropertyDocumentPayload {
 export interface CreatePropertyPayload {
   title: string;
   description?: string;
-  propertyType: string; // PropertyType enum
+  mainCategory: string; // MainCategory enum
+  subCategory: string; // SubCategory enum
   askingPrice: number;
   pricePerAana?: number | null;
   roadAccessWidthFt?: number;
@@ -588,7 +611,7 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
   // per-aana rate derived from an optional/small land parcel would be
   // misleading (e.g. a 1-paisa parcel under an apartment → an absurd rate).
   let pricePerAana: number | undefined;
-  if (isLandType(draft.propertyType) && draft.unitSystem === "ROPANI") {
+  if (isLandType(draft.subCategory) && draft.unitSystem === "ROPANI") {
     const totalAana =
       num(u.ropani) * 16 + num(u.aana) + num(u.paisa) / 4 + num(u.daam) / 16;
     if (totalAana > 0) pricePerAana = Math.round(askingPrice / totalAana);
@@ -658,12 +681,13 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
     ...(stripHtml(draft.description)
       ? { description: draft.description.trim() }
       : {}),
-    propertyType: draft.propertyType,
+    mainCategory: draft.mainCategory,
+    subCategory: draft.subCategory,
     askingPrice,
     // Land types carry the computed rate; building types send an explicit
     // null so stale values stored before the land-only rule are cleared on
     // edit (matches the "cleared fields reset the DB" pattern in this payload).
-    ...(isLandType(draft.propertyType)
+    ...(isLandType(draft.subCategory)
       ? pricePerAana
         ? { pricePerAana }
         : {}
@@ -784,7 +808,8 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
 
 export interface WizardProperty {
   title: string;
-  propertyType: string;
+  mainCategory: string;
+  subCategory: string;
   description?: string | null;
   askingPrice: number | string;
   pricePerAana?: number | string | null;
@@ -948,7 +973,8 @@ export function listingDraftFromApiProperty(p: WizardProperty): ListingDraft {
     // Type-specific spec fields aren't persisted yet — hydrate from defaults.
     ...INITIAL_DRAFT,
     title: p.title,
-    propertyType: p.propertyType,
+    mainCategory: p.mainCategory,
+    subCategory: p.subCategory,
     description: p.description ?? "",
     askingPrice: String(p.askingPrice),
     priceUnit: "",

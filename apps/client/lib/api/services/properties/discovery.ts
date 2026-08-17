@@ -7,7 +7,8 @@ export interface PropertyItem {
   slug: string;
   title: string;
   description?: string | null;
-  propertyType: string;
+  mainCategory: string;
+  subCategory: string;
   status: string;
   verificationLevel: string;
   askingPrice: number;
@@ -74,7 +75,8 @@ const SIMILAR_PROPERTIES_QUERY = `
         slug
         title
         description
-        propertyType
+        mainCategory
+    subCategory
         status
         verificationLevel
         askingPrice
@@ -140,7 +142,8 @@ const RECENTLY_VIEWED_QUERY = `
         slug
         title
         description
-        propertyType
+        mainCategory
+    subCategory
         status
         verificationLevel
         askingPrice
@@ -206,7 +209,8 @@ const FEATURED_PROPERTIES_QUERY = `
         slug
         title
         description
-        propertyType
+        mainCategory
+    subCategory
         status
         verificationLevel
         askingPrice
@@ -272,7 +276,8 @@ const RECENTLY_ADDED_PROPERTIES_QUERY = `
         slug
         title
         description
-        propertyType
+        mainCategory
+    subCategory
         status
         verificationLevel
         askingPrice

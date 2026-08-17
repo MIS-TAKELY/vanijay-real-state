@@ -14,7 +14,8 @@ export function DashboardHeader({
   return (
     <div className="flex flex-col gap-sm sm:flex-row sm:items-end sm:justify-between mb-md">
       <div className="flex flex-col gap-xs">
-        <h1 className="font-headline-md text-headline-md text-on-surface font-semibold leading-tight">
+        <span className="h-px w-10 bg-gold" aria-hidden />
+        <h1 className="font-headline-md text-headline-md text-navy font-bold tracking-tight leading-tight">
           {title}
         </h1>
         {description ? (

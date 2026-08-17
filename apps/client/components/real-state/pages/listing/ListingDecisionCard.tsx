@@ -43,7 +43,7 @@ function PricePerUnitSelect({
         value={unit}
         onChange={(e) => setUnit(e.target.value)}
         aria-label="Price unit"
-        className="h-6 cursor-pointer rounded border border-outline-variant bg-surface px-1 text-[13px] font-medium text-on-surface outline-none transition-colors hover:border-primary focus-visible:ring-2 focus-visible:ring-primary/30"
+        className="h-6 cursor-pointer rounded border border-outline-variant bg-surface px-1 text-[13px] font-medium text-on-surface outline-none transition-colors hover:border-gold/60 focus-visible:ring-2 focus-visible:ring-gold/30"
       >
         {LAND_UNITS.map((u) => (
           <option key={u.key} value={u.key}>
@@ -84,12 +84,20 @@ export function ListingDecisionCard({
     location?.latitude != null && location?.longitude != null;
 
   return (
-    <div className="sticky top-24 flex flex-col gap-4 rounded-md border border-outline-variant bg-surface p-6">
+    <div className="sticky top-24 flex flex-col gap-4 rounded-2xl border border-outline-variant border-t-2 border-t-gold/60 bg-surface p-6 shadow-sm">
       {/* Price */}
       <div>
-        <p className="mono-stat text-2xl font-semibold text-primary">
-          {askingPrice}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="mono-stat text-2xl font-bold text-gold-deep">
+            {askingPrice}
+          </p>
+          {verified && (
+            <span className="inline-flex items-center gap-1 rounded border border-gold/40 bg-navy px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold">
+              <Icon name="verified" filled className="text-[12px]" />
+              Verified
+            </span>
+          )}
+        </div>
         {isLand && landTotalSqFt != null && landTotalSqFt > 0 && (
           <PricePerUnitSelect price={price} totalSqFt={landTotalSqFt} />
         )}
@@ -107,7 +115,7 @@ export function ListingDecisionCard({
             href={`https://www.google.com/maps/search/?api=1&query=${location!.latitude},${location!.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center justify-center gap-1.5 border-t border-outline-variant bg-surface-container py-2 text-xs font-semibold text-on-surface transition-[background-color,color] duration-150 hover:bg-primary hover:text-on-primary"
+            className="flex min-h-11 items-center justify-center gap-1.5 border-t border-outline-variant bg-surface-container py-2 text-xs font-semibold text-on-surface transition-[background-color,color] duration-150 hover:bg-navy hover:text-white"
           >
             <Icon name="map" className="text-[14px]" />
             Open in Google Maps
@@ -118,17 +126,20 @@ export function ListingDecisionCard({
 
       {/* CTAs */}
       <div className="flex flex-col gap-2">
-        <Button asChild className="w-full rounded-md font-semibold">
+        {/* <Button
+          asChild
+          className="w-full rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90"
+        >
           <Link href={`/inquiries?property=${slug}`}>
             <Icon name="chat" className="text-[18px]" />
             Send Inquiry
           </Link>
-        </Button>
+        </Button> */}
         <CallSellerButton
           propertyId={propertyId}
-          className="w-full rounded-md border-outline-variant font-semibold"
+          className="w-full rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90  "
         />
-        <Button
+        {/* <Button
           asChild
           variant="outline"
           className="w-full rounded-md border-outline-variant font-semibold"
@@ -137,18 +148,20 @@ export function ListingDecisionCard({
             <Icon name="event" className="text-[18px]" />
             Request Site Visit
           </Link>
-        </Button>
-        <AddToCartButton
+        </Button> */}
+        <div className="flex gap-x-1">
+          <AddToCartButton
           propertyId={propertyId}
           title={title}
           variant="outline"
-          className="w-full rounded-md border-outline-variant font-semibold"
+          className="w-fit rounded-md border-outline-variant font-semibold"
         />
         <SaveToFavoritesButton
           propertyId={propertyId}
-          variant="ghost"
-          className="w-full rounded-md font-semibold"
+          variant="outline"
+          className="w-fit rounded-md border-outline-variant font-semibold"
         />
+        </div>
       </div>
 
       {/* Verification notice */}

@@ -5,10 +5,11 @@ import {
   DocumentType,
   FacingDirection,
   KabadiUnit,
+  MainCategory,
   MediaType,
   PropertyStatus,
-  PropertyType,
   RoadType,
+  SubCategory,
   UserRole,
   VerificationStatus,
 } from '@repo/db';
@@ -21,7 +22,6 @@ import {
  *
  * This file is imported for its side effects from `app.module.ts`.
  */
-registerEnumType(PropertyType, { name: 'PropertyType' });
 registerEnumType(PropertyStatus, { name: 'PropertyStatus' });
 registerEnumType(VerificationStatus, { name: 'VerificationStatus' });
 registerEnumType(RoadType, { name: 'RoadType' });
@@ -32,3 +32,5 @@ registerEnumType(UserRole, { name: 'UserRole' });
 registerEnumType(ContentPlacement, { name: 'ContentPlacement' });
 registerEnumType(ContentSlot, { name: 'ContentSlot' });
 registerEnumType(KabadiUnit, { name: 'KabadiUnit' });
+registerEnumType(MainCategory, { name: 'MainCategory' });
+registerEnumType(SubCategory, { name: 'SubCategory' });

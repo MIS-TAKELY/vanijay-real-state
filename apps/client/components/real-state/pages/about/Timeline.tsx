@@ -42,7 +42,7 @@ export function Timeline() {
 
                 {/* Content card */}
                 <div className="flex-1 md:pl-xl">
-                  <div className="rounded-2xl border border-outline-variant bg-surface-container-low p-lg transition-[transform,box-shadow] duration-300 hover:shadow-md">
+                  <div className="rounded-2xl border border-outline-variant p-lg transition-[transform,box-shadow] duration-300 hover:shadow-md">
                     <h3 className="font-headline-md text-lg font-semibold text-on-surface mb-xs">
                       {m.title}
                     </h3>

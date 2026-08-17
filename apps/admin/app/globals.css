@@ -3,7 +3,7 @@
 @source "../../../packages/ui";
 
 @theme inline {
-  /* ===== Lekhaprati semantic palette (mirrors apps/client) ===== */
+  /* ===== MALPOTH semantic palette (mirrors apps/client) ===== */
   --color-primary: #244530;
   --color-primary-container: #3b5d46;
   --color-on-primary: #ffffff;
@@ -57,6 +57,14 @@
 
   --color-amber: #b45309;
   --color-on-amber: #ffffff;
+
+  /* ===== brass-gold brand accents (mirrors apps/client) ===== */
+  --color-gold: #c9a227;
+  --color-gold-soft: #e8d9a8;
+  --color-gold-deep: #8a6d1d;
+  --color-on-gold: #10283f;
+  --color-navy: #103050;
+  --color-navy-deep: #0a2540;
 
   /* ===== shadcn UI bridge (shared primitives in packages/ui) ===== */
   --color-card: #ffffff;

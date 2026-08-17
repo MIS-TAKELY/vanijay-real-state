@@ -29,12 +29,12 @@ interface ChecklistItem {
 
 export function StepReview({ draft }: StepProps) {
   const cleanDesc = stripHtml(draft.description);
-  const gradient = TYPE_GRADIENTS[draft.propertyType] ?? FALLBACK_GRADIENT;
+  const gradient = TYPE_GRADIENTS[draft.subCategory] ?? FALLBACK_GRADIENT;
   const price = askingPriceNumber(draft);
   const sqft = totalSqFt(draft);
   const area = formatLandAreaLabel(draft);
   const builtUp = builtUpAreaNumber(draft);
-  const isBuilding = isBuildingType(draft.propertyType);
+  const isBuilding = isBuildingType(draft.subCategory);
   const photoCount = draft.media.filter(
     (m) => m.type !== "VIDEO_WALKTHROUGH" && m.type !== "CADASTRAL_MAP",
   ).length;
@@ -45,7 +45,7 @@ export function StepReview({ draft }: StepProps) {
 
   // Land types are sold by land area; building types by built-up area (or
   // land area when the parcel is included but no built-up area is entered).
-  const areaOk = isLandType(draft.propertyType)
+  const areaOk = isLandType(draft.subCategory)
     ? sqft > 0
     : builtUp > 0 || sqft > 0;
   const areaHint = isBuilding
@@ -115,22 +115,39 @@ export function StepReview({ draft }: StepProps) {
   if (draft.isCornerPlot) meta.push("Corner plot");
 
   // Type-specific spec chips (wizard-only fields — shown as entered).
-  if (draft.propertyType === "RESIDENTIAL_HOUSE") {
+  const sub = draft.subCategory;
+  if (
+    sub === "HOUSE" ||
+    sub === "APARTMENT_FLAT" ||
+    sub === "TOWNHOUSE" ||
+    sub === "RESIDENTIAL_BUILDING"
+  ) {
     if (draft.propertySubtype) meta.push(labelEnum(draft.propertySubtype, {}));
     if (draft.bedrooms) meta.push(`${draft.bedrooms} BHK`);
     if (draft.bathrooms) meta.push(`${draft.bathrooms} bath`);
   }
-  if (draft.propertyType === "COMMERCIAL_LAND" && draft.frontageFt)
+  if (sub === "COMMERCIAL_LAND" && draft.frontageFt)
     meta.push(`${draft.frontageFt} ft frontage`);
-  if (draft.propertyType === "COMMERCIAL_SPACE") {
+  if (
+    sub === "OFFICE" ||
+    sub === "RETAIL_SPACE" ||
+    sub === "RESTAURANT_CAFE" ||
+    sub === "HOSPITALITY" ||
+    sub === "COMMERCIAL_BUILDING"
+  ) {
     if (draft.propertySubtype) meta.push(labelEnum(draft.propertySubtype, {}));
     if (draft.frontageFt) meta.push(`${draft.frontageFt} ft frontage`);
   }
-  if (draft.propertyType === "AGRICULTURAL_LAND") {
+  if (sub === "AGRICULTURAL_LAND") {
     if (draft.landClassification)
       meta.push(labelEnum(draft.landClassification, {}));
   }
-  if (draft.propertyType === "HERITAGE_HOME") {
+  if (
+    sub === "HEALTHCARE" ||
+    sub === "EDUCATION" ||
+    sub === "INSTITUTIONAL" ||
+    sub === "COMMUNITY"
+  ) {
     if (draft.heritageType) meta.push(labelEnum(draft.heritageType, {}));
     if (draft.bedrooms) meta.push(`${draft.bedrooms} bedrooms`);
   }
@@ -166,7 +183,7 @@ export function StepReview({ draft }: StepProps) {
         </div>
         <div className="flex flex-col gap-sm p-md">
           <span className="rounded bg-surface-container px-2 py-0.5 w-fit text-[11px] font-medium text-on-surface-variant">
-            {labelEnum(draft.propertyType, TYPE_LABELS)}
+            {labelEnum(draft.subCategory, TYPE_LABELS)}
           </span>
           <h3 className="font-headline-md text-lg font-medium text-on-surface">
             {draft.title.trim() || "Untitled listing"}

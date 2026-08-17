@@ -110,7 +110,8 @@ export function ListingGallery({
   return (
     <section>
       <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="font-headline-md text-xl font-semibold tracking-tight text-on-surface">
+        <h2 className="flex items-center gap-2.5 font-headline-md text-xl font-semibold tracking-tight text-navy">
+          <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
           Media & Documents
         </h2>
 
@@ -125,7 +126,7 @@ export function ListingGallery({
                   "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   activeTab === "photos"
-                    ? "bg-surface text-on-surface shadow-sm"
+                    ? "bg-primary text-on-primary shadow-sm"
                     : "text-on-surface-variant hover:text-on-surface",
                 )}
               >
@@ -147,7 +148,7 @@ export function ListingGallery({
                   "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   activeTab === "videos"
-                    ? "bg-surface text-on-surface shadow-sm"
+                    ? "bg-primary text-on-primary shadow-sm"
                     : "text-on-surface-variant hover:text-on-surface",
                 )}
               >
@@ -165,7 +166,7 @@ export function ListingGallery({
                   "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   activeTab === "documents"
-                    ? "bg-surface text-on-surface shadow-sm"
+                    ? "bg-primary text-on-primary shadow-sm"
                     : "text-on-surface-variant hover:text-on-surface",
                 )}
               >
@@ -271,8 +272,8 @@ export function ListingGallery({
                     "flex-shrink-0 overflow-hidden rounded-lg border transition-all",
                     "w-20 sm:w-24",
                     idx === activeImage
-                      ? "border-primary ring-1 ring-primary/30"
-                      : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                      ? "border-gold ring-1 ring-gold/40"
+                      : "border-outline-variant opacity-70 hover:border-gold/40 hover:opacity-100",
                   )}
                   aria-label={`View photo ${idx + 1}`}
                   aria-pressed={idx === activeImage}
@@ -318,8 +319,8 @@ export function ListingGallery({
                       "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
                       "w-28 sm:w-36",
                       isActive
-                        ? "border-primary ring-1 ring-primary/30"
-                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                        ? "border-gold ring-1 ring-gold/40"
+                        : "border-outline-variant opacity-70 hover:border-gold/40 hover:opacity-100",
                     )}
                     aria-label={`Play video ${idx + 1}`}
                     aria-pressed={isActive}
@@ -428,8 +429,8 @@ export function ListingGallery({
                       "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
                       "w-28 sm:w-36",
                       isActive
-                        ? "border-primary ring-1 ring-primary/30"
-                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                        ? "border-gold ring-1 ring-gold/40"
+                        : "border-outline-variant opacity-70 hover:border-gold/40 hover:opacity-100",
                     )}
                     aria-label={`View naksa ${idx + 1}`}
                     aria-pressed={isActive}

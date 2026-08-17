@@ -22,8 +22,8 @@ export function ActivityFeed({ activity }: ActivityFeedProps) {
 
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
-      <h3 className="font-headline-md text-base font-semibold text-on-surface mb-md flex items-center gap-xs">
-        <Icon name="history" className="text-[20px] text-on-surface-variant" />
+      <h3 className="mb-md flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+        <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
         Recent Activity
       </h3>
 
@@ -31,7 +31,7 @@ export function ActivityFeed({ activity }: ActivityFeedProps) {
         {/* vertical rail */}
         <span
           aria-hidden
-          className="absolute left-1.75 top-1 bottom-1 w-px bg-outline-variant"
+          className="absolute left-1.75 top-1 bottom-1 w-px bg-gold/40"
         />
 
         {items.map((item) => {

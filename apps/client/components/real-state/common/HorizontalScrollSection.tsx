@@ -101,19 +101,20 @@ export function HorizontalScrollSection({
 
   return (
     <section
-      className={`py-10 md:py-14 relative z-10 ${accent === "trending" ? "bg-surface-container-low" : ""}`}
+      className={`py-10 md:py-14 relative z-10 ${accent === "trending" ? "" : ""}`}
     >
       <div className="max-w-container-max mx-auto px-gutter">
         {/* Header */}
         <div className="flex items-end justify-between mb-6">
           <div>
             {eyebrow && (
-              <p className="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant font-bold mb-1">
+              <p className="mb-2 flex items-center gap-2.5 font-label-sm text-[11px] uppercase tracking-[0.18em] text-gold-deep font-bold">
+                <span className="h-px w-7 bg-gold" aria-hidden />
                 {eyebrow}
               </p>
             )}
             {title && (
-              <h2 className="font-headline-md text-headline-md text-primary">
+              <h2 className="font-headline-md text-headline-md text-navy font-bold tracking-tight">
                 {title}
               </h2>
             )}
@@ -121,7 +122,7 @@ export function HorizontalScrollSection({
           <div className="flex items-center gap-4">
             <a
               href={viewAllHref}
-              className="hidden sm:inline-flex items-center gap-1 font-label-sm text-sm text-primary font-semibold hover:underline underline-offset-4"
+              className="hidden sm:inline-flex items-center gap-1 font-label-sm text-sm text-gold-deep font-semibold hover:text-navy hover:underline underline-offset-4"
             >
               View All
               <Icon name="arrow_forward" className="text-data-table" />

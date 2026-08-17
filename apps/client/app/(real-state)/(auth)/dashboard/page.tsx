@@ -1,7 +1,7 @@
 "use client";
 
-import { useSession } from "@repo/auth/client";
 import { Button, Icon } from "@repo/ui";
+import { useSessionWithServer } from "components/real-state/layout/session-context";
 import { PhoneVerificationModal } from "components/real-state/modals/PhoneVerificationModal";
 import {
   ActivityFeed,
@@ -28,7 +28,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const session = useSession();
+  const session = useSessionWithServer();
 
   useEffect(() => {
     let cancelled = false;
@@ -65,7 +65,10 @@ export default function DashboardPage() {
         title="Overview"
         description="Your archive at a glance — listings, inquiries and verification status."
         action={
-          <Button asChild>
+          <Button
+            asChild
+            className="bg-gold text-on-gold shadow-sm hover:bg-gold/90"
+          >
             <Link href="/my-listings/new">
               <Icon name="add" className="text-data-table" />
               New Listing

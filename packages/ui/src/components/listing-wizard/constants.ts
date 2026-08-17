@@ -3,8 +3,8 @@
  *
  * Icons reference the shared `@repo/ui` `<Icon>` name registry (Lucide),
  * so every glyph here renders through the same source of truth as the rest of
- * the dashboard. Values mirror the real Prisma enums (`PropertyType`,
- * `PropertyStatus`, `UnitSystem` conventions) used in the app.
+ * the dashboard. Values mirror the real Prisma enums (`MainCategory`,
+ * `SubCategory`, `PropertyStatus`, `UnitSystem` conventions) used in the app.
  */
 
 /* ---------------------------- wizard steps ---------------------------- */
@@ -32,43 +32,116 @@ export interface WizardPropertyType {
   desc: string;
 }
 
-export const PROPERTY_TYPES: WizardPropertyType[] = [
+/* ----------------------- hierarchical categories ------------------------ */
+
+export interface CategoryOption {
+  key: string;
+  label: string;
+  icon: string;
+  desc: string;
+}
+
+export interface MainCategoryDef {
+  key: string;
+  label: string;
+  icon: string;
+  desc: string;
+  subCategories: CategoryOption[];
+}
+
+export const MAIN_CATEGORIES: MainCategoryDef[] = [
   {
-    key: "RESIDENTIAL_LAND",
-    label: "Residential Land",
-    icon: "terrain",
-    desc: "Plots for homes",
-  },
-  {
-    key: "COMMERCIAL_LAND",
-    label: "Commercial Land",
-    icon: "storefront",
-    desc: "Business-zone plots",
-  },
-  {
-    key: "AGRICULTURAL_LAND",
-    label: "Agricultural Land",
-    icon: "agriculture",
-    desc: "Farmland & orchards",
-  },
-  {
-    key: "RESIDENTIAL_HOUSE",
-    label: "Residential House",
+    key: "RESIDENTIAL",
+    label: "Residential",
     icon: "home",
-    desc: "Homes & apartments",
+    desc: "Homes, apartments & living spaces",
+    subCategories: [
+      { key: "HOUSE", label: "House", icon: "home", desc: "Detached & semi-detached homes" },
+      { key: "APARTMENT_FLAT", label: "Apartment / Flat", icon: "apartment", desc: "Multi-unit residential" },
+      { key: "TOWNHOUSE", label: "Townhouse", icon: "domain", desc: "Row houses & townhomes" },
+      { key: "ROOM", label: "Room", icon: "bed", desc: "Single rooms & PG" },
+      { key: "RESIDENTIAL_BUILDING", label: "Residential Building", icon: "location_city", desc: "Entire residential buildings" },
+    ],
   },
   {
-    key: "COMMERCIAL_SPACE",
-    label: "Commercial Space",
-    icon: "apartment",
-    desc: "Shops & offices",
+    key: "COMMERCIAL",
+    label: "Commercial",
+    icon: "storefront",
+    desc: "Offices, retail & business spaces",
+    subCategories: [
+      { key: "OFFICE", label: "Office", icon: "business_center", desc: "Office spaces & suites" },
+      { key: "RETAIL_SPACE", label: "Retail Space", icon: "shopping_bag", desc: "Shops & showrooms" },
+      { key: "RESTAURANT_CAFE", label: "Restaurant / Caf\u00e9", icon: "restaurant", desc: "Dining establishments" },
+      { key: "HOSPITALITY", label: "Hospitality", icon: "hotel", desc: "Hotels, lodges & guesthouses" },
+      { key: "COMMERCIAL_BUILDING", label: "Commercial Building", icon: "domain", desc: "Entire commercial buildings" },
+    ],
   },
   {
-    key: "HERITAGE_HOME",
-    label: "Heritage Home",
-    icon: "article",
-    desc: "Traditional property",
+    key: "INDUSTRIAL",
+    label: "Industrial",
+    icon: "factory",
+    desc: "Warehouses, factories & workshops",
+    subCategories: [
+      { key: "WAREHOUSE_GODOWN", label: "Warehouse / Godown", icon: "warehouse", desc: "Storage & godowns" },
+      { key: "FACTORY_MANUFACTURING", label: "Factory / Manufacturing", icon: "precision_manufacturing", desc: "Production facilities" },
+      { key: "LOGISTICS_DISTRIBUTION", label: "Logistics / Distribution", icon: "local_shipping", desc: "Distribution centers" },
+      { key: "WORKSHOP", label: "Workshop", icon: "build", desc: "Repair & craft workshops" },
+      { key: "INDUSTRIAL_BUILDING", label: "Industrial Building", icon: "domain", desc: "Multi-use industrial" },
+    ],
   },
+  {
+    key: "LAND",
+    label: "Land",
+    icon: "terrain",
+    desc: "Plots & land parcels",
+    subCategories: [
+      { key: "RESIDENTIAL_LAND", label: "Residential Land", icon: "landscape", desc: "Plots for homes" },
+      { key: "COMMERCIAL_LAND", label: "Commercial Land", icon: "storefront", desc: "Business-zone plots" },
+      { key: "AGRICULTURAL_LAND", label: "Agricultural Land", icon: "agriculture", desc: "Farmland & orchards" },
+      { key: "INDUSTRIAL_LAND", label: "Industrial Land", icon: "factory", desc: "Industrial-zone plots" },
+      { key: "DEVELOPMENT_LAND", label: "Development Land", icon: "construction", desc: "Land for development projects" },
+    ],
+  },
+  {
+    key: "INSTITUTIONAL_SPECIALIZED",
+    label: "Institutional & Specialized",
+    icon: "school",
+    desc: "Healthcare, education & community",
+    subCategories: [
+      { key: "HEALTHCARE", label: "Healthcare", icon: "local_hospital", desc: "Clinics, hospitals & labs" },
+      { key: "EDUCATION", label: "Education", icon: "school", desc: "Schools & training centers" },
+      { key: "INSTITUTIONAL", label: "Institutional", icon: "account_balance", desc: "Government & institutional" },
+      { key: "COMMUNITY", label: "Community", icon: "groups", desc: "Community centers & halls" },
+    ],
+  },
+];
+
+export const ALL_SUB_CATEGORIES: CategoryOption[] = MAIN_CATEGORIES.flatMap((mc) => mc.subCategories);
+
+export const SUB_TO_MAIN: Record<string, string> = {};
+for (const mc of MAIN_CATEGORIES) {
+  for (const sc of mc.subCategories) {
+    SUB_TO_MAIN[sc.key] = mc.key;
+  }
+}
+
+export const LEGACY_TYPE_MAP: Record<string, { main: string; sub: string }> = {
+  RESIDENTIAL_LAND: { main: "LAND", sub: "RESIDENTIAL_LAND" },
+  COMMERCIAL_LAND: { main: "LAND", sub: "COMMERCIAL_LAND" },
+  AGRICULTURAL_LAND: { main: "LAND", sub: "AGRICULTURAL_LAND" },
+  RESIDENTIAL_HOUSE: { main: "RESIDENTIAL", sub: "HOUSE" },
+  COMMERCIAL_SPACE: { main: "COMMERCIAL", sub: "OFFICE" },
+  HERITAGE_HOME: { main: "RESIDENTIAL", sub: "HOUSE" },
+};
+
+/** Legacy PROPERTY_TYPES kept for backward compatibility. */
+export const PROPERTY_TYPES: WizardPropertyType[] = [
+  { key: "RESIDENTIAL_LAND", label: "Residential Land", icon: "terrain", desc: "Plots for homes" },
+  { key: "COMMERCIAL_LAND", label: "Commercial Land", icon: "storefront", desc: "Business-zone plots" },
+  { key: "AGRICULTURAL_LAND", label: "Agricultural Land", icon: "agriculture", desc: "Farmland & orchards" },
+  { key: "RESIDENTIAL_HOUSE", label: "Residential House", icon: "home", desc: "Homes & apartments" },
+  { key: "COMMERCIAL_SPACE", label: "Commercial Space", icon: "apartment", desc: "Shops & offices" },
+  { key: "HERITAGE_HOME", label: "Heritage Home", icon: "article", desc: "Traditional property" },
 ];
 
 /* ------------------------------ land units ----------------------------- */
@@ -1328,26 +1401,18 @@ export interface Option {
   label: string;
 }
 
-/** Property types that are sold by land area (units required). */
-export const LAND_PROPERTY_TYPES = [
-  "RESIDENTIAL_LAND",
-  "COMMERCIAL_LAND",
-  "AGRICULTURAL_LAND",
-];
-
-/** Property types that are sold by built-up area (building + optional land). */
-export const BUILDING_PROPERTY_TYPES = [
-  "RESIDENTIAL_HOUSE",
-  "COMMERCIAL_SPACE",
-  "HERITAGE_HOME",
-];
-
-export function isLandType(type: string): boolean {
-  return LAND_PROPERTY_TYPES.includes(type);
+/**
+ * Land vs building detection is now derived from the main category.
+ * LAND main category → land type (sold by land area).
+ * All other main categories → building type (sold by built-up area).
+ */
+export function isLandType(subCategory: string): boolean {
+  return SUB_TO_MAIN[subCategory] === "LAND";
 }
 
-export function isBuildingType(type: string): boolean {
-  return BUILDING_PROPERTY_TYPES.includes(type);
+export function isBuildingType(subCategory: string): boolean {
+  const main = SUB_TO_MAIN[subCategory];
+  return !!main && main !== "LAND";
 }
 
 /* ------------------------- residential land ------------------------- */

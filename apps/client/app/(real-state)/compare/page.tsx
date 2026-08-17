@@ -317,14 +317,14 @@ function ComparePageContent() {
       label: "Price / Aana",
       key: "pricePerAana",
       render: (p) =>
-        isLandPropertyType(p.propertyType) && p.pricePerAana
+        isLandPropertyType(p.mainCategory) && p.pricePerAana
           ? formatNPR(p.pricePerAana)
           : "\u2014",
     },
     {
       label: "Type",
       key: "type",
-      render: (p) => labelEnum(p.propertyType, TYPE_LABELS),
+      render: (p) => labelEnum(p.subCategory, TYPE_LABELS),
     },
     {
       label: "Location",
@@ -428,7 +428,7 @@ function ComparePageContent() {
                       )}
                     </div>
                     <Link
-                      href={`/listing/${p.slug}`}
+                      href={`/${p.slug}`}
                       className="mb-1 block font-semibold text-on-surface hover:text-primary line-clamp-2"
                     >
                       {p.title}

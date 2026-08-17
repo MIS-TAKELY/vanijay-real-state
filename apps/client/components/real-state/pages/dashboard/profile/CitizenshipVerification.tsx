@@ -36,7 +36,7 @@ export function CitizenshipVerification({
     profile.citizenshipStatus === "verified"
       ? "bg-primary/10 text-primary"
       : profile.citizenshipStatus === "pending"
-        ? "bg-[#b45309]/10 text-[#b45309]"
+        ? "bg-gold/10 text-gold-deep"
         : "bg-surface-container-high text-on-surface-variant";
 
   async function handleUpload(side: "CITIZENSHIP_FRONT" | "CITIZENSHIP_BACK") {
@@ -100,7 +100,8 @@ export function CitizenshipVerification({
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
       <div className="mb-md flex items-center justify-between">
-        <h2 className="font-headline-md text-base font-semibold text-on-surface">
+        <h2 className="flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+          <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
           Citizenship Verification
         </h2>
         <span
@@ -201,7 +202,7 @@ export function CitizenshipVerification({
               frontUploading || profile.citizenshipStatus === "verified"
             }
             onClick={() => frontRef.current?.click()}
-            className="flex w-full flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer h-auto"
+            className="flex w-full flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-gold/60 hover:text-gold-deep cursor-pointer h-auto"
           >
             {frontUploading ? (
               <Icon
@@ -232,7 +233,7 @@ export function CitizenshipVerification({
             variant="outline"
             disabled={backUploading || profile.citizenshipStatus === "verified"}
             onClick={() => backRef.current?.click()}
-            className="flex w-full flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-primary hover:text-primary cursor-pointer h-auto"
+            className="flex w-full flex-col items-center justify-center gap-xs rounded-xl border-dashed border-outline-variant bg-surface-container-low py-md text-on-surface-variant hover:border-gold/60 hover:text-gold-deep cursor-pointer h-auto"
           >
             {backUploading ? (
               <Icon

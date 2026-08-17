@@ -495,7 +495,7 @@ export default function SettingsPage() {
                   Platform Name
                 </Label>
                 <Input
-                  value={String(settings.platformName ?? "Lekhaprati")}
+                  value={String(settings.platformName ?? "MALPOTH")}
                   onChange={(e) =>
                     setSettings({ ...settings, platformName: e.target.value })
                   }

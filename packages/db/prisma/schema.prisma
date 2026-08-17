@@ -1,4 +1,4 @@
-// Lekhaprati Real Estate Archive (Nepal) — Prisma Schema
+// MALPOTH Real Estate Archive (Nepal) — Prisma Schema
 // Revised to add: saved searches/alerts, notifications, sold-price records,
 // a reusable document vault, centralized government valuation rates,
 // agency accounts, officer appointment scheduling, and community Q&A.
@@ -42,14 +42,46 @@ enum PropertyStatus {
     REJECTED
 }
 
-enum PropertyType {
+enum MainCategory {
+    RESIDENTIAL
+    COMMERCIAL
+    INDUSTRIAL
+    LAND
+    INSTITUTIONAL_SPECIALIZED
+}
+
+enum SubCategory {
+    // Residential
+    HOUSE
+    APARTMENT_FLAT
+    TOWNHOUSE
+    ROOM
+    RESIDENTIAL_BUILDING
+    // Commercial
+    OFFICE
+    RETAIL_SPACE
+    RESTAURANT_CAFE
+    HOSPITALITY
+    COMMERCIAL_BUILDING
+    // Industrial
+    WAREHOUSE_GODOWN
+    FACTORY_MANUFACTURING
+    LOGISTICS_DISTRIBUTION
+    WORKSHOP
+    INDUSTRIAL_BUILDING
+    // Land
     RESIDENTIAL_LAND
     COMMERCIAL_LAND
     AGRICULTURAL_LAND
-    COMMERCIAL_SPACE
-    HERITAGE_HOME
-    RESIDENTIAL_HOUSE
+    INDUSTRIAL_LAND
+    DEVELOPMENT_LAND
+    // Institutional & Specialized
+    HEALTHCARE
+    EDUCATION
+    INSTITUTIONAL
+    COMMUNITY
 }
+
 
 enum FacingDirection {
     NORTH
@@ -334,7 +366,8 @@ model Property {
     slug              String             @unique // e.g., "bagmate-oo1"
     title             String
     description       String?            @db.Text
-    propertyType      PropertyType
+    mainCategory      MainCategory
+    subCategory       SubCategory
     status            PropertyStatus     @default(DRAFT)
     verificationLevel VerificationStatus @default(UNVERIFIED)
 
@@ -461,7 +494,8 @@ model Property {
     publishedAt DateTime?
 
     @@index([status, verificationLevel])
-    @@index([propertyType])
+    @@index([mainCategory])
+    @@index([subCategory])
     @@index([askingPrice])
     @@index([ownerId])
     @@index([agentId])

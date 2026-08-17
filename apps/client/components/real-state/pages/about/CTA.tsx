@@ -8,7 +8,7 @@ export function CTA() {
         className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
           backgroundImage:
-            "radial-gradient(circle at 25px 25px, #244530 1px, transparent 0)",
+            "radial-gradient(circle at 25px 25px, #103050 1px, transparent 0)",
           backgroundSize: "50px 50px",
         }}
         aria-hidden

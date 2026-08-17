@@ -15,7 +15,8 @@ export function IdentityCard({ profile }: IdentityCardProps) {
 
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
-      <h2 className="mb-md font-headline-md text-base font-semibold text-on-surface">
+      <h2 className="mb-md flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+        <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
         Identity
       </h2>
 
@@ -23,7 +24,7 @@ export function IdentityCard({ profile }: IdentityCardProps) {
         {/* Avatar */}
         <div className="flex flex-col items-center gap-xs">
           <div className="relative">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-secondary-container text-primary">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-navy text-gold shadow-sm">
               {profile.avatarUrl ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img

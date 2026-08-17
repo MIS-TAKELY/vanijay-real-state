@@ -10,8 +10,8 @@ import type { ListingDraft } from "./draft";
  * tweaks) discards old drafts instead of hydrating a mismatched shape.
  */
 
-const STORAGE_KEY = "lekha.wizard.draft.v1";
-const VERSION = 1;
+const STORAGE_KEY = "lekha.wizard.draft.v2";
+const VERSION = 2;
 
 interface StoredWizardDraft {
   version: typeof VERSION;
@@ -60,7 +60,7 @@ export function loadWizardDraft(
     // payloads, foreign objects) rather than hydrating garbage.
     if (!parsed.draft || typeof parsed.draft !== "object") return null;
     if (typeof parsed.draft.title !== "string") return null;
-    if (typeof parsed.draft.propertyType !== "string") return null;
+    if (typeof parsed.draft.subCategory !== "string") return null;
     return { draft: parsed.draft, step: parsed.step };
   } catch {
     return null;

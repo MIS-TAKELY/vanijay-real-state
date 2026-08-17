@@ -78,7 +78,7 @@ export function FavoriteCard({
         }}
       />
 
-      <div className="flex items-center justify-between gap-2 rounded-xl border border-outline-variant bg-surface-container-low px-3 py-2">
+      <div className="flex items-center justify-between gap-2 rounded-xl border border-outline-variant border-t-2 border-t-gold/30 bg-surface-container-low px-3 py-2">
         <span className="mono-stat text-[11px] text-on-surface-variant">
           Saved {timeAgo(favorite.createdAt)}
         </span>
@@ -91,10 +91,10 @@ export function FavoriteCard({
           onClick={() => void toggleNotify()}
           disabled={busy}
           className={cn(
-            "inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium shadow-sm cursor-pointer border border-outline-variant",
+            "inline-flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-medium shadow-sm cursor-pointer border",
             notify
-              ? "bg-primary text-on-primary"
-              : "bg-surface text-on-surface-variant",
+              ? "border-gold/50 bg-gold text-on-gold"
+              : "border-outline-variant bg-surface text-on-surface-variant",
           )}
         >
           <Icon

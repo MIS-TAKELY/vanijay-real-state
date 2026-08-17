@@ -59,7 +59,16 @@ export function ListingSidebarMap({
         attribution: "&copy; OpenStreetMap",
       }).addTo(map);
 
-      L.marker([latitude, longitude])
+      // Brand pin — navy roundel with a brass-gold ring, echoing the logo.
+      L.marker([latitude, longitude], {
+        icon: L.divIcon({
+          className: "",
+          html: `<div style="width:24px;height:24px;border-radius:9999px;background:#103050;border:2px solid #c9a227;box-shadow:0 2px 8px rgba(10,37,64,0.45);display:flex;align-items:center;justify-content:center;"><div style="width:8px;height:8px;border-radius:9999px;background:#c9a227;"></div></div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12],
+          popupAnchor: [0, -14],
+        }),
+      })
         .addTo(map)
         .bindPopup(title, { closeButton: false });
 

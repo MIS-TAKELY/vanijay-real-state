@@ -1,14 +1,14 @@
 "use client";
 
-import { useSession } from "@repo/auth/client";
 import { Button, Icon, Skeleton } from "@repo/ui";
+import { useSessionWithServer } from "components/real-state/layout/session-context";
 import { PhoneVerificationModal } from "components/real-state/modals/PhoneVerificationModal";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { useState } from "react";
 
 export function ListingsGate({ children }: { children: ReactNode }) {
-  const { data: session, isPending } = useSession();
+  const { data: session, isPending } = useSessionWithServer();
   const [modalOpen, setModalOpen] = useState(true);
 
   if (isPending) {

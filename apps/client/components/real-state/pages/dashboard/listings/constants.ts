@@ -19,7 +19,8 @@ export interface MyListing {
   listingCode: string;
   slug: string;
   title: string;
-  propertyType: string; // PropertyType enum
+  mainCategory: string; // MainCategory enum
+  subCategory: string; // SubCategory enum
   status: ListingStatus; // PropertyStatus enum
   verificationLevel: string; // VerificationStatus enum
   askingPrice: number;
@@ -124,8 +125,8 @@ export const LISTING_STATUS_STYLES: Record<ListingStatus, StatusStyle> = {
     label: "Draft",
   },
   UNDER_VERIFICATION: {
-    dot: "bg-[#b45309]",
-    chip: "bg-[#b45309]/10 text-[#b45309]",
+    dot: "bg-gold",
+    chip: "bg-gold/10 text-gold-deep",
     label: "Under Verification",
   },
   LIVE: {

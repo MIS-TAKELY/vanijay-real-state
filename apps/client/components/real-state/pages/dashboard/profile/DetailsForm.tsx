@@ -38,7 +38,8 @@ export function DetailsForm({ profile, onSaved }: DetailsFormProps) {
 
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
-      <h2 className="mb-md font-headline-md text-base font-semibold text-on-surface">
+      <h2 className="mb-md flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+        <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
         Details
       </h2>
 

@@ -45,7 +45,8 @@ export interface ApiProperty {
   slug: string;
   title: string;
   description?: string | null;
-  propertyType: string;
+  mainCategory: string;
+  subCategory: string;
   status: string;
   verificationLevel: string;
   askingPrice: number;
@@ -154,7 +155,8 @@ export interface PropertyDocumentPayload {
 export interface CreatePropertyPayload {
   title: string;
   description?: string;
-  propertyType: string; // PropertyType enum
+  mainCategory: string; // MainCategory enum
+  subCategory: string; // SubCategory enum
   askingPrice: number;
   pricePerAana?: number | null;
   roadAccessWidthFt?: number;
@@ -317,15 +319,11 @@ export function formatLandArea(a?: ApiLandArea | null): string | null {
   return parts.length > 0 ? parts.join(" ") : null;
 }
 
-/** The three land property types — priced per land unit (aana/ropani/bigha).
- *  Building types (houses, apartments, heritage, commercial space) are priced
- *  per sq.ft of built-up area, so per-aana rates are hidden for them. */
-export function isLandPropertyType(type?: string | null): boolean {
-  return (
-    type === "RESIDENTIAL_LAND" ||
-    type === "COMMERCIAL_LAND" ||
-    type === "AGRICULTURAL_LAND"
-  );
+/** Land sub-categories — priced per land unit (aana/ropani/bigha).
+ *  Building types are priced per sq.ft of built-up area, so per-aana
+ *  rates are hidden for them. Uses mainCategory for detection. */
+export function isLandPropertyType(mainCategory?: string | null): boolean {
+  return mainCategory === "LAND";
 }
 
 export function toCardProps(p: ApiProperty): CardProperty {
@@ -345,7 +343,7 @@ export function toCardProps(p: ApiProperty): CardProperty {
     const minArea = formatMinBuyableLand(p);
     if (minArea) meta.push(`Min: ${minArea}`);
   }
-  if (isLandPropertyType(p.propertyType) && p.pricePerAana)
+  if (isLandPropertyType(p.mainCategory) && p.pricePerAana)
     meta.push(`Price/Aana: ${formatNPR(p.pricePerAana)}`);
   if (p.verificationLevel && p.verificationLevel !== "UNVERIFIED") {
     meta.push(
@@ -360,7 +358,7 @@ export function toCardProps(p: ApiProperty): CardProperty {
     title: p.title,
     price: formatNPR(p.askingPrice),
     location: formatLocation(p.location),
-    gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
+    gradient: TYPE_GRADIENTS[p.subCategory] ?? FALLBACK_GRADIENT,
     imageUrl: listingCoverImageUrl(p.media),
     meta,
     isVerified:

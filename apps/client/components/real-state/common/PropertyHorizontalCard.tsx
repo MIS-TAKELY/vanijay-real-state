@@ -119,7 +119,7 @@ export function PropertyHorizontalCard({
           <Icon name="location_on" className="text-data-table" />
           {location}
         </p>
-        <p className="font-data-price text-data-price text-primary tracking-tight font-bold">
+        <p className="font-data-price text-data-price text-gold-deep tracking-tight font-bold">
           {price}
         </p>
 

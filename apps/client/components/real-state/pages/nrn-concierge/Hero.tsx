@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export function Hero() {
   return (
-    <section className="relative border-b border-outline-variant bg-surface">
+    <section className="relative border-b border-outline-variant ">
       {/* Clipping wrapper for decorative elements only */}
       <div
         className="pointer-events-none absolute inset-0 overflow-hidden"
@@ -14,7 +14,7 @@ export function Hero() {
           className="absolute inset-0 opacity-[0.04]"
           style={{
             backgroundImage:
-              "radial-gradient(circle at 25px 25px, #244530 1px, transparent 0)",
+              "radial-gradient(circle at 25px 25px, #103050 1px, transparent 0)",
             backgroundSize: "50px 50px",
           }}
         />

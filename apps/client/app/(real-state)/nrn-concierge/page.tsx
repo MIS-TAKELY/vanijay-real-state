@@ -4,8 +4,9 @@ import { Hero } from "components/real-state/pages/nrn-concierge/Hero";
 import { ProcessAndBooking } from "components/real-state/pages/nrn-concierge/ProcessAndBooking";
 import { RemoteWindow } from "components/real-state/pages/nrn-concierge/RemoteWindow";
 import { VerifiedStamp } from "components/real-state/pages/nrn-concierge/VerifiedStamp";
+import { SITE_URL } from "lib/site";
 
-const PAGE_URL = "https://lekhaprati.com/nrn-concierge";
+const PAGE_URL = `${SITE_URL}/nrn-concierge`;
 
 export const metadata: Metadata = {
   title: "NRN Concierge Service | Buy Land in Nepal from Abroad",
@@ -29,7 +30,7 @@ export const metadata: Metadata = {
     description:
       "Secure remote land purchase in Nepal as a Non-Resident Nepali. Power of Attorney, title verification & escrow handled end-to-end — no travel required.",
     url: PAGE_URL,
-    siteName: "Lekhaprati",
+    siteName: "MALPOTH",
     type: "website",
   },
   twitter: {
@@ -62,8 +63,8 @@ const serviceSchema = {
   },
   provider: {
     "@type": "Organization",
-    name: "Lekhaprati",
-    url: "https://lekhaprati.com",
+    name: "MALPOTH",
+    url: SITE_URL,
     description:
       "Nepal's verified land and property archive. Professionalizing real estate through rigorous field verification and legal transparency.",
   },
@@ -119,7 +120,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: "https://lekhaprati.com",
+      item: SITE_URL,
     },
     {
       "@type": "ListItem",

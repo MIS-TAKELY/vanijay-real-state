@@ -36,12 +36,26 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
     useHorizontalDrag(scrollRef);
   const pathname = usePathname();
 
+  // Root-level paths owned by sibling apps (gold, scrape, construction).
+  // Everything else under "/" belongs to the real-estate app — including
+  // listing detail pages, which now live directly at /[slug] for SEO.
+  const siblingAppPrefixes = [
+    "/gold",
+    "/silver",
+    "/steel",
+    "/copper",
+    "/diamond",
+    "/metals",
+    "/admin",
+    "/scrape",
+    "/construction",
+    "/api",
+  ];
+
   const isActive = (href: string) => {
     if (href === "/") {
-      return (
-        pathname === "/" ||
-        pathname.startsWith("/listing") ||
-        pathname.startsWith("/area-guid")
+      return !siblingAppPrefixes.some((prefix) =>
+        pathname.startsWith(prefix),
       );
     }
     return pathname.startsWith(href);

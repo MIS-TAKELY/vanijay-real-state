@@ -8,10 +8,11 @@ import {
 } from '@nestjs/graphql';
 import {
   FacingDirection,
+  MainCategory,
   MediaType,
   PropertyStatus,
-  PropertyType,
   RoadType,
+  SubCategory,
   VerificationStatus,
 } from '@repo/db';
 
@@ -107,8 +108,11 @@ export class Property {
   @Field(() => String, { nullable: true })
   description?: string | null;
 
-  @Field(() => PropertyType)
-  propertyType!: PropertyType;
+  @Field(() => MainCategory)
+  mainCategory!: MainCategory;
+
+  @Field(() => SubCategory)
+  subCategory!: SubCategory;
 
   @Field(() => PropertyStatus)
   status!: PropertyStatus;

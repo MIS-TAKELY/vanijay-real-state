@@ -59,7 +59,7 @@ function CategoryStrip() {
               className="group flex flex-col items-center gap-3 min-w-[88px] snap-start"
               draggable={false}
             >
-              <div className="size-20 md:size-24 rounded-2xl overflow-hidden border border-outline-variant bg-surface transition-transform duration-200 group-hover:-translate-y-1 group-hover:shadow-lg">
+              <div className="size-20 md:size-24 rounded-2xl overflow-hidden border border-outline-variant bg-surface transition-all duration-200 group-hover:-translate-y-1 group-hover:border-gold/50 group-hover:shadow-lg group-hover:shadow-gold/10">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={cat.image}
@@ -68,7 +68,7 @@ function CategoryStrip() {
                   loading="lazy"
                 />
               </div>
-              <span className="font-label-sm text-label-sm text-on-surface text-center leading-snug">
+              <span className="font-label-sm text-label-sm text-on-surface text-center leading-snug transition-colors group-hover:text-navy group-hover:font-semibold">
                 {cat.name}
               </span>
             </Link>

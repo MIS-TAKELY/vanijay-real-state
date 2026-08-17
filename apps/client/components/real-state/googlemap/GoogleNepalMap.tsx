@@ -83,7 +83,7 @@ export function GoogleNepalMap({
     map.data.setStyle({
       fillColor: "transparent",
       fillOpacity: 0,
-      strokeColor: "#4ade80",
+      strokeColor: "#c9a227",
       strokeWeight: 1,
       strokeOpacity: 0.85,
       clickable: true,
@@ -92,9 +92,9 @@ export function GoogleNepalMap({
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     map.data.addListener("mouseover", (event: any) => {
       map.data.overrideStyle(event.feature, {
-        fillColor: "#4ade80",
+        fillColor: "#c9a227",
         fillOpacity: 0.2,
-        strokeColor: "#4ade80",
+        strokeColor: "#c9a227",
         strokeWeight: 1.5,
         strokeOpacity: 1,
       });
@@ -219,7 +219,7 @@ export function GoogleNepalMap({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0d1a14",
+          background: "#0a2540",
           color: "#f87171",
           fontSize: 13,
           fontWeight: 700,
@@ -239,8 +239,8 @@ export function GoogleNepalMap({
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          background: "#0d1a14",
-          color: "#4ade80",
+          background: "#0a2540",
+          color: "#c9a227",
           fontSize: 13,
           fontWeight: 700,
           borderRadius: 14,
@@ -258,7 +258,7 @@ export function GoogleNepalMap({
         height,
         width: "100%",
         position: "relative",
-        background: "#0d1a14",
+        background: "#0a2540",
         overflow: "hidden",
         borderRadius: 14,
       }}

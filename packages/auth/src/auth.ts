@@ -205,7 +205,7 @@ export const auth = betterAuth({
         if (type === "email-verification") {
           await sendEmail(
             email,
-            "Verify your Lekhaprati account",
+            "Verify your MALPOTH account",
             emailOtpVerificationOtp(otp),
           );
         }
@@ -217,7 +217,7 @@ export const auth = betterAuth({
       async sendOTP({ phoneNumber, code }) {
         await sendWhatsAppMessage(
           phoneNumber,
-          `Your Lekhaprati code is: ${code}`,
+          `Your MALPOTH code is: ${code}`,
         );
       },
       expiresIn: 300, // 5 min, like your email OTP

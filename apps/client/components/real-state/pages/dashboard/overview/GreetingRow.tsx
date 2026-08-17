@@ -21,7 +21,7 @@ export function GreetingRow({
   return (
     <div className="flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between mb-md">
       <div className="flex items-center gap-md">
-        <h2 className="font-headline-md text-headline-md text-on-surface font-semibold">
+        <h2 className="font-headline-md text-headline-md text-navy font-bold tracking-tight">
           Namaste, {name}
         </h2>
       </div>
@@ -30,7 +30,7 @@ export function GreetingRow({
         className={`inline-flex items-center gap-1 rounded-full px-3 py-1 text-xs font-medium ${
           isVerified
             ? "bg-primary/10 text-primary"
-            : "bg-[#b45309]/10 text-[#b45309]"
+            : "bg-gold/10 text-gold-deep"
         }`}
       >
         <Icon

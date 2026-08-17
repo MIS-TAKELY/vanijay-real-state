@@ -445,7 +445,7 @@ function RoadBlock({ draft, update, errors }: StepProps) {
 /** Asking price + price-per-unit. Land types use the unit dropdown; building
  *  types show the auto-calculated per-sq.ft / per-sq.m rates. */
 function PriceBlock({ draft, update, errors }: StepProps) {
-  const isBuilding = isBuildingType(draft.propertyType);
+  const isBuilding = isBuildingType(draft.subCategory);
   const unitKey = isBuilding
     ? "sqft"
     : draft.priceUnit || PRICE_UNIT_DEFAULT[draft.unitSystem];
@@ -1251,19 +1251,38 @@ function HeritageHomeSpecs(props: StepProps) {
 /* ------------------------------------------------------------------ */
 
 export function StepLandSpecs(props: StepProps) {
-  const type = props.draft.propertyType;
-  switch (type) {
+  const sub = props.draft.subCategory;
+  switch (sub) {
     case "RESIDENTIAL_LAND":
+    case "INDUSTRIAL_LAND":
+    case "DEVELOPMENT_LAND":
       return <ResidentialLandSpecs {...props} />;
     case "COMMERCIAL_LAND":
       return <CommercialLandSpecs {...props} />;
     case "AGRICULTURAL_LAND":
       return <AgriculturalLandSpecs {...props} />;
-    case "RESIDENTIAL_HOUSE":
+    case "HOUSE":
+    case "APARTMENT_FLAT":
+    case "TOWNHOUSE":
+    case "ROOM":
+    case "RESIDENTIAL_BUILDING":
       return <ResidentialHouseSpecs {...props} />;
-    case "COMMERCIAL_SPACE":
+    case "OFFICE":
+    case "RETAIL_SPACE":
+    case "RESTAURANT_CAFE":
+    case "HOSPITALITY":
+    case "COMMERCIAL_BUILDING":
       return <CommercialSpaceSpecs {...props} />;
-    case "HERITAGE_HOME":
+    case "WAREHOUSE_GODOWN":
+    case "FACTORY_MANUFACTURING":
+    case "LOGISTICS_DISTRIBUTION":
+    case "WORKSHOP":
+    case "INDUSTRIAL_BUILDING":
+      return <CommercialSpaceSpecs {...props} />;
+    case "HEALTHCARE":
+    case "EDUCATION":
+    case "INSTITUTIONAL":
+    case "COMMUNITY":
       return <HeritageHomeSpecs {...props} />;
     default:
       return <ResidentialLandSpecs {...props} />;

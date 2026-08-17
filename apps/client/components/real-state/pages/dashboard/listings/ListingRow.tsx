@@ -36,7 +36,7 @@ export function ListingRow({
   onChanged,
 }: ListingRowProps) {
   const publicHref =
-    listing.status === "LIVE" ? `/listing/${listing.slug}` : null;
+    listing.status === "LIVE" ? `/${listing.slug}` : null;
 
   const thumbContent = listing.thumbnailUrl ? (
     <Image
@@ -102,7 +102,7 @@ export function ListingRow({
       {/* Type chip */}
       <TableCell className={cn(CELL_CLASS, columnClassName("type"))}>
         <span className="inline-flex items-center rounded bg-surface-container px-2 py-0.5 text-[12px] font-medium whitespace-nowrap text-on-surface-variant">
-          {labelEnum(listing.propertyType, TYPE_LABELS)}
+          {labelEnum(listing.subCategory, TYPE_LABELS)}
         </span>
       </TableCell>
 
@@ -118,7 +118,7 @@ export function ListingRow({
 
       {/* Asking price */}
       <TableCell className={CELL_CLASS}>
-        <span className="mono-stat text-label-sm font-semibold whitespace-nowrap text-primary">
+        <span className="mono-stat text-label-sm font-semibold whitespace-nowrap text-gold-deep">
           {formatNPR(listing.askingPrice)}
         </span>
       </TableCell>

@@ -7,16 +7,46 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RichTextEditor } from "./RichTextEditor";
-import { PROPERTY_TYPES } from "./constants";
+import { MAIN_CATEGORIES, SUB_TO_MAIN } from "./constants";
 import { DESC_MAX, TITLE_MAX } from "./draft";
 import { stripHtml } from "./format";
 import { FieldError, type StepProps } from "./types";
+import { useState } from "react";
 
 export function StepBasics({ draft, update, errors }: StepProps) {
   const cleanDesc = stripHtml(draft.description);
   const plainDescLength = cleanDesc.length;
   const isDescOverLimit =
     plainDescLength > DESC_MAX || draft.description.length > DESC_MAX;
+
+  // Track which main category is expanded for sub-category selection
+  const [expandedMain, setExpandedMain] = useState<string | null>(
+    draft.mainCategory || null,
+  );
+
+  const handleMainSelect = (mainKey: string) => {
+    if (expandedMain === mainKey) {
+      // Toggle off if clicking the same one
+      setExpandedMain(null);
+    } else {
+      setExpandedMain(mainKey);
+      // Clear sub-category when switching main categories
+      if (draft.mainCategory !== mainKey) {
+        update({ mainCategory: mainKey, subCategory: "" });
+      }
+    }
+  };
+
+  const handleSubSelect = (subKey: string) => {
+    const mainKey = SUB_TO_MAIN[subKey];
+    if (mainKey) {
+      update({ mainCategory: mainKey, subCategory: subKey });
+    }
+  };
+
+  const selectedMainDef = MAIN_CATEGORIES.find(
+    (mc) => mc.key === draft.mainCategory,
+  );
 
   return (
     <div className="flex flex-col gap-md">
@@ -41,47 +71,92 @@ export function StepBasics({ draft, update, errors }: StepProps) {
         <FieldError message={errors.title} />
       </div>
 
-      {/* Property type — 6 cards */}
+      {/* Hierarchical Category Selection */}
       <div className="flex flex-col gap-xs">
-        <Label>Property type</Label>
-        <ToggleGroup
-          type="single"
-          value={draft.propertyType}
-          onValueChange={(v) => {
-            if (v) update({ propertyType: v });
-          }}
-          aria-label="Property type"
-          variant="outline"
-          className="grid grid-cols-2 gap-sm sm:grid-cols-3 justify-start w-full "
-        >
-          {PROPERTY_TYPES.map((pt) => (
-            <ToggleGroupItem
-              key={pt.key}
-              value={pt.key}
-              aria-label={pt.label}
+        <Label>Property category</Label>
+
+        {/* Main Categories */}
+        <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 justify-start w-full">
+          {MAIN_CATEGORIES.map((mc) => (
+            <button
+              key={mc.key}
+              type="button"
+              onClick={() => handleMainSelect(mc.key)}
               className={cn(
-                "flex flex-col items-start gap-xs rounded-xl border p-sm text-left transition-colors data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:ring-1 data-[state=on]:ring-primary/30 data-[state=off]:border-outline-variant data-[state=off]:bg-surface data-[state=off]:hover:border-primary/40 h-auto",
+                "flex flex-col items-start gap-xs rounded-xl border p-sm text-left transition-colors h-auto",
+                draft.mainCategory === mc.key
+                  ? "border-primary bg-primary/5 ring-1 ring-primary/30"
+                  : "border-outline-variant bg-surface hover:border-primary/40",
               )}
             >
               <span
                 className={cn(
                   "flex h-9 w-9 items-center justify-center rounded-lg",
-                  draft.propertyType === pt.key
+                  draft.mainCategory === mc.key
                     ? "bg-primary text-on-primary"
                     : "bg-surface-container text-on-surface-variant",
                 )}
               >
-                <Icon name={pt.icon} className="text-[20px]" />
+                <Icon name={mc.icon} className="text-[20px]" />
               </span>
               <span className="text-sm font-medium text-on-surface">
-                {pt.label}
+                {mc.label}
               </span>
               <span className="text-[11px] text-on-surface-variant">
-                {pt.desc}
+                {mc.desc}
               </span>
-            </ToggleGroupItem>
+            </button>
           ))}
-        </ToggleGroup>
+        </div>
+
+        {/* Sub Categories - shown when a main category is selected */}
+        {expandedMain && selectedMainDef && (
+          <div className="mt-sm animate-in fade-in slide-in-from-top-2 duration-200">
+            <p className="mb-xs text-xs font-medium text-on-surface-variant">
+              Select specific type for {selectedMainDef.label}:
+            </p>
+            <ToggleGroup
+              type="single"
+              value={draft.subCategory}
+              onValueChange={(v) => {
+                if (v) handleSubSelect(v);
+              }}
+              aria-label="Property sub-type"
+              variant="outline"
+              className="grid grid-cols-2 gap-sm sm:grid-cols-3 justify-start w-full"
+            >
+              {selectedMainDef.subCategories.map((sc) => (
+                <ToggleGroupItem
+                  key={sc.key}
+                  value={sc.key}
+                  aria-label={sc.label}
+                  className={cn(
+                    "flex flex-col items-start gap-xs rounded-xl border p-sm text-left transition-colors data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:ring-1 data-[state=on]:ring-primary/30 data-[state=off]:border-outline-variant data-[state=off]:bg-surface data-[state=off]:hover:border-primary/40 h-auto",
+                  )}
+                >
+                  <span
+                    className={cn(
+                      "flex h-8 w-8 items-center justify-center rounded-lg",
+                      draft.subCategory === sc.key
+                        ? "bg-primary text-on-primary"
+                        : "bg-surface-container text-on-surface-variant",
+                    )}
+                  >
+                    <Icon name={sc.icon} className="text-[18px]" />
+                  </span>
+                  <span className="text-sm font-medium text-on-surface">
+                    {sc.label}
+                  </span>
+                  <span className="text-[11px] text-on-surface-variant line-clamp-2">
+                    {sc.desc}
+                  </span>
+                </ToggleGroupItem>
+              ))}
+            </ToggleGroup>
+          </div>
+        )}
+
+        <FieldError message={errors.subCategory} />
       </div>
 
       {/* Description — Rich Text Editor */}

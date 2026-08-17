@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma, PrismaClient, PropertyType } from '@repo/db';
+import { Prisma, PrismaClient, MainCategory, SubCategory } from '@repo/db';
 import {
   CursorPage,
   decodeCursor,
@@ -20,12 +20,12 @@ export interface FeedFilters {
   maxSize?: number;
 }
 
-const TYPE_GROUPS: Record<string, PropertyType[]> = {
-  residential: ['RESIDENTIAL_LAND', 'RESIDENTIAL_HOUSE'],
-  commercial: ['COMMERCIAL_LAND', 'COMMERCIAL_SPACE'],
-  plot: ['RESIDENTIAL_LAND', 'COMMERCIAL_LAND', 'AGRICULTURAL_LAND'],
-  house: ['RESIDENTIAL_HOUSE', 'HERITAGE_HOME'],
-  land: ['RESIDENTIAL_LAND', 'COMMERCIAL_LAND', 'AGRICULTURAL_LAND'],
+const MAIN_CATEGORY_GROUPS: Record<string, MainCategory[]> = {
+  residential: ['RESIDENTIAL'],
+  commercial: ['COMMERCIAL'],
+  industrial: ['INDUSTRIAL'],
+  land: ['LAND'],
+  institutional: ['INSTITUTIONAL_SPECIALIZED'],
 };
 
 const PRICE_BANDS: Record<string, { gte?: number; lt?: number }> = {
@@ -104,6 +104,15 @@ export class PropertiesService {
       nextCursor,
       hasMore,
     };
+  }
+
+  /** Slugs + updatedAt for every LIVE property — feeds the public XML sitemap. */
+  async findSitemapSlugs(): Promise<Array<{ slug: string; updatedAt: Date }>> {
+    return this.prisma.property.findMany({
+      where: { status: 'LIVE' },
+      select: { slug: true, updatedAt: true },
+      orderBy: { updatedAt: 'desc' },
+    });
   }
 
   async findOne(idOrSlug: string): Promise<Property> {
@@ -394,13 +403,15 @@ export class PropertiesService {
     }
 
     if (type && type !== 'all') {
-      const types =
-        TYPE_GROUPS[type] ??
-        ((Object.values(PropertyType) as string[]).includes(type)
-          ? [type as PropertyType]
+      const mainCats =
+        MAIN_CATEGORY_GROUPS[type] ??
+        ((Object.values(MainCategory) as string[]).includes(type)
+          ? [type as MainCategory]
           : undefined);
-      if (types?.length) {
-        filters.push({ propertyType: { in: types } });
+      if (mainCats?.length) {
+        filters.push({ mainCategory: { in: mainCats } });
+      } else if ((Object.values(SubCategory) as string[]).includes(type)) {
+        filters.push({ subCategory: type as SubCategory });
       }
     }
 
@@ -470,7 +481,8 @@ export class PropertiesService {
       slug: row.slug,
       title: row.title,
       description: row.description ?? undefined,
-      propertyType: row.propertyType,
+      mainCategory: row.mainCategory,
+      subCategory: row.subCategory,
       status: row.status,
       verificationLevel: row.verificationLevel,
       askingPrice: PropertiesService.toNumber(row.askingPrice) as number,

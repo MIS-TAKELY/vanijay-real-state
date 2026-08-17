@@ -5,7 +5,7 @@ import { AuthModalListener } from "components/real-state/auth/AuthModalListener"
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Lekhaprati | Verified Land & Property Archive",
+  title: "MALPOTH | Verified Land & Property Archive",
   description: "The archive of record for legitimate land ownership in Nepal.",
 };
 

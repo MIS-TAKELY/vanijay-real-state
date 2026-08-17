@@ -44,11 +44,12 @@ function toDuplicatePayload(p: ApiProperty): CreatePropertyPayload {
   return {
     title: `${p.title} (Copy)`,
     ...(p.description ? { description: p.description } : {}),
-    propertyType: p.propertyType,
+    mainCategory: p.mainCategory,
+    subCategory: p.subCategory,
     askingPrice: p.askingPrice,
     // Per-aana is a land-pricing metric — never carry it onto a duplicate of a
     // building-type listing (a stale value would resurface the bogus rate).
-    ...(isLandPropertyType(p.propertyType) && p.pricePerAana != null
+    ...(isLandPropertyType(p.mainCategory) && p.pricePerAana != null
       ? { pricePerAana: p.pricePerAana }
       : {}),
     ...(p.roadAccessWidthFt != null && {
@@ -174,7 +175,7 @@ export function ListingMenu({ listing, onChanged }: ListingMenuProps) {
 
           {isLive ? (
             <DropdownMenuItem asChild>
-              <Link href={`/listing/${listing.slug}`}>
+              <Link href={`/${listing.slug}`}>
                 <Icon name="open_in_new" />
                 View public page
               </Link>

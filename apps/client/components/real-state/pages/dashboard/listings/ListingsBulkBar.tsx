@@ -18,7 +18,7 @@ export function ListingsBulkBar({
   if (selectedCount === 0) return null;
 
   return (
-    <div className="flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between rounded-xl border border-primary/30 bg-secondary-container/60 px-md py-sm mb-md">
+    <div className="flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between rounded-xl border border-gold/40 border-t-2 border-t-gold/50 bg-secondary-container/60 px-md py-sm mb-md">
       <div className="flex items-center gap-sm">
         <span className="mono-stat inline-flex items-center justify-center rounded-full bg-primary px-2 py-1.5 text-[12px] font-bold text-on-primary leading-none">
           {selectedCount}
@@ -33,7 +33,7 @@ export function ListingsBulkBar({
           type="button"
           variant="outline"
           onClick={onReverify}
-          className="inline-flex items-center gap-1 rounded-md border-outline-variant px-3 py-1.5 text-sm font-medium text-on-surface hover:border-primary hover:text-primary cursor-pointer"
+          className="inline-flex items-center gap-1 rounded-md border-outline-variant px-3 py-1.5 text-sm font-medium text-on-surface hover:border-gold/60 hover:text-gold-deep cursor-pointer"
         >
           <Icon name="verified" className="text-data-table" />
           Request re-verification

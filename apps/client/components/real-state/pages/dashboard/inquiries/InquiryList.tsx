@@ -45,19 +45,19 @@ export function InquiryList() {
         <div className="min-w-[640px]">
           {/* Header */}
           <div className="grid grid-cols-[auto_minmax(160px,1.5fr)_1fr_auto_auto] items-center gap-sm border-b border-outline-variant bg-surface-container-low px-sm py-2.5">
-            <span className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
               Type
             </span>
-            <span className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
               Person
             </span>
-            <span className="hidden font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant md:block">
+            <span className="hidden font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep md:block">
               Message
             </span>
-            <span className="hidden font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant sm:block">
+            <span className="hidden font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep sm:block">
               Status
             </span>
-            <span className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
+            <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
               Date
             </span>
           </div>

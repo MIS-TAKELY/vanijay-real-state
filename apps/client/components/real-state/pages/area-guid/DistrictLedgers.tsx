@@ -47,7 +47,7 @@ export function DistrictLedgers() {
     Object.values(tier).filter(Boolean).length;
 
   return (
-    <section className="bg-surface-container-low border-b border-outline-variant">
+    <section className=" border-b border-outline-variant">
       <div className="mx-auto max-w-container-max px-gutter py-xl">
         <div className="flex gap-10">
           {/* Sidebar Filters */}

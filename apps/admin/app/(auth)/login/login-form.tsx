@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Alert, Button, Icon, Input, Label, Eye, EyeOff } from "@repo/ui";
+import { Alert, Button, Input, Label, Eye, EyeOff } from "@repo/ui";
 import { signIn } from "@repo/auth/client";
+
+import logo from "../../../public/logo.webp";
+import logoText from "../../../public/logo-text.webp";
 // import {  } from "lucide-react";
 
 /** Password field with show/hide eye toggle. */
@@ -49,13 +53,23 @@ export function LoginSplash() {
       <div className="w-full max-w-sm">
         <div className="admin-surface border border-outline-variant rounded-2xl p-lg shadow-sm">
           <div className="mb-md flex flex-col items-center gap-sm text-center">
-            <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-on-primary shadow-md ring-4 ring-primary/20">
-              <span className="font-headline-md text-[28px]">L</span>
+            <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white p-1 shadow-md ring-2 ring-gold/40">
+              <Image
+                src={logo}
+                alt="MALPOTH"
+                width={56}
+                height={56}
+                className="size-full rounded-full object-contain"
+              />
             </span>
             <div>
-              <h1 className="font-headline-md text-headline-md font-bold text-on-surface">
-                Lekhaprati Admin
-              </h1>
+              <Image
+                src={logoText}
+                alt="MALPOTH"
+                width={160}
+                height={38}
+                className="mx-auto h-9 w-auto object-contain"
+              />
             </div>
           </div>
         </div>
@@ -104,14 +118,24 @@ export function LoginForm() {
       <div className="relative w-full max-w-sm animate-fade-in-up">
         {/* Brand header above card */}
         <div className="mb-6 flex flex-col items-center gap-3 text-center">
-          <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary text-on-primary shadow-lg ring-4 ring-primary/20">
-            <Icon name="account_balance" className="text-[30px]" />
+          <span className="flex h-16 w-16 items-center justify-center rounded-full bg-white p-1 shadow-lg ring-2 ring-gold/40">
+            <Image
+              src={logo}
+              alt="MALPOTH"
+              width={56}
+              height={56}
+              className="size-full rounded-full object-contain"
+            />
           </span>
-          <div>
-            <h1 className="font-headline-md text-2xl font-bold text-on-surface tracking-tight">
-              Lekhaprati Admin
-            </h1>
-            <p className="mt-1 text-sm text-on-surface-variant">
+          <div className="flex flex-col items-center gap-1">
+            <Image
+              src={logoText}
+              alt="MALPOTH"
+              width={160}
+              height={38}
+              className="h-9 w-auto object-contain"
+            />
+            <p className="text-sm text-on-surface-variant">
               Sign in to the operations console
             </p>
           </div>

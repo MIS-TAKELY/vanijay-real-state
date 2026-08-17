@@ -68,7 +68,7 @@ export function CallSellerButton({
       disabled={loading}
       className={className}
     >
-      <Icon name="call" className="text-[18px]" />
+      <Icon name="PhoneCall" className="text-[18px]" />
       {loading ? "Loading…" : "Call Seller"}
     </Button>
   );

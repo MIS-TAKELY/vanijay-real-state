@@ -74,7 +74,7 @@ export default async function AnalyticsPage() {
   }));
 
   const byType = (listings?.byType ?? []).map((r) => ({
-    key: r.propertyType.replace(/_/g, " "),
+    key: r.mainCategory.replace(/_/g, " "),
     value: r._count._all,
   }));
   const byStatus = (listings?.byStatus ?? []).map((r) => ({

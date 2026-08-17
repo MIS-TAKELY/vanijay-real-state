@@ -31,7 +31,7 @@ export function QuestionCard({ question }: QuestionCardProps) {
             Answered
           </span>
         ) : (
-          <span className="ml-auto inline-flex items-center gap-0.5 rounded-full bg-[#b45309]/10 px-2 py-0.5 text-[11px] font-medium text-[#b45309]">
+          <span className="ml-auto inline-flex items-center gap-0.5 rounded-full bg-gold/10 px-2 py-0.5 text-[11px] font-medium text-gold-deep">
             <Icon name="schedule" filled className="text-label-sm" />
             Awaiting
           </span>

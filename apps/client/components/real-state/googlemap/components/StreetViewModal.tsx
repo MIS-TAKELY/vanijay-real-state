@@ -100,7 +100,7 @@ export function StreetViewModal({
             <div
               style={{
                 fontSize: 10,
-                color: "rgba(209,250,229,0.4)",
+                color: "rgba(232,217,168,0.4)",
                 fontFamily: "'IBM Plex Mono', monospace",
                 marginTop: 2,
               }}
@@ -118,7 +118,7 @@ export function StreetViewModal({
               borderRadius: "50%",
               background: "rgba(255,255,255,0.07)",
               border: "1px solid rgba(255,255,255,0.1)",
-              color: "rgba(209,250,229,0.7)",
+              color: "rgba(232,217,168,0.7)",
               fontSize: 14,
               cursor: "pointer",
               display: "flex",
@@ -161,11 +161,11 @@ export function StreetViewModal({
                   fontWeight: 700,
                   textTransform: "uppercase",
                   letterSpacing: "0.04em",
-                  color: active ? "#4ade80" : "rgba(209,250,229,0.45)",
+                  color: active ? "#c9a227" : "rgba(232,217,168,0.45)",
                   background: "transparent",
                   border: "none",
                   borderBottom: active
-                    ? "2px solid #4ade80"
+                    ? "2px solid #c9a227"
                     : "2px solid transparent",
                   cursor: "pointer",
                   transition: "all 0.15s ease",
@@ -216,7 +216,7 @@ export function StreetViewModal({
               href={googleMapsUrl}
               target="_blank"
               rel="noreferrer"
-              style={footerLink("#4ade80")}
+              style={footerLink("#c9a227")}
             >
               📍 Maps ↗
             </a>
@@ -224,7 +224,7 @@ export function StreetViewModal({
           <span
             style={{
               fontSize: 9,
-              color: "rgba(209,250,229,0.25)",
+              color: "rgba(232,217,168,0.25)",
               whiteSpace: "nowrap",
             }}
           >
@@ -262,7 +262,7 @@ function SatellitePlaceholder({ marker }: { marker: Marker }) {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "#0a140d",
+        background: "#0a1626",
         flexDirection: "column",
         gap: 12,
       }}
@@ -271,7 +271,7 @@ function SatellitePlaceholder({ marker }: { marker: Marker }) {
       <div
         style={{
           fontSize: 13,
-          color: "rgba(209,250,229,0.6)",
+          color: "rgba(232,217,168,0.6)",
           textAlign: "center",
           maxWidth: 300,
         }}
@@ -284,7 +284,7 @@ function SatellitePlaceholder({ marker }: { marker: Marker }) {
         target="_blank"
         rel="noreferrer"
         style={{
-          ...footerLink("#4ade80"),
+          ...footerLink("#c9a227"),
           padding: "8px 20px",
           fontSize: 12,
         }}
@@ -346,14 +346,14 @@ function StreetViewLauncher({
         <p
           style={{
             fontSize: 12,
-            color: "rgba(209,250,229,0.5)",
+            color: "rgba(232,217,168,0.5)",
             lineHeight: 1.65,
             margin: 0,
           }}
         >
           Google Maps blocks in-app embedding. Click below to open an
           interactive panorama for{" "}
-          <strong style={{ color: "#4ade80" }}>{marker.area}</strong> in a new
+          <strong style={{ color: "#c9a227" }}>{marker.area}</strong> in a new
           tab.
         </p>
       </div>
@@ -374,8 +374,8 @@ function StreetViewLauncher({
             display: "inline-flex",
             alignItems: "center",
             gap: 6,
-            background: "#4ade80",
-            color: "#0d1a14",
+            background: "#c9a227",
+            color: "#0a2540",
             fontWeight: 800,
             fontSize: 12,
             padding: "10px 22px",
@@ -407,7 +407,7 @@ function StreetViewLauncher({
             alignItems: "center",
             gap: 6,
             background: "rgba(255,255,255,0.07)",
-            color: "#d1fae5",
+            color: "#e8d9a8",
             fontWeight: 700,
             fontSize: 12,
             padding: "10px 20px",
@@ -432,7 +432,7 @@ function StreetViewLauncher({
       <div
         style={{
           fontSize: 10,
-          color: "rgba(209,250,229,0.3)",
+          color: "rgba(232,217,168,0.3)",
           fontFamily: "'IBM Plex Mono', monospace",
           background: "rgba(255,255,255,0.04)",
           border: "1px solid rgba(255,255,255,0.07)",
@@ -479,7 +479,7 @@ function DataTabContent({ marker }: { marker: Marker }) {
           <span
             style={{
               fontSize: 11,
-              color: "rgba(209,250,229,0.4)",
+              color: "rgba(232,217,168,0.4)",
               fontWeight: 600,
             }}
           >
@@ -488,7 +488,7 @@ function DataTabContent({ marker }: { marker: Marker }) {
           <span
             style={{
               fontSize: 12,
-              color: "#d1fae5",
+              color: "#e8d9a8",
               fontFamily: "'IBM Plex Mono', monospace",
               fontWeight: 500,
             }}

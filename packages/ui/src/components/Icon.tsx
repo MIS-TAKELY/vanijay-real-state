@@ -31,8 +31,8 @@ import {
   CreditCard,
   Download,
   Edit,
-  ExternalLink,
   Expand,
+  ExternalLink,
   Eye,
   EyeOff,
   FileText,
@@ -69,10 +69,12 @@ import {
   Mountain,
   Navigation,
   Phone,
+  PhoneCall,
   Plane,
   Play,
   PlayCircle,
   Plus,
+  Podium,
   Receipt,
   RefreshCw,
   Reply,
@@ -93,7 +95,6 @@ import {
   TriangleAlert,
   UserCog,
   Video,
-  Podium,
   X,
   ZoomIn,
 } from "lucide-react";
@@ -236,6 +237,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   article: FileText,
   help_outline: HelpCircle,
   Podium: Podium,
+  PhoneCall,
 };
 
 const FALLBACK: LucideIcon = HelpCircle;

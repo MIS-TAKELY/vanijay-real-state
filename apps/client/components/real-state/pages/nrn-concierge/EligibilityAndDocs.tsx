@@ -46,7 +46,7 @@ export function EligibilityAndDocs() {
   return (
     <section
       id="eligibility"
-      className="bg-surface-container-low border-b border-outline-variant scroll-mt-20"
+      className=" border-b border-outline-variant scroll-mt-20"
     >
       <div className="mx-auto max-w-container-max px-gutter py-xl">
         {/* Section intro — E-E-A-T content */}

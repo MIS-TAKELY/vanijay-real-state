@@ -16,7 +16,7 @@ export function ArchitectureOfTrust() {
             The Architecture of Trust
           </h2>
           <p className="text-body-md text-on-surface-variant max-w-[520px] mx-auto leading-relaxed">
-            Every listing on Lekhaprati undergoes a rigid, three-phase archival
+            Every listing on MALPOTH undergoes a rigid, three-phase archival
             audit before being indexed.
           </p>
         </div>

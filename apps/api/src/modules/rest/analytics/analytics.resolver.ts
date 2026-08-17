@@ -79,7 +79,10 @@ export class PropertyResponse {
   description?: string | null;
 
   @Field(() => String)
-  propertyType!: string;
+  mainCategory!: string;
+
+  @Field(() => String)
+  subCategory!: string;
 
   @Field(() => String)
   status!: string;

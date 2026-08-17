@@ -15,18 +15,22 @@ import {
 import SignIn from "components/real-state/modals/SignIn";
 import { AppModeStrip } from "components/shared/AppModeStrip";
 import { navLinks } from "constants/varibles-constants";
-import { LogOut, User, ChevronDown } from "lucide-react";
+import { ChevronDown, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useAuthModalStore } from "store/auth-modal";
 import { useCartStore } from "store/cart";
 
+import Image from "next/image";
+import logoText from "../../../public/logo-text.webp";
+import logo from "../../../public/logo.webp";
+
 const searchForm = (
   <form
     action="/search"
     role="search"
-    className="flex h-9 items-center gap-1.5 rounded-xl border border-outline-variant bg-surface pl-2.5 pr-1.5 shadow-sm transition-shadow focus-within:ring-2 focus-within:ring-primary/25"
+    className="flex h-9 items-center gap-1.5 rounded-xl border border-outline-variant bg-white pl-2.5 pr-1.5 shadow-sm transition-shadow focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/30"
   >
     <Icon
       name="search"
@@ -38,7 +42,7 @@ const searchForm = (
       name="q"
       aria-label="Search properties"
       placeholder="Search properties or locations…"
-      className="h-8 min-w-0 flex-1 border-0 bg-transparent px-0 text-sm shadow-none focus-visible:ring-0"
+      className="h-8 min-w-0 flex-1 appearance-none border-0 !bg-white px-0 text-sm shadow-none focus-visible:ring-0 dark:!bg-white"
     />
     <Button
       type="submit"
@@ -112,14 +116,26 @@ export function Navbar() {
         <div className="flex items-center gap-1">
           <Link
             href="/"
-            className="group flex items-center gap-2.5"
-            aria-label="Lekhaprati home"
+            className="group flex items-center "
+            aria-label="MALPOTH home"
           >
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-on-primary shadow-sm transition-transform group-hover:scale-105">
-              <Icon name="domain" filled className="text-[22px]" />
+            <span className="flex h-12 w-12 rounded-full ring-1 ring-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105">
+              <Image
+                src={logo}
+                alt="MALPOTH"
+                width={46}
+                height={46}
+                className="h-full w-full rounded-full object-contain"
+              />
             </span>
-            <span className="font-display-lg text-headline-md text-primary font-bold tracking-tight">
-              Lekhaprati
+            <span>
+              <Image
+                src={logoText}
+                alt="MALPOTH"
+                width={120}
+                height={36}
+                className="h-full w-full rounded-full object-contain"
+              />
             </span>
           </Link>
 
@@ -129,7 +145,7 @@ export function Navbar() {
                 variant="ghost"
                 size="icon"
                 aria-label="Switch app"
-                className="h-9 w-9 rounded-full bg-primary text-on-primary shadow-sm ring-2 ring-surface transition-all duration-200 hover:scale-105 hover:bg-primary/90 hover:shadow-md data-[state=open]:rotate-180 cursor-pointer"
+                className="h-6 w-6 rounded-full bg-primary text-on-primary shadow-xs ring-1 ring-surface transition-all duration-200 hover:scale-105 hover:bg-primary/90 hover:shadow-md data-[state=open]:rotate-180 cursor-pointer"
               >
                 <ChevronDown className="size-4" />
               </Button>
@@ -146,26 +162,6 @@ export function Navbar() {
           </DropdownMenu>
         </div>
 
-        {/* Desktop nav links */}
-        {/* <div className="hidden md:flex items-center gap-x-1">
-          {navLinks.map((item) => (
-            <Link
-              href={item.href}
-              key={item.href}
-              className={`relative px-3 py-2 text-sm font-medium transition-colors hover:text-primary ${
-                isActive(item.href) ? "text-primary" : "text-on-surface-variant"
-              }`}
-            >
-              {item.label}
-              <span
-                className={`absolute left-3 right-3 -bottom-0.5 h-0.5 rounded-full bg-primary transition-transform duration-300 ${
-                  isActive(item.href) ? "scale-x-100" : "scale-x-0"
-                }`}
-              />
-            </Link>
-          ))}
-        </div> */}
-
         {/* Desktop search bar */}
         <div className="hidden flex-1 justify-center xl:flex">
           <div className="w-full max-w-md">{searchForm}</div>
@@ -176,7 +172,12 @@ export function Navbar() {
           {/* CTA: List a Property (desktop) */}
           <div className="hidden sm:block">
             {isLoggedIn ? (
-              <Button asChild variant="default" size="sm">
+              <Button
+                asChild
+                variant="default"
+                size="sm"
+                className="bg-gold text-white shadow-sm hover:bg-gold/90"
+              >
                 <Link
                   href="/my-listings/new"
                   className="inline-flex items-center gap-1.5"
@@ -188,7 +189,11 @@ export function Navbar() {
             ) : (
               <SignIn
                 trigger={
-                  <Button variant="default" size="sm">
+                  <Button
+                    variant="default"
+                    size="sm"
+                    className="bg-gold text-on-gold shadow-sm hover:bg-gold/90"
+                  >
                     List a Property
                     <Icon name="arrow_outward" className="text-data-table" />
                   </Button>
@@ -223,16 +228,12 @@ export function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button
-                    variant="ghost"
-                    className="flex items-center gap-2 rounded-full bg-primary-container/15 hover:bg-primary-container/25 py-1.5 pl-1.5 pr-2 sm:pr-3 text-sm font-medium text-primary transition-all h-auto cursor-pointer"
+                    variant="default"
+                    size="icon"
+                    aria-label="Account menu"
+                    className="rounded-full text-xs font-bold shadow-sm cursor-pointer hover:bg-primary/90 data-[state=open]:bg-primary"
                   >
-                    <span className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-on-primary">
-                      {initials}
-                    </span>
-                    <span className="hidden sm:inline max-w-[100px] truncate">
-                      {user?.name}
-                    </span>
-                    <ChevronDown className="h-3.5 w-3.5" />
+                    {initials}
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -352,7 +353,7 @@ export function Navbar() {
                       setMobileOpen(false);
                       openAuth();
                     }}
-                    className="h-11 rounded-lg bg-primary text-on-primary font-semibold cursor-pointer"
+                    className="h-11 rounded-lg bg-gold text-on-gold font-semibold cursor-pointer hover:bg-gold/90"
                   >
                     List a Property
                   </Button>

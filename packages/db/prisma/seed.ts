@@ -450,7 +450,7 @@ async function main() {
 
   // ---------- Static pages ----------
   for (const p of [
-    { slug: "about", route: "/about", title: "About Lekhaprati" },
+    { slug: "about", route: "/about", title: "About MALPOTH" },
     { slug: "area-guid", route: "/area-guid", title: "Area Guides" },
     { slug: "compare", route: "/compare", title: "Compare Properties" },
   ]) {
@@ -498,18 +498,18 @@ async function main() {
   const seos = [
     {
       route: "/",
-      title: "Verified Land & Property Listings in Nepal | Lekhaprati",
+      title: "Verified Land & Property Listings in Nepal | MALPOTH",
       description:
         "Browse field-verified land, residential, commercial & apartment listings across Nepal.",
     },
     {
       route: "/gold",
-      title: "Gold Price Today in Nepal | Lekhaprati",
+      title: "Gold Price Today in Nepal | MALPOTH",
       description: "Live gold prices in Nepali Rupees.",
     },
     {
       route: "/scrape",
-      title: "Kabadi — Sell Your Scrap | Lekhaprati",
+      title: "Kabadi — Sell Your Scrap | MALPOTH",
       description: "Check today scrap rates and book a pickup.",
     },
   ];
@@ -525,7 +525,7 @@ async function main() {
     create: {
       key: "main",
       data: {
-        brand: "Lekhaprati",
+        brand: "MALPOTH",
         phone: "9800522234",
         phoneDisplay: "9800-KABADI",
         email: "hello@lekhaprati.com",
@@ -534,7 +534,7 @@ async function main() {
     update: {},
   });
 
-  // ---------- Admin user (Lekhaprati operations console) ----------
+  // ---------- Admin user (MALPOTH operations console) ----------
   const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@lekhaprati.com";
   const adminPassword =
     process.env.ADMIN_SEED_PASSWORD || "LekhapratiAdmin@2026";

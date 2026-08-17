@@ -2,7 +2,7 @@ import { Icon } from "@repo/ui";
 
 export function Story() {
   return (
-    <section className="border-b border-outline-variant bg-surface-container-low">
+    <section className="border-b border-outline-variant">
       <div className="mx-auto max-w-container-max px-gutter py-xl">
         <div className="grid grid-cols-1 items-start gap-xl lg:grid-cols-2">
           {/* Left — the problem */}
@@ -24,7 +24,7 @@ export function Story() {
             <p className="font-body-md text-on-surface-variant leading-relaxed">
               Existing registries are fragmented across 77 district Land Revenue
               Offices, making it nearly impossible to verify a property&apos;s
-              full history without months of manual research. Lekhaprati was
+              full history without months of manual research. MALPOTH was
               founded to solve this asymmetry — by creating a single trusted
               archive that any buyer, investor, or agent can rely on.
             </p>

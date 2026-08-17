@@ -12,13 +12,14 @@ interface VerificationPanelProps {
 export function VerificationPanel({ profile }: VerificationPanelProps) {
   return (
     <div className="rounded-2xl border border-outline-variant bg-surface p-md">
-      <h2 className="mb-md font-headline-md text-base font-semibold text-on-surface">
+      <h2 className="mb-md flex items-center gap-2.5 font-headline-md text-base font-bold tracking-tight text-navy">
+        <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
         Roles & Verification
       </h2>
 
       {/* Roles */}
       <div className="mb-md flex flex-col gap-xs">
-        <span className="font-label-sm text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+        <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
           Current roles
         </span>
         <div className="flex flex-wrap gap-1.5">
@@ -36,7 +37,7 @@ export function VerificationPanel({ profile }: VerificationPanelProps) {
 
       {/* Verification level progress */}
       <div className="flex flex-col gap-xs">
-        <span className="font-label-sm text-[11px] font-bold uppercase tracking-wider text-on-surface-variant">
+        <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
           Verification level
         </span>
         <div className="flex flex-col gap-sm">

@@ -1,11 +1,10 @@
 "use client";
 
-import { Button, Icon, toast } from "@repo/ui";
+import { Button, toast } from "@repo/ui";
 import { EmptyState } from "components/real-state/layout/dashboard/EmptyState";
 import { ApiError } from "lib/api/core/client";
 import { removeFromCart, updateCartQuantity } from "lib/api/services/cart";
 import type { CartItem } from "lib/api/services/cart/types";
-import { formatNPR } from "lib/api/services/properties/types";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useCartStore } from "store/cart";
@@ -28,12 +27,6 @@ export function CartClient({ initialItems }: CartClientProps) {
   );
   const unavailableCount = items.length - available.length;
 
-  const total = useMemo(
-    () => available.reduce((sum, item) => sum + (item.subtotal ?? 0), 0),
-    [available],
-  );
-  const itemCount = available.reduce((sum, item) => sum + item.quantity, 0);
-
   if (!items.length) {
     return (
       <EmptyState
@@ -41,7 +34,10 @@ export function CartClient({ initialItems }: CartClientProps) {
         title="Your cart is empty"
         description="Tap “Add to Cart” on any listing to shortlist it here."
         action={
-          <Button asChild className="rounded-md font-semibold">
+          <Button
+            asChild
+            className="rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90"
+          >
             <Link href="/">Browse listings</Link>
           </Button>
         }
@@ -105,23 +101,6 @@ export function CartClient({ initialItems }: CartClientProps) {
             available and will be removed when you update the cart.
           </p>
         )}
-      </div>
-
-      <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant bg-surface p-md sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm text-on-surface-variant">
-            {itemCount} item{itemCount === 1 ? "" : "s"} · Total
-          </p>
-          <p className="mono-stat text-2xl font-semibold text-primary">
-            {formatNPR(total)}
-          </p>
-        </div>
-        <Button asChild className="rounded-md font-semibold">
-          <Link href="/inquiries">
-            <Icon name="chat" className="text-[18px]" />
-            Send Inquiries
-          </Link>
-        </Button>
       </div>
     </div>
   );

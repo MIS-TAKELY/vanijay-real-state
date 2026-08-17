@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "@repo/ui";
 
 export const metadata: Metadata = {
-  title: "Lekhaprati — Admin",
+  title: "MALPOTH — Admin",
   description:
     "Archive control panel for verifying listings, managing documents, resolving disputes, curating CMS content, gold prices and kabadi rates.",
 };

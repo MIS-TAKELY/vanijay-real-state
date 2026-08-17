@@ -22,7 +22,10 @@ export function FavoritesGrid({ initialItems }: FavoritesGridProps) {
         title="Save listings to track price drops"
         description="Tap “Save to Favorites” on any listing to favourite it. We'll alert you when its asking price drops."
         action={
-          <Button asChild className="rounded-md font-semibold">
+          <Button
+            asChild
+            className="rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90"
+          >
             <Link href="/">Browse listings</Link>
           </Button>
         }

@@ -20,11 +20,10 @@ export function EmptyState({
     <div
       className={`blueprint-grid flex flex-col items-center justify-center text-center rounded-2xl border border-outline-variant bg-surface px-md py-xl ${className ?? ""}`}
     >
-      <Icon
-        name={icon}
-        className="text-display-lg text-on-surface-variant mb-md"
-      />
-      <h3 className="font-headline-md text-headline-md text-on-surface font-semibold mb-xs">
+      <div className="mb-md flex size-14 items-center justify-center rounded-full border border-gold/40 bg-navy text-gold shadow-sm">
+        <Icon name={icon} className="text-[28px]" />
+      </div>
+      <h3 className="font-headline-md text-headline-md text-navy font-bold tracking-tight mb-xs">
         {title}
       </h3>
       {description ? (

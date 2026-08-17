@@ -49,7 +49,7 @@ export default async function VerificationsPage() {
                 {r.title}
               </AdminDataTable.Cell>
               <AdminDataTable.Cell className="text-on-surface-variant">
-                {r.propertyType}
+                {r.mainCategory}
               </AdminDataTable.Cell>
               <AdminDataTable.Cell className="mono-stat text-on-surface">
                 {r.askingPrice}

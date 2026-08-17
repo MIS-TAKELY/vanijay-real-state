@@ -2,75 +2,85 @@
 @import "tailwindcss";
 @source "../../../packages/ui";
 
+/* MALPOTH brand palette — extracted from apps/client/public/logo.webp:
+   deep navy roundel (#103050) crowned in brass gold (#c0a040) on warm white. */
 @theme inline {
-  --color-surface-container-high: #eae8e3;
+  --color-surface-container-high: #e7ebf0;
   --color-error-container: #ffdad6;
-  --color-secondary: #54615a;
-  --color-on-secondary-fixed: #121e18;
-  --color-on-primary-fixed-variant: #2c4e38;
+  --color-secondary: #55637a;
+  --color-on-secondary-fixed: #101418;
+  --color-on-primary-fixed-variant: #0b2a47;
   --color-on-tertiary: #ffffff;
-  --color-on-surface-variant: #424842;
-  --color-surface: #fbf9f4;
-  --color-primary-container: #3b5d46;
-  --color-primary: #244530;
+  --color-on-surface-variant: #4a5058;
+  --color-surface: #ffffff;
+  --color-primary-container: #d3e1f5;
+  --color-primary: #103050;
   --color-on-tertiary-fixed-variant: #891b1f;
-  --color-inverse-on-surface: #f2f1ec;
-  --color-outline-variant: #c2c8c0;
-  --color-on-surface: #1b1c19;
+  --color-inverse-on-surface: #edf1f7;
+  --color-outline-variant: #c7cfd8;
+  --color-on-surface: #171a1f;
   --color-tertiary-container: #9e2b2c;
   --color-error: #ba1a1a;
-  --color-inverse-surface: #30312e;
+  --color-inverse-surface: #1c2430;
   --color-on-error: #ffffff;
-  --color-secondary-container: #d8e6dc;
-  --color-primary-fixed-dim: #aad0b3;
-  --color-primary-fixed: #c5ecce;
-  --color-surface-container-highest: #e4e2dd;
-  --color-on-secondary-container: #5a6760;
-  --color-on-background: #1b1c19;
-  --color-background: #fbf9f4;
-  --color-on-primary-container: #aed4b7;
+  --color-secondary-container: #dce6f0;
+  --color-primary-fixed-dim: #a9c7ea;
+  --color-primary-fixed: #d2e4fa;
+  --color-surface-container-highest: #e5e8ec;
+  --color-on-secondary-container: #4a5563;
+  --color-on-background: #171a1f;
+  --color-background: #fbfaf7;
+  --color-on-primary-container: #b7cff0;
   --color-on-tertiary-container: #ffbab5;
   --color-on-error-container: #93000a;
-  --color-surface-tint: #44664e;
-  --color-surface-container: #f0eee9;
+  --color-surface-tint: #103050;
+  --color-surface-container: #f0f2f5;
   --color-tertiary: #7d1118;
   --color-on-primary: #ffffff;
-  --color-inverse-primary: #aad0b3;
-  --color-secondary-fixed-dim: #bccac1;
-  --color-on-primary-fixed: #00210f;
+  --color-inverse-primary: #b7cff0;
+  --color-secondary-fixed-dim: #bfcbd8;
+  --color-on-primary-fixed: #0a2540;
   --color-tertiary-fixed: #ffdad7;
-  --color-outline: #727972;
-  --color-surface-container-low: #f5f3ee;
-  --color-surface-bright: #fbf9f4;
-  --color-secondary-fixed: #d8e6dc;
-  --color-surface-variant: #e4e2dd;
-  --color-on-secondary-fixed-variant: #3d4a43;
+  --color-outline: #6e7886;
+  --color-surface-container-low: #f6f7f9;
+  --color-surface-bright: #fbfcfd;
+  --color-secondary-fixed: #dce6f0;
+  --color-surface-variant: #e5e8ec;
+  --color-on-secondary-fixed-variant: #3e4a58;
   --color-tertiary-fixed-dim: #ffb3ae;
   --color-on-tertiary-fixed: #410004;
   --color-on-secondary: #ffffff;
-  --color-surface-dim: #dbdad5;
+  --color-surface-dim: #d8dde3;
+
+  /* Brass-gold brand accents (logo crown) — used sparingly for premium detail */
+  --color-gold: #c9a227;
+  --color-gold-soft: #e8d9a8;
+  --color-gold-deep: #8a6d1d;
+  --color-on-gold: #10283f;
+  --color-navy: #103050;
+  --color-navy-deep: #0a2540;
 
   /* shadcn UI semantic tokens (bridge DESIGN.md → packages/ui primitives) */
-  --color-foreground: #1b1c19;
+  --color-foreground: #171a1f;
   --color-card: #ffffff;
-  --color-card-foreground: #1b1c19;
+  --color-card-foreground: #171a1f;
   --color-popover: #ffffff;
-  --color-popover-foreground: #1b1c19;
+  --color-popover-foreground: #171a1f;
   --color-primary-foreground: #ffffff;
   --color-secondary-foreground: #ffffff;
   --color-destructive: #ba1a1a;
   --color-destructive-foreground: #ffffff;
-  --color-accent: #d8e6dc;
-  --color-accent-foreground: #1b1c19;
-  --color-muted: #e4e2dd;
-  --color-muted-foreground: #727972;
-  --color-border: #c2c8c0;
-  --color-input: #727972;
-  --color-ring: #244530;
+  --color-accent: #dce6f0;
+  --color-accent-foreground: #0a2540;
+  --color-muted: #e5e8ec;
+  --color-muted-foreground: #6e7886;
+  --color-border: #c7cfd8;
+  --color-input: #6e7886;
+  --color-ring: #103050;
   --radius-sm: 4px;
   --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
 
   --font-display-lg: "Fraunces", serif;
   --font-headline-md: "Fraunces", serif;
@@ -110,7 +120,7 @@
 }
 
 body {
-  background-color: #f7f5f0;
+  background-color: #ffffff;
   font-family: "Public Sans", sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #1b1c19;
@@ -125,8 +135,8 @@ body {
 }
 
 .verification-stamp {
-  border: 2px solid #7d1118;
-  color: #7d1118;
+  border: 2px solid #103050;
+  color: #103050;
   transform: rotate(-6deg);
   display: inline-flex;
   align-items: center;
@@ -136,14 +146,14 @@ body {
   font-weight: 800;
   font-size: 11px;
   letter-spacing: 0.1em;
-  background: rgba(125, 17, 24, 0.05);
+  background: rgba(201, 162, 39, 0.08);
   border-radius: 4px;
   pointer-events: none;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .topo-bg {
-  background-image: radial-gradient(#244530 0.5px, transparent 0.5px);
+  background-image: radial-gradient(#103050 0.5px, transparent 0.5px);
   background-size: 24px 24px;
   opacity: 0.06;
 }
@@ -154,8 +164,8 @@ body {
 
 .blueprint-grid {
   background-image:
-    linear-gradient(#e4e2dd 1px, transparent 1px),
-    linear-gradient(90deg, #e4e2dd 1px, transparent 1px);
+    linear-gradient(#dfe3ea 1px, transparent 1px),
+    linear-gradient(90deg, #dfe3ea 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -242,26 +252,26 @@ body {
 }
 
 .suneditor-wrapper .sun-editor .se-toolbar {
-  background-color: #f0eee9;
-  border-bottom: 1px solid #c2c8c0;
+  background-color: #f0f2f5;
+  border-bottom: 1px solid #c7cfd8;
   padding: 6px 8px;
   outline: none;
 }
 
 .suneditor-wrapper .sun-editor .se-btn {
-  color: #424842;
+  color: #4a5058;
   border-radius: 6px;
   margin: 1px;
   transition: all 0.15s ease;
 }
 
 .suneditor-wrapper .sun-editor .se-btn:hover {
-  background-color: #e4e2dd;
-  color: #244530;
+  background-color: #e5e8ec;
+  color: #103050;
 }
 
 .suneditor-wrapper .sun-editor .se-btn.active {
-  background-color: #244530;
+  background-color: #103050;
   color: #ffffff;
 }
 
@@ -274,12 +284,12 @@ body {
   font-family: inherit;
   font-size: 14px;
   line-height: 1.65;
-  color: #1b1c19;
+  color: #171a1f;
   background-color: transparent;
 }
 
 .suneditor-wrapper .sun-editor .se-placeholder {
-  color: #727972;
+  color: #6e7886;
   font-style: normal;
   padding: 12px 14px;
   font-size: 14px;
@@ -312,10 +322,10 @@ body {
 }
 
 .suneditor-content a {
-  color: #244530;
+  color: #103050;
   text-decoration: underline;
 }
 
 .suneditor-content a:hover {
-  color: #3b5d46;
+  color: #8a6d1d;
 }

@@ -379,7 +379,8 @@ export interface TopListing {
   title: string;
   slug: string;
   status: string;
-  propertyType: string;
+  mainCategory: string;
+  subCategory: string;
   askingPrice: number;
   location: string;
   views: number;
@@ -390,7 +391,7 @@ export interface TopListing {
 
 export interface ListingPerformanceData {
   top: TopListing[];
-  byType: { propertyType: string; _count: { _all: number } }[];
+  byType: { mainCategory: string; _count: { _all: number } }[];
   byStatus: { status: string; _count: { _all: number } }[];
 }
 
@@ -478,7 +479,8 @@ export interface AdminProperty {
   listingCode: string;
   title: string;
   status: string;
-  propertyType: string;
+  mainCategory: string;
+  subCategory: string;
   askingPrice: string;
   isFeatured: boolean;
   owner?: { id: string; name: string; email: string } | null;
@@ -597,7 +599,8 @@ export interface AdminPropertyDetail extends AdminProperty {
 export interface AdminPropertyPatch {
   title?: string;
   description?: string | null;
-  propertyType?: string;
+  mainCategory?: string;
+  subCategory?: string;
   status?: string;
   askingPrice?: number;
   pricePerAana?: number | null;

@@ -236,7 +236,8 @@ export class AnalyticsService {
     const property = await this.prisma.property.findUnique({
       where: { id: propertyId },
       select: {
-        propertyType: true,
+        mainCategory: true,
+        subCategory: true,
         askingPrice: true,
         location: {
           select: {
@@ -261,7 +262,8 @@ export class AnalyticsService {
       where: {
         id: { not: propertyId },
         status: 'LIVE',
-        propertyType: property.propertyType,
+        mainCategory: property.mainCategory,
+        subCategory: property.subCategory,
         askingPrice: { gte: minPrice, lte: maxPrice },
         ...(property.location?.district && {
           location: {

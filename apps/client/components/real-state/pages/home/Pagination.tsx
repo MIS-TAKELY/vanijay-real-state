@@ -29,7 +29,7 @@ export function Pagination({ hasMore, loading, onLoadMore }: PaginationProps) {
         onClick={onLoadMore}
         disabled={loading}
         aria-busy={loading}
-        className="rounded-md border-outline-variant bg-surface px-md py-2.5 font-semibold text-on-surface hover:border-primary hover:text-primary disabled:cursor-not-allowed disabled:opacity-60"
+        className="rounded-md border-outline-variant bg-surface px-md py-2.5 font-semibold text-on-surface hover:border-gold/60 hover:text-gold-deep disabled:cursor-not-allowed disabled:opacity-60"
       >
         {loading ? "Loading…" : "Load more listings"}
       </Button>

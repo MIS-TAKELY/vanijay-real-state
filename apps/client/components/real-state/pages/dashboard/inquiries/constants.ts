@@ -90,8 +90,8 @@ export const DEFAULT_INQUIRY_STATUS_STYLE: InquiryStatusStyle = {
 export const INQUIRY_STATUS_STYLES: Record<InquiryStatus, InquiryStatusStyle> =
   {
     OPEN: {
-      dot: "bg-[#b45309]",
-      chip: "bg-[#b45309]/10 text-[#b45309]",
+      dot: "bg-gold",
+      chip: "bg-gold/10 text-gold-deep",
       label: "Open",
     },
     IN_NEGOTIATION: {

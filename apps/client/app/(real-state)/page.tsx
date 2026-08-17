@@ -1,20 +1,16 @@
 import {
-  CallToActionBanner,
   CategoryStrip,
   HeroBannerCarousel,
   ListingsMarketplace,
   RecentlyAdded,
   RecentlyViewed,
-  SearchBar,
 } from "components/real-state/pages/home";
 import NepalmapWrapper from "components/real-state/pages/home/NepalmapWrapper";
-import { AppModeStrip } from "components/shared/AppModeStrip";
+import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
-const PAGE_URL = "https://lekhaprati.com";
-
 export const metadata: Metadata = {
-  title: "Verified Land & Property Listings in Nepal | Lekhaprati",
+  title: "Verified Land & Property Listings in Nepal | MALPOTH",
   description:
     "Browse field-verified land, residential, commercial & apartment listings across Nepal. Every plot cross-referenced against cadastral records — zero title disputes.",
   keywords: [
@@ -29,16 +25,16 @@ export const metadata: Metadata = {
   ],
   alternates: { canonical: "/" },
   openGraph: {
-    title: "Verified Land & Property Listings in Nepal | Lekhaprati",
+    title: "Verified Land & Property Listings in Nepal | MALPOTH",
     description:
       "Browse field-verified land, residential, commercial & apartment listings across Nepal. Cadastral-cleared, zero title disputes.",
-    url: PAGE_URL,
-    siteName: "Lekhaprati",
+    url: SITE_URL,
+    siteName: "MALPOTH",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Verified Land & Property Listings in Nepal | Lekhaprati",
+    title: "Verified Land & Property Listings in Nepal | MALPOTH",
     description:
       "Browse field-verified land & property listings across Nepal. Cadastral-cleared, zero title disputes.",
   },
@@ -53,7 +49,7 @@ const breadcrumbSchema = {
       "@type": "ListItem",
       position: 1,
       name: "Home",
-      item: PAGE_URL,
+      item: SITE_URL,
     },
   ],
 };

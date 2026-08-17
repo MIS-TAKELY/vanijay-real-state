@@ -1,55 +1,55 @@
-// MapTypeStyle entries for Google Maps dark theme
+// MapTypeStyle entries for Google Maps dark theme (navy + gold brand palette)
 export const DARK_MAP_STYLE: Array<{
   featureType?: string;
   elementType?: string;
   stylers: Array<Record<string, string>>;
 }> = [
-  { elementType: "geometry", stylers: [{ color: "#0d1a14" }] },
-  { elementType: "labels.text.stroke", stylers: [{ color: "#0d1a14" }] },
-  { elementType: "labels.text.fill", stylers: [{ color: "#4ade80" }] },
+  { elementType: "geometry", stylers: [{ color: "#0b1424" }] },
+  { elementType: "labels.text.stroke", stylers: [{ color: "#0b1424" }] },
+  { elementType: "labels.text.fill", stylers: [{ color: "#9db8d8" }] },
   {
     featureType: "administrative.locality",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#d1fae5" }],
+    stylers: [{ color: "#e8d9a8" }],
   },
   {
     featureType: "poi",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#86efac" }],
+    stylers: [{ color: "#8fa8c8" }],
   },
   {
     featureType: "poi.park",
     elementType: "geometry",
-    stylers: [{ color: "#14332a" }],
+    stylers: [{ color: "#14263f" }],
   },
   {
     featureType: "road",
     elementType: "geometry",
-    stylers: [{ color: "#1a3326" }],
+    stylers: [{ color: "#16283f" }],
   },
   {
     featureType: "road",
     elementType: "geometry.stroke",
-    stylers: [{ color: "#244530" }],
+    stylers: [{ color: "#2a4a75" }],
   },
   {
     featureType: "road",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#6b7280" }],
+    stylers: [{ color: "#8fa8c8" }],
   },
   {
     featureType: "transit",
     elementType: "geometry",
-    stylers: [{ color: "#14332a" }],
+    stylers: [{ color: "#14263f" }],
   },
   {
     featureType: "water",
     elementType: "geometry",
-    stylers: [{ color: "#0a140d" }],
+    stylers: [{ color: "#0a1626" }],
   },
   {
     featureType: "water",
     elementType: "labels.text.fill",
-    stylers: [{ color: "#2563eb" }],
+    stylers: [{ color: "#5b8dd6" }],
   },
 ];

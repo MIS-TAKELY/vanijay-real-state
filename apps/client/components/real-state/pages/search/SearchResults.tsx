@@ -144,13 +144,14 @@ export function SearchResults({
 
         {results.length === 0 && !initialError ? (
           <div className="blueprint-grid rounded-2xl border border-outline-variant bg-surface px-6 py-16 text-center">
-            <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full bg-surface-container">
-              <Icon
-                name="search"
-                className="text-[24px] text-on-surface-variant"
-              />
+            <div className="mx-auto mb-4 flex size-12 items-center justify-center rounded-full border border-gold/40 bg-navy text-gold shadow-sm">
+              <Icon name="search" className="text-[24px]" />
             </div>
-            <p className="font-headline-md text-xl font-semibold text-on-surface">
+            <p className="mx-auto mb-2 flex w-fit items-center gap-2.5 font-label-sm text-[11px] uppercase tracking-[0.18em] text-gold-deep font-bold">
+              <span className="h-px w-6 bg-gold" aria-hidden />
+              No matches
+            </p>
+            <p className="font-headline-md text-xl font-semibold text-navy">
               No properties match your search
             </p>
             <p className="mx-auto mt-2 max-w-md text-sm text-on-surface-variant">
@@ -159,7 +160,10 @@ export function SearchResults({
             </p>
             {chips.length > 0 && (
               <div className="mt-6">
-                <Button asChild className="rounded-md bg-primary font-semibold">
+                <Button
+                  asChild
+                  className="rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90"
+                >
                   <Link href="/search">Browse all properties</Link>
                 </Button>
               </div>
@@ -167,6 +171,14 @@ export function SearchResults({
           </div>
         ) : (
           <>
+            <div className="mb-5 flex items-end justify-between">
+              <p className="flex items-center gap-2.5 font-label-sm text-[11px] uppercase tracking-[0.18em] text-gold-deep font-bold">
+                <span className="h-px w-7 bg-gold" aria-hidden />
+                <span>
+                  {results.length} verified listing{results.length === 1 ? "" : "s"}
+                </span>
+              </p>
+            </div>
             <div className="grid grid-cols-1 gap-md sm:grid-cols-2 lg:grid-cols-3">
               {results.map((p) => (
                 <PropertyCard

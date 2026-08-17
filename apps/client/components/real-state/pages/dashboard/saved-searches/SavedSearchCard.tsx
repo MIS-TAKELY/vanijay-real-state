@@ -12,12 +12,12 @@ export function SavedSearchCard({ search }: SavedSearchCardProps) {
   const hasNew = search.newMatches > 0;
 
   return (
-    <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant bg-surface p-md transition-[transform,box-shadow,border-color] duration-300 hover:border-primary/40 hover:shadow-lg">
+    <div className="flex flex-col gap-sm rounded-2xl border border-outline-variant border-t-2 border-t-gold/40 bg-surface p-md shadow-sm transition-[transform,box-shadow,border-color] duration-300 hover:border-gold/50 hover:shadow-lg">
       <div className="flex items-start justify-between gap-sm">
         <div className="flex min-w-0 items-start gap-1.5">
           {hasNew ? (
             <span
-              className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-primary ring-4 ring-primary/10"
+              className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-gold ring-4 ring-gold/15"
               aria-label={`${search.newMatches} new matches`}
             />
           ) : null}
@@ -45,7 +45,7 @@ export function SavedSearchCard({ search }: SavedSearchCardProps) {
       <div className="flex flex-wrap items-center justify-between gap-sm border-t border-outline-variant pt-sm">
         <div className="flex items-center gap-sm">
           <div className="flex flex-col">
-            <span className="mono-stat text-lg font-bold text-primary leading-none">
+            <span className="mono-stat text-lg font-bold text-gold-deep leading-none">
               {search.matchCount}
             </span>
             <span className="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">
@@ -53,7 +53,7 @@ export function SavedSearchCard({ search }: SavedSearchCardProps) {
             </span>
           </div>
           {hasNew ? (
-            <span className="mono-stat inline-flex items-center rounded-full bg-primary px-1.5 py-0.5 text-[11px] font-bold text-on-primary leading-none">
+            <span className="mono-stat inline-flex items-center rounded-full bg-gold px-1.5 py-0.5 text-[11px] font-bold text-on-gold leading-none">
               +{search.newMatches} new
             </span>
           ) : null}
@@ -63,7 +63,7 @@ export function SavedSearchCard({ search }: SavedSearchCardProps) {
           <FrequencyToggle value={search.alertFrequency} />
           <Link
             href="/"
-            className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-label-sm font-medium text-on-surface-variant hover:text-primary hover:bg-surface-container transition-colors"
+            className="inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-label-sm font-medium text-on-surface-variant hover:text-gold-deep hover:bg-surface-container transition-colors"
           >
             <Icon name="play_arrow" className="text-data-table" />
             Run now

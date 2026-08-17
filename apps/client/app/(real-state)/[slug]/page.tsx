@@ -1,5 +1,6 @@
 import { Badge, Icon } from "@repo/ui";
 import { PropertyViewTracker } from "components/real-state/common/PropertyViewTracker";
+import { stripHtml } from "components/real-state/googlemap/utils";
 import { SimilarProperties } from "components/real-state/pages/home/SimilarProperties";
 import { ListingDecisionCard } from "components/real-state/pages/listing/ListingDecisionCard";
 import { ListingDescription } from "components/real-state/pages/listing/ListingDescription";
@@ -20,7 +21,6 @@ import {
   type ApiProperty,
   type ApiPropertyMedia,
 } from "lib/api/services/properties/types";
-import { stripHtml } from "components/real-state/googlemap/utils";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -52,10 +52,11 @@ export async function generateMetadata({
     const property = await fetchPropertyByGraphql(slug);
     const plainDesc = stripHtml(property.description);
     return {
-      title: `${property.title} | Lekhaprati`,
+      title: `${property.title} | MALPOTH`,
       description:
         plainDesc ||
-        `${labelEnum(property.propertyType, TYPE_LABELS)} for sale in ${formatLocation(property.location)}.`,
+        `${labelEnum(property.subCategory, TYPE_LABELS)} for sale in ${formatLocation(property.location)}.`,
+      alternates: { canonical: `/${slug}` },
       openGraph: {
         title: property.title,
         description:
@@ -66,7 +67,7 @@ export async function generateMetadata({
       },
     };
   } catch {
-    return { title: "Listing not found | Lekhaprati" };
+    return { title: "Listing not found | MALPOTH" };
   }
 }
 
@@ -98,10 +99,7 @@ function partitionMedia(media: ApiPropertyMedia[] = []) {
   const sorted = [...media].sort((a, b) => a.sortOrder - b.sortOrder);
   const images = sorted.filter((m) => !m.type || m.type === "IMAGE");
   const videos = sorted.filter((m) => m.type === "VIDEO_WALKTHROUGH");
-  // Cadastral maps (Naksa) are the only documents shown on the listing page.
   const cadastralMaps = sorted.filter((m) => m.type === "CADASTRAL_MAP");
-  // Anything without a recognized type still belongs in the photo gallery so
-  // we never silently drop uploaded assets.
   const known = new Set(["IMAGE", "VIDEO_WALKTHROUGH", "CADASTRAL_MAP"]);
   const otherImages = sorted.filter(
     (m) => m.type && !known.has(m.type) && !images.includes(m),
@@ -118,12 +116,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const property = await loadProperty(slug);
 
   const { images, videos, cadastralMaps } = partitionMedia(property.media);
-  const gradient = TYPE_GRADIENTS[property.propertyType] ?? FALLBACK_GRADIENT;
+  const gradient = TYPE_GRADIENTS[property.subCategory] ?? FALLBACK_GRADIENT;
   const area = formatLandArea(property.landArea);
   const location = formatLocation(property.location);
   const verified = property.verificationLevel !== "UNVERIFIED";
-  // Building types (houses/spaces/heritage) don't always include land — skip
-  // the land-area rows when the parcel is zero/absent.
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
   const p = property;
 
@@ -135,7 +131,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
           ["Total Area (m²)", `${formatNumber(p.landArea?.totalSqMeters)} m²`],
         ] as Array<[string, string | null | undefined]>)
       : []),
-    ["Property Type", labelEnum(property.propertyType, TYPE_LABELS)],
+    ["Property Type", labelEnum(property.subCategory, TYPE_LABELS)],
     [
       "Road Access",
       [
@@ -154,9 +150,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
       labelEnum(property.verificationLevel, VERIFICATION_LABELS),
     ],
   ];
-
-  // Type-specific specs from Step 3 (null/empty values are filtered out
-  // below). Multi-select fields render as chip groups under the rows.
   const typeSpecs: Array<[string, string | null | undefined]> = [];
   const chipGroups: Array<{ label: string; values: string[] }> = [];
   const label = (v: string) => labelEnum(v, {});
@@ -321,13 +314,17 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 Home
               </Link>
             </li>
-            <li>/</li>
+            <li aria-hidden className="text-gold">
+              /
+            </li>
             <li>
               <Link href="/#listings" className="hover:text-primary">
                 Listings
               </Link>
             </li>
-            <li>/</li>
+            <li aria-hidden className="text-gold">
+              /
+            </li>
             <li className="truncate font-medium text-on-surface">
               {property.title}
             </li>
@@ -339,12 +336,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
           {/* Badges */}
           <div className="mb-1.5 flex flex-wrap items-center gap-2">
             <Badge variant="secondary">
-              {labelEnum(property.propertyType, TYPE_LABELS)}
+              {labelEnum(property.subCategory, TYPE_LABELS)}
             </Badge>
             {verified && (
               <Badge
                 variant="outline"
-                className="gap-1 border-primary/30 text-primary"
+                className="gap-1 border-gold/40 text-gold-deep"
               >
                 <Icon name="verified" className="text-[14px]" />
                 {labelEnum(property.verificationLevel, VERIFICATION_LABELS)}
@@ -362,7 +359,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
           {/* Title + Location + Maps */}
           <div className="min-w-0">
-            <h1 className="font-headline-md text-pretty text-2xl font-semibold tracking-tight text-on-surface sm:text-3xl">
+            <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
               {property.title}
             </h1>
             <div className="mt-1.5 flex flex-wrap items-center gap-2">
@@ -392,10 +389,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
             {/* Specifications */}
             <section className="mt-5">
-              <h2 className="mb-2 text-lg font-semibold text-on-surface">
+              <h2 className="mb-3 flex items-center gap-2.5 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
                 Specifications
               </h2>
-              <div className="rounded-xl border border-outline-variant bg-surface px-4 py-2">
+              <div className="rounded-xl border border-outline-variant border-t-2 border-t-gold/50 bg-surface px-4 py-2 shadow-sm">
                 {allSpecs
                   .filter(([, value]) => value)
                   .map(([label, value]) => (
@@ -432,10 +430,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
             {/* Location details */}
             {locationSpecs.length > 0 && (
               <section className="mt-5">
-                <h2 className="mb-2 text-lg font-semibold text-on-surface">
+                <h2 className="mb-3 flex items-center gap-2.5 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                  <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
                   Location
                 </h2>
-                <div className="rounded-xl border border-outline-variant bg-surface px-4 py-2">
+                <div className="rounded-xl border border-outline-variant border-t-2 border-t-gold/50 bg-surface px-4 py-2 shadow-sm">
                   {locationSpecs
                     .filter(([, value]) => value)
                     .map(([label, value]) => (
@@ -458,7 +457,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
               title={property.title}
               askingPrice={formatNPR(property.askingPrice)}
               price={property.askingPrice}
-              isLand={isLandPropertyType(property.propertyType)}
+              isLand={isLandPropertyType(property.mainCategory)}
               landTotalSqFt={property.landArea?.totalSqFt ?? null}
               location={property.location}
               verified={verified}

@@ -1,6 +1,7 @@
 import { Badge, Button, Icon, cn } from "@repo/ui";
 import Link from "next/link";
 import type { CardProperty } from "lib/api/services/properties/types";
+import { getSecureMediaUrl } from "@repo/ui";
 import { AddToCartButton } from "./AddToCartButton";
 import { CompareToggleButton } from "./CompareToggleButton";
 import { SaveToFavoritesButton } from "./SaveToFavoritesButton";
@@ -32,7 +33,7 @@ export function PropertyCard({
   onFavoriteChange,
   className,
 }: PropertyCardProps) {
-  const href = `/listing/${property.id}`;
+  const href = `/${property.id}`;
 
   return (
     <article
@@ -52,7 +53,7 @@ export function PropertyCard({
           {property.imageUrl ? (
             // eslint-disable-next-line @next/next/no-img-element -- external upload URL, see CartRow
             <img
-              src={property.imageUrl}
+              src={getSecureMediaUrl(property.imageUrl)}
               alt={property.title}
               loading="lazy"
               className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
@@ -66,9 +67,10 @@ export function PropertyCard({
 
           {/* Verified stamp — the archive's trust mark (DESIGN.md §2.2). Only
               shown for listings that carry a verification level; unverified
-              seller uploads render without it. */}
+              seller uploads render without it. Navy + gold, echoing the
+              brand roundel. */}
           {property.isVerified && (
-            <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded border border-tertiary/30 bg-surface/95 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-tertiary">
+            <span className="absolute left-2.5 top-2.5 inline-flex items-center gap-1 rounded border border-gold/40 bg-navy/95 px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold backdrop-blur-sm">
               <Icon name="verified" filled className="text-[12px]" />
               Verified
             </span>
@@ -121,7 +123,7 @@ export function PropertyCard({
         )}
 
         {/* Price — ledger mono, the primary scannable datum */}
-        <p className="mb-2 mono-stat text-xl font-bold tracking-tight text-primary">
+        <p className="mb-2 mono-stat text-xl font-bold tracking-tight text-gold-deep">
           {property.price}
         </p>
 

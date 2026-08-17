@@ -57,23 +57,23 @@ export const DASHBOARD_NAV_SECTIONS: DashboardNavSection[] = [
       },
     ],
   },
-  {
-    heading: "Activity",
-    items: [
-      {
-        label: "Inquiries",
-        href: "/inquiries",
-        icon: "forum",
-        badgeKey: "openInquiries",
-      },
-      {
-        label: "Appointments",
-        href: "/appointments",
-        icon: "event",
-      },
-      { label: "My Questions", href: "/questions", icon: "help" },
-    ],
-  },
+  // {
+  //   heading: "Activity",
+  //   items: [
+  //     {
+  //       label: "Inquiries",
+  //       href: "/inquiries",
+  //       icon: "forum",
+  //       badgeKey: "openInquiries",
+  //     },
+  //     {
+  //       label: "Appointments",
+  //       href: "/appointments",
+  //       icon: "event",
+  //     },
+  //     { label: "My Questions", href: "/questions", icon: "help" },
+  //   ],
+  // },
   {
     heading: "Account",
     items: [
@@ -291,8 +291,8 @@ export const STATUS_STYLES: Record<
     label: "Live",
   },
   "Under Verification": {
-    dot: "bg-[#b45309]",
-    chip: "bg-[#b45309]/10 text-[#b45309]",
+    dot: "bg-gold",
+    chip: "bg-gold/10 text-gold-deep",
     label: "Under Verification",
   },
   Draft: {
@@ -306,8 +306,8 @@ export const STATUS_STYLES: Record<
     label: "Scheduled",
   },
   Requested: {
-    dot: "bg-[#b45309]",
-    chip: "bg-[#b45309]/10 text-[#b45309]",
+    dot: "bg-gold",
+    chip: "bg-gold/10 text-gold-deep",
     label: "Requested",
   },
   Completed: {
@@ -346,7 +346,7 @@ export const ACTIVITY_STYLES: Record<
     label: "Price Drop",
   },
   appointment: {
-    dot: "bg-[#b45309]",
+    dot: "bg-gold",
     icon: "event",
     label: "Appointment",
   },

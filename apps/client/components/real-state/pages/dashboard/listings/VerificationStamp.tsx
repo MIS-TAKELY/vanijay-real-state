@@ -32,7 +32,7 @@ export function VerificationStamp({
       title={label}
       className={cn(
         "inline-flex items-center justify-center rounded border px-1.5 py-0.5 text-[10px] font-extrabold uppercase tracking-wider leading-none",
-        isVerified && "border-tertiary/60 text-tertiary bg-tertiary/5",
+        isVerified && "border-gold/50 text-gold-deep bg-gold/5",
         isRejected && "border-error/60 text-error bg-error/5",
         !isVerified &&
           !isRejected &&

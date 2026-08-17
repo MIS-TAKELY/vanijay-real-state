@@ -42,11 +42,12 @@ function toMyListing(p: ApiProperty): MyListing {
     listingCode: p.listingCode,
     slug: p.slug,
     title: p.title,
-    propertyType: p.propertyType,
+    mainCategory: p.mainCategory,
+    subCategory: p.subCategory,
     status: p.status as ListingStatus,
     verificationLevel: p.verificationLevel,
     askingPrice: p.askingPrice,
-    gradient: TYPE_GRADIENTS[p.propertyType] ?? FALLBACK_GRADIENT,
+    gradient: TYPE_GRADIENTS[p.subCategory] ?? FALLBACK_GRADIENT,
     thumbnailUrl: listingCoverImageUrl(p.media),
     views: 0,
     inquiries: 0,
@@ -152,7 +153,7 @@ export function MyListings() {
         <Button
           variant="outline"
           onClick={() => void load()}
-          className="rounded-md border-outline-variant px-md py-2 text-sm font-semibold text-on-surface hover:border-primary hover:text-primary"
+          className="rounded-md border-outline-variant px-md py-2 text-sm font-semibold text-on-surface hover:border-gold/60 hover:text-gold-deep"
         >
           Try again
         </Button>
@@ -167,7 +168,10 @@ export function MyListings() {
         title="Your archive is empty"
         description="List your first verified property to start building your archive."
         action={
-          <Button asChild>
+          <Button
+            asChild
+            className="bg-gold text-on-gold shadow-sm hover:bg-gold/90"
+          >
             <Link href="/my-listings/new">List your first property</Link>
           </Button>
         }

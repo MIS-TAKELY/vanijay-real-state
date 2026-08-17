@@ -36,7 +36,8 @@ export function DashboardSidebar() {
         <nav className="flex flex-col gap-md py-md">
           {DASHBOARD_NAV_SECTIONS.map((section) => (
             <div key={section.heading} className="flex flex-col gap-xs">
-              <p className="font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant px-sm">
+              <p className="flex items-center gap-2 px-sm font-label-sm text-[11px] font-bold uppercase tracking-[0.18em] text-gold-deep">
+                <span className="h-px w-4 bg-gold" aria-hidden />
                 {section.heading}
               </p>
               <div className="flex flex-col gap-xs">

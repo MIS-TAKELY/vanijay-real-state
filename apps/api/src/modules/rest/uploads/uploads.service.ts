@@ -47,4 +47,9 @@ export class UploadsService {
   deleteFiles(publicIds: string[]): Promise<{ deleted: string[] }> {
     return this.cloudinary.deleteMany(publicIds);
   }
+
+  /** Look up a Cloudinary resource by public id. */
+  findResource(publicId: string) {
+    return this.cloudinary.findResource(publicId);
+  }
 }

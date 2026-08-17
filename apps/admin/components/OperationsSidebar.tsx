@@ -8,8 +8,11 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@repo/ui";
+import Image from "next/image";
 
 import { AdminNavList } from "components/AdminNavList";
+import logo from "../public/logo.webp";
+import logoText from "../public/logo-text.webp";
 
 /**
  * Desktop + mobile operations sidebar (shadcn Sidebar, icon-collapsible).
@@ -23,14 +26,25 @@ export function OperationsSidebar() {
     <Sidebar collapsible="icon" className="border-sidebar-border">
       <SidebarHeader className="border-b border-sidebar-border">
         <div className="flex h-12 items-center gap-3 px-2 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-0">
-          <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-sidebar-foreground/10">
-            <Icon
-              name="account_balance"
-              className="text-[20px] text-sidebar-foreground"
+          {/* Roundel + wordmark sit on white chips so they stay legible on
+              the green sidebar rail. */}
+          <span className="flex size-8 shrink-0 items-center justify-center rounded-full bg-white p-0.5 shadow-sm ring-1 ring-gold/40">
+            <Image
+              src={logo}
+              alt="MALPOTH"
+              width={32}
+              height={32}
+              className="size-full rounded-full object-contain"
             />
           </span>
-          <span className="font-headline-md truncate text-lg font-bold tracking-tight text-sidebar-foreground group-data-[collapsible=icon]:hidden">
-            Lekhaprati
+          <span className="flex h-7 shrink-0 items-center rounded-md bg-white px-2 shadow-sm group-data-[collapsible=icon]:hidden">
+            <Image
+              src={logoText}
+              alt="MALPOTH"
+              width={92}
+              height={22}
+              className="h-[18px] w-auto object-contain"
+            />
           </span>
         </div>
       </SidebarHeader>

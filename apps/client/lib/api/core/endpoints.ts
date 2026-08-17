@@ -3,6 +3,7 @@ import { API_VERSION } from "./config";
 export const API_ENDPOINTS = {
   properties: {
     feed: `/api/${API_VERSION}/properties/feed`,
+    sitemap: `/api/${API_VERSION}/properties/sitemap`,
     byId: (id: string) =>
       `/api/${API_VERSION}/properties/${encodeURIComponent(id)}`,
     create: `/api/${API_VERSION}/properties`,

@@ -21,7 +21,7 @@ const LeafletNepalMapDynamic = dynamic(
           alignItems: "center",
           justifyContent: "center",
           background: "rgba(13,26,20,0.6)",
-          color: "#4ade80",
+          color: "#c9a227",
           fontSize: 13,
           fontWeight: 700,
           letterSpacing: "0.05em",
@@ -172,7 +172,7 @@ function toMarker(p: ApiProperty): Marker | null {
     description:
       plainDesc || `Property in ${area || district || "Nepal"} — ${p.title}`,
     tags: [
-      p.propertyType.replace(/_/g, " "),
+      p.subCategory.replace(/_/g, " "),
       verified ? "Verified" : "Listing",
     ],
     sqFt: sqFt > 0 ? sqFt.toLocaleString("en-US") : "—",

@@ -139,10 +139,10 @@ export default function LeafletNepalMap({
     try {
       L.geoJSON(NEPAL_GEOJSON as unknown as GeoJSON.GeoJsonObject, {
         style: {
-          color: "#22c55e",
+          color: "#8a6d1d",
           weight: 1.5,
           opacity: 0.9,
-          fillColor: "#4ade80",
+          fillColor: "#c9a227",
           fillOpacity: 0,
         },
         onEachFeature: (_feature, layer) => {
@@ -150,18 +150,18 @@ export default function LeafletNepalMap({
             mouseover: (e) => {
               const target = e.target;
               target.setStyle({
-                fillColor: "#4ade80",
+                fillColor: "#c9a227",
                 fillOpacity: 0.22,
                 weight: 2,
-                color: "#4ade80",
+                color: "#c9a227",
               });
             },
             mouseout: (e) => {
               const target = e.target;
               target.setStyle({
-                color: "#22c55e",
+                color: "#8a6d1d",
                 weight: 1.5,
-                fillColor: "#4ade80",
+                fillColor: "#c9a227",
                 fillOpacity: 0,
               });
             },
@@ -274,7 +274,7 @@ export default function LeafletNepalMap({
         height,
         width: "100%",
         overflow: "hidden",
-        background: "#0d1a14",
+        background: "#0a2540",
         zIndex: 0,
       }}
     >
@@ -324,7 +324,7 @@ export default function LeafletNepalMap({
               }
               style={{
                 background: active ? "rgba(34, 197, 94, 0.22)" : "transparent",
-                color: active ? "#4ade80" : "rgba(209,250,229,0.6)",
+                color: active ? "#c9a227" : "rgba(232,217,168,0.6)",
                 border: active
                   ? "1px solid rgba(74,222,128,0.4)"
                   : "1px solid transparent",
@@ -364,7 +364,7 @@ export default function LeafletNepalMap({
             borderRadius: 999,
             padding: "6px 14px",
             boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
-            color: "#4ade80",
+            color: "#c9a227",
             fontSize: 11,
             fontWeight: 700,
             cursor: "pointer",
@@ -374,37 +374,37 @@ export default function LeafletNepalMap({
         >
           <option
             value="all"
-            style={{ background: "#0d1a14", color: "#4ade80" }}
+            style={{ background: "#0a2540", color: "#c9a227" }}
           >
             📍 All Nepal
           </option>
           <option
             value="Kathmandu Valley"
-            style={{ background: "#0d1a14", color: "#4ade80" }}
+            style={{ background: "#0a2540", color: "#c9a227" }}
           >
             Kathmandu Valley
           </option>
           <option
             value="Pokhara"
-            style={{ background: "#0d1a14", color: "#4ade80" }}
+            style={{ background: "#0a2540", color: "#c9a227" }}
           >
             Pokhara Region
           </option>
           <option
             value="Central & Terai"
-            style={{ background: "#0d1a14", color: "#4ade80" }}
+            style={{ background: "#0a2540", color: "#c9a227" }}
           >
             Central & Terai
           </option>
           <option
             value="Eastern"
-            style={{ background: "#0d1a14", color: "#4ade80" }}
+            style={{ background: "#0a2540", color: "#c9a227" }}
           >
             Eastern Nepal
           </option>
           <option
             value="Western"
-            style={{ background: "#0d1a14", color: "#4ade80" }}
+            style={{ background: "#0a2540", color: "#c9a227" }}
           >
             Western Nepal
           </option>
@@ -458,7 +458,7 @@ export default function LeafletNepalMap({
               width: 36,
               height: 36,
               background: "transparent",
-              color: "#4ade80",
+              color: "#c9a227",
               border: "none",
               borderBottom: i === 0 ? "1px solid rgba(74,222,128,0.2)" : "none",
               fontSize: 20,
@@ -478,7 +478,7 @@ export default function LeafletNepalMap({
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLButtonElement).style.background =
                 "transparent";
-              (e.currentTarget as HTMLButtonElement).style.color = "#4ade80";
+              (e.currentTarget as HTMLButtonElement).style.color = "#c9a227";
             }}
           >
             {btn.label}
@@ -507,7 +507,7 @@ export default function LeafletNepalMap({
             width: 36,
             height: 36,
             background: "transparent",
-            color: "#4ade80",
+            color: "#c9a227",
             border: "none",
             fontSize: 15,
             fontWeight: 700,
@@ -525,7 +525,7 @@ export default function LeafletNepalMap({
           onMouseLeave={(e) => {
             (e.currentTarget as HTMLButtonElement).style.background =
               "transparent";
-            (e.currentTarget as HTMLButtonElement).style.color = "#4ade80";
+            (e.currentTarget as HTMLButtonElement).style.color = "#c9a227";
           }}
         >
           ⛶
