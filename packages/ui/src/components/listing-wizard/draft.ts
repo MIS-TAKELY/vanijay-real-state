@@ -2,6 +2,7 @@ import {
   APARTMENT_LIKE_SUBTYPES,
   isBuildingType,
   isLandType,
+  PRICE_UNIT_DEFAULT,
   PRICE_UNITS,
   type UnitSystem,
 } from "./constants";
@@ -225,14 +226,21 @@ const strOrNull = (s: string): string | null =>
 /** Exact area in sq ft (no rounding). Used for price-per-unit so rates stay
  *  consistent with PRICE_UNITS factors (e.g. 1 daam = 342.25/16 sq ft). */
 function totalSqFtExact(draft: ListingDraft): number {
+  return landAreaSqFtExact(landPartsFromDraft(draft), draft.unitSystem);
+}
+
+/** Numeric land parts from a wizard draft (draft.units are strings). */
+function landPartsFromDraft(draft: ListingDraft): PriceLandParts {
   const u = draft.units;
-  if (draft.unitSystem === "ROPANI") {
-    const totalAana =
-      num(u.ropani) * 16 + num(u.aana) + num(u.paisa) / 4 + num(u.daam) / 16;
-    return totalAana * 342.25;
-  }
-  const totalKatha = num(u.bigha) * 20 + num(u.katha) + num(u.dhur) / 20;
-  return totalKatha * 364.5;
+  return {
+    ropani: num(u.ropani),
+    aana: num(u.aana),
+    paisa: num(u.paisa),
+    daam: num(u.daam),
+    bigha: num(u.bigha),
+    katha: num(u.katha),
+    dhur: num(u.dhur),
+  };
 }
 
 /** Rounded area for display / payload. */
@@ -269,32 +277,92 @@ export function builtUpAreaNumber(draft: ListingDraft): number {
   return num(draft.builtUpAreaSqFt);
 }
 
-/**
- * The area (sq ft, exact) that drives price-per-unit math for the current
- * property type. Building types are priced per sq ft of built-up area when it
- * is provided (falling back to the land area otherwise); land types always use
- * the land area.
- */
-function priceAreaSqFtExact(draft: ListingDraft): number {
-  if (isBuildingType(draft.subCategory)) {
-    const built = builtUpAreaNumber(draft);
+/* ------------------------------------------------------------------ */
+/* Reusable price-per-unit conversion — shared with the public /slug    */
+/* page. The listing wizard and the property detail page both convert   */
+/* the asking price into per-unit rates through these functions, so     */
+/* every surface agrees on the PRICE_UNITS factors, the exact           */
+/* (unrounded) area and the 2-decimal rounding.                         */
+/* ------------------------------------------------------------------ */
+
+/** Land area parts — the numeric shape of both the wizard draft's `units`
+ *  and the API record's `landArea`. */
+export interface PriceLandParts {
+  ropani?: number;
+  aana?: number;
+  paisa?: number;
+  daam?: number;
+  bigha?: number;
+  katha?: number;
+  dhur?: number;
+}
+
+/** Minimal inputs the per-unit conversion needs — built from a wizard
+ *  `ListingDraft` via `priceContextFromDraft` or from an API property record
+ *  via the client-side `priceContextFromApiProperty` adapter. */
+export interface PriceContext {
+  subCategory: string;
+  unitSystem?: UnitSystem | null;
+  landParts?: PriceLandParts | null;
+  /** Built-up / carpet area in sq ft (buildings). */
+  builtUpAreaSqFt?: number | null;
+  askingPrice: number;
+  /** Seller-chosen "price per" unit (land types); falls back to the unit
+   *  system's market default. */
+  priceUnit?: string | null;
+}
+
+/** Exact land area in sq ft (no rounding) — the same math the wizard always
+ *  used, so per-unit rates stay consistent with PRICE_UNITS factors
+ *  (e.g. 1 daam = 342.25/16 sq ft). */
+export function landAreaSqFtExact(
+  parts: PriceLandParts | null | undefined,
+  unitSystem?: UnitSystem | null,
+): number {
+  if (!parts) return 0;
+  if (unitSystem === "BIGHA") {
+    const totalKatha =
+      (parts.bigha ?? 0) * 20 + (parts.katha ?? 0) + (parts.dhur ?? 0) / 20;
+    return totalKatha * 364.5;
+  }
+  const totalAana =
+    (parts.ropani ?? 0) * 16 +
+    (parts.aana ?? 0) +
+    (parts.paisa ?? 0) / 4 +
+    (parts.daam ?? 0) / 16;
+  return totalAana * 342.25;
+}
+
+/** The area (sq ft, exact) that drives price-per-unit math for the current
+ *  property type. Building types are priced per sq ft of built-up area when
+ *  it is provided (falling back to the land area otherwise); land types
+ *  always use the land area. */
+export function priceAreaSqFt(ctx: PriceContext): number {
+  if (isBuildingType(ctx.subCategory)) {
+    const built = ctx.builtUpAreaSqFt ?? 0;
     if (built > 0) return built;
   }
-  return totalSqFtExact(draft);
+  return landAreaSqFtExact(ctx.landParts, ctx.unitSystem);
+}
+
+/** True when there is an area to price against (drives the "enter the
+ *  area/price to see rates" hints). */
+export function hasPricingArea(ctx: PriceContext): boolean {
+  return priceAreaSqFt(ctx) > 0;
 }
 
 /**
  * Price per unit of the given PRICE_UNITS key. Building types effectively use
  * the "sqft"/"sqm" keys (built-up area); land types use the land units.
  */
-export function pricePerUnit(
-  draft: ListingDraft,
+export function pricePerUnitFor(
+  ctx: PriceContext,
   unitKey: string,
 ): number | null {
   // Must use exact sq ft — rounding first (e.g. 1 daam → 21 instead of
   // 21.390625) makes totalUnits ≠ the entered land units and skews the rate.
-  const sqft = priceAreaSqFtExact(draft);
-  const price = askingPriceNumber(draft);
+  const sqft = priceAreaSqFt(ctx);
+  const price = ctx.askingPrice;
 
   if (sqft <= 0 || price <= 0) return null;
   const unit = PRICE_UNITS.find((u) => u.key === unitKey);
@@ -303,6 +371,45 @@ export function pricePerUnit(
   if (totalUnits <= 0) return null;
   // Keep paisa-level precision (2 dp) — do not round to whole rupees.
   return Math.round((price / totalUnits) * 100) / 100;
+}
+
+/** The "price per" unit a buyer sees by default: sq.ft for buildings, the
+ *  seller's chosen land unit (or the unit system's market default) for land. */
+export function priceUnitKey(ctx: PriceContext): string {
+  if (isBuildingType(ctx.subCategory)) return "sqft";
+  return ctx.priceUnit || PRICE_UNIT_DEFAULT[ctx.unitSystem ?? "ROPANI"];
+}
+
+/** Every PRICE_UNITS rate keyed by unit key (null when area/price missing). */
+export function priceUnitRates(
+  ctx: PriceContext,
+): Record<string, number | null> {
+  const rates: Record<string, number | null> = {};
+  for (const u of PRICE_UNITS) rates[u.key] = pricePerUnitFor(ctx, u.key);
+  return rates;
+}
+
+/** Build a PriceContext from a wizard draft. */
+export function priceContextFromDraft(draft: ListingDraft): PriceContext {
+  return {
+    subCategory: draft.subCategory,
+    unitSystem: draft.unitSystem,
+    landParts: landPartsFromDraft(draft),
+    builtUpAreaSqFt: builtUpAreaNumber(draft),
+    askingPrice: askingPriceNumber(draft),
+    priceUnit: draft.priceUnit || null,
+  };
+}
+
+/**
+ * Price per unit of the given PRICE_UNITS key for a wizard draft (see
+ * `pricePerUnitFor` for the shared conversion).
+ */
+export function pricePerUnit(
+  draft: ListingDraft,
+  unitKey: string,
+): number | null {
+  return pricePerUnitFor(priceContextFromDraft(draft), unitKey);
 }
 
 /** Price per sq ft of built-up area (building types only). */
@@ -399,7 +506,8 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
         (sub === "APARTMENT_FLAT" || sub === "TOWNHOUSE") &&
         num(draft.floorNumber) <= 0
       )
-        errors.floorNumber = "Floor number is required for apartments/townhouses.";
+        errors.floorNumber =
+          "Floor number is required for apartments/townhouses.";
     }
     if (
       sub === "OFFICE" ||

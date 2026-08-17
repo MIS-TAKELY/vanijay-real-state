@@ -1,51 +1,70 @@
 "use client";
 
-import { Icon } from "@repo/ui";
+import {
+  Icon,
+  PRICE_UNITS,
+  formatNPR,
+  hasPricingArea,
+  isBuildingType,
+  pricePerUnitFor,
+  priceUnitKey,
+  priceUnitRates,
+  type PriceContext,
+} from "@repo/ui";
 import { AddToCartButton } from "components/real-state/common/AddToCartButton";
 import { CallSellerButton } from "components/real-state/common/CallSellerButton";
 import { SaveToFavoritesButton } from "components/real-state/common/SaveToFavoritesButton";
-import {
-  formatNPR,
-  type ApiPropertyLocation,
-} from "lib/api/services/properties/types";
+import { type ApiPropertyLocation } from "lib/api/services/properties/types";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { ListingSidebarMap } from "./ListingSidebarMap";
 
-/** Land area units + sq ft per unit (matches the wizard's conversions). */
-const LAND_UNITS: Array<{ key: string; label: string; sqFt: number }> = [
-  { key: "aana", label: "Aana", sqFt: 342.25 },
-  { key: "ropani", label: "Ropani", sqFt: 342.25 * 16 },
-  { key: "paisa", label: "Paisa", sqFt: 342.25 / 4 },
-  { key: "daam", label: "Daam", sqFt: 342.25 / 16 },
-  { key: "bigha", label: "Bigha", sqFt: 364.5 * 20 },
-  { key: "katha", label: "Katha", sqFt: 364.5 },
-  { key: "dhur", label: "Dhur", sqFt: 364.5 / 20 },
-  { key: "sqft", label: "sq.ft", sqFt: 1 },
-  { key: "sqm", label: "sq.m", sqFt: 10.7639 },
-];
+/**
+ * Per-unit rate for a listing — building types show the auto-calculated
+ * per-sq.ft / per-sq.m rates (same as the listing wizard's review), land
+ * types let the buyer pick the unit (defaulting to the unit system's market
+ * rate). Everything runs through the shared `PriceContext` conversion
+ * (`pricePerUnitFor` + `PRICE_UNITS`), so this always agrees with the
+ * listing process.
+ */
+function PricePerUnit({ pricing }: { pricing: PriceContext }) {
+  const isBuilding = isBuildingType(pricing.subCategory);
+  const [unit, setUnit] = useState(() => priceUnitKey(pricing));
+  const rateLabel = useMemo(() => {
+    const rates: Record<string, string> = {};
+    for (const [key, rate] of Object.entries(priceUnitRates(pricing))) {
+      rates[key] = rate != null ? formatNPR(rate) : "—";
+    }
+    return rates;
+  }, [pricing]);
+  const perUnit = useMemo(
+    () => pricePerUnitFor(pricing, unit),
+    [pricing, unit],
+  );
 
-/** Per-unit rate for a land listing — buyer picks the unit (defaults to Dhur). */
-function PricePerUnitSelect({
-  price,
-  totalSqFt,
-}: {
-  price: number;
-  totalSqFt: number;
-}) {
-  const [unit, setUnit] = useState("dhur");
-  const current = LAND_UNITS.find((u) => u.key === unit) ?? LAND_UNITS[0]!;
-  const perUnit = Math.round((price * current.sqFt) / totalSqFt);
+  if (isBuilding) {
+    return (
+      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-on-surface-variant">
+        <span>
+          <span className="font-medium">{rateLabel.sqft}</span> / sq.ft
+        </span>
+        <span>
+          <span className="font-medium">{rateLabel.sqm}</span> / sq.m
+        </span>
+      </div>
+    );
+  }
+
   return (
     <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-on-surface-variant">
-      <span>{formatNPR(perUnit)} per</span>
+      <span>{perUnit != null ? formatNPR(perUnit) : "—"} per</span>
       <select
         value={unit}
         onChange={(e) => setUnit(e.target.value)}
         aria-label="Price unit"
         className="h-10 cursor-pointer rounded-md border border-outline-variant bg-surface px-2.5 text-[13px] font-medium text-on-surface outline-none transition-colors hover:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/50"
       >
-        {LAND_UNITS.map((u) => (
+        {PRICE_UNITS.map((u) => (
           <option key={u.key} value={u.key}>
             {u.label}
           </option>
@@ -58,12 +77,9 @@ function PricePerUnitSelect({
 interface ListingDecisionCardProps {
   propertyId: string;
   title: string;
-  askingPrice: string;
-  /** Numeric asking price — used to compute the per-unit rate. */
-  price: number;
-  /** Land listings show the per-unit selector (buildings are priced per sq.ft). */
-  isLand: boolean;
-  landTotalSqFt?: number | null;
+  /** Shared pricing inputs — built from the API property via
+   *  `priceContextFromApiProperty` so per-unit rates match the listing wizard. */
+  pricing: PriceContext;
   location?: ApiPropertyLocation | null;
   verified: boolean;
 }
@@ -71,10 +87,7 @@ interface ListingDecisionCardProps {
 export function ListingDecisionCard({
   propertyId,
   title,
-  askingPrice,
-  price,
-  isLand,
-  landTotalSqFt,
+  pricing,
   location,
   verified,
 }: ListingDecisionCardProps) {
@@ -86,10 +99,10 @@ export function ListingDecisionCard({
       {/* Price */}
       <div>
         <p className="mono-stat text-2xl font-bold text-gold-deep">
-          {askingPrice}
+          {formatNPR(pricing.askingPrice)}
         </p>
-        {isLand && landTotalSqFt != null && landTotalSqFt > 0 && (
-          <PricePerUnitSelect price={price} totalSqFt={landTotalSqFt} />
+        {hasPricingArea(pricing) && pricing.askingPrice > 0 && (
+          <PricePerUnit pricing={pricing} />
         )}
       </div>
 

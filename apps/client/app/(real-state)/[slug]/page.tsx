@@ -14,8 +14,8 @@ import {
   formatLocation,
   formatMinBuyableLand,
   formatNPR,
-  isLandPropertyType,
   labelEnum,
+  priceContextFromApiProperty,
   TYPE_GRADIENTS,
   TYPE_LABELS,
   VERIFICATION_LABELS,
@@ -113,6 +113,9 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const location = formatLocation(property.location);
   const verified = property.verificationLevel !== "UNVERIFIED";
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
+  // Shared pricing inputs — per-unit rates on this page now use the exact same
+  // conversion as the listing wizard (see priceContextFromApiProperty).
+  const pricing = priceContextFromApiProperty(property);
   const p = property;
 
   const specs: Array<[string, string | null | undefined]> = [
@@ -493,10 +496,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
             <ListingDecisionCard
               propertyId={property.id}
               title={property.title}
-              askingPrice={formatNPR(property.askingPrice)}
-              price={property.askingPrice}
-              isLand={isLandPropertyType(property.mainCategory)}
-              landTotalSqFt={property.landArea?.totalSqFt ?? null}
+              pricing={pricing}
               location={property.location}
               verified={verified}
             />

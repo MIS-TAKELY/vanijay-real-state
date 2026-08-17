@@ -6,6 +6,8 @@ import {
   formatNPR,
   getSecureMediaUrl,
   labelEnum,
+  type PriceContext,
+  type UnitSystem,
 } from "@repo/ui";
 
 export interface ApiPropertyLocation {
@@ -327,6 +329,36 @@ export function formatLandArea(a?: ApiLandArea | null): string | null {
  *  rates are hidden for them. Uses mainCategory for detection. */
 export function isLandPropertyType(mainCategory?: string | null): boolean {
   return mainCategory === "LAND";
+}
+
+/** Build the shared pricing context (`PriceContext`) from an API property
+ *  record so the /slug page computes per-unit rates with the exact same
+ *  conversion as the listing wizard (`pricePerUnitFor` / `PRICE_UNITS`).
+ *  The exact land area is rebuilt from the stored unit parts — never from the
+ *  rounded `landArea.totalSqFt` — so small parcels keep their true rate
+ *  (e.g. 1 dhur priced at 12,34,56,789 shows NPR 12,34,56,789 / Dhur, not a
+ *  skewed figure from the 18.225→18 sq ft rounding). */
+export function priceContextFromApiProperty(p: ApiProperty): PriceContext {
+  const area = p.landArea;
+  const usedBigha = Boolean(area && (area.bigha || area.katha || area.dhur));
+  return {
+    subCategory: p.subCategory,
+    unitSystem: (usedBigha ? "BIGHA" : "ROPANI") as UnitSystem,
+    landParts: area
+      ? {
+          ...(area.ropani ? { ropani: area.ropani } : {}),
+          ...(area.aana ? { aana: area.aana } : {}),
+          ...(area.paisa ? { paisa: area.paisa } : {}),
+          ...(area.daam ? { daam: area.daam } : {}),
+          ...(area.bigha ? { bigha: area.bigha } : {}),
+          ...(area.katha ? { katha: area.katha } : {}),
+          ...(area.dhur ? { dhur: area.dhur } : {}),
+        }
+      : null,
+    builtUpAreaSqFt: p.builtUpAreaSqFt,
+    askingPrice: p.askingPrice,
+    priceUnit: null,
+  };
 }
 
 export function toCardProps(p: ApiProperty): CardProperty {

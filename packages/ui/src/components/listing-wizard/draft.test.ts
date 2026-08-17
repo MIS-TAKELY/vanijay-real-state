@@ -8,10 +8,17 @@ import {
   INITIAL_DRAFT,
   buildCreatePayload,
   builtUpAreaNumber,
+  hasPricingArea,
+  landAreaSqFtExact,
   listingDraftFromApiProperty,
+  priceContextFromDraft,
   pricePerUnit as realPricePerUnit,
+  pricePerUnitFor,
+  priceUnitKey,
+  priceUnitRates,
   validateStep,
   type ListingDraft,
+  type PriceContext,
   type WizardProperty,
 } from "./draft";
 import {
@@ -208,6 +215,81 @@ assert(
   pricePerUnit(realistic, "ropani") ?? 0,
   7000000,
   0.01,
+);
+
+console.log("\n♻️ Shared PriceContext conversion (reused by the /slug page)");
+
+// The exact (unrounded) area must reproduce the asking price as the per-dhur
+// rate — the old /slug page divided by the rounded totalSqFt (18 vs the true
+// 18.225), skewing the rate for small parcels.
+const oneDhur: PriceContext = {
+  subCategory: "RESIDENTIAL_LAND",
+  unitSystem: "BIGHA",
+  landParts: { dhur: 1 },
+  askingPrice: 123456789,
+};
+assert(
+  "1 dhur exact area = 18.225 sq ft",
+  landAreaSqFtExact(oneDhur.landParts, "BIGHA"),
+  18.225,
+  1e-9,
+);
+assert(
+  "Per dhur = asking price (exact area, no rounding skew)",
+  pricePerUnitFor(oneDhur, "dhur"),
+  123456789,
+);
+assert("Default unit for BIGHA land = katha", priceUnitKey(oneDhur), "katha");
+assert("hasPricingArea true with area", hasPricingArea(oneDhur), true);
+assert(
+  "Rates cover every PRICE_UNITS key",
+  priceUnitRates(oneDhur).dhur,
+  123456789,
+);
+
+const noArea: PriceContext = {
+  subCategory: "RESIDENTIAL_LAND",
+  unitSystem: "ROPANI",
+  landParts: {},
+  askingPrice: 1000,
+};
+assert("No area → null rate", pricePerUnitFor(noArea, "aana"), null);
+assert("No area → hasPricingArea false", hasPricingArea(noArea), false);
+assert("Default unit for ROPANI land = aana", priceUnitKey(noArea), "aana");
+
+// Building types price per sq.ft of built-up area (falling back to land).
+const houseCtx: PriceContext = {
+  subCategory: "HOUSE",
+  unitSystem: "ROPANI",
+  landParts: { aana: 1 },
+  builtUpAreaSqFt: 2400,
+  askingPrice: 48000000,
+};
+assert("Building default unit = sqft", priceUnitKey(houseCtx), "sqft");
+assert(
+  "Building per sq.ft of built-up area",
+  pricePerUnitFor(houseCtx, "sqft"),
+  20000,
+);
+assert(
+  "Building per sq.m",
+  pricePerUnitFor(houseCtx, "sqm") ?? 0,
+  20000 / 0.092903,
+  1,
+);
+
+// The wizard draft and the PriceContext adapter agree on identical inputs.
+const houseDraftCtx: ListingDraft = {
+  ...INITIAL_DRAFT,
+  mainCategory: "RESIDENTIAL",
+  subCategory: "HOUSE",
+  builtUpAreaSqFt: "2400",
+  askingPrice: "48000000",
+};
+assert(
+  "priceContextFromDraft matches draft pricePerUnit",
+  pricePerUnitFor(priceContextFromDraft(houseDraftCtx), "sqft"),
+  realPricePerUnit(houseDraftCtx, "sqft"),
 );
 
 console.log("\n🔄 Round-trip consistency check");

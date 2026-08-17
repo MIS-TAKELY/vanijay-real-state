@@ -38,7 +38,6 @@ import {
   PARKING_OPTIONS,
   PLOT_SHAPES,
   PRICE_TYPES,
-  PRICE_UNIT_DEFAULT,
   PRICE_UNITS,
   RENOVATION_STATUSES,
   ROAD_TYPES,
@@ -58,7 +57,14 @@ import {
   type Option,
   type UnitSystem,
 } from "./constants";
-import { pricePerUnit, totalSqFt } from "./draft";
+import {
+  hasPricingArea,
+  priceContextFromDraft,
+  pricePerUnitFor,
+  priceUnitKey,
+  priceUnitRates,
+  totalSqFt,
+} from "./draft";
 import { formatNPR } from "./format";
 import { FieldError, type StepProps } from "./types";
 
@@ -446,21 +452,19 @@ function RoadBlock({ draft, update, errors }: StepProps) {
  *  types show the auto-calculated per-sq.ft / per-sq.m rates. */
 function PriceBlock({ draft, update, errors }: StepProps) {
   const isBuilding = isBuildingType(draft.subCategory);
-  const unitKey = isBuilding
-    ? "sqft"
-    : draft.priceUnit || PRICE_UNIT_DEFAULT[draft.unitSystem];
-  const perUnit = useMemo(() => pricePerUnit(draft, unitKey), [draft, unitKey]);
+  // All per-unit math runs through the shared PriceContext conversion so the
+  // wizard and the public /slug page always produce identical rates.
+  const ctx = useMemo(() => priceContextFromDraft(draft), [draft]);
+  const unitKey = useMemo(() => priceUnitKey(ctx), [ctx]);
+  const perUnit = useMemo(() => pricePerUnitFor(ctx, unitKey), [ctx, unitKey]);
   const rateLabel = useMemo(() => {
     const rates: Record<string, string> = {};
-    for (const u of PRICE_UNITS) {
-      const rate = pricePerUnit(draft, u.key);
-      rates[u.key] = rate != null ? formatNPR(rate) : "—";
+    for (const [key, rate] of Object.entries(priceUnitRates(ctx))) {
+      rates[key] = rate != null ? formatNPR(rate) : "—";
     }
     return rates;
-  }, [draft]);
-  const hasArea = isBuilding
-    ? Number(draft.builtUpAreaSqFt.replace(/[^0-9.]/g, "")) > 0
-    : totalSqFt(draft) > 0;
+  }, [ctx]);
+  const hasArea = hasPricingArea(ctx);
 
   return (
     <div className="flex flex-col gap-sm border-t border-outline-variant pt-md">
