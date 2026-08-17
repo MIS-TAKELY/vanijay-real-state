@@ -13,6 +13,8 @@ interface AddToCartButtonProps {
   /** Listing title, used in the success toast. */
   title?: string;
   variant?: "outline" | "default" | "ghost";
+  /** Renders only the cart icon — used for the compact action margin on property cards. */
+  iconOnly?: boolean;
   className?: string;
 }
 
@@ -20,6 +22,7 @@ export function AddToCartButton({
   propertyId,
   title,
   variant = "outline",
+  iconOnly = false,
   className,
 }: AddToCartButtonProps) {
   const { requireAuth } = useRequireAuth();
@@ -48,17 +51,21 @@ export function AddToCartButton({
   return (
     <Button
       type="button"
-      variant={variant}
+      variant={iconOnly ? "ghost" : variant}
+      size={iconOnly ? "icon-xl" : undefined}
       onClick={() => void handleClick()}
       disabled={loading}
       aria-live="polite"
+      aria-label={iconOnly ? (added ? "Added to cart" : "Add to cart") : undefined}
       className={cn(className)}
     >
       <Icon
         name={added ? "check" : "add_shopping_cart"}
-        className="text-data-table"
+        className={iconOnly ? "text-[18px]" : "text-data-table"}
       />
-      {loading ? "Adding…" : added ? "Added to Cart" : "Add to Cart"}
+      {!iconOnly && (
+        <>{loading ? "Adding…" : added ? "Added to Cart" : "Add to Cart"}</>
+      )}
     </Button>
   );
 }

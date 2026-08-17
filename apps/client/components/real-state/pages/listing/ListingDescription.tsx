@@ -14,9 +14,8 @@ export function ListingDescription({ html }: ListingDescriptionProps) {
   if (!html) return null;
 
   return (
-    <section className="mt-5">
-      <h2 className="mb-3 flex items-center gap-2.5 font-headline-md text-lg font-semibold tracking-tight text-navy">
-        <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
+    <section className="mt-8">
+      <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
         Description
       </h2>
       <RichTextContent html={html} maxHeight={300} />

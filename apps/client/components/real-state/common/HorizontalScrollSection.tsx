@@ -58,7 +58,7 @@ export function HorizontalScrollSection({
   // Rich card accent + rail sizing (the slim card already carries its own
   // width via min/max classes, so only the left accent border is layered on).
   const commonCardClassName = cn(
-    "min-w-[280px] md:min-w-[320px] max-w-[320px] shrink-0 snap-start",
+    "w-[220px] min-w-[220px] max-w-[220px] sm:w-[240px] sm:min-w-[240px] sm:max-w-[240px] md:min-w-[250px] md:max-w-[280px] md:w-auto shrink-0 snap-start",
     accent === "primary-left"
       ? "border-l-4 border-l-primary"
       : accent === "trending"
@@ -69,7 +69,7 @@ export function HorizontalScrollSection({
   const scrollRow = (
     <div
       ref={scrollRef}
-      className="flex gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-4 pt-2"
+      className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 md:pb-4 pt-1 md:pt-2"
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",
@@ -101,25 +101,25 @@ export function HorizontalScrollSection({
 
   return (
     <section
-      className={`py-10 md:py-14 relative z-10 ${accent === "trending" ? "" : ""}`}
+      className={`py-6 md:py-14 relative z-10 ${accent === "trending" ? "" : ""}`}
     >
       <div className="max-w-container-max mx-auto px-gutter">
         {/* Header */}
-        <div className="flex items-end justify-between mb-6">
-          <div>
+        <div className="flex items-end justify-between mb-4 md:mb-6 gap-3">
+          <div className="min-w-0">
             {eyebrow && (
-              <p className="mb-2 flex items-center gap-2.5 font-label-sm text-[11px] uppercase tracking-[0.18em] text-gold-deep font-bold">
-                <span className="h-px w-7 bg-gold" aria-hidden />
+              <p className="mb-1.5 md:mb-2 flex items-center gap-2 font-label-sm text-[9px] md:text-[11px] uppercase tracking-[0.14em] md:tracking-[0.18em] text-gold-deep font-bold">
+                <span className="h-px w-5 md:w-7 bg-gold" aria-hidden />
                 {eyebrow}
               </p>
             )}
             {title && (
-              <h2 className="font-headline-md text-headline-md text-navy font-bold tracking-tight">
+              <h2 className="font-headline-md text-xl md:text-headline-md text-navy font-bold tracking-tight">
                 {title}
               </h2>
             )}
           </div>
-          <div className="flex items-center gap-4">
+          <div className="flex shrink-0 items-center gap-2 md:gap-4">
             <a
               href={viewAllHref}
               className="hidden sm:inline-flex items-center gap-1 font-label-sm text-sm text-gold-deep font-semibold hover:text-navy hover:underline underline-offset-4"
@@ -127,24 +127,24 @@ export function HorizontalScrollSection({
               View All
               <Icon name="arrow_forward" className="text-data-table" />
             </a>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 md:gap-2">
               <Button
                 variant="outline"
-                size="icon"
+                size="icon-sm"
                 aria-label={`Previous ${title ?? "items"}`}
                 onClick={() => scrollByCard("prev")}
-                className="shrink-0"
+                className="shrink-0 md:size-9"
               >
-                <Icon name="chevron_left" />
+                <Icon name="chevron_left" className="text-base" />
               </Button>
               <Button
                 variant="outline"
-                size="icon"
+                size="icon-sm"
                 aria-label={`Next ${title ?? "items"}`}
                 onClick={() => scrollByCard("next")}
-                className="shrink-0"
+                className="shrink-0 md:size-9"
               >
-                <Icon name="chevron_right" />
+                <Icon name="chevron_right" className="text-base" />
               </Button>
             </div>
           </div>

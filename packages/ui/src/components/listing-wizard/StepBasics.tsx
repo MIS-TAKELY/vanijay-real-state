@@ -8,17 +8,11 @@ import { Switch } from "@/components/ui/switch";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RichTextEditor } from "./RichTextEditor";
 import { MAIN_CATEGORIES, SUB_TO_MAIN } from "./constants";
-import { DESC_MAX, TITLE_MAX } from "./draft";
-import { stripHtml } from "./format";
+import { TITLE_MAX } from "./draft";
 import { FieldError, type StepProps } from "./types";
 import { useState } from "react";
 
 export function StepBasics({ draft, update, errors }: StepProps) {
-  const cleanDesc = stripHtml(draft.description);
-  const plainDescLength = cleanDesc.length;
-  const isDescOverLimit =
-    plainDescLength > DESC_MAX || draft.description.length > DESC_MAX;
-
   // Track which main category is expanded for sub-category selection
   const [expandedMain, setExpandedMain] = useState<string | null>(
     draft.mainCategory || null,
@@ -161,28 +155,12 @@ export function StepBasics({ draft, update, errors }: StepProps) {
 
       {/* Description — Rich Text Editor */}
       <div className="flex flex-col gap-xs">
-        <div className="flex items-center justify-between">
-          <Label htmlFor="w-desc">Description</Label>
-          <span
-            className={cn(
-              "mono-stat text-[11px] transition-colors",
-              isDescOverLimit
-                ? "font-semibold text-error"
-                : "text-on-surface-variant",
-            )}
-          >
-            {plainDescLength}/{DESC_MAX}
-          </span>
-        </div>
+        <Label htmlFor="w-desc">Description</Label>
         <RichTextEditor
           id="w-desc"
           value={draft.description}
           onChange={(html) => update({ description: html })}
           placeholder="Describe the plot, access, nearby facilities, and verification highlights…"
-          aria-invalid={!!errors.description || isDescOverLimit}
-          className={cn(
-            (errors.description || isDescOverLimit) && "border-error",
-          )}
         />
         <div className="flex items-start justify-between gap-sm min-h-[18px]">
           <FieldError message={errors.description} />

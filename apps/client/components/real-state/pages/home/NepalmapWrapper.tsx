@@ -8,6 +8,11 @@ import type { ApiProperty } from "lib/api/services/properties/types";
 import dynamic from "next/dynamic";
 import { memo, useEffect, useMemo, useState } from "react";
 
+/** Single source of truth for the map's rendered height — the lazy-loading
+ *  placeholder must occupy the same box as the hydrated map so the layout
+ *  doesn't jump when the bundle arrives. */
+export const NEPAL_MAP_HEIGHT = "clamp(400px, 40vh, 440px)";
+
 const LeafletNepalMapDynamic = dynamic(
   () => import("components/real-state/leaflet-map/LeafletNepalMap"),
   {
@@ -16,7 +21,7 @@ const LeafletNepalMapDynamic = dynamic(
       <div
         style={{
           width: "100%",
-          height: "clamp(420px, 52vh, 620px)",
+          height: NEPAL_MAP_HEIGHT,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -185,6 +190,7 @@ function toMarker(p: ApiProperty): Marker | null {
 
 const NepalmapWrapper = memo(function NepalmapWrapper({
   markers,
+  height = NEPAL_MAP_HEIGHT,
   ...rest
 }: NepalMapWrapperProps) {
   const [dbMarkers, setDbMarkers] = useState<Marker[] | null>(null);
@@ -214,9 +220,9 @@ const NepalmapWrapper = memo(function NepalmapWrapper({
   }, [markers, dbMarkers]);
 
   const props = useMemo(
-    () => ({ markers: resolvedMarkers, ...rest }),
+    () => ({ markers: resolvedMarkers, height, ...rest }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [resolvedMarkers, JSON.stringify(rest)],
+    [resolvedMarkers, height, JSON.stringify(rest)],
   );
 
   return <LeafletNepalMapDynamic {...props} />;

@@ -17,6 +17,8 @@ interface SaveToFavoritesButtonProps {
   variant?: "ghost" | "outline" | "default";
   /** Renders only the heart icon — used as a media overlay on property cards. */
   iconOnly?: boolean;
+  /** Only applies with `iconOnly` — lets the heart exceed the 44px tap target. */
+  size?: "icon" | "icon-sm" |"icon-md" | "icon-lg" | "icon-xl";
   /** Fired with the new state after a successful toggle (keeps parents in sync). */
   onChange?: (isFavorite: boolean) => void;
   className?: string;
@@ -26,6 +28,7 @@ export function SaveToFavoritesButton({
   propertyId,
   variant = "ghost",
   iconOnly = false,
+  size = "icon",
   onChange,
   className,
 }: SaveToFavoritesButtonProps) {
@@ -88,7 +91,7 @@ export function SaveToFavoritesButton({
     <Button
       type="button"
       variant={iconOnly ? "ghost" : variant}
-      size={iconOnly ? "icon" : "default"}
+      size={iconOnly ? size : "default"}
       onClick={() => void toggle()}
       disabled={loading}
       aria-pressed={status.isFavorite}
@@ -103,6 +106,7 @@ export function SaveToFavoritesButton({
       className={cn(
         className,
         iconOnly && status.isFavorite && "text-tertiary",
+        status.isFavorite && "animate-favorite-pop",
       )}
     >
       <Icon

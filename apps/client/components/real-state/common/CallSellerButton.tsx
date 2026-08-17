@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Icon, toast } from "@repo/ui";
+import { Button, Icon, cn, toast } from "@repo/ui";
 import { ApiError } from "lib/api/core/client";
 import {
   fetchSellerContact,
@@ -13,12 +13,15 @@ interface CallSellerButtonProps {
   /** Real DB id of the listing. */
   propertyId: string;
   variant?: "ghost" | "outline" | "default";
+  /** Compact gold pill for the mobile price bar — fits a fixed-height bar. */
+  compact?: boolean;
   className?: string;
 }
 
 export function CallSellerButton({
   propertyId,
   variant = "outline",
+  compact = false,
   className,
 }: CallSellerButtonProps) {
   const [contact, setContact] = useState<SellerContact | null>(null);
@@ -51,7 +54,12 @@ export function CallSellerButton({
     return (
       <a
         href={`tel:${contact.phoneNumber}`}
-        className={`mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-outline-variant px-4 py-2 font-semibold text-on-surface transition-colors hover:bg-surface-container ${className ?? ""}`}
+        className={cn(
+          compact
+            ? "inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-gold px-4 py-2 font-semibold text-on-gold transition-colors hover:bg-gold/90"
+            : "mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-outline-variant px-4 py-2 font-semibold text-on-surface transition-colors hover:bg-surface-container",
+          className,
+        )}
         onClick={() => trackPropertyPhoneClick(propertyId).catch(() => {})}
       >
         <Icon name="call" className="text-[18px]" />
@@ -66,10 +74,14 @@ export function CallSellerButton({
       variant={variant}
       onClick={() => void reveal()}
       disabled={loading}
-      className={className}
+      className={cn(
+        compact &&
+          "min-h-11 bg-gold font-semibold text-on-gold hover:bg-gold/90",
+        className,
+      )}
     >
       <Icon name="PhoneCall" className="text-[18px]" />
-      {loading ? "Loading…" : "Call Seller"}
+      {loading ? "Loading…" : compact ? "Call" : "Call Seller"}
     </Button>
   );
 }

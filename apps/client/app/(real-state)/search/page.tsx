@@ -47,7 +47,7 @@ export default async function SearchPage({
   return (
     <main className="flex flex-col">
       {/* Premium page header — navy title + gold eyebrow */}
-      <header className="mx-auto w-full max-w-container-max px-gutter pt-8 md:pt-10">
+      {/* <header className="mx-auto w-full max-w-container-max px-gutter pt-8 md:pt-10">
         <p className="mb-2 flex items-center gap-2.5 font-label-sm text-[11px] uppercase tracking-[0.18em] text-gold-deep font-bold">
           <span className="h-px w-7 bg-gold" aria-hidden />
           The Archive
@@ -59,8 +59,8 @@ export default async function SearchPage({
           Every listing is field-verified and cross-referenced against cadastral
           records — filter by district, type, price, or size to find your plot.
         </p>
-      </header>
-      <SearchFilters />
+      </header> */}
+      {/* <SearchFilters /> */}
       <SearchResults
         initialItems={initial.items}
         initialNextCursor={initial.nextCursor}

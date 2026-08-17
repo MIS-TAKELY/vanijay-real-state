@@ -1,16 +1,27 @@
 "use client";
 
 import { ToggleGroup, ToggleGroupItem } from "@repo/ui";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FREQUENCY_OPTIONS, type AlertFrequency } from "./constants";
 
 interface FrequencyToggleProps {
   value: AlertFrequency;
   onChange?: (value: AlertFrequency) => void;
+  disabled?: boolean;
 }
 
-export function FrequencyToggle({ value, onChange }: FrequencyToggleProps) {
+export function FrequencyToggle({
+  value,
+  onChange,
+  disabled = false,
+}: FrequencyToggleProps) {
   const [active, setActive] = useState<AlertFrequency>(value);
+
+  // Stay in sync when the parent updates the persisted value (e.g. optimistic
+  // update, or a different card re-renders this one).
+  useEffect(() => {
+    setActive(value);
+  }, [value]);
 
   const handleSelect = (next: AlertFrequency) => {
     setActive(next);
@@ -27,6 +38,7 @@ export function FrequencyToggle({ value, onChange }: FrequencyToggleProps) {
       variant="outline"
       aria-label="Alert frequency"
       className="bg-surface p-0.5"
+      disabled={disabled}
     >
       {FREQUENCY_OPTIONS.map((opt) => (
         <ToggleGroupItem

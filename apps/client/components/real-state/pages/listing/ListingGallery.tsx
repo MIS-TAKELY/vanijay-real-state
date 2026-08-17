@@ -2,7 +2,7 @@
 
 import { Button, Icon, cn } from "@repo/ui";
 import type { ApiPropertyMedia } from "lib/api/services/properties/types";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ListingVideo } from "./ListingVideo";
 import { VideoPoster } from "./VideoPoster";
 
@@ -40,6 +40,8 @@ export function ListingGallery({
   const [lightboxCaption, setLightboxCaption] = useState<string | null>(null);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [activeDocIndex, setActiveDocIndex] = useState(0);
+  const lightboxRef = useRef<HTMLDivElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
 
   const showPrevPhoto = () => {
     setActiveImage((i) => (i === 0 ? images.length - 1 : i - 1));
@@ -51,7 +53,10 @@ export function ListingGallery({
   useEffect(() => {
     if (!lightboxOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setLightboxOpen(false);
+      if (event.key === "Escape") {
+        closeLightbox();
+        return;
+      }
       if (activeTab === "photos" && images.length > 1) {
         if (event.key === "ArrowLeft") {
           event.preventDefault();
@@ -66,6 +71,41 @@ export function ListingGallery({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [lightboxOpen, images.length, activeTab]);
+
+  // Focus the close button on open and trap Tab focus inside the dialog.
+  useEffect(() => {
+    if (!lightboxOpen) return;
+    const dialog = lightboxRef.current;
+    dialog
+      ?.querySelector<HTMLButtonElement>('button[aria-label="Close gallery"]')
+      ?.focus();
+
+    const onTab = (event: KeyboardEvent) => {
+      if (event.key !== "Tab" || !dialog) return;
+      const focusables = dialog.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0]!;
+      const last = focusables[focusables.length - 1]!;
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    window.addEventListener("keydown", onTab);
+    return () => window.removeEventListener("keydown", onTab);
+  }, [lightboxOpen]);
+
+  // Release the body scroll lock if the gallery unmounts while open.
+  useEffect(() => {
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, []);
 
   if (!hasImages && !hasVideos && !hasDocs) {
     return (
@@ -94,7 +134,16 @@ export function ListingGallery({
   const availableTabsCount =
     (hasImages ? 1 : 0) + (hasVideos ? 1 : 0) + (hasDocs ? 1 : 0);
 
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    document.body.style.overflow = "";
+    openerRef.current?.focus();
+    openerRef.current = null;
+  };
+
   const openPhotoLightbox = () => {
+    openerRef.current = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = "hidden";
     setLightboxImageSrc(null);
     setLightboxCaption(null);
     setLightboxOpen(true);
@@ -102,6 +151,8 @@ export function ListingGallery({
 
   const openDocLightbox = () => {
     if (!activeDoc) return;
+    openerRef.current = document.activeElement as HTMLElement | null;
+    document.body.style.overflow = "hidden";
     setLightboxImageSrc(activeDoc.url);
     setLightboxCaption(activeDoc.altText ?? "Naksa (Cadastral Map)");
     setLightboxOpen(true);
@@ -109,21 +160,43 @@ export function ListingGallery({
 
   return (
     <section>
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="flex items-center gap-2.5 font-headline-md text-xl font-semibold tracking-tight text-navy">
-          <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
-          Media & Documents
+      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+        <h2 className="font-headline-md text-lg font-semibold tracking-tight text-navy">
+          Media &amp; Documents
         </h2>
 
         {availableTabsCount > 1 && (
-          <div className="flex gap-1 rounded-lg bg-surface-container p-1 shadow-inner">
+          <div
+            role="tablist"
+            aria-label="Media type"
+            onKeyDown={(e) => {
+              const order: Array<"photos" | "videos" | "documents"> = [];
+              if (hasImages) order.push("photos");
+              if (hasVideos) order.push("videos");
+              if (hasDocs) order.push("documents");
+              if (order.length === 0) return;
+              const idx = order.indexOf(activeTab);
+              if (e.key === "ArrowRight") {
+                e.preventDefault();
+                setActiveTab(order[(idx + 1) % order.length]!);
+              } else if (e.key === "ArrowLeft") {
+                e.preventDefault();
+                setActiveTab(order[(idx - 1 + order.length) % order.length]!);
+              }
+            }}
+            className="flex gap-1 rounded-lg bg-surface-container p-1 shadow-inner"
+          >
             {hasImages && (
               <button
                 type="button"
+                role="tab"
+                id="tab-photos"
+                aria-selected={activeTab === "photos"}
+                aria-controls="panel-photos"
+                tabIndex={activeTab === "photos" ? 0 : -1}
                 onClick={() => setActiveTab("photos")}
-                aria-pressed={activeTab === "photos"}
                 className={cn(
-                  "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
+                  "inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150 sm:flex-none",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   activeTab === "photos"
                     ? "bg-primary text-on-primary shadow-sm"
@@ -142,10 +215,14 @@ export function ListingGallery({
             {hasVideos && (
               <button
                 type="button"
+                role="tab"
+                id="tab-videos"
+                aria-selected={activeTab === "videos"}
+                aria-controls="panel-videos"
+                tabIndex={activeTab === "videos" ? 0 : -1}
                 onClick={() => setActiveTab("videos")}
-                aria-pressed={activeTab === "videos"}
                 className={cn(
-                  "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
+                  "inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150 sm:flex-none",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   activeTab === "videos"
                     ? "bg-primary text-on-primary shadow-sm"
@@ -160,10 +237,14 @@ export function ListingGallery({
             {hasDocs && (
               <button
                 type="button"
+                role="tab"
+                id="tab-documents"
+                aria-selected={activeTab === "documents"}
+                aria-controls="panel-documents"
+                tabIndex={activeTab === "documents" ? 0 : -1}
                 onClick={() => setActiveTab("documents")}
-                aria-pressed={activeTab === "documents"}
                 className={cn(
-                  "inline-flex h-8 items-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150",
+                  "inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150 sm:flex-none",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                   activeTab === "documents"
                     ? "bg-primary text-on-primary shadow-sm"
@@ -211,7 +292,12 @@ export function ListingGallery({
 
       {/* Photos View */}
       {showingPhotos && currentImage && (
-        <div className="flex flex-col gap-2">
+        <div
+          role="tabpanel"
+          id="panel-photos"
+          aria-labelledby="tab-photos"
+          className="flex flex-col gap-2"
+        >
           <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-container shadow-sm">
             <button
               type="button"
@@ -223,6 +309,9 @@ export function ListingGallery({
               <img
                 src={currentImage.url}
                 alt={currentImage.altText ?? title}
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+                onDragStart={(e) => e.preventDefault()}
                 className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-black/10 transition-transform duration-200 group-hover:scale-[1.01]"
               />
             </button>
@@ -270,10 +359,10 @@ export function ListingGallery({
                   onClick={() => setActiveImage(idx)}
                   className={cn(
                     "flex-shrink-0 overflow-hidden rounded-lg border transition-all",
-                    "w-20 sm:w-24",
+                    "w-24 sm:w-28",
                     idx === activeImage
-                      ? "border-gold ring-1 ring-gold/40"
-                      : "border-outline-variant opacity-70 hover:border-gold/40 hover:opacity-100",
+                      ? "border-primary ring-1 ring-primary/40"
+                      : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
                   )}
                   aria-label={`View photo ${idx + 1}`}
                   aria-pressed={idx === activeImage}
@@ -283,6 +372,9 @@ export function ListingGallery({
                     <img
                       src={image.url}
                       alt=""
+                      draggable={false}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onDragStart={(e) => e.preventDefault()}
                       className="h-full w-full object-cover"
                     />
                   </div>
@@ -295,7 +387,12 @@ export function ListingGallery({
 
       {/* Videos View */}
       {showingVideos && activeVideo && (
-        <div className="flex flex-col gap-2">
+        <div
+          role="tabpanel"
+          id="panel-videos"
+          aria-labelledby="tab-videos"
+          className="flex flex-col gap-2"
+        >
           <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
             {/* No fixed aspect wrapper here — ListingVideo picks the right
                 container shape per platform (16:9 for YouTube, portrait for
@@ -317,10 +414,10 @@ export function ListingGallery({
                     onClick={() => setActiveVideoIndex(idx)}
                     className={cn(
                       "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
-                      "w-28 sm:w-36",
+                      "w-24 sm:w-28",
                       isActive
-                        ? "border-gold ring-1 ring-gold/40"
-                        : "border-outline-variant opacity-70 hover:border-gold/40 hover:opacity-100",
+                        ? "border-primary ring-1 ring-primary/40"
+                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
                     )}
                     aria-label={`Play video ${idx + 1}`}
                     aria-pressed={isActive}
@@ -357,7 +454,12 @@ export function ListingGallery({
 
       {/* Documents View — naksa (cadastral map) only */}
       {showingDocs && activeDoc && (
-        <div className="flex flex-col gap-2">
+        <div
+          role="tabpanel"
+          id="panel-documents"
+          aria-labelledby="tab-documents"
+          className="flex flex-col gap-2"
+        >
           <div className="relative aspect-video overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
             <button
               type="button"
@@ -369,6 +471,9 @@ export function ListingGallery({
               <img
                 src={activeDoc.url}
                 alt={activeDoc.altText ?? "Naksa (Cadastral Map)"}
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+                onDragStart={(e) => e.preventDefault()}
                 className="h-full w-full bg-black/5 object-contain"
               />
             </button>
@@ -427,10 +532,10 @@ export function ListingGallery({
                     onClick={() => setActiveDocIndex(idx)}
                     className={cn(
                       "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
-                      "w-28 sm:w-36",
+                      "w-24 sm:w-28",
                       isActive
-                        ? "border-gold ring-1 ring-gold/40"
-                        : "border-outline-variant opacity-70 hover:border-gold/40 hover:opacity-100",
+                        ? "border-primary ring-1 ring-primary/40"
+                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
                     )}
                     aria-label={`View naksa ${idx + 1}`}
                     aria-pressed={isActive}
@@ -440,6 +545,9 @@ export function ListingGallery({
                       <img
                         src={map.url}
                         alt=""
+                        draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
                         className="h-full w-full object-cover"
                       />
                     </div>
@@ -465,8 +573,9 @@ export function ListingGallery({
           role="dialog"
           aria-modal="true"
           aria-label="Media gallery viewer"
+          ref={lightboxRef}
           className="fixed inset-0 z-50 flex flex-col bg-on-surface/95 p-4 sm:p-6 backdrop-blur-md"
-          onClick={() => setLightboxOpen(false)}
+          onClick={closeLightbox}
         >
           <div className="mb-3 flex items-center justify-between text-surface">
             <p className="text-sm font-medium tabular-nums">
@@ -480,7 +589,7 @@ export function ListingGallery({
               size="icon"
               aria-label="Close gallery"
               className="text-surface hover:bg-surface/10"
-              onClick={() => setLightboxOpen(false)}
+              onClick={closeLightbox}
             >
               <Icon name="close" className="text-[22px]" />
             </Button>
@@ -505,6 +614,9 @@ export function ListingGallery({
             <img
               src={lightboxImageSrc ?? (currentImage ? currentImage.url : "")}
               alt={lightboxCaption ?? currentImage?.altText ?? title}
+              draggable={false}
+              onContextMenu={(e) => e.preventDefault()}
+              onDragStart={(e) => e.preventDefault()}
               className="mx-auto max-h-full min-w-0 flex-1 rounded-lg object-contain"
             />
 
@@ -543,6 +655,9 @@ export function ListingGallery({
                   <img
                     src={image.url}
                     alt=""
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onDragStart={(e) => e.preventDefault()}
                     className="h-full w-full object-cover"
                   />
                 </button>

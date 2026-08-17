@@ -207,7 +207,6 @@ export type DraftErrors = Partial<Record<string, string>>;
 
 export const TITLE_MIN = 5;
 export const TITLE_MAX = 80;
-export const DESC_MAX = 5000000000;
 export const ROAD_WIDTH_MAX_FT = 200;
 
 const num = (s: string | undefined): number => {
@@ -342,13 +341,6 @@ export function validateStep(step: number, draft: ListingDraft): DraftErrors {
       errors.title = `Keep the title under ${TITLE_MAX} characters.`;
     if (!draft.mainCategory || !draft.subCategory)
       errors.subCategory = "Pick a property category and type.";
-
-    const plainDesc = stripHtml(draft.description);
-    if (plainDesc.length > DESC_MAX) {
-      errors.description = `Keep the description under ${DESC_MAX.toLocaleString()} characters.`;
-    } else if (draft.description.length > DESC_MAX) {
-      errors.description = `Description with formatting is too long (max ${DESC_MAX.toLocaleString()} characters). Please shorten slightly.`;
-    }
   }
 
   if (step === 1) {

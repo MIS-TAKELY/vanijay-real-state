@@ -18,6 +18,7 @@ import { SellerModule } from './modules/rest/seller/seller.module';
 import { UploadsModule } from './modules/rest/uploads/uploads.module';
 import { FavoritesModule } from './modules/rest/favorites/favorites.module';
 import { CartModule } from './modules/rest/cart/cart.module';
+import { SavedSearchesModule } from './modules/rest/saved-searches/saved-searches.module';
 import { AnalyticsModule } from './modules/rest/analytics/analytics.module';
 import { DashboardModule } from './modules/rest/dashboard/dashboard.module';
 import { ProfileModule } from './modules/rest/profile/profile.module';
@@ -56,6 +57,7 @@ import { SettingsModule } from './modules/rest/settings/settings.module';
     UploadsModule,
     FavoritesModule,
     CartModule,
+    SavedSearchesModule,
     AnalyticsModule,
     DashboardModule,
     ProfileModule,

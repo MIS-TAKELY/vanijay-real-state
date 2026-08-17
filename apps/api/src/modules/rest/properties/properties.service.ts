@@ -136,6 +136,21 @@ export class PropertiesService {
     return rows.map(PropertiesService.mapToResponse);
   }
 
+  /**
+   * How many LIVE listings currently match the given filters — powers the
+   * match count on saved-search cards. Shared with the feed so a saved search
+   * and the `/search` page always agree on results.
+   */
+  async countMatches(filters: FeedFilters): Promise<number> {
+    const where = this.buildFilterWhere(filters);
+    return this.prisma.property.count({
+      where: {
+        status: 'LIVE',
+        ...(Object.keys(where).length > 0 ? { AND: [where] } : {}),
+      },
+    });
+  }
+
   async suggestLocations(q: string, limit = 8): Promise<SearchSuggestion[]> {
     const needle = q.trim();
     if (!needle) return [];

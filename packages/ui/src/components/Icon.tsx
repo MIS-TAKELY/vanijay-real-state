@@ -62,6 +62,7 @@ import {
   Map,
   MapPin,
   Maximize2,
+  Menu,
   MessageCircle,
   MessageSquare,
   Minus,
@@ -209,6 +210,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   public: Globe,
   receipt_long: Receipt,
   schedule: Clock,
+
   search: Search,
   security: ShieldCheck,
   sell: Tag,
@@ -238,6 +240,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   help_outline: HelpCircle,
   Podium: Podium,
   PhoneCall,
+  Menu,
 };
 
 const FALLBACK: LucideIcon = HelpCircle;

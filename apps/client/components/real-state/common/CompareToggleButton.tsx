@@ -1,20 +1,23 @@
 "use client";
 
-import { Button, Icon, toast } from "@repo/ui";
-import { cn } from "@repo/ui";
-import { useCompareStore, MAX_COMPARE_ITEMS } from "store/compare";
+import { Button, cn, Icon, toast } from "@repo/ui";
 import type { CardProperty } from "lib/api/services/properties/types";
+import { MAX_COMPARE_ITEMS, useCompareStore } from "store/compare";
 
 interface CompareToggleButtonProps {
   property: CardProperty;
   /** Renders only the swap icon — used as a media overlay on property cards. */
   iconOnly?: boolean;
+  /** Button size — only applies with `iconOnly`; `icon-xl` (44px) is the
+   *  accessible tap target used in the card's action margin. */
+  size?: "icon" | "icon-sm" | "icon-md" | "icon-lg" | "icon-xl";
   className?: string;
 }
 
 export function CompareToggleButton({
   property,
   iconOnly = false,
+  size = "icon",
   className,
 }: CompareToggleButtonProps) {
   const { add, remove, isSelected, items } = useCompareStore();
@@ -41,7 +44,7 @@ export function CompareToggleButton({
   return (
     <Button
       variant="ghost"
-      size={iconOnly ? "icon" : "sm"}
+      size={iconOnly ? size : "sm"}
       onClick={handleClick}
       disabled={!selected && atMax}
       aria-pressed={selected}

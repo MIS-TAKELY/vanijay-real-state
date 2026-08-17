@@ -1,8 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
 import { Icon } from "@/components/Icon";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -12,6 +11,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { cn } from "@/lib/utils";
 import { useRef, useState } from "react";
 import { VideoPoster } from "./VideoPoster";
 import type { DraftDocument, DraftMedia } from "./draft";
@@ -64,18 +64,8 @@ interface StepMediaDocsProps extends StepProps {
   uploads: WizardUploads;
 }
 
-/**
- * Media & Documents step.
- *
- * Photos are genuinely uploaded to Cloudinary the moment the user picks them
- * (POST /api/v1/uploads) and the returned secure URLs are stored on the draft,
- * so they are included with the listing on submit. A video-walkthrough URL is
- * captured too. Cadastral map / ownership documents remain lightweight helpers
- * (uploaded here for review) — the verification team finalizes those records.
- */
 export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
-  const photoInputRef = useRef<HTMLInputElement>(null);
-  const videoInputRef = useRef<HTMLInputElement>(null);
+  const mediaInputRef = useRef<HTMLInputElement>(null);
   const cadastralInputRef = useRef<HTMLInputElement>(null);
   const docInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,24 +93,20 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
     });
   };
 
-  const handlePhotoFiles = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const handlePhotoFiles = async (files: File[]): Promise<string | null> => {
+    if (files.length === 0) return null;
 
     const pendingPhotos = pending.filter((p) => p.kind === "photo").length;
     const remaining = MAX_PHOTOS - photos.length - pendingPhotos;
-    const accepted = Array.from(files)
+    const accepted = files
       .filter((f) => ACCEPTED_IMAGE_TYPES.includes(f.type))
       .slice(0, remaining);
     if (accepted.length === 0) {
-      setUploadError(
-        remaining <= 0
-          ? `You can add up to ${MAX_PHOTOS} photos.`
-          : "Only JPEG, PNG, WEBP, GIF or AVIF images are supported.",
-      );
-      return;
+      return remaining <= 0
+        ? `You can add up to ${MAX_PHOTOS} photos.`
+        : "Only JPEG, PNG, WEBP, GIF or AVIF images are supported.";
     }
 
-    setUploadError(null);
     const items: PendingUpload[] = accepted.map((file) => ({
       key: `${file.name}-${Date.now()}-${Math.random()}`,
       objectUrl: URL.createObjectURL(file),
@@ -138,42 +124,30 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
         altText: asset.originalFilename,
       }));
       update({ media: [...mediaRef.current, ...uploaded] });
+      return null;
     } catch (error) {
-      setUploadError(getErrorMessage(error));
+      return getErrorMessage(error);
     } finally {
       finishPending(items);
-      if (photoInputRef.current) photoInputRef.current.value = "";
     }
   };
 
-  const handleVideoFiles = async (files: FileList | null) => {
-    if (!files || files.length === 0) return;
+  const handleVideoFiles = async (files: File[]): Promise<string | null> => {
+    if (files.length === 0) return null;
 
     const pendingVideos = pending.filter((p) => p.kind === "video").length;
     const remaining = MAX_VIDEOS - uploadedVideos.length - pendingVideos;
-    const ofType = Array.from(files).filter((f) =>
-      ACCEPTED_VIDEO_TYPES.includes(f.type),
-    );
+    const ofType = files.filter((f) => ACCEPTED_VIDEO_TYPES.includes(f.type));
     if (ofType.length === 0) {
-      setUploadError(
-        remaining <= 0
-          ? `You can add up to ${MAX_VIDEOS} videos.`
-          : "Only MP4, WebM or QuickTime videos are supported.",
-      );
-      return;
+      return remaining <= 0
+        ? `You can add up to ${MAX_VIDEOS} videos.`
+        : "Only MP4, WebM or QuickTime videos are supported.";
     }
     const oversized = ofType.find((f) => f.size > MAX_VIDEO_BYTES);
-    if (oversized) {
-      setUploadError("Videos must be 50 MB or smaller.");
-      return;
-    }
+    if (oversized) return "Videos must be 50 MB or smaller.";
     const accepted = ofType.slice(0, remaining);
-    if (accepted.length === 0) {
-      setUploadError(`You can add up to ${MAX_VIDEOS} videos.`);
-      return;
-    }
+    if (accepted.length === 0) return `You can add up to ${MAX_VIDEOS} videos.`;
 
-    setUploadError(null);
     const items: PendingUpload[] = accepted.map((file) => ({
       key: `${file.name}-${Date.now()}-${Math.random()}`,
       objectUrl: URL.createObjectURL(file),
@@ -196,12 +170,36 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
         });
       }
       update({ media: [...mediaRef.current, ...uploaded] });
+      return null;
     } catch (error) {
-      setUploadError(getErrorMessage(error));
+      return getErrorMessage(error);
     } finally {
       finishPending(items);
-      if (videoInputRef.current) videoInputRef.current.value = "";
     }
+  };
+
+  const handleMediaFiles = async (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+
+    const all = Array.from(files);
+    const imageFiles = all.filter((f) => ACCEPTED_IMAGE_TYPES.includes(f.type));
+    const videoFiles = all.filter((f) => ACCEPTED_VIDEO_TYPES.includes(f.type));
+    const skipped = all.length - imageFiles.length - videoFiles.length;
+
+    const [photoError, videoError] = await Promise.all([
+      handlePhotoFiles(imageFiles),
+      handleVideoFiles(videoFiles),
+    ]);
+    const errors = [photoError, videoError].filter((e): e is string =>
+      Boolean(e),
+    );
+    if (skipped > 0) {
+      errors.push(
+        `${skipped} file${skipped > 1 ? "s" : ""} skipped — unsupported type.`,
+      );
+    }
+    setUploadError(errors.length > 0 ? errors.join(" ") : null);
+    if (mediaInputRef.current) mediaInputRef.current.value = "";
   };
 
   const removeMediaItem = (item: DraftMedia) => {
@@ -318,20 +316,12 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
         </div>
 
         <input
-          ref={photoInputRef}
+          ref={mediaInputRef}
           type="file"
-          accept={ACCEPTED_IMAGE_TYPES.join(",")}
+          accept={[...ACCEPTED_IMAGE_TYPES, ...ACCEPTED_VIDEO_TYPES].join(",")}
           multiple
           className="hidden"
-          onChange={(e) => handlePhotoFiles(e.target.files)}
-        />
-        <input
-          ref={videoInputRef}
-          type="file"
-          accept={ACCEPTED_VIDEO_TYPES.join(",")}
-          multiple
-          className="hidden"
-          onChange={(e) => handleVideoFiles(e.target.files)}
+          onChange={(e) => handleMediaFiles(e.target.files)}
         />
 
         <div className="grid grid-cols-2 gap-sm sm:grid-cols-4">
@@ -427,37 +417,23 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             </div>
           ))}
 
-          {/* Add photo button */}
-          {photos.length + pending.filter((p) => p.kind === "photo").length <
-            MAX_PHOTOS && (
+          {/* Add photos & videos button */}
+          {(photos.length + pending.filter((p) => p.kind === "photo").length <
+            MAX_PHOTOS ||
+            uploadedVideos.length +
+              pending.filter((p) => p.kind === "video").length <
+              MAX_VIDEOS) && (
             <Button
               type="button"
               variant="outline"
               className={cn(DROP, "h-28 border-outline-variant")}
-              onClick={() => photoInputRef.current?.click()}
+              onClick={() => mediaInputRef.current?.click()}
             >
-              <span className="flex flex-col items-center gap-xs">
-                <Icon name="add_photo_alternate" className="text-[28px]" />
-                <span className="text-[12px]">Add photo</span>
-              </span>
-            </Button>
-          )}
-
-          {/* Add video button */}
-          {uploadedVideos.length +
-            pending.filter((p) => p.kind === "video").length <
-            MAX_VIDEOS && (
-            <Button
-              type="button"
-              variant="outline"
-              className={cn(DROP, "h-28 border-outline-variant")}
-              onClick={() => videoInputRef.current?.click()}
-            >
-              <span className="flex flex-col items-center gap-xs">
+              <span className="flex flex-col items-center gap-xs ">
                 <Icon name="videocam" className="text-[28px]" />
-                <span className="text-[12px]">Add video</span>
-                <span className="text-[10px] text-on-surface-variant">
-                  MP4 / WebM, max 50 MB
+                <span className="text-[12px]">Add photos & videos</span>
+                <span className="text-[8px] text-on-surface-variant">
+                  JPG / PNG / WEBP / GIF · MP4 / WebM, max 50 MB
                 </span>
               </span>
             </Button>

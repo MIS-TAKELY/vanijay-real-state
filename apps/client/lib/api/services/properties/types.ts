@@ -4,6 +4,7 @@ import {
   TYPE_GRADIENTS,
   FALLBACK_GRADIENT,
   formatNPR,
+  getSecureMediaUrl,
   labelEnum,
 } from "@repo/ui";
 
@@ -261,6 +262,8 @@ export interface CardProperty {
   location: string;
   gradient: string;
   imageUrl?: string;
+  /** All listing photos (cover first, secure URLs) — powers card carousels. */
+  images?: string[];
   meta: string[];
   /** Optional accent badge (e.g. "HOT", "FEATURED") rendered top-right. */
   badge?: string;
@@ -351,6 +354,17 @@ export function toCardProps(p: ApiProperty): CardProperty {
     );
   }
 
+  // Carousel source: all media, cover first, secure URLs, capped at 8 slides.
+  const images = (p.media ?? [])
+    .slice()
+    .sort((a, b) => {
+      if (a.isCover !== b.isCover) return a.isCover ? -1 : 1;
+      return (a.sortOrder ?? 0) - (b.sortOrder ?? 0);
+    })
+    .map((m) => getSecureMediaUrl(m.url))
+    .filter((url): url is string => Boolean(url))
+    .slice(0, 8);
+
   return {
     id: p.slug,
     propertyId: p.id,
@@ -360,6 +374,7 @@ export function toCardProps(p: ApiProperty): CardProperty {
     location: formatLocation(p.location),
     gradient: TYPE_GRADIENTS[p.subCategory] ?? FALLBACK_GRADIENT,
     imageUrl: listingCoverImageUrl(p.media),
+    images: images.length > 0 ? images : undefined,
     meta,
     isVerified:
       p.verificationLevel != null && p.verificationLevel !== "UNVERIFIED",

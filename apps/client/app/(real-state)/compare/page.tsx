@@ -139,6 +139,9 @@ function PropertySearch({
                       <img
                         src={p.imageUrl}
                         alt=""
+                        draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
                         className="h-full w-full object-cover"
                       />
                     ) : (
@@ -419,6 +422,9 @@ function ComparePageContent() {
                         <img
                           src={coverUrl}
                           alt={p.title}
+                          draggable={false}
+                          onContextMenu={(e) => e.preventDefault()}
+                          onDragStart={(e) => e.preventDefault()}
                           className="h-full w-full object-cover"
                         />
                       ) : (

@@ -57,7 +57,7 @@ function HeroBannerCarousel() {
 
   return (
     <section
-      className="relative w-full h-[50vh] min-h-[480px] max-h-[720px] overflow-hidden"
+      className="relative w-full h-[220px] sm:h-[280px] md:h-[40vh] md:min-h-[380px] md:max-h-[520px] overflow-hidden"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -78,32 +78,32 @@ function HeroBannerCarousel() {
           />
           {/* Gradient overlay — navy-tinted to echo the brand roundel */}
           <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/85 via-navy/45 to-navy/5" />
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-navy-deep/70 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-16 md:h-40 bg-gradient-to-t from-navy-deep/70 to-transparent" />
           {/* Content */}
-          <div className="relative z-20 flex items-center h-full max-w-container-max mx-auto px-gutter">
+          <div className="relative z-20 flex items-center h-full max-w-container-max mx-auto px-gutter py-4 md:py-0">
             <div className="text-white max-w-2xl">
-              <p className="mb-4 flex items-center gap-3 font-label-sm text-[11px] font-bold uppercase tracking-[0.22em] text-gold">
-                <span className="h-px w-8 bg-gold/70" aria-hidden />
+              <p className="mb-2 md:mb-4 flex items-center gap-2 md:gap-3 font-label-sm text-[9px] md:text-[11px] font-bold uppercase tracking-[0.16em] md:tracking-[0.22em] text-gold">
+                <span className="h-px w-5 md:w-8 bg-gold/70" aria-hidden />
                 Nepal&apos;s Verified Land Archive
               </p>
-              <h1 className="font-display-lg text-display-lg leading-tight mb-4">
+              <h1 className="font-display-lg text-[22px] sm:text-3xl md:text-display-lg leading-[1.15] md:leading-tight mb-2 md:mb-4 line-clamp-2 md:line-clamp-none">
                 {slide.headline}
               </h1>
-              <p className="font-body-lg text-white/85 leading-relaxed mb-8">
+              <p className="font-body-lg text-xs sm:text-sm md:text-body-lg text-white/85 leading-snug md:leading-relaxed mb-3 md:mb-8 line-clamp-2 md:line-clamp-none">
                 {slide.subheadline}
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-2 md:gap-3">
                 <Button
-                  size="lg"
-                  className="bg-gold text-on-gold shadow-lg shadow-navy-deep/30 hover:bg-gold/90"
+                  size="sm"
+                  className="h-8 px-4 text-xs md:h-10 md:px-6 md:text-sm bg-gold text-on-gold shadow-lg shadow-navy-deep/30 hover:bg-gold/90"
                   onClick={() => router.push("/")}
                 >
                   {slide.ctaPrimary}
                 </Button>
                 <Button
-                  size="lg"
+                  size="sm"
                   variant="outline"
-                  className="border-white/40 text-white hover:border-gold/70 hover:bg-white/10 shadow-lg"
+                  className="hidden sm:inline-flex h-8 px-4 text-xs md:h-10 md:px-6 md:text-sm border-white/40 text-white hover:border-gold/70 hover:bg-white/10 shadow-lg"
                   onClick={() => router.push("/nrn-concierge")}
                 >
                   {slide.ctaSecondary}
@@ -115,15 +115,15 @@ function HeroBannerCarousel() {
       ))}
 
       {/* Dot indicators — gold for the active slide */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2">
+      <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 md:gap-2">
         {heroSlides.map((_, index) => (
           <button
             key={index}
             onClick={() => goTo(index)}
-            className={`h-2 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
+            className={`h-1.5 md:h-2 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
               index === current
-                ? "w-8 bg-gold"
-                : "w-2 bg-white/50 hover:bg-white/80"
+                ? "w-6 md:w-8 bg-gold"
+                : "w-1.5 md:w-2 bg-white/50 hover:bg-white/80"
             }`}
             aria-label={`Go to slide ${index + 1}`}
           />

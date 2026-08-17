@@ -24,7 +24,6 @@ export {
   INITIAL_DRAFT,
   TITLE_MIN,
   TITLE_MAX,
-  DESC_MAX,
   ROAD_WIDTH_MAX_FT,
   totalSqFt,
   askingPriceNumber,

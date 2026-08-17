@@ -71,17 +71,17 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
           const row = (
             <div
               className={[
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors duration-150",
+                "flex items-center gap-3 rounded-lg border-l-2 px-3 py-2.5 transition-colors duration-150",
                 active
-                  ? "bg-primary/10 text-primary"
-                  : "text-on-surface hover:bg-surface-container",
+                  ? "border-gold bg-gold-soft/40 text-gold-deep"
+                  : "border-transparent text-on-surface hover:bg-surface-container",
               ].join(" ")}
             >
               <Icon
                 name={mode.icon}
                 filled
                 className={`w-6 shrink-0 text-[20px] ${
-                  active ? "text-primary" : "text-on-surface-variant"
+                  active ? "text-gold-deep" : "text-on-surface-variant"
                 }`}
               />
               <span className="text-sm font-medium">{mode.label}</span>
@@ -89,12 +89,6 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
                 <span className="ml-auto shrink-0 rounded-full bg-error/10 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-error">
                   Soon
                 </span>
-              )}
-              {active && (
-                <Icon
-                  name="check"
-                  className="ml-auto text-[16px] text-primary"
-                />
               )}
             </div>
           );

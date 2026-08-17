@@ -195,7 +195,6 @@ export class CreatePropertyInput {
   @Field(() => String, { nullable: true })
   @IsString()
   @IsOptional()
-  // @MaxLength(5000)
   description?: string;
 
   @Field(() => MainCategory)

@@ -40,6 +40,12 @@ export const API_ENDPOINTS = {
       `/api/${API_VERSION}/cart/${encodeURIComponent(propertyId)}`,
   },
 
+  savedSearches: {
+    base: `/api/${API_VERSION}/saved-searches`,
+    byId: (id: string) =>
+      `/api/${API_VERSION}/saved-searches/${encodeURIComponent(id)}`,
+  },
+
   auth: {
     base: `/api/auth`,
     signUpEmail: `/api/auth/sign-up/email`,

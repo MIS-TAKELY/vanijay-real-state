@@ -67,12 +67,15 @@ export function HintBar() {
 export function MobileListToggle({
   showList,
   onToggle,
+  className,
 }: {
   showList: boolean;
   onToggle: () => void;
+  className?: string;
 }) {
   return (
     <button
+      type="button"
       onClick={onToggle}
       aria-label={showList ? "Hide list" : "Show list"}
       style={{
@@ -91,7 +94,7 @@ export function MobileListToggle({
         justifyContent: "center",
         boxShadow: "0 4px 20px rgba(0,0,0,0.5)",
       }}
-      className="lg-hidden"
+      className={className}
     >
       <svg viewBox="0 0 24 24" fill="white" style={{ width: 18, height: 18 }}>
         {showList ? (

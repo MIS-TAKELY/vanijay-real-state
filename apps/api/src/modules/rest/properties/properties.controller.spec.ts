@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PropertiesController } from './properties.controller';
 import { PropertiesService } from './properties.service';
-import { PropertyType } from '@repo/db';
 
 // better-auth is ESM-only; the controller imports AuthGuard/RolesGuard which
 // pull in `@repo/auth` + `better-auth/node`. Mock them so this spec stays
@@ -51,7 +50,8 @@ describe('PropertiesController', () => {
   it('delegates create to the shared service with ownerId from @CurrentUser', async () => {
     const input = {
       title: 'T',
-      propertyType: PropertyType.RESIDENTIAL_HOUSE,
+      mainCategory: 'RESIDENTIAL',
+      subCategory: 'HOUSE',
       askingPrice: 1,
     } as never;
     await controller.create(input, 'u1');

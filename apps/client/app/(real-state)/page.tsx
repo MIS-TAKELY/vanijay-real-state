@@ -68,18 +68,16 @@ export default async function HomePage() {
         >
           <div className="h-px w-full bg-outline-variant/60" />
         </div>
-        {/* <AppModeStrip /> */}
         <CategoryStrip />
         <HeroBannerCarousel />
 
-        {/* <SearchBar /> */}
 
         <ListingsMarketplace />
         <RecentlyAdded />
         <RecentlyViewed />
         <section className="py-10 md:py-14 relative z-10">
           <div className="">
-            <NepalmapWrapper height="clamp(420px, 52vh, 620px)" />
+            <NepalmapWrapper />
           </div>
         </section>
         {/* <CallToActionBanner /> */}

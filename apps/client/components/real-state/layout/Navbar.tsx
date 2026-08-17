@@ -2,7 +2,11 @@
 
 import { signOut, useSession } from "@repo/auth/client";
 import {
+  Avatar,
+  AvatarFallback,
+  Badge,
   Button,
+  cn,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -11,10 +15,17 @@ import {
   DropdownMenuTrigger,
   Icon,
   Input,
+  ScrollArea,
+  Separator,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 } from "@repo/ui";
 import SignIn from "components/real-state/modals/SignIn";
 import { AppModeStrip } from "components/shared/AppModeStrip";
-import { navLinks } from "constants/varibles-constants";
 import { ChevronDown, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -56,10 +67,23 @@ const searchForm = (
   </form>
 );
 
+/* Mobile nav — shown in the right-side Sheet. */
+const MOBILE_LINKS = [
+  { label: "Home", href: "/", icon: "home" },
+  { label: "Compare", href: "/compare", icon: "swap_horiz" },
+  { label: "Cart", href: "/cart", icon: "add_shopping_cart" },
+] as const;
+
+const MOBILE_ACCOUNT_LINKS = [
+  { label: "Dashboard", href: "/dashboard", icon: "space_dashboard" },
+  { label: "My Listings", href: "/my-listings", icon: "inventory" },
+  { label: "Saved Searches", href: "/saved-searches", icon: "bookmark" },
+] as const;
+
 export function Navbar() {
   const { data: session, isPending } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [appsOpen, setAppsOpen] = useState(false);
   const pathname = usePathname();
   const { open: openAuth } = useAuthModalStore();
   const cartCount = useCartStore((state) => state.count);
@@ -82,15 +106,8 @@ export function Navbar() {
   // Close menus on route change
   useEffect(() => {
     setMobileOpen(false);
+    setAppsOpen(false);
   }, [pathname]);
-
-  // Lock body scroll when mobile menu is open
-  useEffect(() => {
-    document.body.style.overflow = mobileOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [mobileOpen]);
 
   const handleLogout = async () => {
     setMobileOpen(false);
@@ -112,14 +129,14 @@ export function Navbar() {
   return (
     <header className="w-full top-0 sticky z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
       <nav className="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-16 sm:h-20">
-        {/* Logo (links home) + app switcher chevron */}
+        {/* Logo (links home) */}
         <div className="flex items-center gap-1">
           <Link
             href="/"
             className="group flex items-center "
             aria-label="MALPOTH home"
           >
-            <span className="flex h-12 w-12 rounded-full ring-1 ring-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105">
+            <span className="flex h-10 w-10 sm:h-12 sm:w-12 rounded-full ring-1 ring-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105">
               <Image
                 src={logo}
                 alt="MALPOTH"
@@ -128,7 +145,7 @@ export function Navbar() {
                 className="h-full w-full rounded-full object-contain"
               />
             </span>
-            <span>
+            <span className="hidden md:block">
               <Image
                 src={logoText}
                 alt="MALPOTH"
@@ -138,39 +155,17 @@ export function Navbar() {
               />
             </span>
           </Link>
-
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                aria-label="Switch app"
-                className="h-6 w-6 rounded-full bg-primary text-on-primary shadow-xs ring-1 ring-surface transition-all duration-200 hover:scale-105 hover:bg-primary/90 hover:shadow-md data-[state=open]:rotate-180 cursor-pointer"
-              >
-                <ChevronDown className="size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent
-              align="start"
-              className="w-[300px] overflow-hidden p-0 sm:w-[340px]"
-            >
-              <p className="px-4 pt-3 font-label-sm text-label-sm font-semibold uppercase tracking-widest text-on-surface-variant">
-                Switch app
-              </p>
-              <AppModeStrip compact />
-            </DropdownMenuContent>
-          </DropdownMenu>
         </div>
 
-        {/* Desktop search bar */}
-        <div className="hidden flex-1 justify-center xl:flex">
+        {/* Search bar — always visible, shrinks to fill on mobile */}
+        <div className="flex min-w-0 flex-1 justify-center px-2 sm:px-3">
           <div className="w-full max-w-md">{searchForm}</div>
         </div>
 
         {/* Right cluster */}
         <div className="flex items-center gap-2 sm:gap-3">
-          {/* CTA: List a Property (desktop) */}
-          <div className="hidden sm:block">
+          {/* CTA: List a Property (md+) — on mobile it lives in the side menu */}
+          <div className="hidden md:block">
             {isLoggedIn ? (
               <Button
                 asChild
@@ -202,13 +197,52 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Cart */}
+          {/* Apps switcher (md+) — on mobile it collapses into the side menu */}
+          <div className="mr-1 hidden md:block sm:mr-2">
+            <DropdownMenu open={appsOpen} onOpenChange={setAppsOpen}>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  aria-haspopup="menu"
+                  aria-expanded={appsOpen}
+                  aria-label="Switch app"
+                  className="h-9 gap-2 rounded-full border-outline-variant bg-surface px-3 text-sm font-medium text-on-surface shadow-xs transition-all duration-200 hover:scale-[1.03] hover:border-gold/60 hover:bg-gold-soft/40 focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface cursor-pointer"
+                >
+                  <Icon
+                    name="grid_view"
+                    className="text-[18px] text-gold-deep"
+                  />
+                  <span className="hidden lg:inline">Apps</span>
+                  <ChevronDown
+                    className={cn(
+                      "size-4 text-on-surface-variant transition-transform duration-200",
+                      appsOpen && "rotate-180",
+                    )}
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent
+                align="end"
+                sideOffset={8}
+                className="w-[300px] overflow-hidden rounded-2xl border-outline-variant bg-surface p-0 shadow-xl sm:w-[340px]"
+              >
+                <p className="flex items-center gap-2 px-4 pb-2 pt-4 font-label-sm text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+                  <Icon name="grid_view" className="text-[14px]" />
+                  Switch app
+                </p>
+                <AppModeStrip compact />
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+
+          {/* Cart (md+) — on mobile it lives in the side menu */}
           <Button
             asChild
             variant="ghost"
             size="icon"
             aria-label={`Cart${cartCount > 0 ? ` — ${cartCount} items` : " (empty)"}`}
-            className="relative inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
+            className="relative hidden h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer md:inline-flex"
           >
             <Link href="/cart">
               <Icon name="add_shopping_cart" className="text-[24px]" />
@@ -220,8 +254,8 @@ export function Navbar() {
             </Link>
           </Button>
 
-          {/* Auth area */}
-          <div className="relative">
+          {/* Auth area (md+) — on mobile it lives in the side menu */}
+          <div className="relative hidden md:block">
             {!hasLoadedOnce ? (
               <div className="h-9 w-9 animate-pulse rounded-full bg-outline-variant" />
             ) : isLoggedIn ? (
@@ -273,106 +307,184 @@ export function Navbar() {
             )}
           </div>
 
-          {/* Search toggle (below xl) */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
-            aria-label={mobileSearchOpen ? "Close search" : "Open search"}
-            aria-expanded={mobileSearchOpen}
-            className="xl:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
-          >
-            <Icon
-              name={mobileSearchOpen ? "close" : "search"}
-              className="text-[24px]"
-            />
-          </Button>
-
-          {/* Mobile hamburger */}
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-            aria-expanded={mobileOpen}
-            className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
-          >
-            <Icon
-              name={mobileOpen ? "close" : "menu"}
-              className="text-[26px]"
-            />
-          </Button>
-        </div>
-      </nav>
-
-      {/* Search bar (below xl) */}
-      {mobileSearchOpen && (
-        <div className="border-t border-outline-variant bg-surface/95 px-gutter py-3 xl:hidden">
-          <div className="mx-auto max-w-container-max">{searchForm}</div>
-        </div>
-      )}
-
-      {/* Mobile panel */}
-      {mobileOpen && (
-        <div className="md:hidden border-t border-outline-variant bg-surface">
-          <div className="px-gutter py-md max-w-container-max mx-auto flex flex-col gap-1">
-            {navLinks.map((item) => (
-              <Link
-                href={item.href}
-                key={item.href}
-                className={`px-3 py-3 rounded-lg text-base font-medium transition-colors ${
-                  isActive(item.href)
-                    ? "bg-primary/10 text-primary"
-                    : "text-on-surface hover:bg-surface-container"
-                }`}
+          {/* Mobile hamburger → right-side Sheet */}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label="Toggle menu"
+                aria-expanded={mobileOpen}
+                className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
               >
-                {item.label}
-              </Link>
-            ))}
-            <div className="mt-sm flex flex-col gap-sm pt-sm border-t border-outline-variant">
-              {isLoggedIn ? (
-                <>
-                  <Link
-                    href="/dashboard"
-                    className="px-3 py-3 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container transition-colors"
-                  >
-                    Dashboard
-                  </Link>
+                <Icon
+                  name={mobileOpen ? "close" : "Menu"}
+                  className="text-[26px]"
+                />
+              </Button>
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="flex w-[86%] max-w-sm flex-col gap-0 bg-surface p-0"
+            >
+              <SheetHeader className="border-b border-outline-variant px-4 py-4 pr-12">
+                {isLoggedIn ? (
+                  <>
+                    <SheetTitle className="sr-only">Menu</SheetTitle>
+                    <div className="flex items-center gap-3">
+                      <Avatar size="lg" className="bg-primary">
+                        <AvatarFallback className="bg-primary text-xs font-bold text-on-primary">
+                          {initials}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0">
+                        <p className="truncate text-sm font-semibold text-on-surface">
+                          {user?.name}
+                        </p>
+                        <p className="truncate text-xs text-on-surface-variant">
+                          {user?.email}
+                        </p>
+                      </div>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <SheetTitle className="font-headline-md text-lg font-semibold tracking-tight text-navy">
+                      Menu
+                    </SheetTitle>
+                    <p className="text-sm text-on-surface-variant">
+                      Browse, compare and list properties.
+                    </p>
+                  </>
+                )}
+              </SheetHeader>
+
+              <ScrollArea className="min-h-0 flex-1">
+                <nav
+                  aria-label="Main menu"
+                  className="flex flex-col gap-0.5 p-2"
+                >
+                  {MOBILE_LINKS.map((link) => {
+                    const active = isActive(link.href);
+                    return (
+                      <SheetClose asChild key={link.href}>
+                        <Link
+                          href={link.href}
+                          aria-current={active ? "page" : undefined}
+                          className={cn(
+                            "flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-surface-container",
+                            active && "bg-primary/10 text-primary",
+                          )}
+                        >
+                          <Icon
+                            name={link.icon}
+                            className={cn(
+                              "text-[20px]",
+                              active
+                                ? "text-primary"
+                                : "text-on-surface-variant",
+                            )}
+                          />
+                          <span className="flex-1">{link.label}</span>
+                          {link.href === "/cart" &&
+                            isLoggedIn &&
+                            cartCount > 0 && (
+                              <Badge
+                                variant="default"
+                                className="min-w-5 justify-center rounded-full px-1.5 text-[10px] font-bold leading-none"
+                              >
+                                {cartCount > 99 ? "99+" : cartCount}
+                              </Badge>
+                            )}
+                        </Link>
+                      </SheetClose>
+                    );
+                  })}
+
+                  {isLoggedIn && (
+                    <>
+                      <Separator className="my-2" />
+                      {MOBILE_ACCOUNT_LINKS.map((link) => {
+                        const active = isActive(link.href);
+                        return (
+                          <SheetClose asChild key={link.href}>
+                            <Link
+                              href={link.href}
+                              aria-current={active ? "page" : undefined}
+                              className={cn(
+                                "flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-surface-container",
+                                active && "bg-primary/10 text-primary",
+                              )}
+                            >
+                              <Icon
+                                name={link.icon}
+                                className={cn(
+                                  "text-[20px]",
+                                  active
+                                    ? "text-primary"
+                                    : "text-on-surface-variant",
+                                )}
+                              />
+                              <span className="flex-1">{link.label}</span>
+                            </Link>
+                          </SheetClose>
+                        );
+                      })}
+                    </>
+                  )}
+
+                  {/* Apps switcher (mobile) — collapsed into the side menu */}
+                  <Separator className="my-2" />
+                  <p className="px-3 pb-1 pt-2 text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+                    Switch app
+                  </p>
+                  <div className="-mx-2">
+                    <AppModeStrip compact />
+                  </div>
+                </nav>
+              </ScrollArea>
+
+              {/* Auth actions */}
+              <div className="border-t border-outline-variant p-4">
+                {isLoggedIn ? (
                   <Button
                     variant="ghost"
                     onClick={handleLogout}
-                    className="justify-start px-3 py-3 rounded-lg text-left text-base font-medium text-error hover:bg-surface-container cursor-pointer h-auto"
+                    className="h-11 w-full justify-start rounded-lg px-3 text-base font-medium text-error hover:bg-error/10 cursor-pointer"
                   >
+                    <LogOut className="h-4 w-4" />
                     Sign Out
                   </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onClick={() => {
-                      setMobileOpen(false);
-                      openAuth();
-                    }}
-                    className="h-11 rounded-lg bg-gold text-on-gold font-semibold cursor-pointer hover:bg-gold/90"
-                  >
-                    List a Property
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      openAuth();
-                    }}
-                    className="h-11 rounded-lg border-outline-variant text-on-surface font-semibold cursor-pointer"
-                  >
-                    Sign in
-                  </Button>
-                </>
-              )}
-            </div>
-          </div>
+                ) : (
+                  <div className="flex flex-col gap-2">
+                    <Button
+                      onClick={() => {
+                        setMobileOpen(false);
+                        openAuth();
+                      }}
+                      className="h-11 rounded-lg bg-gold text-on-gold font-semibold cursor-pointer hover:bg-gold/90"
+                    >
+                      List a Property
+                      <Icon name="arrow_outward" className="text-data-table" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setMobileOpen(false);
+                        openAuth();
+                      }}
+                      className="h-11 rounded-lg border-outline-variant text-on-surface font-semibold cursor-pointer"
+                    >
+                      Sign in
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
-      )}
+      </nav>
+
     </header>
   );
 }

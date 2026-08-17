@@ -5,6 +5,7 @@ import { SimilarProperties } from "components/real-state/pages/home/SimilarPrope
 import { ListingDecisionCard } from "components/real-state/pages/listing/ListingDecisionCard";
 import { ListingDescription } from "components/real-state/pages/listing/ListingDescription";
 import { ListingGallery } from "components/real-state/pages/listing/ListingGallery";
+import { MobilePriceBar } from "components/real-state/pages/listing/MobilePriceBar";
 import { ApiError } from "lib/api/core/client";
 import { fetchPropertyByGraphql } from "lib/api/services/properties";
 import {
@@ -69,15 +70,6 @@ export async function generateMetadata({
   } catch {
     return { title: "Listing not found | MALPOTH" };
   }
-}
-
-function SpecRow({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="flex items-baseline justify-between gap-4 border-b border-outline-variant py-2.5 text-sm last:border-b-0">
-      <span className="shrink-0 text-on-surface-variant">{label}</span>
-      <span className="text-right font-medium text-on-surface">{value}</span>
-    </div>
-  );
 }
 
 function formatNumber(n: number | null | undefined): string | null {
@@ -150,6 +142,15 @@ export default async function ListingDetailPage({ params }: PageProps) {
       labelEnum(property.verificationLevel, VERIFICATION_LABELS),
     ],
   ];
+
+  // Key facts for the scannable strip under the title — the four
+  // decision-relevant essentials, pulled from the spec rows built above.
+  const keyFacts = specs
+    .filter(([label]) =>
+      ["Land Area", "Road Access", "Facing", "Property Type"].includes(label),
+    )
+    .filter(([, value]) => Boolean(value)) as Array<[string, string]>;
+
   const typeSpecs: Array<[string, string | null | undefined]> = [];
   const chipGroups: Array<{ label: string; values: string[] }> = [];
   const label = (v: string) => labelEnum(v, {});
@@ -308,24 +309,33 @@ export default async function ListingDetailPage({ params }: PageProps) {
       <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
         <nav className="mb-3" aria-label="Breadcrumb">
-          <ol className="flex items-center gap-2 text-sm text-on-surface-variant">
+          <ol className="flex items-center gap-1.5 text-sm text-on-surface-variant">
             <li>
-              <Link href="/" className="hover:text-primary">
+              <Link href="/" className="transition-colors hover:text-primary">
                 Home
               </Link>
             </li>
-            <li aria-hidden className="text-gold">
-              /
+            <li aria-hidden className="flex items-center">
+              <Icon
+                name="chevron_right"
+                className="text-on-surface-variant/60"
+              />
             </li>
             <li>
-              <Link href="/#listings" className="hover:text-primary">
+              <Link
+                href="/search"
+                className="transition-colors hover:text-primary"
+              >
                 Listings
               </Link>
             </li>
-            <li aria-hidden className="text-gold">
-              /
+            <li aria-hidden className="flex items-center">
+              <Icon
+                name="chevron_right"
+                className="text-on-surface-variant/60"
+              />
             </li>
-            <li className="truncate font-medium text-on-surface">
+            <li className="min-w-0 truncate font-medium text-on-surface">
               {property.title}
             </li>
           </ol>
@@ -357,7 +367,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
             )}
           </div>
 
-          {/* Title + Location + Maps */}
+          {/* Title + Location */}
           <div className="min-w-0">
             <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
               {property.title}
@@ -369,6 +379,25 @@ export default async function ListingDetailPage({ params }: PageProps) {
               </p>
             </div>
           </div>
+
+          {/* Key facts — the essentials at a glance, without reading the table */}
+          {keyFacts.length > 0 && (
+            <div className="mt-4 flex flex-wrap gap-2">
+              {keyFacts.map(([label, value]) => (
+                <div
+                  key={label}
+                  className="flex items-baseline gap-2 rounded-lg border border-outline-variant bg-surface px-3 py-2"
+                >
+                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
+                    {label}
+                  </span>
+                  <span className="mono-stat text-[13px] font-medium text-on-surface">
+                    {value}
+                  </span>
+                </div>
+              ))}
+            </div>
+          )}
         </header>
 
         <div className="grid gap-5 lg:grid-cols-3">
@@ -388,63 +417,73 @@ export default async function ListingDetailPage({ params }: PageProps) {
             )}
 
             {/* Specifications */}
-            <section className="mt-5">
-              <h2 className="mb-3 flex items-center gap-2.5 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
+            <section className="mt-8">
+              <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
                 Specifications
               </h2>
-              <div className="rounded-xl border border-outline-variant border-t-2 border-t-gold/50 bg-surface px-4 py-2 shadow-sm">
+              <dl className="divide-y divide-outline-variant">
                 {allSpecs
                   .filter(([, value]) => value)
                   .map(([label, value]) => (
-                    <SpecRow
+                    <div
                       key={label}
-                      label={label}
-                      value={value as string}
-                    />
+                      className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
+                    >
+                      <dt className="text-sm text-on-surface-variant">
+                        {label}
+                      </dt>
+                      <dd className="text-sm font-medium text-on-surface">
+                        {value as string}
+                      </dd>
+                    </div>
                   ))}
-                {chipGroups.length > 0 && (
-                  <div className="flex flex-col gap-sm pt-3">
-                    {chipGroups.map((group) => (
-                      <div key={group.label} className="flex flex-col gap-1.5">
-                        <span className="text-sm text-on-surface-variant">
-                          {group.label}
-                        </span>
-                        <div className="flex flex-wrap gap-1.5">
-                          {group.values.map((v) => (
-                            <span
-                              key={v}
-                              className="rounded bg-surface-container px-2 py-0.5 text-[12px] font-medium text-on-surface-variant"
-                            >
-                              {v}
-                            </span>
-                          ))}
-                        </div>
+              </dl>
+              {chipGroups.length > 0 && (
+                <div className="flex flex-col gap-4 pt-4">
+                  {chipGroups.map((group) => (
+                    <div key={group.label} className="flex flex-col gap-2">
+                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
+                        {group.label}
+                      </h3>
+                      <div className="flex flex-wrap gap-1.5">
+                        {group.values.map((v) => (
+                          <span
+                            key={v}
+                            className="rounded-md bg-surface-container px-2.5 py-1 text-[13px] font-medium text-on-surface-variant"
+                          >
+                            {v}
+                          </span>
+                        ))}
                       </div>
-                    ))}
-                  </div>
-                )}
-              </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </section>
 
             {/* Location details */}
             {locationSpecs.length > 0 && (
-              <section className="mt-5">
-                <h2 className="mb-3 flex items-center gap-2.5 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                  <span className="h-4 w-1 rounded-full bg-gold" aria-hidden />
+              <section className="mt-8">
+                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
                   Location
                 </h2>
-                <div className="rounded-xl border border-outline-variant border-t-2 border-t-gold/50 bg-surface px-4 py-2 shadow-sm">
+                <dl className="divide-y divide-outline-variant">
                   {locationSpecs
                     .filter(([, value]) => value)
                     .map(([label, value]) => (
-                      <SpecRow
+                      <div
                         key={label}
-                        label={label}
-                        value={value as string}
-                      />
+                        className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
+                      >
+                        <dt className="text-sm text-on-surface-variant">
+                          {label}
+                        </dt>
+                        <dd className="text-sm font-medium text-on-surface">
+                          {value as string}
+                        </dd>
+                      </div>
                     ))}
-                </div>
+                </dl>
               </section>
             )}
           </div>
@@ -453,7 +492,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
           <aside>
             <ListingDecisionCard
               propertyId={property.id}
-              slug={property.slug}
               title={property.title}
               askingPrice={formatNPR(property.askingPrice)}
               price={property.askingPrice}
@@ -467,7 +505,16 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
         {/* Similar Properties Section */}
         <SimilarProperties propertyId={property.id} />
+
+        {/* Clearance so the fixed mobile price bar never covers the footer */}
+        <div className="h-28 lg:hidden" aria-hidden="true" />
       </main>
+
+      {/* Mobile sticky price + primary actions (desktop uses the sidebar card) */}
+      <MobilePriceBar
+        askingPrice={formatNPR(property.askingPrice)}
+        propertyId={property.id}
+      />
     </>
   );
 }

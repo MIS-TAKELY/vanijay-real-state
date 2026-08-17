@@ -63,31 +63,31 @@ export function ListingsMarketplace() {
   if (loading && trendingItems.length === 0 && similarItems.length === 0) {
     return (
       <>
-        <div className="py-10 md:py-14">
+        <div className="py-6 md:py-14">
           <div className="max-w-container-max mx-auto px-gutter">
-            <h2 className="font-headline-md text-headline-md text-primary mb-4">
+            <h2 className="font-headline-md text-xl md:text-headline-md text-primary mb-3 md:mb-4">
               Featured Properties
             </h2>
-            <div className="flex gap-4 overflow-x-auto pb-4">
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="min-w-[280px] md:min-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container"
+                  className="min-w-[220px] md:min-w-[280px] h-[300px] md:h-[420px] animate-pulse rounded-2xl bg-surface-container shrink-0"
                 />
               ))}
             </div>
           </div>
         </div>
-        <div className="py-10 md:py-14 bg-surface-container-low">
+        <div className="py-6 md:py-14 bg-surface-container-low">
           <div className="max-w-container-max mx-auto px-gutter">
-            <h2 className="font-headline-md text-headline-md text-primary mb-4">
+            <h2 className="font-headline-md text-xl md:text-headline-md text-primary mb-3 md:mb-4">
               Trending Now
             </h2>
-            <div className="flex gap-4 overflow-x-auto pb-4">
+            <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4">
               {[1, 2, 3, 4].map((i) => (
                 <div
                   key={i}
-                  className="min-w-[280px] md:min-w-[320px] h-[500px] animate-pulse rounded-2xl bg-surface-container"
+                  className="min-w-[220px] md:min-w-[280px] h-[300px] md:h-[420px] animate-pulse rounded-2xl bg-surface-container shrink-0"
                 />
               ))}
             </div>

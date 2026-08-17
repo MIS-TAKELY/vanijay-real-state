@@ -231,7 +231,8 @@ console.log(
 // Built-up area drives price-per-unit for building types.
 const houseBase: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "RESIDENTIAL_HOUSE",
+  mainCategory: "RESIDENTIAL",
+  subCategory: "HOUSE",
   builtUpAreaSqFt: "2400",
   askingPrice: "48000000",
 };
@@ -251,7 +252,8 @@ assert(
 // Land types keep pricing off the land area even when built-up area is set.
 const landWithBuiltUp: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "RESIDENTIAL_LAND",
+  mainCategory: "LAND",
+  subCategory: "RESIDENTIAL_LAND",
   units: { aana: "1" },
   askingPrice: "342250",
   builtUpAreaSqFt: "2400",
@@ -265,7 +267,8 @@ assert(
 // Per-type required-field validation.
 const houseNoBuiltUp: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "RESIDENTIAL_HOUSE",
+  mainCategory: "RESIDENTIAL",
+  subCategory: "HOUSE",
   askingPrice: "1000",
 };
 assert(
@@ -276,7 +279,8 @@ assert(
 
 const houseNoLand: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "RESIDENTIAL_HOUSE",
+  mainCategory: "RESIDENTIAL",
+  subCategory: "HOUSE",
   builtUpAreaSqFt: "1200",
   askingPrice: "1000",
 };
@@ -288,9 +292,9 @@ assert(
 
 const apartmentNoFloor: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "RESIDENTIAL_HOUSE",
+  mainCategory: "RESIDENTIAL",
+  subCategory: "APARTMENT_FLAT",
   builtUpAreaSqFt: "1200",
-  propertySubtype: "APARTMENT",
   askingPrice: "1000",
 };
 assert(
@@ -310,7 +314,8 @@ assert(
 
 const commercialLandNoFrontage: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "COMMERCIAL_LAND",
+  mainCategory: "LAND",
+  subCategory: "COMMERCIAL_LAND",
   units: { aana: "1" },
   askingPrice: "1000",
 };
@@ -331,7 +336,8 @@ assert(
 
 const commercialSpaceNoArea: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "COMMERCIAL_SPACE",
+  mainCategory: "COMMERCIAL",
+  subCategory: "OFFICE",
   frontageFt: "30",
   askingPrice: "1000",
 };
@@ -354,7 +360,8 @@ assert(
 // Land types still require land area.
 const emptyLand: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "AGRICULTURAL_LAND",
+  mainCategory: "LAND",
+  subCategory: "AGRICULTURAL_LAND",
   askingPrice: "1000",
 };
 assert(
@@ -367,7 +374,8 @@ console.log("\n📦 Payload wiring (buildCreatePayload) tests");
 
 const houseDraft: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "RESIDENTIAL_HOUSE",
+  mainCategory: "RESIDENTIAL",
+  subCategory: "HOUSE",
   builtUpAreaSqFt: "2400",
   propertySubtype: "APARTMENT",
   floorNumber: "4",
@@ -406,7 +414,8 @@ assert(
 );
 const tinyParcelApartment: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "RESIDENTIAL_HOUSE",
+  mainCategory: "RESIDENTIAL",
+  subCategory: "HOUSE",
   propertySubtype: "APARTMENT",
   builtUpAreaSqFt: "900",
   askingPrice: "1234567",
@@ -438,6 +447,8 @@ assert("Cleared floor number becomes null", clearedPayload.floorNumber, null);
 // Land types send the building spec fields as null/[]/false (harmless defaults).
 const landPayload = buildCreatePayload({
   ...INITIAL_DRAFT,
+  mainCategory: "LAND",
+  subCategory: "RESIDENTIAL_LAND",
   units: { aana: "1" },
   askingPrice: "1000",
 });
@@ -456,7 +467,8 @@ console.log("\n🔁 Round-trip hydration (listingDraftFromApiProperty) tests");
 
 const apiRecord: WizardProperty = {
   title: "Modern Apartment",
-  propertyType: "RESIDENTIAL_HOUSE",
+  mainCategory: "RESIDENTIAL",
+  subCategory: "HOUSE",
   askingPrice: 48000000,
   isCornerPlot: false,
   builtUpAreaSqFt: 2400,
@@ -518,7 +530,8 @@ function fakeStorage(): WizardDraftStorage {
 const storage = fakeStorage();
 const draftToSave: ListingDraft = {
   ...INITIAL_DRAFT,
-  propertyType: "COMMERCIAL_SPACE",
+  mainCategory: "COMMERCIAL",
+  subCategory: "OFFICE",
   title: "Storefront in Baluwatar",
   builtUpAreaSqFt: "1800",
   amenities: ["CCTV"],

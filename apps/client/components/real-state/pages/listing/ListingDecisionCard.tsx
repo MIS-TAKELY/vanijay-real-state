@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Icon } from "@repo/ui";
+import { Icon } from "@repo/ui";
 import { AddToCartButton } from "components/real-state/common/AddToCartButton";
 import { CallSellerButton } from "components/real-state/common/CallSellerButton";
 import { SaveToFavoritesButton } from "components/real-state/common/SaveToFavoritesButton";
@@ -43,7 +43,7 @@ function PricePerUnitSelect({
         value={unit}
         onChange={(e) => setUnit(e.target.value)}
         aria-label="Price unit"
-        className="h-6 cursor-pointer rounded border border-outline-variant bg-surface px-1 text-[13px] font-medium text-on-surface outline-none transition-colors hover:border-gold/60 focus-visible:ring-2 focus-visible:ring-gold/30"
+        className="h-10 cursor-pointer rounded-md border border-outline-variant bg-surface px-2.5 text-[13px] font-medium text-on-surface outline-none transition-colors hover:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/50"
       >
         {LAND_UNITS.map((u) => (
           <option key={u.key} value={u.key}>
@@ -57,7 +57,6 @@ function PricePerUnitSelect({
 
 interface ListingDecisionCardProps {
   propertyId: string;
-  slug: string;
   title: string;
   askingPrice: string;
   /** Numeric asking price — used to compute the per-unit rate. */
@@ -71,7 +70,6 @@ interface ListingDecisionCardProps {
 
 export function ListingDecisionCard({
   propertyId,
-  slug,
   title,
   askingPrice,
   price,
@@ -84,20 +82,12 @@ export function ListingDecisionCard({
     location?.latitude != null && location?.longitude != null;
 
   return (
-    <div className="sticky top-24 flex flex-col gap-4 rounded-2xl border border-outline-variant border-t-2 border-t-gold/60 bg-surface p-6 shadow-sm">
+    <div className="sticky top-24 flex flex-col gap-5 rounded-2xl border border-outline-variant bg-surface p-6 shadow-sm">
       {/* Price */}
       <div>
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="mono-stat text-2xl font-bold text-gold-deep">
-            {askingPrice}
-          </p>
-          {verified && (
-            <span className="inline-flex items-center gap-1 rounded border border-gold/40 bg-navy px-1.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-gold">
-              <Icon name="verified" filled className="text-[12px]" />
-              Verified
-            </span>
-          )}
-        </div>
+        <p className="mono-stat text-2xl font-bold text-gold-deep">
+          {askingPrice}
+        </p>
         {isLand && landTotalSqFt != null && landTotalSqFt > 0 && (
           <PricePerUnitSelect price={price} totalSqFt={landTotalSqFt} />
         )}
@@ -105,7 +95,7 @@ export function ListingDecisionCard({
 
       {/* Embedded map — location is the product */}
       {hasCoordinates && (
-        <div className="overflow-hidden rounded-md border border-outline-variant">
+        <div className="overflow-hidden rounded-lg border border-outline-variant">
           <ListingSidebarMap
             latitude={location!.latitude!}
             longitude={location!.longitude!}
@@ -126,41 +116,22 @@ export function ListingDecisionCard({
 
       {/* CTAs */}
       <div className="flex flex-col gap-2">
-        {/* <Button
-          asChild
-          className="w-full rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90"
-        >
-          <Link href={`/inquiries?property=${slug}`}>
-            <Icon name="chat" className="text-[18px]" />
-            Send Inquiry
-          </Link>
-        </Button> */}
         <CallSellerButton
           propertyId={propertyId}
-          className="w-full rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90  "
+          className="min-h-11 w-full rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90"
         />
-        {/* <Button
-          asChild
-          variant="outline"
-          className="w-full rounded-md border-outline-variant font-semibold"
-        >
-          <Link href="/appointments">
-            <Icon name="event" className="text-[18px]" />
-            Request Site Visit
-          </Link>
-        </Button> */}
-        <div className="flex gap-x-1">
+        <div className="flex gap-2">
           <AddToCartButton
-          propertyId={propertyId}
-          title={title}
-          variant="outline"
-          className="w-fit rounded-md border-outline-variant font-semibold"
-        />
-        <SaveToFavoritesButton
-          propertyId={propertyId}
-          variant="outline"
-          className="w-fit rounded-md border-outline-variant font-semibold"
-        />
+            propertyId={propertyId}
+            title={title}
+            variant="outline"
+            className="min-h-11 w-[40%] rounded-md border-outline-variant font-semibold"
+          />
+          <SaveToFavoritesButton
+            propertyId={propertyId}
+            variant="outline"
+            className="min-h-11 w-[57%] rounded-md border-outline-variant font-semibold"
+          />
         </div>
       </div>
 

@@ -6,4 +6,5 @@ export * from "./services/properties";
 export * from "./services/seller";
 export * from "./services/favorites";
 export * from "./services/cart";
+export * from "./services/saved-searches";
 export * from "./services/analytics";

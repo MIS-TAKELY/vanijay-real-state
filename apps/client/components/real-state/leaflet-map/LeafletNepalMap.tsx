@@ -3,6 +3,7 @@
 import L from "leaflet";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DetailCard } from "../googlemap/components/DetailCard";
+import { MobileListToggle } from "../googlemap/components/MapControls";
 import { Sidebar } from "../googlemap/components/Sidebar";
 import { StreetViewModal } from "../googlemap/components/StreetViewModal";
 import { NEPAL_GEOJSON } from "../googlemap/nepalGeoJson";
@@ -43,6 +44,40 @@ const TILE_PROVIDERS: Record<
 
 /* ─── helpers ─────────────────────────────────────────────────────── */
 
+// One consistent initial/fit zoom for every screen — the map keeps the same
+// view at all breakpoints except mobile, where we pull back one level.
+const NEPAL_ZOOM = { desktop: 7, mobile: 6 } as const;
+const DESKTOP_MIN_WIDTH = 768;
+
+const PIN_SIZES = {
+  desktop: { width: 96, height: 56, anchorX: 48, anchorY: 56 },
+  mobile: { width: 68, height: 42, anchorX: 34, anchorY: 42 },
+} as const;
+
+function getNepalZoom(isMobile: boolean | undefined): number {
+  return isMobile ? NEPAL_ZOOM.mobile : NEPAL_ZOOM.desktop;
+}
+
+function getPinSize(isMobile: boolean | undefined) {
+  return isMobile ? PIN_SIZES.mobile : PIN_SIZES.desktop;
+}
+
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState<boolean | undefined>(undefined);
+
+  useEffect(() => {
+    const mql = window.matchMedia(`(max-width: ${DESKTOP_MIN_WIDTH - 1}px)`);
+    const onChange = () => {
+      setIsMobile(window.innerWidth < DESKTOP_MIN_WIDTH);
+    };
+    mql.addEventListener("change", onChange);
+    onChange();
+    return () => mql.removeEventListener("change", onChange);
+  }, []);
+
+  return isMobile;
+}
+
 function formatDisplayPrice(price: string, priceValue?: number): string {
   if (price) {
     return price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim();
@@ -53,7 +88,11 @@ function formatDisplayPrice(price: string, priceValue?: number): string {
   return "₹ 0";
 }
 
-function buildPinHtml(marker: MarkerType, selected: boolean): string {
+function buildPinHtml(
+  marker: MarkerType,
+  selected: boolean,
+  compact = false,
+): string {
   const c = getTrendColor(marker.trend, marker.tier);
   const formattedPrice = formatDisplayPrice(marker.price, marker.priceValue);
   const trendSign =
@@ -65,18 +104,28 @@ function buildPinHtml(marker: MarkerType, selected: boolean): string {
         ? "#3b82f6"
         : "#f97316";
 
+  const w = compact ? 68 : 96;
+  const priceFs = compact ? 9.5 : 11.5;
+  const trendFs = compact ? 7.5 : 9.5;
+  const areaFs = compact ? 7 : 8.5;
+  const padding = compact ? "2px 4px" : "4px 6px";
+  const borderTop = compact ? "2.5px" : "3.5px";
+  const borderRadius = compact ? 6 : 8;
+  const selectedScale = compact ? 1.1 : 1.15;
+  const selectedLift = compact ? "-3px" : "-4px";
+
   return `
-<div style="width:96px;display:flex;flex-direction:column;align-items:center;cursor:pointer;${
+<div style="width:${w}px;display:flex;flex-direction:column;align-items:center;cursor:pointer;${
     selected
-      ? "filter:drop-shadow(0 12px 24px rgba(0,0,0,0.45));transform:scale(1.15) translateY(-4px);"
-      : "filter:drop-shadow(0 4px 12px rgba(0,0,0,0.25));transform:scale(1);"
+      ? `filter:drop-shadow(0 10px 20px rgba(0,0,0,0.4));transform:scale(${selectedScale}) translateY(${selectedLift});`
+      : "filter:drop-shadow(0 3px 8px rgba(0,0,0,0.22));transform:scale(1);"
   }transform-origin:bottom center;transition:transform 0.28s cubic-bezier(.175,.885,.32,1.275),filter 0.28s ease">
-  <div style="background:#ffffff;border:1px solid #e2e8f0;border-top:3.5px solid ${c};border-radius:8px;padding:4px 6px;position:relative;width:96px;box-sizing:border-box;text-align:center;box-shadow:0 4px 12px rgba(0,0,0,0.25)">
-    <div style="font-size:11.5px;font-weight:800;color:#0f172a;letter-spacing:-0.02em;white-space:nowrap;font-family:system-ui,-apple-system,sans-serif;line-height:1.2">${formattedPrice}</div>
-    <div style="font-size:9.5px;font-weight:700;color:${trendColor};margin-top:1px;line-height:1.2">${trendSign} ${marker.change}</div>
-    <div style="font-size:8.5px;font-weight:600;color:#64748b;margin-top:1px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${marker.area}</div>
+  <div style="background:#ffffff;border:1px solid #e2e8f0;border-top:${borderTop} solid ${c};border-radius:${borderRadius}px;padding:${padding};position:relative;width:${w}px;box-sizing:border-box;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,0.22)">
+    <div style="font-size:${priceFs}px;font-weight:800;color:#0f172a;letter-spacing:-0.02em;white-space:nowrap;font-family:system-ui,-apple-system,sans-serif;line-height:1.2">${formattedPrice}</div>
+    <div style="font-size:${trendFs}px;font-weight:700;color:${trendColor};margin-top:1px;line-height:1.2">${trendSign} ${marker.change}</div>
+    <div style="font-size:${areaFs}px;font-weight:600;color:#64748b;margin-top:1px;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:${w - 8}px">${marker.area}</div>
   </div>
-  <div style="width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-top:7px solid #ffffff;margin-top:-1px"></div>
+  <div style="width:0;height:0;border-left:${compact ? 4 : 6}px solid transparent;border-right:${compact ? 4 : 6}px solid transparent;border-top:${compact ? 5 : 7}px solid #ffffff;margin-top:-1px"></div>
 </div>`;
 }
 
@@ -84,9 +133,9 @@ function buildPinHtml(marker: MarkerType, selected: boolean): string {
 
 export default function LeafletNepalMap({
   markers = [],
-  height = "clamp(420px, 52vh, 620px)",
+  height = "clamp(280px, 38vh, 420px)",
   className,
-  defaultShowList = true,
+  defaultShowList = false,
   onMarkerSelect,
 }: NepalMapProps & { height?: string; className?: string }) {
   const mapRef = useRef<L.Map | null>(null);
@@ -99,9 +148,13 @@ export default function LeafletNepalMap({
   );
   const [selectedRegion, setSelectedRegion] = useState<string>("all");
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [showList, setShowList] = useState(defaultShowList);
   const [modalOpen, setModalOpen] = useState(false);
   const [modalTab, setModalTab] = useState<ModalTab>("streetview");
+  const [mobileListOpen, setMobileListOpen] = useState(defaultShowList);
+  const isMobile = useIsMobile();
+
+  // Desktop/tablet (≥768px): sidebar always visible. Mobile: toggled via list button.
+  const showList = isMobile ? mobileListOpen : true;
 
   const filteredMarkers = useMemo(() => {
     if (selectedRegion === "all") return markers;
@@ -121,9 +174,10 @@ export default function LeafletNepalMap({
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
 
+    const mobile = window.innerWidth < DESKTOP_MIN_WIDTH;
     const map = L.map(containerRef.current, {
       center: [28.2, 84.4],
-      zoom: 7,
+      zoom: getNepalZoom(mobile),
       zoomControl: false,
       attributionControl: false,
     });
@@ -180,6 +234,13 @@ export default function LeafletNepalMap({
     };
   }, []);
 
+  // Keep the country-level zoom in sync when crossing the mobile breakpoint.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || isMobile === undefined || selectedId) return;
+    map.setView([28.2, 84.4], getNepalZoom(isMobile), { animate: false });
+  }, [isMobile, selectedId]);
+
   // Handle map mode switches (Dark, Satellite, Streets)
   useEffect(() => {
     const map = mapRef.current;
@@ -204,13 +265,15 @@ export default function LeafletNepalMap({
     leafletMarkersRef.current.clear();
 
     const layerGroup = L.layerGroup().addTo(map);
+    const pinSize = getPinSize(isMobile);
+    const compactPins = !!isMobile;
 
     (filteredMarkers ?? []).forEach((m) => {
       const icon = L.divIcon({
-        html: buildPinHtml(m, m.id === selectedId),
+        html: buildPinHtml(m, m.id === selectedId, compactPins),
         className: "",
-        iconSize: [96, 56],
-        iconAnchor: [48, 56],
+        iconSize: [pinSize.width, pinSize.height],
+        iconAnchor: [pinSize.anchorX, pinSize.anchorY],
       });
 
       const marker = L.marker([m.lat, m.lng], {
@@ -223,7 +286,7 @@ export default function LeafletNepalMap({
         L.DomEvent.stopPropagation(e);
         setSelectedId(m.id);
         onMarkerSelect?.(m);
-        map.flyTo([m.lat, m.lng], Math.max(map.getZoom(), 13), {
+        map.flyTo([m.lat, m.lng], Math.max(map.getZoom(), isMobile ? 12 : 13), {
           duration: 0.8,
         });
       });
@@ -233,17 +296,17 @@ export default function LeafletNepalMap({
       layerGroup.clearLayers();
       map.removeLayer(layerGroup);
     };
-  }, [filteredMarkers, selectedId, onMarkerSelect]);
+  }, [filteredMarkers, selectedId, onMarkerSelect, isMobile]);
 
   const handleMarkerClick = useCallback(
     (m: MarkerType) => {
       setSelectedId(m.id);
       onMarkerSelect?.(m);
       if (mapRef.current) {
-        mapRef.current.flyTo([m.lat, m.lng], 14, { duration: 1.2 });
+        mapRef.current.flyTo([m.lat, m.lng], isMobile ? 13 : 14, { duration: 1.2 });
       }
     },
-    [onMarkerSelect],
+    [onMarkerSelect, isMobile],
   );
 
   const handleCloseDetail = useCallback(() => {
@@ -293,26 +356,27 @@ export default function LeafletNepalMap({
       <div
         style={{
           position: "absolute",
-          top: 14,
+          top: isMobile ? 10 : 14,
           left: "50%",
           transform: "translateX(-50%)",
           zIndex: 1000,
           display: "flex",
           alignItems: "center",
-          gap: 3,
+          gap: isMobile ? 1 : 2,
           background: "rgba(10, 20, 13, 0.88)",
           backdropFilter: "blur(14px)",
           WebkitBackdropFilter: "blur(14px)",
           border: "1px solid rgba(255,255,255,0.12)",
           borderRadius: 999,
-          padding: "4px 6px",
+          padding: isMobile ? "2px 3px" : "3px 4px",
           boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
+          maxWidth: isMobile ? "calc(100% - 120px)" : undefined,
         }}
       >
         {[
-          { id: "dark", label: "🌑 Dark" },
-          { id: "satellite", label: "🛰️ Satellite" },
-          { id: "streets", label: "🗺️ Streets" },
+          { id: "dark", label: isMobile ? "Dark" : "🌑 Dark" },
+          { id: "satellite", label: isMobile ? "Sat" : "🛰️ Satellite" },
+          { id: "streets", label: isMobile ? "Map" : "🗺️ Streets" },
         ].map((mode) => {
           const active = mapMode === mode.id;
           return (
@@ -329,8 +393,8 @@ export default function LeafletNepalMap({
                   ? "1px solid rgba(74,222,128,0.4)"
                   : "1px solid transparent",
                 borderRadius: 999,
-                padding: "5px 14px",
-                fontSize: 11,
+                padding: isMobile ? "2px 6px" : "3px 10px",
+                fontSize: isMobile ? 9 : 10,
                 fontWeight: 700,
                 cursor: "pointer",
                 whiteSpace: "nowrap",
@@ -344,12 +408,12 @@ export default function LeafletNepalMap({
         })}
       </div>
 
-      {/* RIGHT TOP: Region filter */}
+      {/* RIGHT TOP: Region filter — clears the sidebar only while it's open */}
       <div
         style={{
           position: "absolute",
-          top: 14,
-          right: 336,
+          top: isMobile ? 10 : 14,
+          right: showList ? 336 : isMobile ? 10 : 14,
           zIndex: 1000,
         }}
       >
@@ -362,21 +426,22 @@ export default function LeafletNepalMap({
             WebkitBackdropFilter: "blur(14px)",
             border: "1px solid rgba(74,222,128,0.3)",
             borderRadius: 999,
-            padding: "6px 14px",
+            padding: isMobile ? "3px 8px" : "4px 10px",
             boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
             color: "#c9a227",
-            fontSize: 11,
+            fontSize: isMobile ? 9 : 10,
             fontWeight: 700,
             cursor: "pointer",
             outline: "none",
             letterSpacing: "0.02em",
+            maxWidth: isMobile ? 96 : undefined,
           }}
         >
           <option
             value="all"
             style={{ background: "#0a2540", color: "#c9a227" }}
           >
-            📍 All Nepal
+            {isMobile ? "📍 All" : "📍 All Nepal"}
           </option>
           <option
             value="Kathmandu Valley"
@@ -411,12 +476,12 @@ export default function LeafletNepalMap({
         </select>
       </div>
 
-      {/* RIGHT CENTER: Zoom + Fit pill */}
+      {/* RIGHT CENTER: Zoom + Fit pill — clears the sidebar only while it's open */}
       <div
         style={{
           position: "absolute",
           top: "50%",
-          right: 336,
+          right: showList ? 336 : isMobile ? 10 : 14,
           transform: "translateY(-50%)",
           zIndex: 1000,
           display: "flex",
@@ -426,7 +491,7 @@ export default function LeafletNepalMap({
           backdropFilter: "blur(14px)",
           WebkitBackdropFilter: "blur(14px)",
           border: "1px solid rgba(74,222,128,0.3)",
-          borderRadius: 14,
+          borderRadius: isMobile ? 10 : 14,
           overflow: "hidden",
           boxShadow: "0 8px 24px rgba(0,0,0,0.5)",
         }}
@@ -455,13 +520,13 @@ export default function LeafletNepalMap({
             title={btn.title}
             onClick={btn.onClick}
             style={{
-              width: 36,
-              height: 36,
+              width: isMobile ? 24 : 28,
+              height: isMobile ? 24 : 28,
               background: "transparent",
               color: "#c9a227",
               border: "none",
               borderBottom: i === 0 ? "1px solid rgba(74,222,128,0.2)" : "none",
-              fontSize: 20,
+              fontSize: isMobile ? 14 : 16,
               fontWeight: 600,
               cursor: "pointer",
               display: "flex",
@@ -500,16 +565,20 @@ export default function LeafletNepalMap({
           title="Fit Nepal view"
           onClick={() => {
             if (mapRef.current) {
-              mapRef.current.flyTo([28.2, 84.4], 7, { duration: 1.0 });
+              mapRef.current.flyTo(
+                [28.2, 84.4],
+                getNepalZoom(isMobile),
+                { duration: 1.0 },
+              );
             }
           }}
           style={{
-            width: 36,
-            height: 36,
+            width: isMobile ? 24 : 28,
+            height: isMobile ? 24 : 28,
             background: "transparent",
             color: "#c9a227",
             border: "none",
-            fontSize: 15,
+            fontSize: isMobile ? 10 : 12,
             fontWeight: 700,
             cursor: "pointer",
             display: "flex",
@@ -532,6 +601,14 @@ export default function LeafletNepalMap({
         </button>
       </div>
 
+      {isMobile && (
+        <MobileListToggle
+          showList={mobileListOpen}
+          onToggle={() => setMobileListOpen((open) => !open)}
+          className="scale-90 origin-bottom-right"
+        />
+      )}
+
       {/* Selected Marker Detail Card */}
       {selectedMarker && (
         <DetailCard
@@ -542,15 +619,16 @@ export default function LeafletNepalMap({
         />
       )}
 
-      {/* Right Overlay Sidebar */}
-      <Sidebar
-        markers={filteredMarkers}
-        selectedId={selectedId}
-        avgChange={avgChange}
-        onMarkerClick={handleMarkerClick}
-        showList={showList}
-        listRef={{ current: null }}
-      />
+      {showList && (
+        <Sidebar
+          markers={filteredMarkers}
+          selectedId={selectedId}
+          avgChange={avgChange}
+          onMarkerClick={handleMarkerClick}
+          showList={showList}
+          listRef={{ current: null }}
+        />
+      )}
 
       {/* 360 Street View / Satellite Modal */}
       {modalOpen && selectedMarker && (

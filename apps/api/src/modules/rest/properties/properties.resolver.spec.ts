@@ -1,7 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PropertiesResolver } from './properties.resolver';
 import { PropertiesService } from './properties.service';
-import { PropertyType } from '@repo/db';
 
 // `better-auth` ships ESM-only ("type": "module") that Jest (CommonJS) cannot
 // load. The resolver imports `AuthGuard`/`RolesGuard`, which import `@repo/auth`
@@ -39,7 +38,8 @@ describe('PropertiesResolver', () => {
   it('delegates createProperty to the shared service with ownerId from auth', async () => {
     const input = {
       title: 'T',
-      propertyType: PropertyType.RESIDENTIAL_HOUSE,
+      mainCategory: 'RESIDENTIAL',
+      subCategory: 'HOUSE',
       askingPrice: 1,
     };
     await resolver.createProperty(input as never, 'u1');

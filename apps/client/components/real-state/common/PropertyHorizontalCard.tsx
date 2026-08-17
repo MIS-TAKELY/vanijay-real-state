@@ -49,14 +49,14 @@ export function PropertyHorizontalCard({
     <Card
       data-card
       className={[
-        "min-w-[280px] md:min-w-[320px] max-w-[320px]",
+        "min-w-[220px] max-w-[220px] sm:min-w-[240px] sm:max-w-[240px] md:min-w-[280px] md:max-w-[320px]",
         "bg-surface",
         "rounded-xl",
         "overflow-hidden",
-        "hover:shadow-lg",
+        "md:hover:shadow-lg",
         "hover:border-primary/40",
         "transition-all duration-200",
-        "hover:-translate-y-1",
+        "md:hover:-translate-y-1",
         "snap-start",
         className ?? "",
       ]
@@ -64,7 +64,7 @@ export function PropertyHorizontalCard({
         .join(" ")}
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-[16/10] md:aspect-[4/3] overflow-hidden">
         <Link
           href={href}
           aria-label={`${title} — view details`}
@@ -75,12 +75,15 @@ export function PropertyHorizontalCard({
             alt={alt ?? title}
             className="h-full w-full object-cover"
             loading="lazy"
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
           />
         </Link>
 
         {/* Listing type badge */}
-        <div className="absolute top-3 left-3">
-          <Badge variant={listingType === "For Sale" ? "default" : "secondary"}>
+        <div className="absolute top-2 left-2 md:top-3 md:left-3">
+          <Badge variant={listingType === "For Sale" ? "default" : "secondary"} className="text-[10px] md:text-xs px-2 py-0 md:px-2.5 md:py-0.5">
             {listingType}
           </Badge>
         </div>
@@ -97,34 +100,34 @@ export function PropertyHorizontalCard({
         {/* Favorite button */}
         <Button
           variant="ghost"
-          size="icon"
+          size="icon-sm"
           onClick={toggleFavorite}
-          className="absolute top-3 right-3 size-8 bg-white/80 backdrop-blur-sm hover:bg-white"
+          className="absolute top-2 right-2 md:top-3 md:right-3 size-7 md:size-8 bg-white/80 backdrop-blur-sm hover:bg-white"
           aria-label={favorite ? "Remove from favorites" : "Add to favorites"}
         >
           <Icon
             name="favorite"
-            className="text-lg"
+            className="text-base md:text-lg"
             fill={favorite ? "currentColor" : "none"}
           />
         </Button>
       </div>
 
       {/* Details */}
-      <CardContent className="p-4 flex flex-col gap-2">
-        <h4 className="font-body-md font-semibold text-on-surface truncate">
+      <CardContent className="p-3 md:p-4 flex flex-col gap-1.5 md:gap-2">
+        <h4 className="font-body-md text-[13px] md:text-base font-semibold text-on-surface truncate">
           {title}
         </h4>
-        <p className="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1">
-          <Icon name="location_on" className="text-data-table" />
+        <p className="font-label-sm text-[11px] md:text-label-sm text-on-surface-variant flex items-center gap-1">
+          <Icon name="location_on" className="text-sm md:text-data-table" />
           {location}
         </p>
-        <p className="font-data-price text-data-price text-gold-deep tracking-tight font-bold">
+        <p className="font-data-price text-xl md:text-data-price text-gold-deep tracking-tight font-bold">
           {price}
         </p>
 
         {/* Specs */}
-        <div className="flex items-center gap-3 font-label-sm text-label-sm text-on-surface-variant">
+        <div className="flex items-center gap-2 md:gap-3 font-label-sm text-[10px] md:text-label-sm text-on-surface-variant">
           {beds !== undefined && (
             <span className="flex items-center gap-1">
               <Icon name="home" className="text-data-table" />
@@ -138,7 +141,7 @@ export function PropertyHorizontalCard({
         </div>
 
         {/* CTA */}
-        <Button variant="outline" size="sm" className="w-full mt-1" asChild>
+        <Button variant="outline" size="sm" className="w-full mt-1 h-8 md:h-9 text-xs md:text-sm" asChild>
           <Link href={href}>View Details</Link>
         </Button>
       </CardContent>

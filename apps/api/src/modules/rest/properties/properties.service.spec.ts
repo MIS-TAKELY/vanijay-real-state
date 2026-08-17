@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
 import { CreatePropertyInput } from './dto/create-property.input';
-import { PrismaClient, PropertyType } from '@repo/db';
+import { PrismaClient, MainCategory, SubCategory } from '@repo/db';
 import { encodeCursor } from 'src/common/pagination';
 
 /**
@@ -28,7 +28,8 @@ describe('PropertiesService', () => {
     slug: 'my-house-abc',
     title: 'My House',
     description: 'desc',
-    propertyType: PropertyType.RESIDENTIAL_HOUSE,
+    mainCategory: MainCategory.RESIDENTIAL,
+    subCategory: SubCategory.HOUSE,
     status: 'LIVE',
     verificationLevel: 'UNVERIFIED',
     askingPrice: { toString: () => '1500000' }, // Prisma.Decimal-like
@@ -89,7 +90,8 @@ describe('PropertiesService', () => {
   it('create passes ownerId from auth (not the body) and generates listingCode/slug', async () => {
     const input: CreatePropertyInput = {
       title: 'My House',
-      propertyType: PropertyType.RESIDENTIAL_HOUSE,
+      mainCategory: MainCategory.RESIDENTIAL,
+      subCategory: SubCategory.HOUSE,
       askingPrice: 1500000,
       landArea: { ropani: 1, aana: 0, totalSqFt: 508.74, totalSqMeters: 47.29 },
       location: {
@@ -112,7 +114,8 @@ describe('PropertiesService', () => {
   it('create publishes the listing immediately as LIVE + UNVERIFIED so it appears on public pages', async () => {
     const input: CreatePropertyInput = {
       title: 'My House',
-      propertyType: PropertyType.RESIDENTIAL_HOUSE,
+      mainCategory: MainCategory.RESIDENTIAL,
+      subCategory: SubCategory.HOUSE,
       askingPrice: 1500000,
       landArea: { ropani: 1, aana: 0, totalSqFt: 508.74, totalSqMeters: 47.29 },
       location: {

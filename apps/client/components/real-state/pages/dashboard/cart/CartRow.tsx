@@ -33,6 +33,9 @@ export function CartRow({ item, busy, onQuantity, onRemove }: CartRowProps) {
           <img
             src={cover.url}
             alt={cover.altText ?? property.title}
+            draggable={false}
+            onContextMenu={(e) => e.preventDefault()}
+            onDragStart={(e) => e.preventDefault()}
             className="h-full w-full object-cover"
           />
         ) : (

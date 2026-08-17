@@ -14,6 +14,7 @@ import {
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PROVINCES } from "@repo/ui";
+import { SaveSearchButton } from "./SaveSearchButton";
 
 const DISTRICT_OPTIONS = [
   { value: "any", label: "All Districts" },
@@ -136,30 +137,6 @@ export function SearchFilters() {
     pendingSizeMin.current = "";
     pendingSizeMax.current = "";
     router.push("/search", { scroll: false });
-  };
-
-  const removeFilter = (key: string) => {
-    switch (key) {
-      case "q":
-        setQuery("");
-        break;
-      case "type":
-        setType("all");
-        break;
-      case "price":
-        setPrice("any");
-        break;
-      case "district":
-        setDistrict("any");
-        break;
-      case "minSize":
-        setSizeMin("");
-        break;
-      case "maxSize":
-        setSizeMax("");
-        break;
-    }
-    navigateWithParams({ [key]: "" });
   };
 
   // Build active filter chips from current committed URL state
@@ -336,6 +313,7 @@ export function SearchFilters() {
 
           {/* Action */}
           <div className="ml-auto flex items-center gap-2">
+            <SaveSearchButton />
             {activeFilters.length > 0 && (
               <Button
                 type="button"
