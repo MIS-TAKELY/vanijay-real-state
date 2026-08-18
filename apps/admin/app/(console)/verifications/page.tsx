@@ -1,4 +1,5 @@
 import { cookies } from "next/headers";
+import { MAIN_CATEGORY_LABELS } from "@repo/ui";
 import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
 import { AdminProperty } from "lib/api";
@@ -49,7 +50,7 @@ export default async function VerificationsPage() {
                 {r.title}
               </AdminDataTable.Cell>
               <AdminDataTable.Cell className="text-on-surface-variant">
-                {r.mainCategory}
+                {MAIN_CATEGORY_LABELS[r.mainCategory] ?? r.mainCategory}
               </AdminDataTable.Cell>
               <AdminDataTable.Cell className="mono-stat text-on-surface">
                 {r.askingPrice}

@@ -6,6 +6,7 @@ import {
   Int,
   ObjectType,
 } from '@nestjs/graphql';
+import GraphQLJSON from 'graphql-type-json';
 import {
   FacingDirection,
   MainCategory,
@@ -318,6 +319,10 @@ export class Property {
 
   @Field(() => String, { nullable: true })
   renovationStatus?: string | null;
+
+  /** Seller-defined specification tables (custom headings + rows). */
+  @Field(() => GraphQLJSON, { nullable: true })
+  customSpecs?: any;
 
   @Field(() => String)
   ownerId!: string;

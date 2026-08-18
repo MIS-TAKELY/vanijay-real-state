@@ -104,7 +104,7 @@ export const MAIN_CATEGORIES: MainCategoryDef[] = [
   },
   {
     key: "INSTITUTIONAL_SPECIALIZED",
-    label: "Institutional & Specialized",
+    label: "Special Purpose",
     icon: "school",
     desc: "Healthcare, education & community",
     subCategories: [

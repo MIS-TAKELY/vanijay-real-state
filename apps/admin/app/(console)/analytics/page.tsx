@@ -7,6 +7,7 @@ import {
   Donut,
   FunnelChart,
   InquiryCharts,
+  MAIN_CATEGORY_LABELS,
   PlatformCharts,
   PriceTrendChart,
   SearchQueriesChart,
@@ -74,7 +75,7 @@ export default async function AnalyticsPage() {
   }));
 
   const byType = (listings?.byType ?? []).map((r) => ({
-    key: r.mainCategory.replace(/_/g, " "),
+    key: MAIN_CATEGORY_LABELS[r.mainCategory] ?? r.mainCategory.replace(/_/g, " "),
     value: r._count._all,
   }));
   const byStatus = (listings?.byStatus ?? []).map((r) => ({

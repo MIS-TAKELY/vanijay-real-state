@@ -118,6 +118,9 @@ export interface ListingDraft {
   traditionalFeatures: string[];
   renovationStatus: string;
 
+  /* custom specs — seller-defined tables with custom headings */
+  customSpecs: Array<{ heading: string; rows: [string, string][] }>;
+
   /* media & documents */
   media: DraftMedia[];
   videoUrls: string[];
@@ -199,6 +202,7 @@ export const INITIAL_DRAFT: ListingDraft = {
   courtyard: "",
   traditionalFeatures: [],
   renovationStatus: "",
+  customSpecs: [],
   media: [],
   videoUrls: [],
   documents: [],
@@ -874,6 +878,8 @@ export function buildCreatePayload(draft: ListingDraft): CreatePropertyPayload {
     courtyard: strOrNull(draft.courtyard),
     traditionalFeatures: draft.traditionalFeatures,
     renovationStatus: strOrNull(draft.renovationStatus),
+    // Custom specs — only send when non-empty so we don't overwrite with []
+    ...(draft.customSpecs.length > 0 && { customSpecs: draft.customSpecs }),
     landArea,
     location: {
       province: draft.province,
@@ -977,6 +983,8 @@ export interface WizardProperty {
   courtyard?: string | null;
   traditionalFeatures?: string[] | null;
   renovationStatus?: string | null;
+  /** Seller-defined specification tables: { heading, rows }[]. */
+  customSpecs?: Array<{ heading: string; rows: [string, string][] }> | null;
   location?: {
     province?: string;
     district?: string;
@@ -1157,6 +1165,7 @@ export function listingDraftFromApiProperty(p: WizardProperty): ListingDraft {
     courtyard: p.courtyard ?? "",
     traditionalFeatures: p.traditionalFeatures ?? [],
     renovationStatus: p.renovationStatus ?? "",
+    customSpecs: Array.isArray(p.customSpecs) ? p.customSpecs : [],
     media,
     videoUrls,
     documents: (p.documents ?? []).map((d) => ({

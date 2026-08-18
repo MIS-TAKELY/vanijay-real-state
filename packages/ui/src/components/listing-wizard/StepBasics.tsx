@@ -4,40 +4,20 @@ import { cn } from "@/lib/utils";
 import { Icon } from "@/components/Icon";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { RichTextEditor } from "./RichTextEditor";
 import { MAIN_CATEGORIES, SUB_TO_MAIN } from "./constants";
 import { TITLE_MAX } from "./draft";
 import { FieldError, type StepProps } from "./types";
-import { useState } from "react";
 
 export function StepBasics({ draft, update, errors }: StepProps) {
-  // Track which main category is expanded for sub-category selection
-  const [expandedMain, setExpandedMain] = useState<string | null>(
-    draft.mainCategory || null,
-  );
-
-  const handleMainSelect = (mainKey: string) => {
-    if (expandedMain === mainKey) {
-      // Toggle off if clicking the same one
-      setExpandedMain(null);
-    } else {
-      setExpandedMain(mainKey);
-      // Clear sub-category when switching main categories
-      if (draft.mainCategory !== mainKey) {
-        update({ mainCategory: mainKey, subCategory: "" });
-      }
-    }
-  };
-
-  const handleSubSelect = (subKey: string) => {
-    const mainKey = SUB_TO_MAIN[subKey];
-    if (mainKey) {
-      update({ mainCategory: mainKey, subCategory: subKey });
-    }
-  };
-
   const selectedMainDef = MAIN_CATEGORIES.find(
     (mc) => mc.key === draft.mainCategory,
   );
@@ -65,93 +45,87 @@ export function StepBasics({ draft, update, errors }: StepProps) {
         <FieldError message={errors.title} />
       </div>
 
-      {/* Hierarchical Category Selection */}
-      <div className="flex flex-col gap-xs">
-        <Label>Property category</Label>
-
-        {/* Main Categories */}
-        <div className="grid grid-cols-2 gap-sm sm:grid-cols-3 justify-start w-full">
-          {MAIN_CATEGORIES.map((mc) => (
-            <button
-              key={mc.key}
-              type="button"
-              onClick={() => handleMainSelect(mc.key)}
+      {/* Category & Specific Type Dropdowns */}
+      <div className="grid grid-cols-1 gap-md sm:grid-cols-2">
+        {/* Main Category */}
+        <div className="flex flex-col gap-xs">
+          <Label htmlFor="w-main-category">Property category</Label>
+          <Select
+            value={draft.mainCategory || undefined}
+            onValueChange={(val) => {
+              const newSub =
+                draft.subCategory && SUB_TO_MAIN[draft.subCategory] === val
+                  ? draft.subCategory
+                  : "";
+              update({ mainCategory: val, subCategory: newSub });
+            }}
+          >
+            <SelectTrigger
+              id="w-main-category"
               className={cn(
-                "flex flex-col items-start gap-xs rounded-xl border p-sm text-left transition-colors h-auto",
-                draft.mainCategory === mc.key
-                  ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                  : "border-outline-variant bg-surface hover:border-primary/40",
+                "h-11 w-full",
+                errors.subCategory && !draft.mainCategory && "border-error",
               )}
             >
-              <span
-                className={cn(
-                  "flex h-9 w-9 items-center justify-center rounded-lg",
-                  draft.mainCategory === mc.key
-                    ? "bg-primary text-on-primary"
-                    : "bg-surface-container text-on-surface-variant",
-                )}
-              >
-                <Icon name={mc.icon} className="text-[20px]" />
-              </span>
-              <span className="text-sm font-medium text-on-surface">
-                {mc.label}
-              </span>
-              <span className="text-[11px] text-on-surface-variant">
-                {mc.desc}
-              </span>
-            </button>
-          ))}
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {MAIN_CATEGORIES.map((mc) => (
+                <SelectItem key={mc.key} value={mc.key}>
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-5 w-5 items-center justify-center rounded text-on-surface-variant">
+                      <Icon name={mc.icon} className="text-[16px]" />
+                    </span>
+                    <span>{mc.label}</span>
+                  </div>
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
-        {/* Sub Categories - shown when a main category is selected */}
-        {expandedMain && selectedMainDef && (
-          <div className="mt-sm animate-in fade-in slide-in-from-top-2 duration-200">
-            <p className="mb-xs text-xs font-medium text-on-surface-variant">
-              Select specific type for {selectedMainDef.label}:
-            </p>
-            <ToggleGroup
-              type="single"
-              value={draft.subCategory}
-              onValueChange={(v) => {
-                if (v) handleSubSelect(v);
-              }}
-              aria-label="Property sub-type"
-              variant="outline"
-              className="grid grid-cols-2 gap-sm sm:grid-cols-3 justify-start w-full"
+        {/* Sub Category / Property Type */}
+        <div className="flex flex-col gap-xs">
+          <Label htmlFor="w-sub-category">Property type</Label>
+          <Select
+            value={draft.subCategory || undefined}
+            disabled={!draft.mainCategory}
+            onValueChange={(val) => {
+              const mainKey = SUB_TO_MAIN[val] || draft.mainCategory;
+              update({ mainCategory: mainKey, subCategory: val });
+            }}
+          >
+            <SelectTrigger
+              id="w-sub-category"
+              className={cn(
+                "h-11 w-full",
+                errors.subCategory && "border-error",
+              )}
             >
-              {selectedMainDef.subCategories.map((sc) => (
-                <ToggleGroupItem
-                  key={sc.key}
-                  value={sc.key}
-                  aria-label={sc.label}
-                  className={cn(
-                    "flex flex-col items-start gap-xs rounded-xl border p-sm text-left transition-colors data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:ring-1 data-[state=on]:ring-primary/30 data-[state=off]:border-outline-variant data-[state=off]:bg-surface data-[state=off]:hover:border-primary/40 h-auto",
-                  )}
-                >
-                  <span
-                    className={cn(
-                      "flex h-8 w-8 items-center justify-center rounded-lg",
-                      draft.subCategory === sc.key
-                        ? "bg-primary text-on-primary"
-                        : "bg-surface-container text-on-surface-variant",
-                    )}
-                  >
-                    <Icon name={sc.icon} className="text-[18px]" />
-                  </span>
-                  <span className="text-sm font-medium text-on-surface">
-                    {sc.label}
-                  </span>
-                  <span className="text-[11px] text-on-surface-variant line-clamp-2">
-                    {sc.desc}
-                  </span>
-                </ToggleGroupItem>
+              <SelectValue
+                placeholder={
+                  draft.mainCategory
+                    ? `Select ${selectedMainDef?.label.toLowerCase() || "property"} type`
+                    : "Select category first"
+                }
+              />
+            </SelectTrigger>
+            <SelectContent>
+              {selectedMainDef?.subCategories.map((sc) => (
+                <SelectItem key={sc.key} value={sc.key}>
+                  <div className="flex items-center gap-2">
+                    <span className="flex h-5 w-5 items-center justify-center rounded text-on-surface-variant">
+                      <Icon name={sc.icon} className="text-[15px]" />
+                    </span>
+                    <span>{sc.label}</span>
+                  </div>
+                </SelectItem>
               ))}
-            </ToggleGroup>
-          </div>
-        )}
-
-        <FieldError message={errors.subCategory} />
+            </SelectContent>
+          </Select>
+        </div>
       </div>
+      <FieldError message={errors.subCategory} />
 
       {/* Description — Rich Text Editor */}
       <div className="flex flex-col gap-xs">

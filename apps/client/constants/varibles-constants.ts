@@ -493,7 +493,7 @@ export const categories: Category[] = [
       "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200&h=200&fit=crop",
   },
   {
-    name: "Institutional",
+    name: "Special Purpose",
     image:
       "https://images.unsplash.com/photo-1562774053-701939374585?w=200&h=200&fit=crop",
   },
@@ -550,7 +550,7 @@ export const HIERARCHICAL_CATEGORIES: HierarchicalCategory[] = [
   },
   {
     mainCategory: "INSTITUTIONAL_SPECIALIZED",
-    label: "Institutional & Specialized",
+    label: "Special Purpose",
     image: "https://images.unsplash.com/photo-1562774053-701939374585?w=200&h=200&fit=crop",
     subCategories: [
       { key: "HEALTHCARE", label: "Healthcare" },

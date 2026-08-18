@@ -1254,41 +1254,27 @@ function HeritageHomeSpecs(props: StepProps) {
 /* Entry point — picks the variant for the selected property type.      */
 /* ------------------------------------------------------------------ */
 
+import { CustomSpecsBlock } from "./CustomSpecsBlock";
+
 export function StepLandSpecs(props: StepProps) {
   const sub = props.draft.subCategory;
+  let Variant: React.ComponentType<StepProps>;
   switch (sub) {
-    case "RESIDENTIAL_LAND":
-    case "INDUSTRIAL_LAND":
-    case "DEVELOPMENT_LAND":
-      return <ResidentialLandSpecs {...props} />;
-    case "COMMERCIAL_LAND":
-      return <CommercialLandSpecs {...props} />;
-    case "AGRICULTURAL_LAND":
-      return <AgriculturalLandSpecs {...props} />;
-    case "HOUSE":
-    case "APARTMENT_FLAT":
-    case "TOWNHOUSE":
-    case "ROOM":
-    case "RESIDENTIAL_BUILDING":
-      return <ResidentialHouseSpecs {...props} />;
-    case "OFFICE":
-    case "RETAIL_SPACE":
-    case "RESTAURANT_CAFE":
-    case "HOSPITALITY":
-    case "COMMERCIAL_BUILDING":
-      return <CommercialSpaceSpecs {...props} />;
-    case "WAREHOUSE_GODOWN":
-    case "FACTORY_MANUFACTURING":
-    case "LOGISTICS_DISTRIBUTION":
-    case "WORKSHOP":
-    case "INDUSTRIAL_BUILDING":
-      return <CommercialSpaceSpecs {...props} />;
-    case "HEALTHCARE":
-    case "EDUCATION":
-    case "INSTITUTIONAL":
-    case "COMMUNITY":
-      return <HeritageHomeSpecs {...props} />;
-    default:
-      return <ResidentialLandSpecs {...props} />;
+    case "RESIDENTIAL_LAND": case "INDUSTRIAL_LAND": case "DEVELOPMENT_LAND": Variant = ResidentialLandSpecs; break;
+    case "COMMERCIAL_LAND": Variant = CommercialLandSpecs; break;
+    case "AGRICULTURAL_LAND": Variant = AgriculturalLandSpecs; break;
+    case "HOUSE": case "APARTMENT_FLAT": case "TOWNHOUSE": case "ROOM": case "RESIDENTIAL_BUILDING": Variant = ResidentialHouseSpecs; break;
+    case "OFFICE": case "RETAIL_SPACE": case "RESTAURANT_CAFE": case "HOSPITALITY": case "COMMERCIAL_BUILDING": Variant = CommercialSpaceSpecs; break;
+    case "WAREHOUSE_GODOWN": case "FACTORY_MANUFACTURING": case "LOGISTICS_DISTRIBUTION": case "WORKSHOP": case "INDUSTRIAL_BUILDING": Variant = CommercialSpaceSpecs; break;
+    case "HEALTHCARE": case "EDUCATION": case "INSTITUTIONAL": case "COMMUNITY": Variant = HeritageHomeSpecs; break;
+    default: Variant = ResidentialLandSpecs;
   }
+  return (
+    <div className="flex flex-col gap-lg">
+      <Variant {...props} />
+      <div className="border-t border-outline-variant pt-lg">
+        <CustomSpecsBlock {...props} />
+      </div>
+    </div>
+  );
 }

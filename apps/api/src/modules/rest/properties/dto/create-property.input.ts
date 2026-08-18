@@ -1,4 +1,5 @@
 import { InputType, Field } from '@nestjs/graphql';
+import GraphQLJSON from 'graphql-type-json';
 import {
   IsArray,
   IsBoolean,
@@ -555,6 +556,11 @@ export class CreatePropertyInput {
   @IsString()
   @IsOptional()
   agentId?: string;
+
+  /** Seller-defined specification tables (custom headings + rows). */
+  @Field(() => GraphQLJSON, { nullable: true })
+  @IsOptional()
+  customSpecs?: any;
 
   @Field(() => LandAreaDetailsInput)
   @ValidateNested()

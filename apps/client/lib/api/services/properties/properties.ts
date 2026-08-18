@@ -106,6 +106,7 @@ const PROPERTY_FRAGMENT = `
     courtyard
     traditionalFeatures
     renovationStatus
+    customSpecs
     ownerId
     agentId
     createdAt

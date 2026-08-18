@@ -1,4 +1,6 @@
-import { Badge, Icon } from "@repo/ui";
+import React from "react";
+
+import { Icon } from "@repo/ui";
 import { PropertyViewTracker } from "components/real-state/common/PropertyViewTracker";
 import { stripHtml } from "components/real-state/googlemap/utils";
 import { SimilarProperties } from "components/real-state/pages/home/SimilarProperties";
@@ -18,7 +20,6 @@ import {
   priceContextFromApiProperty,
   TYPE_GRADIENTS,
   TYPE_LABELS,
-  VERIFICATION_LABELS,
   type ApiProperty,
   type ApiPropertyMedia,
 } from "lib/api/services/properties/types";
@@ -103,6 +104,63 @@ function partitionMedia(media: ApiPropertyMedia[] = []) {
   };
 }
 
+/** Build categorized land-detail rows for the Land Details table.
+ *  Returns null when the property is not LAND or has no land fields. */
+function buildLandDetails(p: ApiProperty) {
+  if (p.mainCategory !== "LAND") return null;
+  const label = (v: string) => labelEnum(v, {});
+
+  type Row = [string, string];
+  type Section = { heading: string; rows: Row[] };
+  const sections: Section[] = [];
+
+  // Plot Details
+  const plotRows: Row[] = [];
+  if (p.plotShape) plotRows.push(["Plot Shape", label(p.plotShape)]);
+  if (p.frontageFt) plotRows.push(["Frontage", `${formatNumber(p.frontageFt)} ft`]);
+  if (p.depthFt) plotRows.push(["Depth", `${formatNumber(p.depthFt)} ft`]);
+  if (p.boundaryWall) plotRows.push(["Boundary Wall", label(p.boundaryWall)]);
+  if (p.landClearance) plotRows.push(["Cleared / Fenced", "Yes"]);
+  if (p.isCornerPlot) plotRows.push(["Corner Plot", "Yes"]);
+  if (plotRows.length) sections.push({ heading: "Plot Details", rows: plotRows });
+
+  // Land Classification
+  const classRows: Row[] = [];
+  if (p.landClassification) classRows.push(["Land Classification", label(p.landClassification)]);
+  if (p.soilType) classRows.push(["Soil Type", label(p.soilType)]);
+  if (p.terrain) classRows.push(["Terrain", label(p.terrain)]);
+  if (p.zoning) classRows.push(["Zoning", label(p.zoning)]);
+  if (classRows.length) sections.push({ heading: "Land Classification", rows: classRows });
+
+  // Utilities & Infrastructure
+  const utilRows: Row[] = [];
+  if (p.electricityAvailable) utilRows.push(["Electricity", "Available"]);
+  if (p.waterSources?.length) utilRows.push(["Water Sources", p.waterSources.map(label).join(", ")]);
+  if (p.irrigationType) utilRows.push(["Irrigation", label(p.irrigationType)]);
+  if (p.fencing) utilRows.push(["Fencing", label(p.fencing)]);
+  if (utilRows.length) sections.push({ heading: "Utilities & Infrastructure", rows: utilRows });
+
+  // Agricultural
+  const agriRows: Row[] = [];
+  if (p.currentCrops) agriRows.push(["Current Crops", p.currentCrops]);
+  if (p.annualYield) agriRows.push(["Annual Yield", p.annualYield]);
+  if (p.farmStructures?.length) agriRows.push(["Farm Structures", p.farmStructures.map(label).join(", ")]);
+  if (agriRows.length) sections.push({ heading: "Agricultural", rows: agriRows });
+
+  // Development & Usage
+  const devRows: Row[] = [];
+  if (p.setbackAvailable) devRows.push(["Setback", p.setbackText ? `Yes — ${p.setbackText}` : "Yes"]);
+  if (p.suitableFor?.length) devRows.push(["Suitable For", p.suitableFor.map(label).join(", ")]);
+  if (p.parkingSpaces != null) devRows.push(["Parking Spaces", String(p.parkingSpaces)]);
+  if (p.minBuyableLandSqFt)
+    devRows.push(["Min Buyable Land", formatMinBuyableLand(p) ?? `${formatNumber(p.minBuyableLandSqFt)} sq ft`]);
+  if (p.isNegotiable) devRows.push(["Negotiable", "Yes"]);
+  if (devRows.length) sections.push({ heading: "Development & Usage", rows: devRows });
+
+  return sections.length ? sections : null;
+}
+
+
 export default async function ListingDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const property = await loadProperty(slug);
@@ -113,10 +171,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const location = formatLocation(property.location);
   const verified = property.verificationLevel !== "UNVERIFIED";
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
-  // Shared pricing inputs — per-unit rates on this page now use the exact same
-  // conversion as the listing wizard (see priceContextFromApiProperty).
   const pricing = priceContextFromApiProperty(property);
   const p = property;
+  const landDetails = buildLandDetails(p);
+
 
   const specs: Array<[string, string | null | undefined]> = [
     ...(hasLand
@@ -138,27 +196,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
     ],
     ["Facing", property.facing ? labelEnum(property.facing, {}) : null],
     ["Corner Plot", property.isCornerPlot ? "Yes" : null],
-    // Per-unit price moved to the interactive unit selector on the decision card.
-    ["Listing Code", property.listingCode ?? null],
-    [
-      "Verification",
-      labelEnum(property.verificationLevel, VERIFICATION_LABELS),
-    ],
   ];
-
-  // Key facts for the scannable strip under the title — the four
-  // decision-relevant essentials, pulled from the spec rows built above.
-  const keyFacts = specs
-    .filter(([label]) =>
-      ["Land Area", "Road Access", "Facing", "Property Type"].includes(label),
-    )
-    .filter(([, value]) => Boolean(value)) as Array<[string, string]>;
 
   const typeSpecs: Array<[string, string | null | undefined]> = [];
   const chipGroups: Array<{ label: string; values: string[] }> = [];
   const label = (v: string) => labelEnum(v, {});
 
-  // Building specs (house / space / heritage)
   if (p.builtUpAreaSqFt)
     typeSpecs.push([
       "Built-up Area",
@@ -346,26 +389,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
         {/* Header */}
         <header className="mb-4">
-          {/* Badges */}
-          <div className="mb-1.5 flex flex-wrap items-center gap-2">
-            <Badge variant="secondary">
-              {labelEnum(property.subCategory, TYPE_LABELS)}
-            </Badge>
-            {verified && (
-              <Badge
-                variant="outline"
-                className="gap-1 border-gold/40 text-gold-deep"
-              >
-                <Icon name="verified" className="text-[14px]" />
-                {labelEnum(property.verificationLevel, VERIFICATION_LABELS)}
-              </Badge>
-            )}
-            {property.isFeatured && (
-              <Badge variant="destructive">Featured</Badge>
-            )}
-            
-          </div>
-
           {/* Title + Location */}
           <div className="min-w-0">
             <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
@@ -378,25 +401,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
               </p>
             </div>
           </div>
-
-          {/* Key facts — the essentials at a glance, without reading the table */}
-          {/* {keyFacts.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-2">
-              {keyFacts.map(([label, value]) => (
-                <div
-                  key={label}
-                  className="flex items-baseline gap-2 rounded-lg border border-outline-variant bg-surface px-3 py-2"
-                >
-                  <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
-                    {label}
-                  </span>
-                  <span className="mono-stat text-[13px] font-medium text-on-surface">
-                    {value}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )} */}
         </header>
 
         <div className="grid gap-5 lg:grid-cols-3">
@@ -460,6 +464,81 @@ export default async function ListingDetailPage({ params }: PageProps) {
               )}
             </section>
 
+            {/* Land Details Table — only for LAND properties */}
+            {landDetails && (
+              <section className="mt-8">
+                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                  Land Details
+                </h2>
+                <div className="overflow-x-auto rounded-xl border border-outline-variant">
+                  <table className="w-full text-left text-sm">
+                    <thead>
+                      <tr className="bg-surface-container">
+                        <th className="px-4 py-3 font-semibold text-on-surface">Detail</th>
+                        <th className="px-4 py-3 font-semibold text-on-surface">Value</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-outline-variant bg-surface">
+                      {landDetails.map((section) => (
+                        <React.Fragment key={section.heading}>
+                          <tr className="bg-surface-container/50">
+                            <td colSpan={2} className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                              {section.heading}
+                            </td>
+                          </tr>
+                          {section.rows.map(([detail, value]) => (
+                            <tr key={detail} className="hover:bg-surface-container/30">
+                              <td className="px-4 py-3 text-on-surface-variant">{detail}</td>
+                              <td className="px-4 py-3 font-medium text-on-surface">{value}</td>
+                            </tr>
+                          ))}
+                        </React.Fragment>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            )}
+
+
+            {/* Seller-defined custom specs tables */}
+            {property.customSpecs && property.customSpecs.length > 0 && (
+              <section className="mt-8">
+                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                  Additional Specifications
+                </h2>
+                <div className="flex flex-col gap-6">
+                  {property.customSpecs.map((table, tIdx) => (
+                    <div key={tIdx}>
+                      {table.heading && (
+                        <h3 className="mb-2 text-sm font-bold uppercase tracking-wider text-on-surface-variant">
+                          {table.heading}
+                        </h3>
+                      )}
+                      <div className="overflow-x-auto rounded-xl border border-outline-variant">
+                        <table className="w-full text-left text-sm">
+                          <thead>
+                            <tr className="bg-surface-container">
+                              <th className="px-4 py-3 font-semibold text-on-surface">Detail</th>
+                              <th className="px-4 py-3 font-semibold text-on-surface">Value</th>
+                            </tr>
+                          </thead>
+                          <tbody className="divide-y divide-outline-variant bg-surface">
+                            {table.rows.map(([detail, value], rIdx) => (
+                              <tr key={rIdx} className="hover:bg-surface-container/30">
+                                <td className="px-4 py-3 text-on-surface-variant">{detail}</td>
+                                <td className="px-4 py-3 font-medium text-on-surface">{value}</td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
+
             {/* Location details */}
             {locationSpecs.length > 0 && (
               <section className="mt-8">
@@ -494,7 +573,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
               title={property.title}
               pricing={pricing}
               location={property.location}
-              verified={verified}
             />
           </aside>
         </div>

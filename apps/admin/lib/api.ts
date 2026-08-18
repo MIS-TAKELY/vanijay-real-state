@@ -246,7 +246,7 @@ export function cmsDelete(id: string) {
 
 // Convenience wrappers used by the CMS admin pages.
 
-export type CmsContentItem = CmsItem & { metaJson?: unknown | null };
+export type CmsContentItem = CmsItem;
 
 export function cmsListItems(placement: string, slot?: string) {
   return cmsList(placement, slot, true) as Promise<CmsContentItem[]>;
@@ -257,15 +257,33 @@ export function cmsUpsertItem(item: {
   slot: string;
   key: string;
   title?: string | null;
+  subtitle?: string | null;
   body?: string | null;
-  metaJson?: unknown | null;
+  image?: string | null;
+  ctaLabel?: string | null;
+  ctaHref?: string | null;
+  metadata?: unknown | null;
+  sortOrder?: number;
+  published?: boolean;
 }) {
   return cmsUpsert(item.placement, item.slot, {
     key: item.key,
     title: item.title,
+    subtitle: item.subtitle,
     body: item.body,
-    metaJson: item.metaJson,
+    image: item.image,
+    ctaLabel: item.ctaLabel,
+    ctaHref: item.ctaHref,
+    metadata: item.metadata,
+    sortOrder: item.sortOrder,
+    published: item.published,
   }) as Promise<CmsContentItem>;
+}
+
+export function listingPerformance(days = 365) {
+  return apiFetch<ListingPerformanceData>("/api/v1/admin/analytics/listings", {
+    query: { days },
+  });
 }
 
 // Gold
@@ -720,6 +738,7 @@ export interface CmsItem {
   image?: string | null;
   ctaLabel?: string | null;
   ctaHref?: string | null;
+  metadata?: unknown | null;
   sortOrder: number;
   published: boolean;
 }

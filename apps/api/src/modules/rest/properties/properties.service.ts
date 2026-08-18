@@ -567,6 +567,7 @@ export class PropertiesService {
       courtyard: row.courtyard ?? undefined,
       traditionalFeatures: row.traditionalFeatures ?? [],
       renovationStatus: row.renovationStatus ?? undefined,
+      customSpecs: row.customSpecs ?? undefined,
       ownerId: row.ownerId,
       agentId: row.agentId ?? undefined,
       location: row.location ?? undefined,

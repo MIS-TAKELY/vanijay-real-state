@@ -4,14 +4,48 @@ import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Icon } from "@repo/ui";
 import { useContentStore } from "store/content";
+import { fetchCmsHeroBanners, type CmsHeroSlide } from "lib/api/services/cms";
+import type { HeroSlide } from "constants/varibles-constants";
+
+type Slide = HeroSlide & { key?: string; ctaHref?: string };
+
+function toSlide(item: CmsHeroSlide): Slide {
+  return {
+    key: item.key,
+    image: item.image,
+    headline: item.headline,
+    subheadline: item.subheadline,
+    ctaPrimary: item.ctaPrimary,
+    ctaSecondary: "List Your Property",
+    ctaHref: item.ctaHref,
+  };
+}
 
 function HeroBannerCarousel() {
   const router = useRouter();
   const heroEnabled = useContentStore((s) => s.heroEnabled);
-  const heroSlides = useContentStore((s) => s.heroSlides);
+  const storeSlides = useContentStore((s) => s.heroSlides);
+  const [cmsSlides, setCmsSlides] = useState<CmsHeroSlide[] | null>(null);
   const [current, setCurrent] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchCmsHeroBanners()
+      .then((slides) => {
+        if (!cancelled) setCmsSlides(slides);
+      })
+      .catch(() => {
+        if (!cancelled) setCmsSlides([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const heroSlides: Slide[] =
+    cmsSlides && cmsSlides.length > 0 ? cmsSlides.map(toSlide) : storeSlides;
 
   const goTo = useCallback(
     (index: number) => {
@@ -63,7 +97,7 @@ function HeroBannerCarousel() {
     >
       {heroSlides.map((slide, index) => (
         <div
-          key={index}
+          key={slide.key ?? index}
           className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${
             index === current ? "opacity-100 z-10" : "opacity-0 z-0"
           }`}
@@ -96,7 +130,7 @@ function HeroBannerCarousel() {
                 <Button
                   size="sm"
                   className="h-8 px-4 text-xs md:h-10 md:px-6 md:text-sm bg-gold text-on-gold shadow-lg shadow-navy-deep/30 hover:bg-gold/90"
-                  onClick={() => router.push("/")}
+                  onClick={() => router.push(slide.ctaHref || "/")}
                 >
                   {slide.ctaPrimary}
                 </Button>

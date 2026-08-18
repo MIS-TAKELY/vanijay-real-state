@@ -8,3 +8,4 @@ export * from "./services/favorites";
 export * from "./services/cart";
 export * from "./services/saved-searches";
 export * from "./services/analytics";
+export * from "./services/cms";

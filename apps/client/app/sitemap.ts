@@ -2,6 +2,7 @@ import type { MetadataRoute } from "next";
 import { API_ENDPOINTS } from "lib/api/core/endpoints";
 import { apiUrl } from "lib/api/core/config";
 import { SITE_URL } from "lib/site";
+import { CATEGORY_CATALOG } from "constants/category-catalog";
 
 // Regenerate the sitemap at most once an hour (ISR-style). Listing detail
 // pages moved to /{slug} (SEO), so every LIVE listing gets a clean short URL.
@@ -19,6 +20,17 @@ const STATIC_ROUTES: Array<{
   { path: "/nrn-concierge", changeFrequency: "monthly", priority: 0.5 },
   { path: "/compare", changeFrequency: "weekly", priority: 0.4 },
 ];
+
+// Category archive pages — one per verified register (daily as listings churn).
+const CATEGORY_ROUTES: Array<{
+  path: string;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority: number;
+}> = CATEGORY_CATALOG.map((c) => ({
+  path: `/category/${c.slug}`,
+  changeFrequency: "daily",
+  priority: 0.7,
+}));
 
 interface SitemapSlug {
   slug: string;

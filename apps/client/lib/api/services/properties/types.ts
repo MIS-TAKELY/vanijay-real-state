@@ -118,6 +118,8 @@ export interface ApiProperty {
   heritageGrade?: string | null;
   courtyard?: string | null;
   traditionalFeatures?: string[] | null;
+  /** Seller-defined specification tables: { heading, rows }[]. */
+  customSpecs?: Array<{ heading: string; rows: [string, string][] }> | null;
   renovationStatus?: string | null;
   ownerId: string;
   agentId?: string | null;

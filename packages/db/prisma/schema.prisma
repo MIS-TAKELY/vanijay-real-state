@@ -460,6 +460,10 @@ model Property {
     traditionalFeatures String[] @default([])
     renovationStatus    String?  // RENOVATION_STATUSES
 
+    // Seller-defined specification tables (Step 3 custom specs).
+    // Stored as JSON array of { heading: string, rows: [string, string][] }.
+    customSpecs Json?
+
     // Internal moderation note — visible to the verification/admin team only.
     adminNote String? @db.Text
 

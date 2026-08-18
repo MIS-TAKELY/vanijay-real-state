@@ -1,7 +1,9 @@
 "use client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useContentStore } from "store/content";
+import { fetchCmsCategories, type CmsCategory } from "lib/api/services/cms";
+import { resolveCategorySlug } from "constants/category-catalog";
 
 function useHorizontalDrag(ref: React.RefObject<HTMLDivElement | null>) {
   const [isDragging, setIsDragging] = useState(false);
@@ -45,9 +47,42 @@ function CategoryStrip() {
   const { dragMovedRef, onMouseDown, onMouseMove, onMouseUp, onMouseLeave } =
     useHorizontalDrag(scrollRef);
   const categoriesEnabled = useContentStore((s) => s.categoriesEnabled);
-  const categories = useContentStore((s) => s.categories);
+  const storeCategories = useContentStore((s) => s.categories);
 
-  if (!categoriesEnabled || categories.length === 0) return null;
+  // Categories published through the admin CMS (image + display order) take
+  // precedence over the local content store. While the fetch is in flight we
+  // render the store defaults so the strip never flashes empty.
+  const [cmsCategories, setCmsCategories] = useState<CmsCategory[] | null>(
+    null,
+  );
+
+  useEffect(() => {
+    let cancelled = false;
+    fetchCmsCategories()
+      .then((cats) => {
+        if (!cancelled) setCmsCategories(cats);
+      })
+      .catch(() => {
+        if (!cancelled) setCmsCategories([]);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  const useCms = cmsCategories !== null && cmsCategories.length > 0;
+  const tiles: { key: string; name: string; image: string }[] = useCms
+    ? cmsCategories.map((c) => ({ key: c.key, name: c.name, image: c.image }))
+    : storeCategories.map((c) => ({ key: c.name, name: c.name, image: c.image }));
+
+  if (!useCms && (!categoriesEnabled || tiles.length === 0)) return null;
+
+  // Known categories deep-link into their archive page (/category/[slug]);
+  // anything the catalog doesn't recognise falls back to the search page.
+  const tileHref = (tile: { key: string; name: string }) => {
+    const slug = resolveCategorySlug(tile.key) || resolveCategorySlug(tile.name);
+    return slug ? `/category/${slug}` : "/search";
+  };
 
   // Swallow the click that fires right after a mouse drag — releasing a drag
   // over a tile should scroll the strip, not navigate.
@@ -77,10 +112,10 @@ function CategoryStrip() {
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           <div className="flex w-max gap-4 md:mx-auto">
-            {categories.map((cat) => (
+            {tiles.map((cat) => (
               <Link
-                key={cat.name}
-                href={`/?category=${encodeURIComponent(cat.name.toLowerCase().replace(/ /g, "-"))}`}
+                key={cat.key}
+                href={tileHref(cat)}
                 className="group flex flex-col items-center gap-2.5 min-w-[88px] max-w-[104px] snap-start"
                 draggable={false}
               >

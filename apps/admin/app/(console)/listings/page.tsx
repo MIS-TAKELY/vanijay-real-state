@@ -7,6 +7,7 @@ import {
   Button,
   Input,
   Loader2,
+  MAIN_CATEGORY_LABELS,
   Select,
   SelectContent,
   SelectItem,
@@ -211,7 +212,7 @@ export default function ListingsPage() {
                 </Link>
               </AdminDataTable.Cell>
               <AdminDataTable.Cell className="text-on-surface-variant">
-                {r.mainCategory}
+                {MAIN_CATEGORY_LABELS[r.mainCategory] ?? r.mainCategory}
               </AdminDataTable.Cell>
               <AdminDataTable.Cell className="mono-stat text-on-surface">
                 {r.askingPrice}

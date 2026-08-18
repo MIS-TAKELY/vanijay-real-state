@@ -18,7 +18,7 @@ import {
  * overrides that were written under an older version are re-seeded from
  * the new defaults instead of silently shipping stale copy.
  */
-export const CONTENT_VERSION = 1;
+export const CONTENT_VERSION = 2;
 
 export type ContentSection = "hero" | "categories" | "contentBlocks";
 

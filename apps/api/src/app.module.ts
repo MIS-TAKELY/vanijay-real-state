@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { LoggerModule } from 'nestjs-pino';
+import GraphQLJSON from 'graphql-type-json';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { CommonModule } from './common/common.module';
@@ -50,6 +51,7 @@ import { SettingsModule } from './modules/rest/settings/settings.module';
       playground: process.env.NODE_ENV !== 'production',
       path: '/api/v1/malpoth',
       validationRules: graphqlValidationRules,
+      resolvers: { JSON: GraphQLJSON },
     }),
     AuthModule,
     PropertiesModule,

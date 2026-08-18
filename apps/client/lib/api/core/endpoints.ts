@@ -74,6 +74,11 @@ export const API_ENDPOINTS = {
     base: `/api/${API_VERSION}/profile`,
     citizenship: `/api/${API_VERSION}/profile/citizenship`,
   },
+
+  cms: {
+    items: (placement: string) =>
+      `/api/${API_VERSION}/cms/${encodeURIComponent(placement)}`,
+  },
 } as const;
 
 export const GRAPHQL_ENDPOINT = `/api/${API_VERSION}/malpoth`;

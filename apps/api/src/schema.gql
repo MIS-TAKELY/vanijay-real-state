@@ -115,6 +115,7 @@ type Property {
   courtyard: String
   traditionalFeatures: [String!]
   renovationStatus: String
+  customSpecs: JSON
   ownerId: String!
   agentId: String
   location: PropertyLocation
@@ -194,6 +195,11 @@ enum FacingDirection {
   SOUTH_EAST
   SOUTH_WEST
 }
+
+"""
+The `JSON` scalar type represents JSON values as specified by [ECMA-404](http://www.ecma-international.org/publications/files/ECMA-ST/ECMA-404.pdf).
+"""
+scalar JSON
 
 """
 A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
@@ -361,6 +367,7 @@ input CreatePropertyInput {
   traditionalFeatures: [String!]
   renovationStatus: String
   agentId: String
+  customSpecs: JSON
   landArea: LandAreaDetailsInput!
   location: PropertyLocationInput!
   cadastralRecord: CadastralRecordInput
@@ -496,6 +503,7 @@ input UpdatePropertyInput {
   traditionalFeatures: [String!]
   renovationStatus: String
   agentId: String
+  customSpecs: JSON
   landArea: LandAreaDetailsInput
   location: PropertyLocationInput
   cadastralRecord: CadastralRecordInput

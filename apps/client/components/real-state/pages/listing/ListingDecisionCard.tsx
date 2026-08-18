@@ -19,14 +19,6 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ListingSidebarMap } from "./ListingSidebarMap";
 
-/**
- * Per-unit rate for a listing — building types show the auto-calculated
- * per-sq.ft / per-sq.m rates (same as the listing wizard's review), land
- * types let the buyer pick the unit (defaulting to the unit system's market
- * rate). Everything runs through the shared `PriceContext` conversion
- * (`pricePerUnitFor` + `PRICE_UNITS`), so this always agrees with the
- * listing process.
- */
 function PricePerUnit({ pricing }: { pricing: PriceContext }) {
   const isBuilding = isBuildingType(pricing.subCategory);
   const [unit, setUnit] = useState(() => priceUnitKey(pricing));
@@ -44,44 +36,57 @@ function PricePerUnit({ pricing }: { pricing: PriceContext }) {
 
   if (isBuilding) {
     return (
-      <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-0.5 text-sm text-on-surface-variant">
-        <span>
-          <span className="font-medium">{rateLabel.sqft}</span> / sq.ft
+      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
+        <span className="mono-stat text-2xl font-bold text-navy">
+          {rateLabel.sqft}
+          <span className="ms-1 text-sm font-medium text-on-surface-variant">
+            / sq.ft
+          </span>
         </span>
-        <span>
-          <span className="font-medium">{rateLabel.sqm}</span> / sq.m
+        <span className="mono-stat text-2xl font-bold text-navy">
+          {rateLabel.sqm}
+          <span className="ms-1 text-sm font-medium text-on-surface-variant">
+            / sq.m
+          </span>
         </span>
       </div>
     );
   }
 
   return (
-    <p className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-sm text-on-surface-variant">
-      <span>{perUnit != null ? formatNPR(perUnit) : "—"} per</span>
-      <select
-        value={unit}
-        onChange={(e) => setUnit(e.target.value)}
-        aria-label="Price unit"
-        className="h-10 cursor-pointer rounded-md border border-outline-variant bg-surface px-2.5 text-[13px] font-medium text-on-surface outline-none transition-colors hover:border-primary/40 focus-visible:ring-2 focus-visible:ring-ring/50"
-      >
-        {PRICE_UNITS.map((u) => (
-          <option key={u.key} value={u.key}>
-            {u.label}
-          </option>
-        ))}
-      </select>
-    </p>
+    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+      <span className="mono-stat text-2xl font-bold text-navy">
+        {perUnit != null ? formatNPR(perUnit) : "—"}
+      </span>
+      <span className="text-sm font-medium text-on-surface-variant">per</span>
+      <span className="relative inline-flex min-h-11 items-center">
+        <select
+          value={unit}
+          onChange={(e) => setUnit(e.target.value)}
+          aria-label="Price unit"
+          className="h-11 cursor-pointer appearance-none border-0 bg-transparent py-0 pr-6 pl-0 text-sm font-medium text-on-surface shadow-none outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md"
+        >
+          {PRICE_UNITS.map((u) => (
+            <option key={u.key} value={u.key}>
+              {u.label}
+            </option>
+          ))}
+        </select>
+        <Icon
+          name="expand_more"
+          className="pointer-events-none absolute right-0 text-[16px] text-on-surface-variant"
+          aria-hidden
+        />
+      </span>
+    </div>
   );
 }
 
 interface ListingDecisionCardProps {
   propertyId: string;
   title: string;
-  /** Shared pricing inputs — built from the API property via
-   *  `priceContextFromApiProperty` so per-unit rates match the listing wizard. */
   pricing: PriceContext;
   location?: ApiPropertyLocation | null;
-  verified: boolean;
 }
 
 export function ListingDecisionCard({
@@ -89,7 +94,6 @@ export function ListingDecisionCard({
   title,
   pricing,
   location,
-  verified,
 }: ListingDecisionCardProps) {
   const hasCoordinates =
     location?.latitude != null && location?.longitude != null;
@@ -98,11 +102,17 @@ export function ListingDecisionCard({
     <div className="sticky top-24 flex flex-col gap-5 rounded-2xl border border-outline-variant bg-surface p-6 shadow-sm">
       {/* Price */}
       <div>
-        <p className="mono-stat text-2xl font-bold text-gold-deep">
-          {formatNPR(pricing.askingPrice)}
-        </p>
-        {hasPricingArea(pricing) && pricing.askingPrice > 0 && (
+        {hasPricingArea(pricing) && pricing.askingPrice > 0 ? (
           <PricePerUnit pricing={pricing} />
+        ) : (
+          <p className="mono-stat text-2xl font-bold text-navy">
+            {formatNPR(pricing.askingPrice)}
+          </p>
+        )}
+        {hasPricingArea(pricing) && pricing.askingPrice > 0 && (
+          <p className="mt-1 text-sm text-on-surface-variant">
+            {formatNPR(pricing.askingPrice)}
+          </p>
         )}
       </div>
 
@@ -131,7 +141,8 @@ export function ListingDecisionCard({
       <div className="flex flex-col gap-2">
         <CallSellerButton
           propertyId={propertyId}
-          className="min-h-11 w-full rounded-md bg-gold font-semibold text-on-gold hover:bg-gold/90"
+          variant="default"
+          className="min-h-11 w-full rounded-md bg-navy font-semibold text-white hover:bg-navy-deep hover:text-white"
         />
         <div className="flex gap-2">
           <AddToCartButton
@@ -147,14 +158,6 @@ export function ListingDecisionCard({
           />
         </div>
       </div>
-
-      {/* Verification notice */}
-      {!verified && (
-        <p className="rounded-md bg-surface-container p-3 text-xs leading-5 text-on-surface-variant">
-          This listing has not completed verification yet. Independently confirm
-          ownership documents (Lalpurja) before any payment.
-        </p>
-      )}
     </div>
   );
 }

@@ -68,7 +68,7 @@ function CmsItemCard({
   const [title, setTitle] = useState(item.title ?? "");
   const [body, setBody] = useState(item.body ?? "");
   const [meta, setMeta] = useState(
-    item.metaJson ? JSON.stringify(item.metaJson, null, 2) : "",
+    item.metadata ? JSON.stringify(item.metadata, null, 2) : "",
   );
 
   async function save() {
@@ -88,7 +88,7 @@ function CmsItemCard({
         key,
         title: title || null,
         body: body || null,
-        metaJson: parsedMeta ?? null,
+        metadata: parsedMeta ?? null,
       });
       toast.success(`Saved ${slot}/${key}`);
       onChange();

@@ -35,6 +35,15 @@ export function stripHtml(input?: string | null): string {
   );
 }
 
+/** Friendly display labels for the five main categories (`MainCategory` enum). */
+export const MAIN_CATEGORY_LABELS: Record<string, string> = {
+  RESIDENTIAL: "Residential",
+  COMMERCIAL: "Commercial",
+  INDUSTRIAL: "Industrial",
+  LAND: "Land",
+  INSTITUTIONAL_SPECIALIZED: "Special Purpose",
+};
+
 export const TYPE_LABELS: Record<string, string> = {
   // Residential
   HOUSE: "House",
