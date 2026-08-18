@@ -1,24 +1,25 @@
 @import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
+@import "../../../packages/ui/src/styles/kabadi.css";
 @source "../../../packages/ui";
 
 @theme inline {
   /* ===== MALPOTH semantic palette (mirrors apps/client) ===== */
-  --color-primary: #244530;
-  --color-primary-container: #3b5d46;
+  --color-primary: #103050;
+  --color-primary-container: #d3e1f5;
   --color-on-primary: #ffffff;
-  --color-on-primary-container: #aed4b7;
-  --color-primary-fixed: #c5ecce;
-  --color-primary-fixed-dim: #aad0b3;
-  --color-on-primary-fixed: #00210f;
-  --color-on-primary-fixed-variant: #2c4e38;
+  --color-on-primary-container: #b7cff0;
+  --color-primary-fixed: #d2e4fa;
+  --color-primary-fixed-dim: #a9c7ea;
+  --color-on-primary-fixed: #0a2540;
+  --color-on-primary-fixed-variant: #0b2a47;
 
-  --color-secondary: #54615a;
-  --color-secondary-container: #d8e6dc;
+  --color-secondary: #55637a;
+  --color-secondary-container: #dce6f0;
   --color-on-secondary: #ffffff;
-  --color-on-secondary-container: #5a6760;
-  --color-secondary-fixed: #d8e6dc;
-  --color-secondary-fixed-dim: #bccac1;
+  --color-on-secondary-container: #4a5563;
+  --color-secondary-fixed: #dce6f0;
+  --color-secondary-fixed-dim: #bfcbd8;
 
   --color-tertiary: #7d1118;
   --color-tertiary-container: #9e2b2c;
@@ -34,26 +35,26 @@
   --color-on-error: #ffffff;
   --color-on-error-container: #93000a;
 
-  --color-surface: #fbf9f4;
-  --color-surface-bright: #fbf9f4;
-  --color-surface-container-low: #f5f3ee;
-  --color-surface-container: #f0eee9;
-  --color-surface-container-high: #eae8e3;
-  --color-surface-container-highest: #e4e2dd;
-  --color-surface-dim: #dbdad5;
-  --color-surface-tint: #44664e;
-  --color-surface-variant: #e4e2dd;
+  --color-surface: #ffffff;
+  --color-surface-bright: #fbfcfd;
+  --color-surface-container-low: #f6f7f9;
+  --color-surface-container: #f0f2f5;
+  --color-surface-container-high: #e7ebf0;
+  --color-surface-container-highest: #e5e8ec;
+  --color-surface-dim: #d8dde3;
+  --color-surface-tint: #103050;
+  --color-surface-variant: #e5e8ec;
 
-  --color-on-surface: #1b1c19;
-  --color-on-surface-variant: #424842;
-  --color-on-background: #1b1c19;
-  --color-background: #fbf9f4;
+  --color-on-surface: #171a1f;
+  --color-on-surface-variant: #4a5058;
+  --color-on-background: #171a1f;
+  --color-background: #fbfaf7;
 
-  --color-outline: #727972;
-  --color-outline-variant: #c2c8c0;
-  --color-inverse-surface: #30312e;
-  --color-inverse-on-surface: #f2f1ec;
-  --color-inverse-primary: #aad0b3;
+  --color-outline: #6e7886;
+  --color-outline-variant: #c7cfd8;
+  --color-inverse-surface: #1c2430;
+  --color-inverse-on-surface: #edf1f7;
+  --color-inverse-primary: #b7cff0;
 
   --color-amber: #b45309;
   --color-on-amber: #ffffff;
@@ -68,21 +69,21 @@
 
   /* ===== shadcn UI bridge (shared primitives in packages/ui) ===== */
   --color-card: #ffffff;
-  --color-card-foreground: #1b1c19;
+  --color-card-foreground: #171a1f;
   --color-popover: #ffffff;
-  --color-popover-foreground: #1b1c19;
-  --color-muted: #e4e2dd;
-  --color-muted-foreground: #727972;
-  --color-accent: #d8e6dc;
-  --color-accent-foreground: #1b1c19;
-  --color-border: #c2c8c0;
-  --color-input: #727972;
-  --color-ring: #244530;
+  --color-popover-foreground: #171a1f;
+  --color-muted: #e5e8ec;
+  --color-muted-foreground: #6e7886;
+  --color-accent: #dce6f0;
+  --color-accent-foreground: #0a2540;
+  --color-border: #c7cfd8;
+  --color-input: #6e7886;
+  --color-ring: #103050;
   --color-destructive: #ba1a1a;
   --color-destructive-foreground: #ffffff;
-  --color-foreground: #1b1c19;
+  --color-foreground: #171a1f;
 
-  /* ===== shadcn sidebar (forest green rail) ===== */
+  /* ===== shadcn sidebar (navy blue rail) ===== */
   --color-sidebar: var(--sidebar);
   --color-sidebar-foreground: var(--sidebar-foreground);
   --color-sidebar-primary: var(--sidebar-primary);
@@ -95,8 +96,8 @@
   /* ===== radius scale ===== */
   --radius-sm: 4px;
   --radius-md: 8px;
-  --radius-lg: 10px;
-  --radius-xl: 16px;
+  --radius-lg: 12px;
+  --radius-xl: 18px;
 
   /* ===== typography: faces ===== */
   --font-display-lg: "Fraunces", serif;
@@ -139,15 +140,15 @@
 }
 
 :root {
-  /* Forest green ops sidebar — matches brand primary rail */
-  --sidebar: #244530;
+  /* Navy blue ops sidebar — matches brand primary rail */
+  --sidebar: #103050;
   --sidebar-foreground: #ffffff;
   --sidebar-primary: #ffffff;
-  --sidebar-primary-foreground: #244530;
-  --sidebar-accent: #3b5d46;
+  --sidebar-primary-foreground: #103050;
+  --sidebar-accent: #1c3d63;
   --sidebar-accent-foreground: #ffffff;
-  --sidebar-border: #3b5d46;
-  --sidebar-ring: #aad0b3;
+  --sidebar-border: #1c3d63;
+  --sidebar-ring: #b7cff0;
 }
 
 /* ===== base ===== */
@@ -171,15 +172,15 @@ html { font-size: 16px; }
 
 /* ===== signature textures ===== */
 .topo-bg {
-  background-image: radial-gradient(#244530 0.5px, transparent 0.5px);
+  background-image: radial-gradient(#103050 0.5px, transparent 0.5px);
   background-size: 24px 24px;
   opacity: 0.06;
 }
 
 .blueprint-grid {
   background-image:
-    linear-gradient(#e4e2dd 1px, transparent 1px),
-    linear-gradient(90deg, #e4e2dd 1px, transparent 1px);
+    linear-gradient(#c7cfd8 1px, transparent 1px),
+    linear-gradient(90deg, #c7cfd8 1px, transparent 1px);
   background-size: 40px 40px;
 }
 
@@ -187,8 +188,8 @@ html { font-size: 16px; }
 
 /* ===== brand trust stamp ===== */
 .verification-stamp {
-  border: 2px solid #7d1118;
-  color: #7d1118;
+  border: 2px solid #103050;
+  color: #103050;
   transform: rotate(-6deg);
   display: inline-flex;
   align-items: center;
@@ -198,7 +199,7 @@ html { font-size: 16px; }
   font-weight: 800;
   font-size: 10px;
   letter-spacing: 0.1em;
-  background: rgba(125, 17, 24, 0.05);
+  background: rgba(201, 162, 39, 0.08);
   border-radius: 4px;
   pointer-events: none;
   transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -239,7 +240,7 @@ textarea:-webkit-autofill:hover,
 textarea:-webkit-autofill:focus {
   -webkit-text-fill-color: var(--on-surface);
   caret-color: var(--on-surface);
-  box-shadow: 0 0 0 1000px var(--surface) inset;
+  box-shadow: 0 0 0 1000px #ffffff inset;
   transition: background-color 99999s ease-out;
 }
 
@@ -251,8 +252,8 @@ textarea:-webkit-autofill:focus {
 }
 
 .suneditor-wrapper .sun-editor .se-toolbar {
-  background-color: var(--surface-container);
-  border-bottom: 1px solid var(--outline-variant);
+  background-color: #f0f2f5;
+  border-bottom: 1px solid #c7cfd8;
   padding: 6px 8px;
   outline: none;
 }
@@ -265,13 +266,13 @@ textarea:-webkit-autofill:focus {
 }
 
 .suneditor-wrapper .sun-editor .se-btn:hover {
-  background-color: var(--surface-variant);
-  color: var(--primary);
+  background-color: #e5e8ec;
+  color: #103050;
 }
 
 .suneditor-wrapper .sun-editor .se-btn.active {
-  background-color: var(--primary);
-  color: var(--on-primary);
+  background-color: #103050;
+  color: #ffffff;
 }
 
 .suneditor-wrapper .sun-editor .se-wrapper-inner {
@@ -283,12 +284,12 @@ textarea:-webkit-autofill:focus {
   font-family: inherit;
   font-size: 14px;
   line-height: 1.65;
-  color: var(--on-surface);
+  color: #171a1f;
   background-color: transparent;
 }
 
 .suneditor-wrapper .sun-editor .se-placeholder {
-  color: var(--outline);
+  color: #6e7886;
   font-style: normal;
   padding: 12px 14px;
   font-size: 14px;

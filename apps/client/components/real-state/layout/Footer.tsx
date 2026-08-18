@@ -9,6 +9,7 @@ const footerLinks = {
   "The Archive": [
     { label: "Area Guides", href: "/area-guid" },
     { label: "NRN", href: "/nrn-concierge" },
+    { label: "Unit Converter", href: "/convertor" },
     { label: "About", href: "/about" },
   ],
   Compliance: [

@@ -104,77 +104,6 @@ function partitionMedia(media: ApiPropertyMedia[] = []) {
   };
 }
 
-/** Build categorized land-detail rows for the Land Details table.
- *  Returns null when the property is not LAND or has no land fields. */
-function buildLandDetails(p: ApiProperty) {
-  if (p.mainCategory !== "LAND") return null;
-  const label = (v: string) => labelEnum(v, {});
-
-  type Row = [string, string];
-  type Section = { heading: string; rows: Row[] };
-  const sections: Section[] = [];
-
-  // Plot Details
-  const plotRows: Row[] = [];
-  if (p.plotShape) plotRows.push(["Plot Shape", label(p.plotShape)]);
-  if (p.frontageFt)
-    plotRows.push(["Frontage", `${formatNumber(p.frontageFt)} ft`]);
-  if (p.depthFt) plotRows.push(["Depth", `${formatNumber(p.depthFt)} ft`]);
-  if (p.boundaryWall) plotRows.push(["Boundary Wall", label(p.boundaryWall)]);
-  if (p.landClearance) plotRows.push(["Cleared / Fenced", "Yes"]);
-  if (p.isCornerPlot) plotRows.push(["Corner Plot", "Yes"]);
-  if (plotRows.length)
-    sections.push({ heading: "Plot Details", rows: plotRows });
-
-  // Land Classification
-  const classRows: Row[] = [];
-  if (p.landClassification)
-    classRows.push(["Land Classification", label(p.landClassification)]);
-  if (p.soilType) classRows.push(["Soil Type", label(p.soilType)]);
-  if (p.terrain) classRows.push(["Terrain", label(p.terrain)]);
-  if (p.zoning) classRows.push(["Zoning", label(p.zoning)]);
-  if (classRows.length)
-    sections.push({ heading: "Land Classification", rows: classRows });
-
-  // Utilities & Infrastructure
-  const utilRows: Row[] = [];
-  if (p.electricityAvailable) utilRows.push(["Electricity", "Available"]);
-  if (p.waterSources?.length)
-    utilRows.push(["Water Sources", p.waterSources.map(label).join(", ")]);
-  if (p.irrigationType) utilRows.push(["Irrigation", label(p.irrigationType)]);
-  if (p.fencing) utilRows.push(["Fencing", label(p.fencing)]);
-  if (utilRows.length)
-    sections.push({ heading: "Utilities & Infrastructure", rows: utilRows });
-
-  // Agricultural
-  const agriRows: Row[] = [];
-  if (p.currentCrops) agriRows.push(["Current Crops", p.currentCrops]);
-  if (p.annualYield) agriRows.push(["Annual Yield", p.annualYield]);
-  if (p.farmStructures?.length)
-    agriRows.push(["Farm Structures", p.farmStructures.map(label).join(", ")]);
-  if (agriRows.length)
-    sections.push({ heading: "Agricultural", rows: agriRows });
-
-  // Development & Usage
-  const devRows: Row[] = [];
-  if (p.setbackAvailable)
-    devRows.push(["Setback", p.setbackText ? `Yes — ${p.setbackText}` : "Yes"]);
-  if (p.suitableFor?.length)
-    devRows.push(["Suitable For", p.suitableFor.map(label).join(", ")]);
-  if (p.parkingSpaces != null)
-    devRows.push(["Parking Spaces", String(p.parkingSpaces)]);
-  if (p.minBuyableLandSqFt)
-    devRows.push([
-      "Min Buyable Land",
-      formatMinBuyableLand(p) ?? `${formatNumber(p.minBuyableLandSqFt)} sq ft`,
-    ]);
-  if (p.isNegotiable) devRows.push(["Negotiable", "Yes"]);
-  if (devRows.length)
-    sections.push({ heading: "Development & Usage", rows: devRows });
-
-  return sections.length ? sections : null;
-}
-
 export default async function ListingDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const property = await loadProperty(slug);
@@ -186,7 +115,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
   const pricing = priceContextFromApiProperty(property);
   const p = property;
-  const landDetails = buildLandDetails(p);
 
   const specs: Array<[string, string | null | undefined]> = [
     ...(hasLand
@@ -431,152 +359,8 @@ export default async function ListingDetailPage({ params }: PageProps) {
               <ListingDescription html={property.description} />
             )}
 
-            {/* Specifications */}
-            <section className="mt-8">
-              <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                Specifications
-              </h2>
-              <dl className="divide-y divide-outline-variant">
-                {allSpecs
-                  .filter(([, value]) => value)
-                  .map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
-                    >
-                      <dt className="text-sm text-on-surface-variant">
-                        {label}
-                      </dt>
-                      <dd className="text-sm font-medium text-on-surface">
-                        {value as string}
-                      </dd>
-                    </div>
-                  ))}
-              </dl>
-              {chipGroups.length > 0 && (
-                <div className="flex flex-col gap-4 pt-4">
-                  {chipGroups.map((group) => (
-                    <div key={group.label} className="flex flex-col gap-2">
-                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
-                        {group.label}
-                      </h3>
-                      <div className="flex flex-wrap gap-1.5">
-                        {group.values.map((v) => (
-                          <span
-                            key={v}
-                            className="rounded-md bg-surface-container px-2.5 py-1 text-[13px] font-medium text-on-surface-variant"
-                          >
-                            {v}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </section>
-
-            {/* Land Details Table — only for LAND properties */}
-            {landDetails && (
-              <section className="mt-8">
-                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                  Land Details
-                </h2>
-                <div className="overflow-x-auto rounded-xl border border-outline-variant">
-                  <table className="w-full text-left text-sm">
-                    <thead>
-                      <tr className="bg-surface-container">
-                        <th className="px-4 py-3 font-semibold text-on-surface">
-                          Detail
-                        </th>
-                        <th className="px-4 py-3 font-semibold text-on-surface">
-                          Value
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-outline-variant bg-surface">
-                      {landDetails.map((section) => (
-                        <React.Fragment key={section.heading}>
-                          <tr className="bg-surface-container/50">
-                            <td
-                              colSpan={2}
-                              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant"
-                            >
-                              {section.heading}
-                            </td>
-                          </tr>
-                          {section.rows.map(([detail, value]) => (
-                            <tr
-                              key={detail}
-                              className="hover:bg-surface-container/30"
-                            >
-                              <td className="px-4 py-3 text-on-surface-variant">
-                                {detail}
-                              </td>
-                              <td className="px-4 py-3 font-medium text-on-surface">
-                                {value}
-                              </td>
-                            </tr>
-                          ))}
-                        </React.Fragment>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </section>
-            )}
-
-            {/* Seller-defined custom specs tables */}
-            {property.customSpecs && property.customSpecs.length > 0 && (
-              <section className="mt-8">
-                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                  Additional Specifications
-                </h2>
-                <div className="flex flex-col gap-6">
-                  {property.customSpecs.map((table, tIdx) => (
-                    <div key={tIdx}>
-                      {table.heading && (
-                        <h3 className="mb-2 text-sm font-bold uppercase tracking-wider text-on-surface-variant">
-                          {table.heading}
-                        </h3>
-                      )}
-                      <div className="overflow-x-auto rounded-xl border border-outline-variant">
-                        <table className="w-full text-left text-sm">
-                          <thead>
-                            <tr className="bg-surface-container">
-                              <th className="px-4 py-3 font-semibold text-on-surface">
-                                Detail
-                              </th>
-                              <th className="px-4 py-3 font-semibold text-on-surface">
-                                Value
-                              </th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y divide-outline-variant bg-surface">
-                            {table.rows.map(([detail, value], rIdx) => (
-                              <tr
-                                key={rIdx}
-                                className="hover:bg-surface-container/30"
-                              >
-                                <td className="px-4 py-3 text-on-surface-variant">
-                                  {detail}
-                                </td>
-                                <td className="px-4 py-3 font-medium text-on-surface">
-                                  {value}
-                                </td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
             {/* Location details */}
-            {locationSpecs.length > 0 && (
+            {locationSpecs.some(([, value]) => Boolean(value)) && (
               <section className="mt-8">
                 <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
                   Location
@@ -598,6 +382,88 @@ export default async function ListingDetailPage({ params }: PageProps) {
                       </div>
                     ))}
                 </dl>
+              </section>
+            )}
+
+            {/* Specifications */}
+            {allSpecs.some(([, value]) => Boolean(value)) && (
+              <section className="mt-8">
+                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                  Specifications
+                </h2>
+                <dl className="divide-y divide-outline-variant">
+                  {allSpecs
+                    .filter(([, value]) => value)
+                    .map(([label, value]) => (
+                      <div
+                        key={label}
+                        className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
+                      >
+                        <dt className="text-sm text-on-surface-variant">
+                          {label}
+                        </dt>
+                        <dd className="text-sm font-medium text-on-surface">
+                          {value as string}
+                        </dd>
+                      </div>
+                    ))}
+                </dl>
+                {chipGroups.length > 0 && (
+                  <div className="flex flex-col gap-4 pt-4">
+                    {chipGroups.map((group) => (
+                      <div key={group.label} className="flex flex-col gap-2">
+                        <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
+                          {group.label}
+                        </h3>
+                        <div className="flex flex-wrap gap-1.5">
+                          {group.values.map((v) => (
+                            <span
+                              key={v}
+                              className="rounded-md bg-surface-container px-2.5 py-1 text-[13px] font-medium text-on-surface-variant"
+                            >
+                              {v}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </section>
+            )}
+
+            {/* Seller-defined custom specs */}
+            {property.customSpecs && property.customSpecs.length > 0 && (
+              <section className="mt-8">
+                
+                <div className="flex flex-col gap-6">
+                  {property.customSpecs.map((table, tIdx) => (
+                    <div key={tIdx}>
+                      {table.heading && (
+                        <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                          {table.heading}
+                        </h2>
+                      )}
+                      <dl className="divide-y divide-outline-variant">
+                        {table.rows
+                          .filter(([detail, value]) => detail || value)
+                          .map(([detail, value], rIdx) => (
+                            <div
+                              key={rIdx}
+                              className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
+                            >
+                              <dt className="text-sm text-on-surface-variant">
+                                {detail}
+                              </dt>
+                              <dd className="text-sm font-medium text-on-surface">
+                                {value}
+                              </dd>
+                            </div>
+                          ))}
+                      </dl>
+                    </div>
+                  ))}
+                </div>
               </section>
             )}
           </div>

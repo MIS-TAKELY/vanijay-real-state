@@ -1,6 +1,7 @@
 "use client";
 import {
   Button,
+  cn,
   Combobox,
   FACING_DIRECTIONS,
   Icon,
@@ -129,6 +130,46 @@ const CS_LABELS: Record<string, string> = {
   NEWLY_BUILT: "Newly Built",
 };
 
+/* ── Size units (conversion factors to sq ft) ────────────────────────
+ * The API stores & filters size in sq ft (`landArea.totalSqFt`), so the
+ * URL `minS`/`maxS` values are always sq ft. The selected unit only drives
+ * how the quick-bar inputs display/interpret the value. Factors mirror the
+ * listing wizard (`@repo/ui` PRICE_UNITS / UNIT_PART conversion rates). */
+
+const SIZE_UNITS = [
+  { key: "sqft", label: "Sq. ft", sqFt: 1 },
+  { key: "sqm", label: "Sq. m", sqFt: 1 / 0.092903 },
+  { key: "ropani", label: "Ropani", sqFt: 342.25 * 16 },
+  { key: "aana", label: "Aana", sqFt: 342.25 },
+  { key: "paisa", label: "Paisa", sqFt: 342.25 / 4 },
+  { key: "daam", label: "Daam", sqFt: 342.25 / 16 },
+  { key: "bigha", label: "Bigha", sqFt: 364.5 * 20 },
+  { key: "katha", label: "Katha", sqFt: 364.5 },
+  { key: "dhur", label: "Dhur", sqFt: 364.5 / 20 },
+];
+
+const DEFAULT_SIZE_UNIT = "sqft";
+
+const sizeUnitFactor = (unit: string): number =>
+  SIZE_UNITS.find((u) => u.key === unit)?.sqFt ?? 1;
+
+/** Format an sq-ft value for display in `unit` ("" when empty/invalid). */
+const formatSizeInUnit = (sqFt: string, unit: string): string => {
+  if (!sqFt) return "";
+  const n = Number(sqFt);
+  if (!Number.isFinite(n)) return "";
+  const rounded = Math.round((n / sizeUnitFactor(unit)) * 10000) / 10000;
+  return String(rounded);
+};
+
+/** Convert a value typed in `unit` to sq ft ("" when empty/invalid). */
+const toSqFt = (txt: string, unit: string): string => {
+  if (txt.trim() === "") return "";
+  const n = Number(txt.trim());
+  if (!Number.isFinite(n) || n < 0) return "";
+  return String(Math.round(n * sizeUnitFactor(unit) * 10000) / 10000);
+};
+
 /* ── Types ─────────────────────────────────────────────────────────── */
 
 interface ActiveFilter {
@@ -144,12 +185,21 @@ export function SearchFilters() {
   const searchParams = useSearchParams();
 
   /* --- Quick-bar state (always visible) --- */
-  const [query, setQuery] = useState(searchParams.get("q") ?? "");
   const [type, setType] = useState(searchParams.get("type") ?? "all");
   const [price, setPrice] = useState(searchParams.get("pr") ?? "any");
   const [district, setDistrict] = useState(searchParams.get("dist") ?? "any");
   const [sizeMin, setSizeMin] = useState(searchParams.get("minS") ?? "");
   const [sizeMax, setSizeMax] = useState(searchParams.get("maxS") ?? "");
+  const [unit, setUnit] = useState(
+    searchParams.get("unit") ?? DEFAULT_SIZE_UNIT,
+  );
+  /* Display text for the size inputs, interpreted in the selected unit */
+  const [sizeMinTxt, setSizeMinTxt] = useState(() =>
+    formatSizeInUnit(sizeMin, unit),
+  );
+  const [sizeMaxTxt, setSizeMaxTxt] = useState(() =>
+    formatSizeInUnit(sizeMax, unit),
+  );
 
   /* --- Advanced panel state (collapsed by default on desktop) --- */
   const [panelOpen, setPanelOpen] = useState(false);
@@ -183,7 +233,6 @@ export function SearchFilters() {
   });
 
   /* Debounce refs */
-  const pendingQuery = useRef(query);
   const pendingSizeMin = useRef(sizeMin);
   const pendingSizeMax = useRef(sizeMax);
   const pendingMunicipality = useRef(municipality);
@@ -216,13 +265,14 @@ export function SearchFilters() {
       };
 
       /* Quick-bar params */
-      setP("q", pendingQuery.current);
       const t = overrides.type ?? type;
       if (t !== "all") params.set("type", t);
       const p = overrides.pr ?? price;
       if (p !== "any") params.set("pr", p);
       const d = overrides.dist ?? district;
       if (d !== "any") params.set("dist", d);
+      const u = overrides.unit !== undefined ? overrides.unit : unit;
+      if (u && u !== DEFAULT_SIZE_UNIT) params.set("unit", u);
       setP("minS", pendingSizeMin.current);
       setP("maxS", pendingSizeMax.current);
 
@@ -283,6 +333,7 @@ export function SearchFilters() {
       type,
       price,
       district,
+      unit,
       facing,
       roadType,
       constructionStatus,
@@ -298,7 +349,6 @@ export function SearchFilters() {
   useEffect(() => {
     const timer = setTimeout(() => {
       navigateWithParams({
-        q: query,
         minS: sizeMin,
         maxS: sizeMax,
         mun: municipality,
@@ -309,7 +359,6 @@ export function SearchFilters() {
     }, 400);
     return () => clearTimeout(timer);
   }, [
-    query,
     sizeMin,
     sizeMax,
     municipality,
@@ -320,14 +369,13 @@ export function SearchFilters() {
   ]);
 
   useEffect(() => {
-    pendingQuery.current = query;
     pendingSizeMin.current = sizeMin;
     pendingSizeMax.current = sizeMax;
     pendingMunicipality.current = municipality;
     pendingWard.current = ward;
     pendingBedrooms.current = bedrooms;
     pendingBathrooms.current = bathrooms;
-  }, [query, sizeMin, sizeMax, municipality, ward, bedrooms, bathrooms]);
+  }, [sizeMin, sizeMax, municipality, ward, bedrooms, bathrooms]);
 
   /* ── Handlers ─────────────────────────────────────────────────── */
 
@@ -378,13 +426,33 @@ export function SearchFilters() {
     setMobileOpen(false);
   };
 
+  const handleUnitChange = (unitKey: string) => {
+    setUnit(unitKey);
+    setSizeMinTxt(formatSizeInUnit(sizeMin, unitKey));
+    setSizeMaxTxt(formatSizeInUnit(sizeMax, unitKey));
+    navigateWithParams({
+      unit: unitKey === DEFAULT_SIZE_UNIT ? null : unitKey,
+    });
+  };
+
+  const handleSizeMinChange = (txt: string) => {
+    setSizeMinTxt(txt);
+    setSizeMin(toSqFt(txt, unit));
+  };
+
+  const handleSizeMaxChange = (txt: string) => {
+    setSizeMaxTxt(txt);
+    setSizeMax(toSqFt(txt, unit));
+  };
+
   const handleClear = () => {
-    setQuery("");
     setType("all");
     setPrice("any");
     setDistrict("any");
     setSizeMin("");
     setSizeMax("");
+    setSizeMinTxt("");
+    setSizeMaxTxt("");
     setMunicipality("");
     setWard("");
     setBedrooms("");
@@ -397,7 +465,6 @@ export function SearchFilters() {
     setFurnishing("any");
     setSubCategory("all");
     setAmenities([]);
-    pendingQuery.current = "";
     pendingSizeMin.current = "";
     pendingSizeMax.current = "";
     pendingMunicipality.current = "";
@@ -412,8 +479,6 @@ export function SearchFilters() {
   /* ── Active filter chips ─────────────────────────────────────────── */
 
   const activeFilters: ActiveFilter[] = [];
-  const spQ = searchParams.get("q");
-  if (spQ) activeFilters.push({ key: "q", label: "Search", value: `"${spQ}"` });
   const spType = searchParams.get("type");
   if (spType && spType !== "all")
     activeFilters.push({
@@ -533,7 +598,7 @@ export function SearchFilters() {
               value={municipality}
               onChange={(e) => setMunicipality(e.target.value)}
               placeholder="e.g. Kathmandu Metropolitan"
-              className="h-9 text-sm"
+              className="h-9 text-sm rounded-lg border border-outline-variant bg-white"
             />
           </div>
           <div>
@@ -550,7 +615,7 @@ export function SearchFilters() {
               value={ward}
               onChange={(e) => setWard(e.target.value)}
               placeholder="e.g. 14"
-              className="h-9 text-sm"
+              className="h-9 text-sm rounded-lg border border-outline-variant bg-white"
             />
           </div>
         </div>
@@ -564,7 +629,7 @@ export function SearchFilters() {
               Main Category
             </Label>
             <Select value={type} onValueChange={handleTypeChange}>
-              <SelectTrigger className="h-9 text-sm">
+              <SelectTrigger className="h-9 text-sm rounded-lg border border-outline-variant bg-white">
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
@@ -585,7 +650,7 @@ export function SearchFilters() {
                 value={subCategory}
                 onValueChange={(v) => handleSelectChange("subCategory", v)}
               >
-                <SelectTrigger className="h-9 text-sm">
+                <SelectTrigger className="h-9 text-sm rounded-lg border border-outline-variant bg-white">
                   <SelectValue placeholder="All Sub-types" />
                 </SelectTrigger>
                 <SelectContent>
@@ -618,7 +683,7 @@ export function SearchFilters() {
               value={bedrooms}
               onChange={(e) => setBedrooms(e.target.value)}
               placeholder="Min"
-              className="h-9 text-sm"
+              className="h-9 text-sm rounded-lg border border-outline-variant bg-white"
             />
           </div>
           <div>
@@ -635,7 +700,7 @@ export function SearchFilters() {
               value={bathrooms}
               onChange={(e) => setBathrooms(e.target.value)}
               placeholder="Min"
-              className="h-9 text-sm"
+              className="h-9 text-sm rounded-lg border border-outline-variant bg-white"
             />
           </div>
           <div className="col-span-2 sm:col-span-1">
@@ -646,7 +711,7 @@ export function SearchFilters() {
               value={furnishing}
               onValueChange={(v) => handleSelectChange("furnishing", v)}
             >
-              <SelectTrigger className="h-9 text-sm">
+              <SelectTrigger className="h-9 text-sm rounded-lg border border-outline-variant bg-white">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
@@ -666,7 +731,7 @@ export function SearchFilters() {
               value={constructionStatus}
               onValueChange={(v) => handleSelectChange("constructionStatus", v)}
             >
-              <SelectTrigger className="h-9 text-sm">
+              <SelectTrigger className="h-9 text-sm rounded-lg border border-outline-variant bg-white">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
@@ -692,7 +757,7 @@ export function SearchFilters() {
               value={facing}
               onValueChange={(v) => handleSelectChange("facing", v)}
             >
-              <SelectTrigger className="h-9 text-sm">
+              <SelectTrigger className="h-9 text-sm rounded-lg border border-outline-variant bg-white">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
@@ -712,7 +777,7 @@ export function SearchFilters() {
               value={roadType}
               onValueChange={(v) => handleSelectChange("roadType", v)}
             >
-              <SelectTrigger className="h-9 text-sm">
+              <SelectTrigger className="h-9 text-sm rounded-lg border border-outline-variant bg-white">
                 <SelectValue placeholder="Any" />
               </SelectTrigger>
               <SelectContent>
@@ -797,51 +862,21 @@ export function SearchFilters() {
           aria-label="Filter property search results"
           onSubmit={(e) => {
             e.preventDefault();
-            navigateWithParams({ q: query, minS: sizeMin, maxS: sizeMax });
+            navigateWithParams({ minS: sizeMin, maxS: sizeMax });
           }}
-          className="flex flex-wrap items-center gap-x-3 gap-y-2 rounded-xl border border-outline-variant bg-surface px-3 py-2 shadow-sm transition-[box-shadow,border-color] duration-200 focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/30"
+          className="flex flex-wrap items-end gap-x-4 gap-y-3 rounded-2xl border border-outline-variant bg-surface px-4 py-3 shadow-sm"
         >
-          {/* Search */}
-          {/* <div className="flex min-w-[180px] flex-1 items-center gap-2">
-            <Icon
-              name="search"
-              className="text-on-surface-variant text-[18px]"
-            />
-            <Input
-              type="text"
-              name="q"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              aria-label="Search by location, property ID, or keyword"
-              placeholder="District, area or keyword"
-              className="border-0 bg-transparent text-sm shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
-            />
-            {query && (
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery("");
-                  navigateWithParams({ q: "" });
-                }}
-                aria-label="Clear search"
-                className="shrink-0 rounded p-0.5 text-on-surface-variant/60 hover:text-on-surface"
-              >
-                <Icon name="close" className="text-[14px]" />
-              </button>
-            )}
-          </div> */}
-
           {/* Type */}
-          <div className="min-w-[120px] border-l border-outline-variant/70 px-3">
-            <Label htmlFor="filter-type" className="sr-only">
-              Property Type
-            </Label>
+          <FilterField label="Type" icon="home">
             <Select value={type} onValueChange={handleTypeChange}>
               <SelectTrigger
                 id="filter-type"
-                className={`h-9 w-full border-0 bg-transparent text-xs px-2 shadow-none focus-visible:ring-0 ${type !== "all" ? "font-medium text-gold-deep" : ""}`}
+                className={cn(
+                  "h-9 w-full min-w-[130px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0",
+                  type !== "all" && "border-gold/50 font-medium text-gold-deep",
+                )}
               >
-                <SelectValue placeholder="Type" />
+                <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
                 {TYPE_OPTIONS.map((o) => (
@@ -851,13 +886,10 @@ export function SearchFilters() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </FilterField>
 
           {/* Price */}
-          <div className="min-w-[120px] border-l border-outline-variant/70 pl-3">
-            <Label htmlFor="filter-price" className="sr-only">
-              Price Range
-            </Label>
+          <FilterField label="Price" icon="sell">
             <Select
               value={price}
               onValueChange={(v) => {
@@ -867,9 +899,12 @@ export function SearchFilters() {
             >
               <SelectTrigger
                 id="filter-price"
-                className={`h-9 w-full border-0 bg-transparent px-2 text-xs shadow-none focus-visible:ring-0 ${price !== "any" ? "font-medium text-gold-deep" : ""}`}
+                className={cn(
+                  "h-9 w-full min-w-[130px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0",
+                  price !== "any" && "border-gold/50 font-medium text-gold-deep",
+                )}
               >
-                <SelectValue placeholder="Price" />
+                <SelectValue placeholder="Any Price" />
               </SelectTrigger>
               <SelectContent>
                 {PRICE_OPTIONS.map((o) => (
@@ -879,60 +914,75 @@ export function SearchFilters() {
                 ))}
               </SelectContent>
             </Select>
-          </div>
+          </FilterField>
 
           {/* District */}
-          <div className="min-w-[140px] border-l border-outline-variant/70 pl-3">
-            <Label id="filter-district" className="sr-only">
-              District
-            </Label>
+          <FilterField label="District" icon="location_on">
             <Combobox
-              aria-labelledby="filter-district"
+              aria-label="District"
               value={district}
               onValueChange={(v) => {
                 setDistrict(v);
                 navigateWithParams({ dist: v });
               }}
               options={DISTRICT_OPTIONS}
-              placeholder="District"
+              placeholder="All Districts"
               searchPlaceholder="Search districts…"
-              triggerClassName={`h-9 w-full border-0 bg-transparent px-2 text-xs shadow-none focus-visible:ring-0 ${district !== "any" ? "font-medium text-gold-deep" : ""}`}
+              triggerClassName={cn(
+                "h-9 w-full min-w-[140px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0",
+                district !== "any" && "border-gold/50 font-medium text-gold-deep",
+              )}
             />
-          </div>
+          </FilterField>
 
           {/* Size */}
-          <div className="flex items-center gap-1 border-l border-outline-variant/70 pl-3">
-            <div>
+          <FilterField label="Size" icon="expand">
+            <div className="flex items-center gap-1.5">
               <Label htmlFor="size-min" className="sr-only">
                 Min size
               </Label>
               <Input
                 id="size-min"
                 type="text"
-                value={sizeMin}
-                onChange={(e) => setSizeMin(e.target.value)}
+                inputMode="decimal"
+                value={sizeMinTxt}
+                onChange={(e) => handleSizeMinChange(e.target.value)}
                 placeholder="Min"
-                className="h-9 w-14 border-0 bg-transparent px-2 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
+                className="h-9 w-[4.5rem] rounded-lg border border-outline-variant bg-white px-2.5 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
               />
-            </div>
-            <span className="text-xs text-on-surface-variant">–</span>
-            <div>
+              <span className="text-xs text-on-surface-variant">–</span>
               <Label htmlFor="size-max" className="sr-only">
                 Max size
               </Label>
               <Input
                 id="size-max"
                 type="text"
-                value={sizeMax}
-                onChange={(e) => setSizeMax(e.target.value)}
+                inputMode="decimal"
+                value={sizeMaxTxt}
+                onChange={(e) => handleSizeMaxChange(e.target.value)}
                 placeholder="Max"
-                className="h-9 w-14 border-0 bg-transparent px-2 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
+                className="h-9 w-[4.5rem] rounded-lg border border-outline-variant bg-white px-2.5 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
               />
+              <Select value={unit} onValueChange={handleUnitChange}>
+                <SelectTrigger
+                  id="filter-size-unit"
+                  className="h-9 w-[6.5rem] shrink-0 rounded-lg border border-outline-variant bg-white px-2.5 text-xs shadow-none focus-visible:ring-0"
+                >
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {SIZE_UNITS.map((o) => (
+                    <SelectItem key={o.key} value={o.key}>
+                      {o.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
-          </div>
+          </FilterField>
 
-          {/* All Filters toggle */}
-          <div className="border-l border-outline-variant/70 pl-3">
+          {/* Actions */}
+          <div className="ml-auto flex items-center gap-2 self-end">
             <Button
               type="button"
               variant="ghost"
@@ -943,7 +993,7 @@ export function SearchFilters() {
                   setPanelOpen((prev) => !prev);
                 }
               }}
-              className="h-9 shrink-0 rounded-md px-3 text-xs font-semibold"
+              className="h-9 shrink-0 rounded-lg border border-outline-variant bg-white px-3 text-xs font-semibold text-on-surface hover:border-gold/50 hover:text-gold-deep"
             >
               <Icon name="tune" className="mr-1.5 text-[14px]" />
               Filters
@@ -957,17 +1007,13 @@ export function SearchFilters() {
                 className="ml-1 text-[14px]"
               />
             </Button>
-          </div>
-
-          {/* Actions */}
-          <div className="ml-auto flex items-center gap-2">
             <SaveSearchButton />
             {activeFilters.length > 0 && (
               <Button
                 type="button"
                 variant="ghost"
                 onClick={handleClear}
-                className="h-9 shrink-0 rounded-md px-3 text-xs font-semibold text-on-surface-variant hover:text-on-surface"
+                className="h-9 shrink-0 rounded-lg px-3 text-xs font-semibold text-on-surface-variant hover:text-on-surface"
               >
                 <Icon name="close" className="text-[14px]" />
                 Clear all
@@ -1089,6 +1135,28 @@ function FilterSection({
           {title}
         </h3>
       </div>
+      {children}
+    </div>
+  );
+}
+
+function FilterField({
+  label,
+  icon,
+  className,
+  children,
+}: {
+  label: string;
+  icon: string;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className={cn("flex flex-col gap-1.5", className)}>
+      <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-on-surface-variant">
+        <Icon name={icon} className="text-[13px]" />
+        {label}
+      </span>
       {children}
     </div>
   );

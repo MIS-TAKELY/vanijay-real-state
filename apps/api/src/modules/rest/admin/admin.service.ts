@@ -1020,6 +1020,124 @@ export class AdminService {
     });
   }
 
+  /**
+   * Transfer a property to a different user. Validates that the target user
+   * exists before reassigning ownership.
+   */
+  async transferProperty(
+    actorId: string,
+    propertyId: string,
+    newOwnerId: string,
+  ) {
+    const property = await this.prisma.property.findUnique({
+      where: { id: propertyId },
+      select: { id: true, listingCode: true, title: true, ownerId: true },
+    });
+    if (!property) throw new NotFoundException(`Property ${propertyId} not found`);
+
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id: newOwnerId },
+      select: { id: true, name: true, email: true },
+    });
+    if (!targetUser)
+      throw new NotFoundException(`User ${newOwnerId} not found`);
+
+    if (property.ownerId === newOwnerId) {
+      throw new BadRequestException('Property already belongs to this user');
+    }
+
+    const updated = await this.prisma.property.update({
+      where: { id: propertyId },
+      data: { ownerId: newOwnerId },
+      include: {
+        owner: { select: { id: true, name: true, email: true } },
+      },
+    });
+
+    await this.audit(
+      actorId,
+      'transfer',
+      'property',
+      propertyId,
+      `Transferred property ${property.listingCode} from ${property.ownerId} to ${newOwnerId} (${targetUser.name || targetUser.email})`,
+    );
+
+    return updated;
+  }
+
+  /**
+   * Bulk-transfer multiple properties to a new owner in a single call.
+   * Returns a summary of successes and failures.
+   */
+  async bulkTransferProperties(
+    actorId: string,
+    propertyIds: string[],
+    newOwnerId: string,
+  ) {
+    if (!propertyIds.length) {
+      throw new BadRequestException('No property IDs provided');
+    }
+
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id: newOwnerId },
+      select: { id: true, name: true, email: true },
+    });
+    if (!targetUser)
+      throw new NotFoundException(`User ${newOwnerId} not found`);
+
+    const properties = await this.prisma.property.findMany({
+      where: { id: { in: propertyIds } },
+      select: { id: true, listingCode: true, ownerId: true },
+    });
+
+    const idSet = new Set(properties.map((p) => p.id));
+    const notFound = propertyIds.filter((id) => !idSet.has(id));
+
+    // Only update properties that actually belong to a different user.
+    const toUpdate = properties.filter((p) => p.ownerId !== newOwnerId);
+    const alreadyOwner = properties.filter((p) => p.ownerId === newOwnerId);
+
+    if (toUpdate.length > 0) {
+      await this.prisma.property.updateMany({
+        where: { id: { in: toUpdate.map((p) => p.id) } },
+        data: { ownerId: newOwnerId },
+      });
+    }
+
+    // Audit each transfer individually for a clear paper trail.
+    for (const p of toUpdate) {
+      await this.audit(
+        actorId,
+        'transfer',
+        'property',
+        p.id,
+        `Bulk transferred property ${p.listingCode} from ${p.ownerId} to ${newOwnerId} (${targetUser.name || targetUser.email})`,
+      );
+    }
+
+    return {
+      transferred: toUpdate.map((p) => p.id),
+      alreadyOwner: alreadyOwner.map((p) => p.id),
+      notFound,
+      targetUser: { id: targetUser.id, name: targetUser.name, email: targetUser.email },
+    };
+  }
+
+  /** Fetch transfer audit log entries for a specific property. */
+  async getPropertyTransfers(propertyId: string) {
+    return this.prisma.adminAuditLog.findMany({
+      where: {
+        entity: 'property',
+        entityId: propertyId,
+        action: 'transfer',
+      },
+      orderBy: { createdAt: 'desc' },
+      include: {
+        actor: { select: { id: true, name: true, email: true } },
+      },
+    });
+  }
+
   private async audit(
     actorId: string,
     action: string,

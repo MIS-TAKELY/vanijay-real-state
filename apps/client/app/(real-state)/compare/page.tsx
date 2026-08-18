@@ -256,7 +256,7 @@ function ComparePageContent() {
   /* ---- Empty / insufficient state ---- */
   if (!loading && properties.length < 2) {
     return (
-      <div className="mx-auto max-w-4xl px-4 py-8">
+      <div className="mx-auto max-w-container-max px-gutter py-8">
         <div className="mb-6 flex items-center justify-between">
           <h1 className="font-headline-md text-2xl font-bold text-on-surface">
             Compare Properties
@@ -382,7 +382,7 @@ function ComparePageContent() {
   ];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="mx-auto max-w-container-max px-gutter py-8">
       <div className="mb-6 flex items-center justify-between">
         <h1 className="font-headline-md text-2xl font-bold text-on-surface">
           Compare Properties

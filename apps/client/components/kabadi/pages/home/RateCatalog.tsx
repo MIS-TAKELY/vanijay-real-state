@@ -14,6 +14,7 @@ import {
   ToggleGroup,
   ToggleGroupItem,
 } from "@repo/ui";
+import type { KabadiCategoryData } from "lib/kabadi/api";
 import {
   categoryById,
   formatRate,
@@ -29,7 +30,11 @@ function normalize(text: string): string {
   return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
-export function RateCatalog() {
+interface RateCatalogProps {
+  categories?: KabadiCategoryData[];
+}
+
+export function RateCatalog({ categories }: RateCatalogProps) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
@@ -39,18 +44,56 @@ export function RateCatalog() {
     if (q) setQuery(q);
   }, []);
 
+  // Build display data from API or fallback to hardcoded
+  const displayCategories = useMemo(() => {
+    if (categories && categories.length > 0) {
+      return categories.map((c) => ({
+        id: c.slug as KabadiCategoryId,
+        name: c.name,
+        nepali: c.nepali ?? "",
+        icon: c.icon ?? "",
+        blurb: c.blurb ?? "",
+      }));
+    }
+    return KABADI_CATEGORIES;
+  }, [categories]);
+
+  const displayItems = useMemo(() => {
+    if (categories && categories.length > 0) {
+      return categories.flatMap((c) =>
+        c.items.map((i) => ({
+          id: i.id,
+          name: i.name,
+          nepali: i.nepali ?? undefined,
+          category: c.slug as KabadiCategoryId,
+          unit: i.unit.toLowerCase() as "kg" | "piece",
+          rate: Number(i.rate),
+          note: i.note ?? undefined,
+          popular: i.popular,
+        })),
+      );
+    }
+    return KABADI_ITEMS;
+  }, [categories]);
+
   const items = useMemo(() => {
     const q = normalize(query);
-    return KABADI_ITEMS.filter((item) => {
+    return displayItems.filter((item) => {
       const inCategory = filter === "all" || item.category === filter;
       if (!inCategory) return false;
       if (!q) return true;
+      const catMeta = displayCategories.find((c) => c.id === item.category);
       const haystack = normalize(
-        `${item.name} ${item.nepali ?? ""} ${categoryById(item.category).name}`,
+        `${item.name} ${item.nepali ?? ""} ${catMeta?.name ?? ""}`,
       );
       return haystack.includes(q);
     });
-  }, [query, filter]);
+  }, [query, filter, displayItems, displayCategories]);
+
+  const getCategoryName = (slug: string) => {
+    const cat = displayCategories.find((c) => c.id === slug);
+    return cat?.name ?? "";
+  };
 
   return (
     <section
@@ -106,7 +149,7 @@ export function RateCatalog() {
           >
             All items
           </ToggleGroupItem>
-          {KABADI_CATEGORIES.map((cat) => (
+          {displayCategories.map((cat) => (
             <ToggleGroupItem
               key={cat.id}
               value={cat.id}
@@ -152,12 +195,12 @@ export function RateCatalog() {
                           {item.nepali}
                         </span>
                       )}
-                      {item.note ?? categoryById(item.category).name}
+                      {item.note ?? getCategoryName(item.category)}
                     </p>
                   </TableCell>
                   <TableCell className="py-3.5 pr-5 text-right">
                     <p className="whitespace-nowrap font-data-table text-lg font-semibold text-kabadi-primary">
-                      {formatRate(item)}
+                      {formatRate({ rate: item.rate, unit: item.unit })}
                     </p>
                     <p className="font-label-sm text-label-sm text-kabadi-muted">
                       {item.unit === "kg" ? "per kilogram" : "per piece"}
@@ -171,7 +214,7 @@ export function RateCatalog() {
           {items.length === 0 && (
             <div className="p-12 text-center">
               <p className="text-base text-kabadi-muted">
-                No items match “{query}”. Try “copper”, “pet”, “fridge” or a
+                No items match &ldquo;{query}&rdquo;. Try &ldquo;copper&rdquo;, &ldquo;pet&rdquo;, &ldquo;fridge&rdquo; or a
                 Nepali name.
               </p>
             </div>

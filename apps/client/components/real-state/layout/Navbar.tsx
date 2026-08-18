@@ -71,6 +71,7 @@ const searchForm = (
 const MOBILE_LINKS = [
   { label: "Home", href: "/", icon: "home" },
   { label: "Compare", href: "/compare", icon: "swap_horiz" },
+  { label: "Convertor", href: "/convertor", icon: "calculate" },
   { label: "Cart", href: "/cart", icon: "add_shopping_cart" },
 ] as const;
 
@@ -129,8 +130,8 @@ export function Navbar() {
   return (
     <header className="w-full top-0 sticky z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
       <nav className="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-16 sm:h-20">
-        {/* Logo (links home) */}
-        <div className="flex items-center gap-1">
+        {/* Logo (links home) + minimal app-switcher chevron */}
+        <div className="flex items-center gap-0.5">
           <Link
             href="/"
             className="group flex items-center "
@@ -155,6 +156,38 @@ export function Navbar() {
               />
             </span>
           </Link>
+
+          {/* Apps switcher (minimal) — a down arrow beside the logo */}
+          <DropdownMenu open={appsOpen} onOpenChange={setAppsOpen}>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon-sm"
+                aria-haspopup="menu"
+                aria-expanded={appsOpen}
+                aria-label="Switch app"
+                className="cursor-pointer rounded-full text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+              >
+                <ChevronDown
+                  className={cn(
+                    "size-4 transition-transform duration-200",
+                    appsOpen && "rotate-180",
+                  )}
+                />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent
+              align="start"
+              sideOffset={8}
+              className="w-[300px] overflow-hidden rounded-2xl border-outline-variant bg-surface p-0 shadow-xl sm:w-[340px]"
+            >
+              <p className="flex items-center gap-2 px-4 pb-2 pt-4 font-label-sm text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+                <Icon name="grid_view" className="text-[14px]" />
+                Switch app
+              </p>
+              <AppModeStrip compact />
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
 
         {/* Search bar — always visible, shrinks to fill on mobile */}
@@ -195,45 +228,6 @@ export function Navbar() {
                 }
               />
             )}
-          </div>
-
-          {/* Apps switcher (md+) — on mobile it collapses into the side menu */}
-          <div className="mr-1 hidden md:block sm:mr-2">
-            <DropdownMenu open={appsOpen} onOpenChange={setAppsOpen}>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  aria-haspopup="menu"
-                  aria-expanded={appsOpen}
-                  aria-label="Switch app"
-                  className="h-9 gap-2 rounded-full border-outline-variant bg-surface px-3 text-sm font-medium text-on-surface shadow-xs transition-all duration-200 hover:scale-[1.03] hover:border-gold/60 hover:bg-gold-soft/40 focus-visible:ring-2 focus-visible:ring-gold/50 focus-visible:ring-offset-2 focus-visible:ring-offset-surface cursor-pointer"
-                >
-                  <Icon
-                    name="grid_view"
-                    className="text-[18px] text-gold-deep"
-                  />
-                  <span className="hidden lg:inline">Apps</span>
-                  <ChevronDown
-                    className={cn(
-                      "size-4 text-on-surface-variant transition-transform duration-200",
-                      appsOpen && "rotate-180",
-                    )}
-                  />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent
-                align="end"
-                sideOffset={8}
-                className="w-[300px] overflow-hidden rounded-2xl border-outline-variant bg-surface p-0 shadow-xl sm:w-[340px]"
-              >
-                <p className="flex items-center gap-2 px-4 pb-2 pt-4 font-label-sm text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
-                  <Icon name="grid_view" className="text-[14px]" />
-                  Switch app
-                </p>
-                <AppModeStrip compact />
-              </DropdownMenuContent>
-            </DropdownMenu>
           </div>
 
           {/* Cart (md+) — on mobile it lives in the side menu */}

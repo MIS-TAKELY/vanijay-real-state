@@ -1111,6 +1111,14 @@ model KabadiCategory {
     sortOrder Int          @default(0)
     published Boolean      @default(true)
 
+    // SEO fields (managed from admin CMS)
+    seoTitle       String?
+    seoDescription String?
+    seoKeywords    String?  // comma-separated keywords
+    heroImage      String?  // hero banner for the category detail page
+    body           String?  @db.Text // long-form rich description (HTML)
+    faq            Json?    // [{ q: string, a: string }]
+
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
 

@@ -30,64 +30,7 @@ interface ChecklistItem {
   hint: string;
 }
 
-/** Build categorized land-detail rows from the wizard draft for preview.
- *  Mirrors the buildLandDetails() on the public [slug] page so sellers see
- *  exactly what buyers will see. Returns null for non-land types or when
- *  no land fields are populated. */
-function buildLandDetailsFromDraft(draft: ListingDraft) {
-  if (!isLandType(draft.subCategory)) return null;
-  const label = (v: string) => (v ? labelEnum(v, {}) : "");
-
-  type Row = [string, string];
-  type Section = { heading: string; rows: Row[] };
-  const sections: Section[] = [];
-
-  // Plot Details
-  const plotRows: Row[] = [];
-  if (draft.plotShape) plotRows.push(["Plot Shape", label(draft.plotShape)]);
-  if (draft.frontageFt) plotRows.push(["Frontage", `${draft.frontageFt} ft`]);
-  if (draft.depthFt) plotRows.push(["Depth", `${draft.depthFt} ft`]);
-  if (draft.boundaryWall) plotRows.push(["Boundary Wall", label(draft.boundaryWall)]);
-  if (draft.landClearance) plotRows.push(["Cleared / Fenced", "Yes"]);
-  if (draft.isCornerPlot) plotRows.push(["Corner Plot", "Yes"]);
-  if (plotRows.length) sections.push({ heading: "Plot Details", rows: plotRows });
-
-  // Land Classification
-  const classRows: Row[] = [];
-  if (draft.landClassification) classRows.push(["Land Classification", label(draft.landClassification)]);
-  if (draft.soilType) classRows.push(["Soil Type", label(draft.soilType)]);
-  if (draft.terrain) classRows.push(["Terrain", label(draft.terrain)]);
-  if (draft.zoning) classRows.push(["Zoning", label(draft.zoning)]);
-  if (classRows.length) sections.push({ heading: "Land Classification", rows: classRows });
-
-  // Utilities & Infrastructure
-  const utilRows: Row[] = [];
-  if (draft.electricityAvailable) utilRows.push(["Electricity", "Available"]);
-  if (draft.waterSources.length) utilRows.push(["Water Sources", draft.waterSources.map(label).join(", ")]);
-  if (draft.irrigationType) utilRows.push(["Irrigation", label(draft.irrigationType)]);
-  if (draft.fencing) utilRows.push(["Fencing", label(draft.fencing)]);
-  if (utilRows.length) sections.push({ heading: "Utilities & Infrastructure", rows: utilRows });
-
-  // Agricultural
-  const agriRows: Row[] = [];
-  if (draft.currentCrops) agriRows.push(["Current Crops", draft.currentCrops]);
-  if (draft.annualYield) agriRows.push(["Annual Yield", draft.annualYield]);
-  if (draft.farmStructures.length) agriRows.push(["Farm Structures", draft.farmStructures.map(label).join(", ")]);
-  if (agriRows.length) sections.push({ heading: "Agricultural", rows: agriRows });
-
-  // Development & Usage
-  const devRows: Row[] = [];
-  if (draft.setbackAvailable) devRows.push(["Setback", draft.setbackText ? `Yes — ${draft.setbackText}` : "Yes"]);
-  if (draft.suitableFor.length) devRows.push(["Suitable For", draft.suitableFor.map(label).join(", ")]);
-  if (draft.parkingSpaces) devRows.push(["Parking Spaces", draft.parkingSpaces]);
-  if (draft.isNegotiable) devRows.push(["Negotiable", "Yes"]);
-  if (devRows.length) sections.push({ heading: "Development & Usage", rows: devRows });
-
-  return sections.length ? sections : null;
-}
-
 export function StepReview({ draft }: StepProps) {
-  const landDetails = buildLandDetailsFromDraft(draft);
 
   const cleanDesc = stripHtml(draft.description);
   const gradient = TYPE_GRADIENTS[draft.subCategory] ?? FALLBACK_GRADIENT;
@@ -277,44 +220,6 @@ export function StepReview({ draft }: StepProps) {
 
       {/* Checklist sidebar — reflects the actual draft */}
 
-      {/* Land Details preview table — only for land property types */}
-      {landDetails && (
-        <div className="mt-md lg:col-span-3">
-          <h4 className="mb-sm font-headline-md text-base font-semibold text-on-surface">
-            Land Details Preview
-          </h4>
-          <p className="mb-sm text-[12px] text-on-surface-variant">
-            This is how your land details will appear on the public listing page.
-          </p>
-          <div className="overflow-x-auto rounded-xl border border-outline-variant">
-            <table className="w-full text-left text-sm">
-              <thead>
-                <tr className="bg-surface-container">
-                  <th className="px-4 py-3 font-semibold text-on-surface">Detail</th>
-                  <th className="px-4 py-3 font-semibold text-on-surface">Value</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-outline-variant bg-surface">
-                {landDetails.map((section) => (
-                  <React.Fragment key={section.heading}>
-                    <tr className="bg-surface-container/50">
-                      <td colSpan={2} className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">
-                        {section.heading}
-                      </td>
-                    </tr>
-                    {section.rows.map(([detail, value]) => (
-                      <tr key={detail}>
-                        <td className="px-4 py-3 text-on-surface-variant">{detail}</td>
-                        <td className="px-4 py-3 font-medium text-on-surface">{value}</td>
-                      </tr>
-                    ))}
-                  </React.Fragment>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
 
 
       <div className="flex flex-col gap-md">

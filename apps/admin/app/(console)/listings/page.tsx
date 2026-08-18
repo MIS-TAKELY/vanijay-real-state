@@ -5,7 +5,15 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Button,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
   Input,
+  Label,
   Loader2,
   MAIN_CATEGORY_LABELS,
   Select,
@@ -18,7 +26,14 @@ import {
 import { cn } from "@repo/ui";
 import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
-import { adminModerateProperty, adminProperties, AdminProperty } from "lib/api";
+import {
+  adminBulkTransferProperties,
+  adminModerateProperty,
+  adminProperties,
+  adminUsers,
+  type AdminProperty,
+  type AdminUser,
+} from "lib/api";
 
 const STATUS_OPTIONS = [
   { label: "All", value: "" },
@@ -60,6 +75,88 @@ export default function ListingsPage() {
   const [take, setTake] = useState(10);
   const [skip, setSkip] = useState(0);
   const [savingId, setSavingId] = useState<string | null>(null);
+
+  /* ── Row selection ── */
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const toggleSelect = (id: string) =>
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  const toggleAll = () =>
+    setSelected((prev) =>
+      prev.size === rows.length ? new Set() : new Set(rows.map((r) => r.id)),
+    );
+
+  /* ── Bulk transfer dialog ── */
+  const [bulkOpen, setBulkOpen] = useState(false);
+  const [bulkUserSearch, setBulkUserSearch] = useState("");
+  const [bulkUserResults, setBulkUserResults] = useState<AdminUser[]>([]);
+  const [bulkSelectedUser, setBulkSelectedUser] = useState<AdminUser | null>(null);
+  const [bulkUserSearching, setBulkUserSearching] = useState(false);
+  const [bulkTransferring, setBulkTransferring] = useState(false);
+  const [bulkError, setBulkError] = useState<string | null>(null);
+  const [bulkSuccess, setBulkSuccess] = useState(false);
+  const [bulkConfirmCode, setBulkConfirmCode] = useState("");
+
+  /* ── User search for bulk transfer ── */
+  useEffect(() => {
+    if (!bulkOpen) return;
+    if (bulkUserSearch.trim().length < 2) {
+      setBulkUserResults([]);
+      return;
+    }
+    let cancelled = false;
+    setBulkUserSearching(true);
+    const timer = setTimeout(() => {
+      adminUsers(bulkUserSearch)
+        .then((users) => { if (!cancelled) setBulkUserResults(users); })
+        .catch(() => {})
+        .finally(() => { if (!cancelled) setBulkUserSearching(false); });
+    }, 300);
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, [bulkUserSearch, bulkOpen]);
+
+  const resetBulkDialog = () => {
+    setBulkUserSearch("");
+    setBulkUserResults([]);
+    setBulkSelectedUser(null);
+    setBulkError(null);
+    setBulkSuccess(false);
+    setBulkConfirmCode("");
+  };
+
+  const handleBulkTransfer = async () => {
+    if (!bulkSelectedUser || selected.size === 0) return;
+    setBulkTransferring(true);
+    setBulkError(null);
+    setBulkSuccess(false);
+    try {
+      const result = await adminBulkTransferProperties(
+        Array.from(selected),
+        bulkSelectedUser.id,
+      );
+      setBulkSuccess(true);
+      setSelected(new Set());
+      resetBulkDialog();
+      toast.success(
+        `Transferred ${result.transferred.length} properties to ${bulkSelectedUser.name || bulkSelectedUser.email}`,
+      );
+      if (result.alreadyOwner.length > 0) {
+        toast.info(`${result.alreadyOwner.length} already belonged to this user`);
+      }
+      if (result.notFound.length > 0) {
+        toast.warning(`${result.notFound.length} properties not found`);
+      }
+      load(); // refresh table
+      setTimeout(() => { setBulkOpen(false); setBulkSuccess(false); }, 1500);
+    } catch (err: any) {
+      setBulkError(err?.message || "Bulk transfer failed.");
+    } finally {
+      setBulkTransferring(false);
+    }
+  };
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -189,8 +286,20 @@ export default function ListingsPage() {
         </div>
 
         <AdminDataTable
-          minWidth={800}
-          columns={["Title", "Type", "Price", "Status", "Owner", "Created"]}
+          minWidth={880}
+          columns={[
+            { label: (
+              <input
+                type="checkbox"
+                className="size-3.5 cursor-pointer accent-primary"
+                checked={rows.length > 0 && selected.size === rows.length}
+                ref={(el) => { if (el) el.indeterminate = selected.size > 0 && selected.size < rows.length; }}
+                onChange={toggleAll}
+                aria-label="Select all rows"
+              />
+            ), className: "w-10" },
+            "Title", "Type", "Price", "Status", "Owner", "Created",
+          ]}
           loading={loading && rows.length === 0}
           busy={loading && rows.length > 0}
           empty={!loading && rows.length === 0}
@@ -199,10 +308,19 @@ export default function ListingsPage() {
           {rows.map((r) => (
             <AdminDataTable.Row
               key={r.id}
-              className="cursor-pointer"
+              className={cn("cursor-pointer", selected.has(r.id) && "bg-primary/5")}
               onClick={() => router.push(`/listings/${r.id}`)}
               title={`Edit ${r.title}`}
             >
+              <AdminDataTable.Cell onClick={(e) => e.stopPropagation()} className="w-10">
+                <input
+                  type="checkbox"
+                  className="size-3.5 cursor-pointer accent-primary"
+                  checked={selected.has(r.id)}
+                  onChange={() => toggleSelect(r.id)}
+                  aria-label={`Select ${r.listingCode}`}
+                />
+              </AdminDataTable.Cell>
               <AdminDataTable.Cell className="whitespace-normal font-medium text-on-surface">
                 <Link
                   href={`/listings/${r.id}`}
@@ -340,6 +458,180 @@ export default function ListingsPage() {
           </div>
         )}
       </section>
+
+      {/* ── Floating bulk action bar ── */}
+      {selected.size > 0 && (
+        <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl border border-outline-variant bg-surface px-5 py-3 shadow-xl">
+          <div className="flex items-center gap-4">
+            <span className="font-label-sm text-[11px] font-semibold text-on-surface">
+              {selected.size} selected
+            </span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setSelected(new Set())}
+              className="text-xs"
+            >
+              Clear
+            </Button>
+            <Button
+              size="sm"
+              className="gap-1.5 text-xs text-white"
+              onClick={() => setBulkOpen(true)}
+            >
+              <span className="material-symbols-outlined text-[14px] ">swap_horiz</span>
+              Transfer selected
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* ── Bulk Transfer Dialog ── */}
+      <Dialog
+        open={bulkOpen}
+        onOpenChange={(open) => {
+          setBulkOpen(open);
+          if (!open) resetBulkDialog();
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Bulk Transfer Properties</DialogTitle>
+            <DialogDescription>
+              Transfer ownership of <strong>{selected.size} properties</strong> to
+              a single user. All selected properties will be reassigned.
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex flex-col gap-2">
+            <Label
+              htmlFor="bulk-user-search"
+              className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
+            >
+              Search for new owner
+            </Label>
+            <Input
+              id="bulk-user-search"
+              placeholder="Type a name or email…"
+              value={bulkUserSearch}
+              onChange={(e) => {
+                setBulkUserSearch(e.target.value);
+                setBulkSelectedUser(null);
+              }}
+            />
+          </div>
+
+          {/* Search results */}
+          {bulkUserSearch.trim().length >= 2 && (
+            <div className="max-h-48 overflow-y-auto rounded-lg border border-outline-variant">
+              {bulkUserSearching ? (
+                <div className="flex items-center gap-2 p-3 text-sm text-on-surface-variant">
+                  <Loader2 className="size-3 animate-spin" />
+                  Searching…
+                </div>
+              ) : bulkUserResults.length === 0 ? (
+                <p className="p-3 text-sm text-on-surface-variant">No users found.</p>
+              ) : (
+                bulkUserResults.map((user) => (
+                  <button
+                    key={user.id}
+                    type="button"
+                    onClick={() => {
+                      setBulkSelectedUser(user);
+                      setBulkUserSearch(user.name || user.email);
+                      setBulkUserResults([]);
+                    }}
+                    className={cn(
+                      "flex w-full flex-col gap-0.5 border-b border-outline-variant/40 p-3 text-left transition-colors last:border-b-0 hover:bg-surface-container",
+                      bulkSelectedUser?.id === user.id && "bg-primary/5 ring-1 ring-primary/30",
+                    )}
+                  >
+                    <span className="text-sm font-medium text-on-surface">
+                      {user.name || "(no name)"}
+                    </span>
+                    <span className="text-xs text-on-surface-variant">
+                      {user.email}
+                    </span>
+                  </button>
+                ))
+              )}
+            </div>
+          )}
+
+          {/* Selected user chip */}
+          {bulkSelectedUser && (
+            <div className="flex items-center gap-2 rounded-lg border border-primary/30 bg-primary/5 p-2">
+              <span className="size-6 flex items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+                {(bulkSelectedUser.name || bulkSelectedUser.email).charAt(0).toUpperCase()}
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="truncate text-sm font-medium text-on-surface">
+                  {bulkSelectedUser.name || "(no name)"}
+                </p>
+                <p className="truncate text-xs text-on-surface-variant">
+                  {bulkSelectedUser.email}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setBulkSelectedUser(null)}
+                className="rounded p-1 text-on-surface-variant hover:text-on-surface"
+              >
+                ✕
+              </button>
+            </div>
+          )}
+
+          {/* Confirmation step */}
+          {bulkSelectedUser && !bulkSuccess && (
+            <div className="flex flex-col gap-2 rounded-lg border border-warning/30 bg-warning/5 p-3">
+              <Label
+                htmlFor="bulk-confirm"
+                className="font-label-sm text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant"
+              >
+                Confirm by typing the word TRANSFER
+              </Label>
+              <Input
+                id="bulk-confirm"
+                placeholder="TRANSFER"
+                value={bulkConfirmCode}
+                onChange={(e) => setBulkConfirmCode(e.target.value)}
+                className={cn(
+                  "h-9 text-sm",
+                  bulkConfirmCode && bulkConfirmCode.toUpperCase() !== "TRANSFER" && "border-error/50 focus-visible:ring-error/30",
+                  bulkConfirmCode.toUpperCase() === "TRANSFER" && "border-primary/50 focus-visible:ring-primary/30",
+                )}
+              />
+            </div>
+          )}
+
+          {bulkError && <p className="text-sm text-error">{bulkError}</p>}
+          {bulkSuccess && (
+            <p className="text-sm text-primary font-medium">
+              ✓ Properties transferred successfully!
+            </p>
+          )}
+
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="ghost" size="sm">Cancel</Button>
+            </DialogClose>
+            <Button
+              size="sm"
+              disabled={
+                !bulkSelectedUser ||
+                bulkTransferring ||
+                bulkConfirmCode.toUpperCase() !== "TRANSFER"
+              }
+              onClick={handleBulkTransfer}
+              className="gap-2"
+            >
+              {bulkTransferring && <Loader2 className="size-3 animate-spin" />}
+              Transfer {selected.size} properties
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

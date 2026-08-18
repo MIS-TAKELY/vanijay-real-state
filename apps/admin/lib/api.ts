@@ -199,6 +199,52 @@ export function adminUsers(q?: string) {
   return apiFetch<AdminUser[]>("/api/v1/admin/users", { query: { q } });
 }
 
+export function adminTransferProperty(propertyId: string, newOwnerId: string) {
+  return apiFetch<AdminPropertyDetail>(
+    `/api/v1/admin/properties/${propertyId}/transfer`,
+    {
+      method: "PATCH",
+      body: { newOwnerId },
+    },
+  );
+}
+
+export interface TransferAuditRow {
+  id: string;
+  actor: { id: string; name: string; email: string };
+  action: string;
+  entity: string;
+  entityId?: string | null;
+  summary?: string | null;
+  createdAt: string;
+}
+
+export function adminPropertyTransfers(propertyId: string) {
+  return apiFetch<TransferAuditRow[]>(
+    `/api/v1/admin/properties/${propertyId}/transfers`,
+  );
+}
+
+export interface BulkTransferResult {
+  transferred: string[];
+  alreadyOwner: string[];
+  notFound: string[];
+  targetUser: { id: string; name: string; email: string };
+}
+
+export function adminBulkTransferProperties(
+  propertyIds: string[],
+  newOwnerId: string,
+) {
+  return apiFetch<BulkTransferResult>(
+    "/api/v1/admin/properties/bulk-transfer",
+    {
+      method: "POST",
+      body: { propertyIds, newOwnerId },
+    },
+  );
+}
+
 // CMS
 
 export function cmsList(placement: string, slot?: string, admin = true) {
@@ -349,6 +395,19 @@ export function kabadiDeleteItem(id: string) {
   return apiFetch<{ deleted: boolean }>("/api/v1/admin/kabadi/items/" + id, {
     method: "DELETE",
   });
+}
+
+export function kabadiUpdateCategory(
+  slug: string,
+  patch: Record<string, unknown>,
+) {
+  return apiFetch<KabadiCategory>(
+    `/api/v1/admin/kabadi/categories/${slug}`,
+    {
+      method: "PATCH",
+      body: patch,
+    },
+  );
 }
 
 // Analytics
@@ -764,6 +823,12 @@ export interface KabadiCategory {
   blurb?: string | null;
   sortOrder: number;
   published: boolean;
+  seoTitle?: string | null;
+  seoDescription?: string | null;
+  seoKeywords?: string | null;
+  heroImage?: string | null;
+  body?: string | null;
+  faq?: { q: string; a: string }[] | null;
   items: {
     id: string;
     name: string;

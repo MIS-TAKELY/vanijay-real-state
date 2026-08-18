@@ -7,7 +7,9 @@ import {
   Recycle,
   Refrigerator,
 } from "lucide-react";
+import Link from "next/link";
 import { Card, CardAction, CardContent, CardHeader, CardTitle } from "@repo/ui";
+import type { KabadiCategoryData } from "lib/kabadi/api";
 import { formatRate, KABADI_CATEGORIES, KABADI_ITEMS } from "lib/kabadi/rates";
 
 const CATEGORY_ICONS: Record<
@@ -22,7 +24,39 @@ const CATEGORY_ICONS: Record<
   bottle: Box,
 };
 
-export function CategoryGrid() {
+interface CategoryGridProps {
+  categories?: KabadiCategoryData[];
+}
+
+export function CategoryGrid({ categories }: CategoryGridProps) {
+  // Use API data if available, fallback to hardcoded
+  const displayCategories =
+    categories && categories.length > 0
+      ? categories
+      : KABADI_CATEGORIES.map((c) => ({
+          ...c,
+          id: c.id,
+          slug: c.id,
+          nepali: c.nepali,
+          icon: c.icon,
+          blurb: c.blurb,
+          sortOrder: 0,
+          published: true,
+          items: [] as any[],
+        }));
+
+  const displayItems =
+    categories && categories.length > 0
+      ? categories.flatMap((c) =>
+          c.items.map((i) => ({
+            ...i,
+            category: c.slug,
+            unit: i.unit.toLowerCase() as "kg" | "piece",
+            rate: Number(i.rate),
+          })),
+        )
+      : KABADI_ITEMS;
+
   return (
     <section
       id="categories"
@@ -39,16 +73,16 @@ export function CategoryGrid() {
         </div>
 
         <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {KABADI_CATEGORIES.map((cat) => {
-            const Icon = CATEGORY_ICONS[cat.icon] ?? Recycle;
-            const samples = KABADI_ITEMS.filter(
-              (i) => i.category === cat.id && i.popular,
+          {displayCategories.map((cat) => {
+            const Icon = CATEGORY_ICONS[cat.icon ?? ""] ?? Recycle;
+            const samples = displayItems.filter(
+              (i) => i.category === cat.slug && i.popular,
             );
             const sample =
-              samples[0] ?? KABADI_ITEMS.find((i) => i.category === cat.id);
+              samples[0] ?? displayItems.find((i) => i.category === cat.slug);
 
             return (
-              <a key={cat.id} href="#rates" className="group block">
+              <Link key={cat.id} href={`/scrape/${cat.slug}`} className="group block">
                 <Card className="h-full rounded-2xl border-kabadi-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-kabadi-primary/40 group-hover:shadow-[0_20px_48px_-20px_rgba(26,107,60,0.35)]">
                   <CardHeader>
                     <CardTitle>
@@ -78,13 +112,16 @@ export function CategoryGrid() {
                           e.g. {sample.name}
                         </span>
                         <span className="font-data-table text-sm font-bold text-kabadi-primary">
-                          {formatRate(sample)}
+                          {formatRate({
+                            rate: Number(sample.rate),
+                            unit: sample.unit,
+                          })}
                         </span>
                       </div>
                     )}
                   </CardContent>
                 </Card>
-              </a>
+              </Link>
             );
           })}
         </div>

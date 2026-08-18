@@ -1,4 +1,4 @@
-import { API_TIMEOUT_MS, apiUrl } from "./config";
+import { API_TIMEOUT_MS, apiUrl, serverApiUrl } from "./config";
 
 export class ApiError extends Error {
   readonly status: number;
@@ -103,7 +103,9 @@ export async function apiFetch<T>(
     if (timeoutSignal) init.signal = timeoutSignal;
   }
 
-  const url = apiUrl(`${path}${query ? toQueryString(query) : ""}`);
+  const url = isServer
+    ? serverApiUrl(`${path}${query ? toQueryString(query) : ""}`)
+    : apiUrl(`${path}${query ? toQueryString(query) : ""}`);
 
   const res = await fetch(url, init);
 

@@ -17,3 +17,10 @@ export function apiUrl(path: string): string {
   if (/^https?:\/\//i.test(path)) return path;
   return `${API_URL}${path}`;
 }
+
+/** Server-side API origin (internal Docker DNS). Never route server fetches
+ *  through the public URL — going out via Cloudflare 403s/times out. */
+export function serverApiUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${AUTH_API_URL}${path}`;
+}

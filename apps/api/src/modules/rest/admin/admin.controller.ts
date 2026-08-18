@@ -4,6 +4,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -139,6 +140,32 @@ export class AdminController {
     @CurrentUser('id') actorId: string,
   ) {
     return this.admin.moderateProperty(actorId, id, body);
+  }
+
+  @Get('properties/:id/transfers')
+  propertyTransfers(@Param('id') id: string) {
+    return this.admin.getPropertyTransfers(id);
+  }
+
+  @Patch('properties/:id/transfer')
+  transfer(
+    @Param('id') id: string,
+    @Body() body: { newOwnerId: string },
+    @CurrentUser('id') actorId: string,
+  ) {
+    return this.admin.transferProperty(actorId, id, body.newOwnerId);
+  }
+
+  @Post('properties/bulk-transfer')
+  bulkTransfer(
+    @Body() body: { propertyIds: string[]; newOwnerId: string },
+    @CurrentUser('id') actorId: string,
+  ) {
+    return this.admin.bulkTransferProperties(
+      actorId,
+      body.propertyIds,
+      body.newOwnerId,
+    );
   }
 
   @Get('documents')

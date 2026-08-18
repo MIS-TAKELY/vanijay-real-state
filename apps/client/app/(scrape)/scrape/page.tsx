@@ -7,6 +7,7 @@ import {
   HowItWorks,
   RateCatalog,
 } from "components/kabadi/pages/home";
+import { fetchKabadiCategories, type KabadiCategoryData } from "lib/kabadi/api";
 
 export const metadata: Metadata = {
   title: "Kabadi | Sell Your Scrap, Get Paid in Cash",
@@ -72,7 +73,15 @@ const itemListSchema = {
   ],
 };
 
-export default function KabadiHomePage() {
+export default async function KabadiHomePage() {
+  let categories: KabadiCategoryData[] = [];
+  try {
+    categories = await fetchKabadiCategories();
+  } catch {
+    // Fallback to empty array if API is down
+    categories = [];
+  }
+
   return (
     <>
       <script
@@ -84,9 +93,9 @@ export default function KabadiHomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
       <Hero />
-      <CategoryGrid />
+      <CategoryGrid categories={categories} />
       <Calculator />
-      <RateCatalog />
+      <RateCatalog categories={categories} />
       <HowItWorks />
       <CTA />
     </>

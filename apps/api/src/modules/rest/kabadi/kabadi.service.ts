@@ -43,6 +43,18 @@ export class KabadiService {
     });
   }
 
+  async getCategoryBySlug(slug: string) {
+    return this.prisma.kabadiCategory.findUnique({
+      where: { slug },
+      include: {
+        items: {
+          where: { published: true },
+          orderBy: { sortOrder: 'asc' },
+        },
+      },
+    });
+  }
+
   async upsertCategory(actorId: string, dto: CategoryDto) {
     const cat = await this.prisma.kabadiCategory.upsert({
       where: { slug: dto.slug },
@@ -55,6 +67,21 @@ export class KabadiService {
       'kabadi_category',
       cat.id,
       `Upserted kabadi category '${dto.slug}'`,
+    );
+    return cat;
+  }
+
+  async updateCategory(actorId: string, slug: string, patch: Record<string, unknown>) {
+    const cat = await this.prisma.kabadiCategory.update({
+      where: { slug },
+      data: patch as any,
+    });
+    await this.audit(
+      actorId,
+      'update',
+      'kabadi_category',
+      cat.id,
+      `Updated kabadi category '${slug}'`,
     );
     return cat;
   }

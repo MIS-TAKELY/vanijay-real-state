@@ -311,6 +311,17 @@ export type { TrendPoint } from "./components/charts/TrendChart";
 export * from "./components/listing-wizard";
 
 /* ------------------------------------------------------------------ */
+/* Kabadi / Scrap page components                                     */
+/* ------------------------------------------------------------------ */
+
+export { KabadiCategoryView } from "./components/kabadi";
+export type {
+  KabadiCategoryViewProps,
+  KabadiCategoryViewData,
+  KabadiCategoryItem,
+} from "./components/kabadi";
+
+/* ------------------------------------------------------------------ */
 /* Reusable location components                                        */
 /* ------------------------------------------------------------------ */
 

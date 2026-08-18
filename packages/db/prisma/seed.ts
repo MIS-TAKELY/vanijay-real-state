@@ -85,6 +85,12 @@ async function main() {
       icon: "newspaper",
       blurb:
         "Newspapers, office paper, books and gatta (cardboard). Keep it dry for top rates.",
+      seoTitle:
+        "Paper & Cardboard Kabadi Rates in Kathmandu | Sell Scrap Paper",
+      seoDescription:
+        "Sell newspaper, office paper, books, notebooks and cardboard for the best rates in Kathmandu Valley. Newspaper at Rs 35/kg, cardboard at Rs 12/kg. Clean & dry for top prices.",
+      seoKeywords:
+        "sell newspaper Nepal, paper kabadi rate, cardboard price Kathmandu, newspaper rate per kg Nepal, gatta price, office paper scrap",
     },
     {
       slug: "plastic",
@@ -93,6 +99,12 @@ async function main() {
       icon: "recycling",
       blurb:
         "PET bottles, milk packets, buckets and hard plastic. Sorted plastic pays more.",
+      seoTitle:
+        "Plastic Kabadi Rates in Kathmandu | Sell PET Bottles & Hard Plastic",
+      seoDescription:
+        "Sell PET bottles, milk packets, hard plastic and drums in Kathmandu. PET bottles at Rs 20/kg, hard plastic at Rs 15/kg. Sorted plastic pays more.",
+      seoKeywords:
+        "sell plastic Nepal, PET bottle rate, hard plastic price, plastic kabadi Kathmandu, milk packet scrap rate, plastic drum price",
     },
     {
       slug: "metal",
@@ -101,6 +113,12 @@ async function main() {
       icon: "hammer",
       blurb:
         "Copper, brass, aluminum, iron and steel. The heavy hitters of the kabadi world.",
+      seoTitle:
+        "Metal Kabadi Rates in Kathmandu | Sell Copper, Brass, Iron & Aluminum",
+      seoDescription:
+        "Sell copper, brass, aluminum, iron, steel and tin for the best rates in Kathmandu. Copper at Rs 1,400/kg, brass at Rs 900/kg. Best prices in the valley.",
+      seoKeywords:
+        "copper price Nepal, sell brass, aluminum rate, iron scrap price, metal kabadi rate Kathmandu, tamasariya, taama rate Nepal",
     },
     {
       slug: "ewaste",
@@ -109,6 +127,12 @@ async function main() {
       icon: "cpu",
       blurb:
         "Old phones, laptops, CPUs, monitors and printers. Value is per piece.",
+      seoTitle:
+        "E-Waste Kabadi Rates in Kathmandu | Sell Old Phones, Laptops & CPUs",
+      seoDescription:
+        "Sell old smartphones, laptops, desktop CPUs, monitors and printers in Kathmandu. Old smartphone at Rs 150/piece, laptop at Rs 350/piece. Responsible e-waste recycling.",
+      seoKeywords:
+        "sell old mobile Nepal, e-waste rate Kathmandu, old laptop price, CPU scrap value, monitor recycling Nepal, smartphone kabadi rate",
     },
     {
       slug: "appliance",
@@ -117,6 +141,12 @@ async function main() {
       icon: "refrigerator",
       blurb:
         "Fridges, washing machines, ACs, geysers and microwaves — priced per unit.",
+      seoTitle:
+        "Appliance Kabadi Rates in Kathmandu | Sell Fridges, ACs & Washing Machines",
+      seoDescription:
+        "Sell old refrigerators, washing machines, ACs, geysers and microwaves in Kathmandu. Fridge at Rs 1,800/piece, AC at Rs 2,500/piece. Free doorstep pickup.",
+      seoKeywords:
+        "sell old fridge Nepal, washing machine scrap price, AC kabadi rate, geyser price, microwave scrap value Kathmandu, appliance recycling",
     },
     {
       slug: "other",
@@ -124,6 +154,12 @@ async function main() {
       nepali: "अन्य सामान",
       icon: "bottle",
       blurb: "Glass bottles, clothes, tires, batteries and vehicles.",
+      seoTitle:
+        "Glass, Tires & Other Kabadi Rates in Kathmandu",
+      seoDescription:
+        "Sell glass bottles, old clothes, vehicle tires, batteries and scrap vehicles in Kathmandu. Glass at Rs 6/kg, scrap car at Rs 18,000/piece.",
+      seoKeywords:
+        "glass bottle rate Nepal, sell old clothes, tire scrap price, battery kabadi rate, car scrap Nepal, motorcycle scrap value",
     },
   ];
   const catIds: Record<string, string> = {};
@@ -137,7 +173,7 @@ async function main() {
   }
   console.log("Kabadi categories seeded");
 
-  // ---------- Kabadi items (mirrors lib/kabadi/rates.ts key rates) ----------
+  // ---------- Kabadi items (mirrors client lib/kabadi/rates.ts) ----------
   const items: {
     id: string;
     name: string;
@@ -148,6 +184,7 @@ async function main() {
     popular?: boolean;
     note?: string;
   }[] = [
+    // ---- Paper & Cardboard ----
     {
       id: "paper-newspaper",
       name: "Newspaper",
@@ -159,6 +196,30 @@ async function main() {
       note: "Clean & dry",
     },
     {
+      id: "paper-office",
+      name: "Office paper (A3/A4)",
+      nepali: "कागज",
+      unit: "KG",
+      rate: 15,
+      cat: "paper",
+    },
+    {
+      id: "paper-books",
+      name: "Books",
+      nepali: "किताब",
+      unit: "KG",
+      rate: 12,
+      cat: "paper",
+    },
+    {
+      id: "paper-notebooks",
+      name: "Notebooks & copies",
+      nepali: "कापी",
+      unit: "KG",
+      rate: 10,
+      cat: "paper",
+    },
+    {
       id: "paper-cardboard",
       name: "Cardboard / gatta",
       nepali: "गत्ता",
@@ -166,6 +227,7 @@ async function main() {
       rate: 12,
       cat: "paper",
     },
+    // ---- Plastic ----
     {
       id: "plastic-pet",
       name: "PET bottles",
@@ -177,6 +239,14 @@ async function main() {
       note: "Sorted",
     },
     {
+      id: "plastic-milk",
+      name: "Milk packets",
+      nepali: "दूधको प्याकेट",
+      unit: "KG",
+      rate: 10,
+      cat: "plastic",
+    },
+    {
       id: "plastic-hard",
       name: "Hard plastic (buckets, chairs)",
       nepali: "कडा प्लास्टिक",
@@ -185,11 +255,38 @@ async function main() {
       cat: "plastic",
     },
     {
+      id: "plastic-mixed",
+      name: "Mixed plastic",
+      nepali: "मिश्रित प्लास्टिक",
+      unit: "KG",
+      rate: 8,
+      cat: "plastic",
+    },
+    {
+      id: "plastic-drum",
+      name: "Plastic drums",
+      nepali: "प्लास्टिक ड्रम",
+      unit: "PIECE",
+      rate: 120,
+      cat: "plastic",
+    },
+    // ---- Metals ----
+    {
       id: "metal-copper",
       name: "Copper (wire, tube)",
       nepali: "तामा",
       unit: "KG",
       rate: 1400,
+      cat: "metal",
+      popular: true,
+      note: "Best rate in the yard",
+    },
+    {
+      id: "metal-brass",
+      name: "Brass",
+      nepali: "पित्तल",
+      unit: "KG",
+      rate: 900,
       cat: "metal",
       popular: true,
     },
@@ -198,32 +295,66 @@ async function main() {
       name: "Aluminum",
       nepali: "एल्मुनियम",
       unit: "KG",
-      rate: 210,
+      rate: 200,
       cat: "metal",
     },
     {
       id: "metal-iron",
-      name: "Iron / steel scrap",
+      name: "Iron",
       nepali: "फलाम",
       unit: "KG",
       rate: 35,
       cat: "metal",
     },
     {
-      id: "ewaste-phone",
-      name: "Old smartphone",
+      id: "metal-steel",
+      name: "Steel utensils",
+      nepali: "स्टिल भाँडा",
+      unit: "KG",
+      rate: 40,
+      cat: "metal",
+    },
+    {
+      id: "metal-tin",
+      name: "Tin",
+      nepali: "टिन",
+      unit: "KG",
+      rate: 25,
+      cat: "metal",
+    },
+    {
+      id: "metal-battery",
+      name: "Lead-acid battery (small)",
+      nepali: "ब्याट्री",
+      unit: "PIECE",
+      rate: 500,
+      cat: "metal",
+    },
+    {
+      id: "metal-battery-large",
+      name: "Lead-acid battery (large)",
+      nepali: "ठूलो ब्याट्री",
+      unit: "PIECE",
+      rate: 1200,
+      cat: "metal",
+    },
+    // ---- E-Waste ----
+    {
+      id: "ewaste-smartphone",
+      name: "Smartphone (old)",
       nepali: "पुरानो मोबाइल",
       unit: "PIECE",
       rate: 150,
       cat: "ewaste",
       popular: true,
+      note: "Working or not",
     },
     {
-      id: "ewaste-cpu",
-      name: "Desktop CPU",
-      nepali: "कम्प्युटर",
+      id: "ewaste-keypad",
+      name: "Keypad phone",
+      nepali: "किप्याड मोबाइल",
       unit: "PIECE",
-      rate: 400,
+      rate: 80,
       cat: "ewaste",
     },
     {
@@ -235,6 +366,39 @@ async function main() {
       cat: "ewaste",
     },
     {
+      id: "ewaste-cpu",
+      name: "Desktop CPU",
+      nepali: "कम्प्युटर",
+      unit: "PIECE",
+      rate: 400,
+      cat: "ewaste",
+    },
+    {
+      id: "ewaste-monitor",
+      name: "Monitor (LCD)",
+      nepali: "मनिटर",
+      unit: "PIECE",
+      rate: 250,
+      cat: "ewaste",
+    },
+    {
+      id: "ewaste-printer",
+      name: "Printer",
+      nepali: "प्रिन्टर",
+      unit: "PIECE",
+      rate: 300,
+      cat: "ewaste",
+    },
+    {
+      id: "ewaste-pcb",
+      name: "Circuit boards (PCB)",
+      nepali: "सर्किट बोर्ड",
+      unit: "KG",
+      rate: 200,
+      cat: "ewaste",
+    },
+    // ---- Appliances ----
+    {
       id: "app-fridge",
       name: "Refrigerator (single door)",
       nepali: "फ्रिज",
@@ -242,6 +406,14 @@ async function main() {
       rate: 1800,
       cat: "appliance",
       popular: true,
+    },
+    {
+      id: "app-fridge-double",
+      name: "Refrigerator (double door)",
+      nepali: "ठूलो फ्रिज",
+      unit: "PIECE",
+      rate: 3500,
+      cat: "appliance",
     },
     {
       id: "app-washing",
@@ -260,11 +432,76 @@ async function main() {
       cat: "appliance",
     },
     {
+      id: "app-ac-split",
+      name: "AC (split, with copper)",
+      nepali: "स्प्लिट एसी",
+      unit: "PIECE",
+      rate: 4000,
+      cat: "appliance",
+    },
+    {
+      id: "app-geyser",
+      name: "Water heater / geyser",
+      nepali: "गिजर",
+      unit: "PIECE",
+      rate: 800,
+      cat: "appliance",
+    },
+    {
+      id: "app-microwave",
+      name: "Microwave oven",
+      nepali: "माइक्रोवेभ",
+      unit: "PIECE",
+      rate: 600,
+      cat: "appliance",
+    },
+    {
+      id: "app-tv",
+      name: "TV (CRT / old)",
+      nepali: "पुरानो टिभी",
+      unit: "PIECE",
+      rate: 500,
+      cat: "appliance",
+    },
+    // ---- Glass & Other ----
+    {
       id: "other-glass",
       name: "Glass bottles",
       nepali: "सिसाको बोतल",
       unit: "KG",
       rate: 6,
+      cat: "other",
+    },
+    {
+      id: "other-clothes",
+      name: "Old clothes",
+      nepali: "पुरानो कपडा",
+      unit: "KG",
+      rate: 5,
+      cat: "other",
+    },
+    {
+      id: "other-tires",
+      name: "Vehicle tires",
+      nepali: "टायर",
+      unit: "PIECE",
+      rate: 50,
+      cat: "other",
+    },
+    {
+      id: "other-bicycle",
+      name: "Bicycle",
+      nepali: "साइकल",
+      unit: "PIECE",
+      rate: 500,
+      cat: "other",
+    },
+    {
+      id: "other-bike",
+      name: "Motorcycle (scrap)",
+      nepali: "मोटरसाइकल",
+      unit: "PIECE",
+      rate: 2500,
       cat: "other",
     },
     {

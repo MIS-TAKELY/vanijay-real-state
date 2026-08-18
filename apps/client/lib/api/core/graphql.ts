@@ -1,5 +1,5 @@
 import { ApiError } from "./client";
-import { API_TIMEOUT_MS, apiUrl } from "./config";
+import { API_TIMEOUT_MS, serverApiUrl } from "./config";
 import { GRAPHQL_ENDPOINT } from "./endpoints";
 
 interface GqlEnvelope<T> {
@@ -61,7 +61,7 @@ export async function gqlRequest<T>(
     if (timeoutSignal) init.signal = timeoutSignal;
   }
 
-  const res = await fetch(apiUrl(GRAPHQL_ENDPOINT), init);
+  const res = await fetch(serverApiUrl(GRAPHQL_ENDPOINT), init);
 
   let parsed: GqlEnvelope<T> | undefined;
   try {

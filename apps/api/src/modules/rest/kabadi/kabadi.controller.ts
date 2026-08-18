@@ -25,6 +25,11 @@ export class KabadiController {
     return this.kabadi.listCategories(false);
   }
 
+  @Get('api/v1/kabadi/categories/:slug')
+  getPublicBySlug(@Param('slug') slug: string) {
+    return this.kabadi.getCategoryBySlug(slug);
+  }
+
   // Admin
   @Get('api/v1/admin/kabadi/categories')
   @UseGuards(AuthGuard, RolesGuard)
@@ -38,6 +43,17 @@ export class KabadiController {
   @Roles('ADMIN')
   upsertCategory(@Body() dto: CategoryDto, @CurrentUser('id') actorId: string) {
     return this.kabadi.upsertCategory(actorId, dto);
+  }
+
+  @Patch('api/v1/admin/kabadi/categories/:slug')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  updateCategory(
+    @Param('slug') slug: string,
+    @Body() body: Record<string, unknown>,
+    @CurrentUser('id') actorId: string,
+  ) {
+    return this.kabadi.updateCategory(actorId, slug, body);
   }
 
   @Patch('api/v1/admin/kabadi/categories/:id/publish')
