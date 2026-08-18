@@ -117,49 +117,63 @@ function buildLandDetails(p: ApiProperty) {
   // Plot Details
   const plotRows: Row[] = [];
   if (p.plotShape) plotRows.push(["Plot Shape", label(p.plotShape)]);
-  if (p.frontageFt) plotRows.push(["Frontage", `${formatNumber(p.frontageFt)} ft`]);
+  if (p.frontageFt)
+    plotRows.push(["Frontage", `${formatNumber(p.frontageFt)} ft`]);
   if (p.depthFt) plotRows.push(["Depth", `${formatNumber(p.depthFt)} ft`]);
   if (p.boundaryWall) plotRows.push(["Boundary Wall", label(p.boundaryWall)]);
   if (p.landClearance) plotRows.push(["Cleared / Fenced", "Yes"]);
   if (p.isCornerPlot) plotRows.push(["Corner Plot", "Yes"]);
-  if (plotRows.length) sections.push({ heading: "Plot Details", rows: plotRows });
+  if (plotRows.length)
+    sections.push({ heading: "Plot Details", rows: plotRows });
 
   // Land Classification
   const classRows: Row[] = [];
-  if (p.landClassification) classRows.push(["Land Classification", label(p.landClassification)]);
+  if (p.landClassification)
+    classRows.push(["Land Classification", label(p.landClassification)]);
   if (p.soilType) classRows.push(["Soil Type", label(p.soilType)]);
   if (p.terrain) classRows.push(["Terrain", label(p.terrain)]);
   if (p.zoning) classRows.push(["Zoning", label(p.zoning)]);
-  if (classRows.length) sections.push({ heading: "Land Classification", rows: classRows });
+  if (classRows.length)
+    sections.push({ heading: "Land Classification", rows: classRows });
 
   // Utilities & Infrastructure
   const utilRows: Row[] = [];
   if (p.electricityAvailable) utilRows.push(["Electricity", "Available"]);
-  if (p.waterSources?.length) utilRows.push(["Water Sources", p.waterSources.map(label).join(", ")]);
+  if (p.waterSources?.length)
+    utilRows.push(["Water Sources", p.waterSources.map(label).join(", ")]);
   if (p.irrigationType) utilRows.push(["Irrigation", label(p.irrigationType)]);
   if (p.fencing) utilRows.push(["Fencing", label(p.fencing)]);
-  if (utilRows.length) sections.push({ heading: "Utilities & Infrastructure", rows: utilRows });
+  if (utilRows.length)
+    sections.push({ heading: "Utilities & Infrastructure", rows: utilRows });
 
   // Agricultural
   const agriRows: Row[] = [];
   if (p.currentCrops) agriRows.push(["Current Crops", p.currentCrops]);
   if (p.annualYield) agriRows.push(["Annual Yield", p.annualYield]);
-  if (p.farmStructures?.length) agriRows.push(["Farm Structures", p.farmStructures.map(label).join(", ")]);
-  if (agriRows.length) sections.push({ heading: "Agricultural", rows: agriRows });
+  if (p.farmStructures?.length)
+    agriRows.push(["Farm Structures", p.farmStructures.map(label).join(", ")]);
+  if (agriRows.length)
+    sections.push({ heading: "Agricultural", rows: agriRows });
 
   // Development & Usage
   const devRows: Row[] = [];
-  if (p.setbackAvailable) devRows.push(["Setback", p.setbackText ? `Yes — ${p.setbackText}` : "Yes"]);
-  if (p.suitableFor?.length) devRows.push(["Suitable For", p.suitableFor.map(label).join(", ")]);
-  if (p.parkingSpaces != null) devRows.push(["Parking Spaces", String(p.parkingSpaces)]);
+  if (p.setbackAvailable)
+    devRows.push(["Setback", p.setbackText ? `Yes — ${p.setbackText}` : "Yes"]);
+  if (p.suitableFor?.length)
+    devRows.push(["Suitable For", p.suitableFor.map(label).join(", ")]);
+  if (p.parkingSpaces != null)
+    devRows.push(["Parking Spaces", String(p.parkingSpaces)]);
   if (p.minBuyableLandSqFt)
-    devRows.push(["Min Buyable Land", formatMinBuyableLand(p) ?? `${formatNumber(p.minBuyableLandSqFt)} sq ft`]);
+    devRows.push([
+      "Min Buyable Land",
+      formatMinBuyableLand(p) ?? `${formatNumber(p.minBuyableLandSqFt)} sq ft`,
+    ]);
   if (p.isNegotiable) devRows.push(["Negotiable", "Yes"]);
-  if (devRows.length) sections.push({ heading: "Development & Usage", rows: devRows });
+  if (devRows.length)
+    sections.push({ heading: "Development & Usage", rows: devRows });
 
   return sections.length ? sections : null;
 }
-
 
 export default async function ListingDetailPage({ params }: PageProps) {
   const { slug } = await params;
@@ -169,12 +183,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const gradient = TYPE_GRADIENTS[property.subCategory] ?? FALLBACK_GRADIENT;
   const area = formatLandArea(property.landArea);
   const location = formatLocation(property.location);
-  const verified = property.verificationLevel !== "UNVERIFIED";
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
   const pricing = priceContextFromApiProperty(property);
   const p = property;
   const landDetails = buildLandDetails(p);
-
 
   const specs: Array<[string, string | null | undefined]> = [
     ...(hasLand
@@ -474,22 +486,36 @@ export default async function ListingDetailPage({ params }: PageProps) {
                   <table className="w-full text-left text-sm">
                     <thead>
                       <tr className="bg-surface-container">
-                        <th className="px-4 py-3 font-semibold text-on-surface">Detail</th>
-                        <th className="px-4 py-3 font-semibold text-on-surface">Value</th>
+                        <th className="px-4 py-3 font-semibold text-on-surface">
+                          Detail
+                        </th>
+                        <th className="px-4 py-3 font-semibold text-on-surface">
+                          Value
+                        </th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-outline-variant bg-surface">
                       {landDetails.map((section) => (
                         <React.Fragment key={section.heading}>
                           <tr className="bg-surface-container/50">
-                            <td colSpan={2} className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant">
+                            <td
+                              colSpan={2}
+                              className="px-4 py-2 text-xs font-bold uppercase tracking-wider text-on-surface-variant"
+                            >
                               {section.heading}
                             </td>
                           </tr>
                           {section.rows.map(([detail, value]) => (
-                            <tr key={detail} className="hover:bg-surface-container/30">
-                              <td className="px-4 py-3 text-on-surface-variant">{detail}</td>
-                              <td className="px-4 py-3 font-medium text-on-surface">{value}</td>
+                            <tr
+                              key={detail}
+                              className="hover:bg-surface-container/30"
+                            >
+                              <td className="px-4 py-3 text-on-surface-variant">
+                                {detail}
+                              </td>
+                              <td className="px-4 py-3 font-medium text-on-surface">
+                                {value}
+                              </td>
                             </tr>
                           ))}
                         </React.Fragment>
@@ -499,7 +525,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 </div>
               </section>
             )}
-
 
             {/* Seller-defined custom specs tables */}
             {property.customSpecs && property.customSpecs.length > 0 && (
@@ -519,15 +544,26 @@ export default async function ListingDetailPage({ params }: PageProps) {
                         <table className="w-full text-left text-sm">
                           <thead>
                             <tr className="bg-surface-container">
-                              <th className="px-4 py-3 font-semibold text-on-surface">Detail</th>
-                              <th className="px-4 py-3 font-semibold text-on-surface">Value</th>
+                              <th className="px-4 py-3 font-semibold text-on-surface">
+                                Detail
+                              </th>
+                              <th className="px-4 py-3 font-semibold text-on-surface">
+                                Value
+                              </th>
                             </tr>
                           </thead>
                           <tbody className="divide-y divide-outline-variant bg-surface">
                             {table.rows.map(([detail, value], rIdx) => (
-                              <tr key={rIdx} className="hover:bg-surface-container/30">
-                                <td className="px-4 py-3 text-on-surface-variant">{detail}</td>
-                                <td className="px-4 py-3 font-medium text-on-surface">{value}</td>
+                              <tr
+                                key={rIdx}
+                                className="hover:bg-surface-container/30"
+                              >
+                                <td className="px-4 py-3 text-on-surface-variant">
+                                  {detail}
+                                </td>
+                                <td className="px-4 py-3 font-medium text-on-surface">
+                                  {value}
+                                </td>
                               </tr>
                             ))}
                           </tbody>

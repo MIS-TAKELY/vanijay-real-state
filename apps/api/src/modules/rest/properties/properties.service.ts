@@ -18,6 +18,19 @@ export interface FeedFilters {
   district?: string;
   minSize?: number;
   maxSize?: number;
+  // Comprehensive filters
+  municipality?: string;
+  ward?: number;
+  facing?: string;
+  roadType?: string;
+  bedrooms?: number;
+  bathrooms?: number;
+  isCornerPlot?: boolean;
+  isNegotiable?: boolean;
+  constructionStatus?: string;
+  furnishing?: string;
+  subCategory?: string;
+  amenities?: string[];
 }
 
 const MAIN_CATEGORY_GROUPS: Record<string, MainCategory[]> = {
@@ -369,9 +382,28 @@ export class PropertiesService {
   }
 
   /** Builds the Prisma WHERE clause for the public search/filter controls
-   *  (keyword, type, price band, district, and land size). */
+   *  (keyword, type, price band, district, land size, and comprehensive specs). */
   private buildFilterWhere(opts: FeedFilters): Prisma.PropertyWhereInput {
-    const { q, type, price, district, minSize, maxSize } = opts;
+    const {
+      q,
+      type,
+      price,
+      district,
+      minSize,
+      maxSize,
+      municipality,
+      ward,
+      facing,
+      roadType,
+      bedrooms,
+      bathrooms,
+      isCornerPlot,
+      isNegotiable,
+      constructionStatus,
+      furnishing,
+      subCategory,
+      amenities,
+    } = opts;
     const filters: Prisma.PropertyWhereInput[] = [];
 
     if (q && q.trim()) {
@@ -430,6 +462,12 @@ export class PropertiesService {
       }
     }
 
+    if (subCategory && subCategory !== 'all') {
+      if ((Object.values(SubCategory) as string[]).includes(subCategory)) {
+        filters.push({ subCategory: subCategory as SubCategory });
+      }
+    }
+
     if (price && price !== 'any') {
       const band = PRICE_BANDS[price];
       if (band) {
@@ -450,6 +488,27 @@ export class PropertiesService {
       });
     }
 
+    if (municipality && municipality.trim()) {
+      filters.push({
+        location: {
+          is: {
+            municipality: {
+              contains: municipality.trim(),
+              mode: 'insensitive',
+            },
+          },
+        },
+      });
+    }
+
+    if (ward != null) {
+      filters.push({
+        location: {
+          is: { wardNumber: ward },
+        },
+      });
+    }
+
     if (minSize != null || maxSize != null) {
       filters.push({
         landArea: {
@@ -461,6 +520,49 @@ export class PropertiesService {
           },
         },
       });
+    }
+
+    if (facing && facing !== 'any') {
+      filters.push({ facing: facing as any });
+    }
+
+    if (roadType && roadType !== 'any') {
+      filters.push({ roadType: roadType as any });
+    }
+
+    if (bedrooms != null) {
+      filters.push({ bedrooms: { gte: bedrooms } });
+    }
+
+    if (bathrooms != null) {
+      filters.push({ bathrooms: { gte: bathrooms } });
+    }
+
+    if (isCornerPlot === true) {
+      filters.push({ isCornerPlot: true });
+    }
+
+    if (isNegotiable === true) {
+      filters.push({ isNegotiable: true });
+    }
+
+    if (constructionStatus && constructionStatus !== 'any') {
+      filters.push({
+        constructionStatus: {
+          equals: constructionStatus,
+          mode: 'insensitive',
+        },
+      });
+    }
+
+    if (furnishing && furnishing !== 'any') {
+      filters.push({
+        furnishing: { equals: furnishing, mode: 'insensitive' },
+      });
+    }
+
+    if (amenities && amenities.length > 0) {
+      filters.push({ amenities: { hasSome: amenities } });
     }
 
     return filters.length > 0 ? { AND: filters } : {};

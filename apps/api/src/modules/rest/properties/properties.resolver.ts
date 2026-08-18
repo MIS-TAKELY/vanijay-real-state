@@ -37,6 +37,30 @@ export class PropertiesResolver {
     minSize?: number,
     @Args('maxSize', { type: () => Float, nullable: true })
     maxSize?: number,
+    @Args('municipality', { type: () => String, nullable: true })
+    municipality?: string,
+    @Args('ward', { type: () => Int, nullable: true })
+    ward?: number,
+    @Args('facing', { type: () => String, nullable: true })
+    facing?: string,
+    @Args('roadType', { type: () => String, nullable: true })
+    roadType?: string,
+    @Args('bedrooms', { type: () => Int, nullable: true })
+    bedrooms?: number,
+    @Args('bathrooms', { type: () => Int, nullable: true })
+    bathrooms?: number,
+    @Args('isCornerPlot', { type: () => Boolean, nullable: true })
+    isCornerPlot?: boolean,
+    @Args('isNegotiable', { type: () => Boolean, nullable: true })
+    isNegotiable?: boolean,
+    @Args('constructionStatus', { type: () => String, nullable: true })
+    constructionStatus?: string,
+    @Args('furnishing', { type: () => String, nullable: true })
+    furnishing?: string,
+    @Args('subCategory', { type: () => String, nullable: true })
+    subCategory?: string,
+    @Args('amenities', { type: () => [String], nullable: true })
+    amenities?: string[],
   ) {
     return this.properties.findFeed({
       first,
@@ -47,6 +71,18 @@ export class PropertiesResolver {
       district,
       minSize,
       maxSize,
+      municipality,
+      ward,
+      facing,
+      roadType,
+      bedrooms,
+      bathrooms,
+      isCornerPlot,
+      isNegotiable,
+      constructionStatus,
+      furnishing,
+      subCategory,
+      amenities,
     });
   }
 

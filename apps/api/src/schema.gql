@@ -277,7 +277,7 @@ type PropertyListResponse {
 }
 
 type Query {
-  propertiesFeed(first: Int = 20, after: String, q: String, type: String, price: String, district: String, minSize: Float, maxSize: Float): PropertyPage!
+  propertiesFeed(first: Int = 20, after: String, q: String, type: String, price: String, district: String, minSize: Float, maxSize: Float, municipality: String, ward: Int, facing: String, roadType: String, bedrooms: Int, bathrooms: Int, isCornerPlot: Boolean, isNegotiable: Boolean, constructionStatus: String, furnishing: String, subCategory: String, amenities: [String!]): PropertyPage!
   searchSuggestions(q: String!, limit: Int = 8): [SearchSuggestion!]!
   property(idOrSlug: ID!): Property!
   myProperties: [Property!]!

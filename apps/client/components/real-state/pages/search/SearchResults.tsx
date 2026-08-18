@@ -20,10 +20,11 @@ function toItem(p: ApiProperty): PropertyItem {
 export type SearchFiltersState = Record<string, string | null>;
 
 const TYPE_LABELS: Record<string, string> = {
-  residential: "Residential",
-  commercial: "Commercial",
-  plot: "Plot / Land",
-  house: "House",
+  RESIDENTIAL: "Residential",
+  COMMERCIAL: "Commercial",
+  INDUSTRIAL: "Industrial",
+  LAND: "Land",
+  INSTITUTIONAL_SPECIALIZED: "Special Purpose",
 };
 
 const PRICE_LABELS: Record<string, string> = {
@@ -31,6 +32,63 @@ const PRICE_LABELS: Record<string, string> = {
   "20l-50l": "20L – 50L",
   "50l-1cr": "50L – 1Cr",
   "1cr-plus": "1Cr+",
+};
+
+const FACING_LABELS: Record<string, string> = {
+  NORTH: "North",
+  SOUTH: "South",
+  EAST: "East",
+  WEST: "West",
+  NORTH_EAST: "North-East",
+  NORTH_WEST: "North-West",
+  SOUTH_EAST: "South-East",
+  SOUTH_WEST: "South-West",
+};
+
+const ROAD_LABELS: Record<string, string> = {
+  PITCHED: "Pitched",
+  GRAVEL: "Gravel",
+  SOIL: "Earthen",
+  BLOCK_PAVED: "Block paved",
+  FOOTPATH: "Footpath",
+};
+
+const FURNISHING_LABELS: Record<string, string> = {
+  UNFURNISHED: "Unfurnished",
+  SEMI_FURNISHED: "Semi-furnished",
+  FULLY_FURNISHED: "Fully furnished",
+};
+
+const CS_LABELS: Record<string, string> = {
+  UNDER_CONSTRUCTION: "Under Construction",
+  READY_TO_MOVE: "Ready to Move",
+  RESALE: "Resale",
+  NEWLY_BUILT: "Newly Built",
+};
+
+/** Short URL key → display info mapping */
+const CHIP_CONFIG: Record<
+  string,
+  { label: string; format?: (v: string) => string }
+> = {
+  q: { label: "Search", format: (v) => `"${v}"` },
+  type: { label: "Type", format: (v) => TYPE_LABELS[v] ?? v },
+  pr: { label: "Price", format: (v) => PRICE_LABELS[v] ?? v },
+  dist: { label: "District" },
+  minS: { label: "Min size" },
+  maxS: { label: "Max size" },
+  mun: { label: "Municipality" },
+  ward: { label: "Ward" },
+  bed: { label: "Bedrooms" },
+  bath: { label: "Bathrooms" },
+  face: { label: "Facing", format: (v) => FACING_LABELS[v] ?? v },
+  road: { label: "Road", format: (v) => ROAD_LABELS[v] ?? v },
+  cs: { label: "Status", format: (v) => CS_LABELS[v] ?? v },
+  ft: { label: "Furnishing", format: (v) => FURNISHING_LABELS[v] ?? v },
+  cp: { label: "Corner plot", format: () => "Yes" },
+  ng: { label: "Negotiable", format: () => "Yes" },
+  sub: { label: "Sub-type" },
+  am: { label: "Amenities", format: (v) => v.split(",").join(", ") },
 };
 
 /** A removable filter chip derived from the URL params. */
@@ -43,18 +101,23 @@ export function getActiveFilterChips(
   filters: SearchFiltersState,
 ): FilterChip[] {
   const chips: FilterChip[] = [];
-  const add = (key: string, label: string) => {
-    if (label) chips.push({ key, label });
-  };
 
-  if (filters.q) add("q", `“${filters.q}”`);
-  if (filters.type && filters.type !== "all")
-    add("type", TYPE_LABELS[filters.type] ?? filters.type);
-  if (filters.price && filters.price !== "any")
-    add("price", PRICE_LABELS[filters.price] ?? filters.price);
-  if (filters.district) add("district", filters.district);
-  if (filters.minSize) add("minSize", `Min size ${filters.minSize}`);
-  if (filters.maxSize) add("maxSize", `Max size ${filters.maxSize}`);
+  for (const [key, cfg] of Object.entries(CHIP_CONFIG)) {
+    const raw = filters[key];
+    if (!raw) continue;
+    // Skip default values
+    if (key === "type" && raw === "all") continue;
+    if (key === "pr" && raw === "any") continue;
+    if (key === "face" && raw === "any") continue;
+    if (key === "road" && raw === "any") continue;
+    if (key === "cs" && raw === "any") continue;
+    if (key === "ft" && raw === "any") continue;
+    if (key === "sub" && raw === "all") continue;
+
+    const display = cfg.format ? cfg.format(raw) : raw;
+    chips.push({ key, label: `${cfg.label}: ${display}` });
+  }
+
   return chips;
 }
 
@@ -110,15 +173,28 @@ export function SearchResults({
     if (!hasMore || loadingMore) return;
     setLoadingMore(true);
     try {
+      const sp = new URLSearchParams(window.location.search);
       const data = await fetchFeedPageGraphql({
         first: 12,
         after: nextCursor,
-        q: new URLSearchParams(window.location.search).get("q"),
-        type: new URLSearchParams(window.location.search).get("type"),
-        price: new URLSearchParams(window.location.search).get("price"),
-        district: new URLSearchParams(window.location.search).get("district"),
-        minSize: new URLSearchParams(window.location.search).get("minSize"),
-        maxSize: new URLSearchParams(window.location.search).get("maxSize"),
+        q: sp.get("q"),
+        type: sp.get("type"),
+        price: sp.get("pr"),
+        district: sp.get("dist"),
+        minSize: sp.get("minS"),
+        maxSize: sp.get("maxS"),
+        municipality: sp.get("mun"),
+        ward: sp.get("ward"),
+        facing: sp.get("face"),
+        roadType: sp.get("road"),
+        bedrooms: sp.get("bed"),
+        bathrooms: sp.get("bath"),
+        isCornerPlot: sp.get("cp") === "true" ? true : undefined,
+        isNegotiable: sp.get("ng") === "true" ? true : undefined,
+        constructionStatus: sp.get("cs"),
+        furnishing: sp.get("ft"),
+        subCategory: sp.get("sub"),
+        amenities: sp.get("am")?.split(",") ?? undefined,
       });
       setResults((prev) => [...prev, ...data.items]);
       setNextCursor(data.nextCursor);

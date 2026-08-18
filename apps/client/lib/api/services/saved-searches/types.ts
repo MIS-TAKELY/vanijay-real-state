@@ -8,6 +8,19 @@ export interface SavedSearchFilters {
   district?: string | null;
   minSize?: string | number | null;
   maxSize?: string | number | null;
+  // Comprehensive filters
+  municipality?: string | null;
+  ward?: string | number | null;
+  facing?: string | null;
+  roadType?: string | null;
+  bedrooms?: string | number | null;
+  bathrooms?: string | number | null;
+  isCornerPlot?: boolean | null;
+  isNegotiable?: boolean | null;
+  constructionStatus?: string | null;
+  furnishing?: string | null;
+  subCategory?: string | null;
+  amenities?: string[] | null;
 }
 
 /** One saved search row from `GET /api/v1/saved-searches`. */

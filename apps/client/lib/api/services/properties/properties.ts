@@ -151,11 +151,36 @@ export interface FeedQueryOptions {
   district?: string | null;
   minSize?: string | number | null;
   maxSize?: string | number | null;
+  // Comprehensive filters
+  municipality?: string | null;
+  ward?: string | number | null;
+  facing?: string | null;
+  roadType?: string | null;
+  bedrooms?: string | number | null;
+  bathrooms?: string | number | null;
+  isCornerPlot?: boolean | null;
+  isNegotiable?: boolean | null;
+  constructionStatus?: string | null;
+  furnishing?: string | null;
+  subCategory?: string | null;
+  amenities?: string[] | null;
 }
 
 const LISTINGS_FEED_QUERY = `
-  query ListingsFeed($first: Int, $after: String, $q: String, $type: String, $price: String, $district: String, $minSize: Float, $maxSize: Float) {
-    propertiesFeed(first: $first, after: $after, q: $q, type: $type, price: $price, district: $district, minSize: $minSize, maxSize: $maxSize) {
+  query ListingsFeed(
+    $first: Int, $after: String, $q: String, $type: String, $price: String, 
+    $district: String, $minSize: Float, $maxSize: Float,
+    $municipality: String, $ward: Int, $facing: String, $roadType: String,
+    $bedrooms: Int, $bathrooms: Int, $isCornerPlot: Boolean, $isNegotiable: Boolean,
+    $constructionStatus: String, $furnishing: String, $subCategory: String, $amenities: [String!]
+  ) {
+    propertiesFeed(
+      first: $first, after: $after, q: $q, type: $type, price: $price, 
+      district: $district, minSize: $minSize, maxSize: $maxSize,
+      municipality: $municipality, ward: $ward, facing: $facing, roadType: $roadType,
+      bedrooms: $bedrooms, bathrooms: $bathrooms, isCornerPlot: $isCornerPlot, isNegotiable: $isNegotiable,
+      constructionStatus: $constructionStatus, furnishing: $furnishing, subCategory: $subCategory, amenities: $amenities
+    ) {
       items {
         ...PropertyFields
       }
@@ -198,6 +223,30 @@ export function fetchFeedPageGraphql(
       opts.minSize != null && opts.minSize !== "" ? Number(opts.minSize) : null,
     maxSize:
       opts.maxSize != null && opts.maxSize !== "" ? Number(opts.maxSize) : null,
+    // Comprehensive filters
+    municipality: opts.municipality?.trim() ? opts.municipality.trim() : null,
+    ward: opts.ward != null && opts.ward !== "" ? Number(opts.ward) : null,
+    facing: opts.facing && opts.facing !== "any" ? opts.facing : null,
+    roadType: opts.roadType && opts.roadType !== "any" ? opts.roadType : null,
+    bedrooms:
+      opts.bedrooms != null && opts.bedrooms !== ""
+        ? Number(opts.bedrooms)
+        : null,
+    bathrooms:
+      opts.bathrooms != null && opts.bathrooms !== ""
+        ? Number(opts.bathrooms)
+        : null,
+    isCornerPlot: opts.isCornerPlot === true ? true : null,
+    isNegotiable: opts.isNegotiable === true ? true : null,
+    constructionStatus:
+      opts.constructionStatus && opts.constructionStatus !== "any"
+        ? opts.constructionStatus
+        : null,
+    furnishing:
+      opts.furnishing && opts.furnishing !== "any" ? opts.furnishing : null,
+    subCategory:
+      opts.subCategory && opts.subCategory !== "all" ? opts.subCategory : null,
+    amenities: opts.amenities && opts.amenities.length > 0 ? opts.amenities : null,
   }).then((data) => data.propertiesFeed);
 }
 

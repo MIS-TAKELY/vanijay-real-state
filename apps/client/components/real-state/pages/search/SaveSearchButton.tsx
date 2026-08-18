@@ -10,6 +10,38 @@ import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { FREQUENCY_OPTIONS } from "../dashboard/saved-searches/constants";
 
+/** All URL param keys that represent an active filter (short keys). */
+const FILTER_KEYS = [
+  "q",
+  "type",
+  "pr",
+  "dist",
+  "minS",
+  "maxS",
+  "mun",
+  "ward",
+  "bed",
+  "bath",
+  "face",
+  "road",
+  "cp",
+  "ng",
+  "cs",
+  "ft",
+  "sub",
+  "am",
+];
+
+const SKIP_DEFAULTS: Record<string, string> = {
+  type: "all",
+  pr: "any",
+  face: "any",
+  road: "any",
+  cs: "any",
+  ft: "any",
+  sub: "all",
+};
+
 /**
  * "Save search & alert" — persists the current `/search` filter state as a
  * `SavedSearch` with the chosen alert frequency. Guests are sent through the
@@ -22,18 +54,12 @@ export function SaveSearchButton() {
   const [saving, setSaving] = useState(false);
   const [open, setOpen] = useState(false);
 
-  const hasActiveFilters = [
-    "q",
-    "type",
-    "price",
-    "district",
-    "minSize",
-    "maxSize",
-  ].some((key) => {
+  const hasActiveFilters = FILTER_KEYS.some((key) => {
     const value = searchParams.get(key);
-    if (key === "type" && value === "all") return false;
-    if (key === "price" && value === "any") return false;
-    return Boolean(value);
+    if (!value) return false;
+    const skipDefault = SKIP_DEFAULTS[key];
+    if (skipDefault && value === skipDefault) return false;
+    return true;
   });
 
   const save = async () => {
