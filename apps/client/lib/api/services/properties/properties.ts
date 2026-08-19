@@ -1,4 +1,4 @@
-import { apiFetch } from "../../core/client";
+import { apiFetch, ApiError } from "../../core/client";
 import { API_ENDPOINTS } from "../../core/endpoints";
 import { gqlRequest } from "../../core/graphql";
 import type { ApiProperty, CreatePropertyPayload, FeedPage } from "./types";
@@ -277,9 +277,14 @@ export function fetchSearchSuggestionsGraphql(
 }
 
 export function fetchPropertyByGraphql(idOrSlug: string): Promise<ApiProperty> {
-  return gqlRequest<{ property: ApiProperty }>(PROPERTY_QUERY, {
+  return gqlRequest<{ property: ApiProperty | null }>(PROPERTY_QUERY, {
     idOrSlug,
-  }).then((data) => data.property);
+  }).then((data) => {
+    if (!data.property) {
+      throw new ApiError(404, `Property ${idOrSlug} not found`);
+    }
+    return data.property;
+  });
 }
 
 export function fetchMyListingsGraphql(): Promise<ApiProperty[]> {
