@@ -1,5 +1,5 @@
 /* Import shared kabadi theme from @repo/ui */
-@import "../../../../packages/ui/src/styles/kabadi.css";
+@import "../../../../../packages/ui/src/styles/kabadi.css";
 
 /* ── Client-specific kabadi styles ── */
 
