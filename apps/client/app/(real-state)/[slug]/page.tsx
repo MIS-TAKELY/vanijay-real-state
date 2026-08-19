@@ -1,5 +1,3 @@
-import React from "react";
-
 import { Icon } from "@repo/ui";
 import { PropertyViewTracker } from "components/real-state/common/PropertyViewTracker";
 import { stripHtml } from "components/real-state/googlemap/utils";
@@ -435,7 +433,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
             {/* Seller-defined custom specs */}
             {property.customSpecs && property.customSpecs.length > 0 && (
               <section className="mt-8">
-                
                 <div className="flex flex-col gap-6">
                   {property.customSpecs.map((table, tIdx) => (
                     <div key={tIdx}>

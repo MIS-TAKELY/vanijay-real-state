@@ -43,6 +43,13 @@ const nextConfig = {
         source: "/api/auth/:path*",
         destination: `${apiUrl}/api/auth/:path*`,
       },
+      {
+        // Proxy server-side GraphQL / REST requests to the API backend so
+        // that server-to-server loopback fetches (e.g. AUTH_API_URL pointing
+        // at the public domain) don't 404 on the Next.js server.
+        source: "/api/v1/:path*",
+        destination: `${apiUrl}/api/v1/:path*`,
+      },
     ];
   },
 };

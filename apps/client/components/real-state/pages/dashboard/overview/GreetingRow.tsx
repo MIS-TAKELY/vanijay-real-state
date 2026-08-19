@@ -19,9 +19,9 @@ export function GreetingRow({
   const isVerified = verificationLevel >= 2;
 
   return (
-    <div className="flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between mb-md">
+    <div className="flex flex-col gap-sm sm:flex-row sm:items-center sm:justify-between mb-sm md:mb-md">
       <div className="flex items-center gap-md">
-        <h2 className="font-headline-md text-headline-md text-navy font-bold tracking-tight">
+        <h2 className="font-headline-md text-xl md:text-headline-md text-navy font-bold tracking-tight">
           Namaste, {name}
         </h2>
       </div>

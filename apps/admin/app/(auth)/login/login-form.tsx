@@ -178,7 +178,7 @@ export function LoginForm() {
               />
             </div>
 
-            <Button type="submit" disabled={loading} className="mt-1 w-full">
+            <Button type="submit" disabled={loading} className="mt-1 w-full text-white">
               {loading ? "Signing in…" : "Sign in"}
             </Button>
           </form>

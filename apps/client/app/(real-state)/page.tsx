@@ -75,8 +75,8 @@ export default async function HomePage() {
         <ListingsMarketplace />
         <RecentlyAdded />
         <RecentlyViewed />
-        <section className="py-10 md:py-14 relative z-10">
-          <div className="">
+        <section className="py-6 md:py-14 relative z-10">
+          <div className="max-w-container-max mx-auto px-gutter">
             <NepalmapWrapper />
           </div>
         </section>

@@ -26,6 +26,7 @@ import {
 } from "@repo/ui";
 import SignIn from "components/real-state/modals/SignIn";
 import { AppModeStrip } from "components/shared/AppModeStrip";
+
 import { ChevronDown, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -91,10 +92,17 @@ export function Navbar() {
   const loadCart = useCartStore((state) => state.load);
 
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
+  const [showAttention, setShowAttention] = useState(false);
 
   useEffect(() => {
     if (!isPending) setHasLoadedOnce(true);
   }, [isPending]);
+
+  // Attention-grabbing bounce on first visit — continuous until user interacts
+  useEffect(() => {
+    if (!hasLoadedOnce || isPending) return;
+    setShowAttention(true);
+  }, [hasLoadedOnce, isPending]);
 
   const user = session?.user;
   const isLoggedIn = !!user;
@@ -128,16 +136,16 @@ export function Navbar() {
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
   return (
-    <header className="w-full top-0 sticky z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant">
-      <nav className="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-16 sm:h-20">
+    <header className="w-full top-0 sticky z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant safe-top">
+      <nav className="flex justify-between items-center w-full px-sm sm:px-gutter max-w-container-max mx-auto h-14 sm:h-16 md:h-20">
         {/* Logo (links home) + minimal app-switcher chevron */}
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-2 md:gap-0.5">
           <Link
             href="/"
             className="group flex items-center "
             aria-label="MALPOTH home"
           >
-            <span className="flex h-10 w-10 sm:h-12 sm:w-12 rounded-full ring-1 ring-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105">
+            <span className="flex h-10 w-10 sm:h-12 sm:w-12 rounded-full border border-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105">
               <Image
                 src={logo}
                 alt="MALPOTH"
@@ -166,22 +174,30 @@ export function Navbar() {
                 aria-haspopup="menu"
                 aria-expanded={appsOpen}
                 aria-label="Switch app"
-                className="cursor-pointer rounded-full text-on-surface-variant transition-colors hover:bg-surface-container hover:text-on-surface"
+                className={cn(
+                  "animate-gentle-float cursor-pointer rounded-full border transition-colors duration-200",
+                  appsOpen
+                    ? "border-gold bg-surface-container text-on-surface"
+                    : "border-gold/50 text-on-surface-variant hover:bg-surface-container hover:text-on-surface",
+                  showAttention && !appsOpen && "animate-bounce-ball",
+                )}
               >
-                <ChevronDown
+                <span
                   className={cn(
-                    "size-4 transition-transform duration-200",
-                    appsOpen && "rotate-180",
+                    "inline-flex",
+                    appsOpen ? "animate-bounce-rotate" : "rotate-0",
                   )}
-                />
+                >
+                  <ChevronDown className="size-4" />
+                </span>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
               sideOffset={8}
-              className="w-[300px] overflow-hidden rounded-2xl border-outline-variant bg-surface p-0 shadow-xl sm:w-[340px]"
+              className="w-[300px] overflow-hidden rounded-2xl border border-outline-variant bg-surface p-0 shadow-xl data-[state=open]:animate-app-switcher-in data-[state=closed]:animate-app-switcher-out sm:w-[240px]"
             >
-              <p className="flex items-center gap-2 px-4 pb-2 pt-4 font-label-sm text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
+              <p className="flex items-center gap-2 px-2 pb-2 pt-2 font-label-sm text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
                 <Icon name="grid_view" className="text-[14px]" />
                 Switch app
               </p>
@@ -191,8 +207,8 @@ export function Navbar() {
         </div>
 
         {/* Search bar — always visible, shrinks to fill on mobile */}
-        <div className="flex min-w-0 flex-1 justify-center px-2 sm:px-3">
-          <div className="w-full max-w-md">{searchForm}</div>
+        <div className="flex min-w-0 flex-1 justify-center px-1 sm:px-3">
+          <div className="w-full max-w-[180px] sm:max-w-md">{searchForm}</div>
         </div>
 
         {/* Right cluster */}
@@ -309,7 +325,7 @@ export function Navbar() {
                 size="icon"
                 aria-label="Toggle menu"
                 aria-expanded={mobileOpen}
-                className="md:hidden inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer"
+                className="md:hidden inline-flex h-11 w-11 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container cursor-pointer touch-target"
               >
                 <Icon
                   name={mobileOpen ? "close" : "Menu"}
@@ -478,7 +494,6 @@ export function Navbar() {
           </Sheet>
         </div>
       </nav>
-
     </header>
   );
 }

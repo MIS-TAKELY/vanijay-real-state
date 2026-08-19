@@ -14,7 +14,7 @@ export function StatCard({ stat }: StatCardProps) {
         <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
           {stat.label}
         </span>
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-navy text-gold shadow-sm">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg  text-gold shadow-sm">
           <Icon name={stat.icon} className="text-body-lg" />
         </span>
       </div>

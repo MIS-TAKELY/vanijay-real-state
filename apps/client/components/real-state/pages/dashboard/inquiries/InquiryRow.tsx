@@ -15,12 +15,58 @@ interface InquiryRowProps {
 export function InquiryRow({ inquiry, expanded, onToggle }: InquiryRowProps) {
   return (
     <div className="border-b border-outline-variant last:border-b-0">
+      {/* Mobile card — visible < md */}
       <button
         type="button"
         onClick={() => onToggle(inquiry.id)}
         aria-expanded={expanded}
         className={cn(
-          "grid w-full cursor-pointer grid-cols-[auto_minmax(160px,1.5fr)_1fr_auto_auto] items-center gap-sm px-sm py-3 text-left transition-colors hover:bg-surface-container-high",
+          "md:hidden w-full cursor-pointer text-left px-sm py-3 transition-colors hover:bg-surface-container-high",
+          expanded && "bg-surface-container-high",
+        )}
+      >
+        <div className="flex items-start gap-sm">
+          <InquiryTypeIcon type={inquiry.type} />
+          <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+            <div className="flex items-center gap-1.5">
+              <span className="truncate text-sm font-medium text-on-surface">
+                {inquiry.personName}
+              </span>
+              {inquiry.isVerifiedLead ? (
+                <Icon
+                  name="verified"
+                  filled
+                  className="shrink-0 text-[14px] text-gold"
+                />
+              ) : null}
+            </div>
+            <span className="mono-stat truncate text-[12px] text-on-surface-variant">
+              {inquiry.propertyCode}
+            </span>
+            <p className="truncate text-[12px] text-on-surface-variant mt-0.5">
+              {inquiry.message}
+            </p>
+            <div className="flex items-center gap-2 mt-1">
+              <InquiryStatusChip status={inquiry.status} />
+              <span className="mono-stat text-[11px] text-on-surface-variant">
+                {inquiry.date}
+              </span>
+            </div>
+          </div>
+          <Icon
+            name={expanded ? "expand_less" : "expand_more"}
+            className="text-body-lg text-on-surface-variant shrink-0 mt-1"
+          />
+        </div>
+      </button>
+
+      {/* Desktop row — visible md+ */}
+      <button
+        type="button"
+        onClick={() => onToggle(inquiry.id)}
+        aria-expanded={expanded}
+        className={cn(
+          "hidden md:grid w-full cursor-pointer grid-cols-[auto_minmax(160px,1.5fr)_1fr_auto_auto] items-center gap-sm px-sm py-3 text-left transition-colors hover:bg-surface-container-high",
           expanded && "bg-surface-container-high",
         )}
       >

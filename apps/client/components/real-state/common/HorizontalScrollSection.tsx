@@ -58,7 +58,7 @@ export function HorizontalScrollSection({
   // Rich card accent + rail sizing (the slim card already carries its own
   // width via min/max classes, so only the left accent border is layered on).
   const commonCardClassName = cn(
-    "w-[220px] min-w-[220px] max-w-[220px] sm:w-[240px] sm:min-w-[240px] sm:max-w-[240px] md:min-w-[250px] md:max-w-[280px] md:w-auto shrink-0 snap-start",
+    "w-[180px] min-w-[180px] max-w-[180px] sm:w-[220px] sm:min-w-[220px] sm:max-w-[220px] md:min-w-[250px] md:max-w-[280px] md:w-auto shrink-0 snap-start",
     accent === "primary-left"
       ? "border-l-4 border-l-primary"
       : accent === "trending"

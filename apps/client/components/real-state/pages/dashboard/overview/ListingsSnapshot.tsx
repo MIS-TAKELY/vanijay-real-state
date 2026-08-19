@@ -17,6 +17,45 @@ interface ListingsSnapshotProps {
   listings?: DashboardListingSnapshot[];
 }
 
+/** Mobile card for a single listing snapshot — shown < md. */
+function ListingSnapshotMobileCard({ item }: { item: DashboardListingSnapshot }) {
+  const status = STATUS_STYLES[item.status] ?? DEFAULT_STATUS_STYLE;
+
+  return (
+    <div className="flex items-center gap-sm border-b border-outline-variant px-sm py-3 last:border-b-0">
+      <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+        <div className="flex items-center gap-1.5">
+          <span className="mono-stat text-[12px] text-on-surface-variant">
+            {item.listingCode}
+          </span>
+          <span
+            className={cn(
+              "inline-flex items-center gap-1 rounded-full px-1.5 py-0.5 text-[10px] font-medium leading-none",
+              status.chip,
+            )}
+          >
+            <span className={cn("h-1.5 w-1.5 rounded-full", status.dot)} />
+            {status.label}
+          </span>
+        </div>
+        <span className="font-body-md text-sm text-on-surface truncate">
+          {item.title}
+        </span>
+      </div>
+      <span className="mono-stat text-label-sm text-on-surface tabular-nums shrink-0">
+        {item.views}
+      </span>
+      <Link
+        href={`/my-listings/new?slug=${item.slug}`}
+        className="inline-flex items-center justify-center h-8 w-8 rounded-md text-on-surface-variant hover:bg-surface-container hover:text-primary transition-colors shrink-0"
+        aria-label={`Manage ${item.listingCode}`}
+      >
+        <Icon name="manage_accounts" className="text-body-lg" />
+      </Link>
+    </div>
+  );
+}
+
 export function ListingsSnapshot({ listings }: ListingsSnapshotProps) {
   const items = listings ?? [];
 
@@ -55,7 +94,15 @@ export function ListingsSnapshot({ listings }: ListingsSnapshotProps) {
         </Link>
       </div>
 
-      <Table>
+      {/* Mobile card view — visible < md */}
+      <div className="md:hidden">
+        {items.map((item) => (
+          <ListingSnapshotMobileCard key={item.id} item={item} />
+        ))}
+      </div>
+
+      {/* Desktop table — visible md+ */}
+      <Table className="hidden md:table">
         <TableHeader>
           <TableRow className="border-outline-variant hover:bg-transparent">
             <TableHead className="h-auto px-xs py-2 font-label-sm text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">

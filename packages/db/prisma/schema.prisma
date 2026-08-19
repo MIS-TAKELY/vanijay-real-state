@@ -33,6 +33,40 @@ enum VerificationStatus {
     REJECTED
 }
 
+// ==========================================
+// SELLER ACCOUNT REGISTRATION
+// ==========================================
+
+// The three seller account flavors supported by the registration wizard.
+enum SellerAccountType {
+    INDIVIDUAL // Owner / Seller / Landlord
+    AGENT // Broker / Real Estate Agency
+    ORGANIZATION // Developer / RE company / Institute / Corporate owner
+}
+
+enum SellerSubType {
+    // Individual
+    OWNER
+    SELLER
+    LANDLORD
+    // Agent
+    BROKER
+    REAL_ESTATE_AGENCY
+    // Organization
+    DEVELOPER
+    REAL_ESTATE_COMPANY
+    INSTITUTE
+    CORPORATE_OWNER
+}
+
+enum SellerRegistrationStatus {
+    DRAFT
+    SUBMITTED
+    UNDER_REVIEW
+    APPROVED
+    REJECTED
+}
+
 enum PropertyStatus {
     DRAFT
     UNDER_VERIFICATION
@@ -109,6 +143,7 @@ enum DocumentType {
     TAX_CLEARANCE // Current Fiscal Year Tax Proof
     SURVEY_NAKSA_MAP // Cadastral Survey Map
     PAN_CARD
+    BUSINESS_REGISTRATION // Agent/organization registration certificate
     OTHER
 }
 
@@ -202,6 +237,7 @@ model User {
     sessions Session[]
     accounts Account[]
     profile  UserProfile?
+    sellerProfile SellerProfile?
 
     properties          Property[]             @relation("OwnerProperties")
     assignedAgentFor    Property[]             @relation("AgentProperties")
@@ -313,6 +349,49 @@ model Agency {
 
     createdAt DateTime @default(now())
     updatedAt DateTime @updatedAt
+}
+
+// Seller account registration record — one per user. Created by the
+// "become a seller" wizard; the status lifecycle drives when the SELLER
+// role is granted (on APPROVED, or on SUBMITTED when auto-approve is on).
+model SellerProfile {
+    id     String @id @default(cuid())
+    userId String @unique
+    user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+    accountType SellerAccountType
+    subType     SellerSubType
+    status      SellerRegistrationStatus @default(DRAFT)
+
+    // ── Individual ──────────────────────────────────────────────
+    fullName                 String?
+    ownershipDeclared        Boolean   @default(false)
+    ownershipDeclarationText String? // versioned declaration text agreed to
+    ownershipDeclaredAt      DateTime?
+
+    // ── Agent / Organization ────────────────────────────────────
+    businessName            String? // agency name OR organization name
+    representativeName      String? // individual rep OR authorized representative
+    hasBusinessRegistration Boolean @default(false) // "where applicable"
+    registrationNumber      String? // PAN/VAT or company registration number
+    businessEmail           String?
+    businessPhone           String?
+    website                 String?
+    officeDistrict          String?
+    officeAddress           String?
+    officeLocation          Json? // optional { lat, lng }
+
+    // ── Review lifecycle ────────────────────────────────────────
+    submittedAt     DateTime?
+    reviewedById    String?
+    reviewedAt      DateTime?
+    rejectionReason String?
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @updatedAt
+
+    @@index([status])
+    @@index([accountType])
 }
 
 // model Subscription {

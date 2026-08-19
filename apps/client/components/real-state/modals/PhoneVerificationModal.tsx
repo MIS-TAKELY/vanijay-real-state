@@ -13,7 +13,7 @@ import {
   InputOTPSlot,
 } from "@repo/ui";
 import { authClient } from "@repo/auth/client";
-import { checkPhoneRegistered, registerSeller } from "lib/api/services/seller";
+import { checkPhoneRegistered } from "lib/api/services/seller";
 import { Loader2, MessageCircle, Phone } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -123,9 +123,8 @@ export function PhoneVerificationModal({
         return;
       }
 
-      // Registering as a seller makes the user a registered buyer AND seller,
-      // which unlocks the full listings section.
-      await registerSeller({ agreedToTerms: true });
+      // Seller registration is handled by the /become-seller wizard now; this
+      // modal only verifies the phone number.
       await authClient.getSession();
 
       successTimeoutRef.current = setTimeout(onVerified, 700);

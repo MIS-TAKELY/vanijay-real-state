@@ -4,6 +4,7 @@ export { DashboardHeader } from "components/real-state/layout/dashboard/Dashboar
 export { DashboardSidebar } from "./DashboardSidebar";
 export { GreetingRow } from "./GreetingRow";
 export { ListingsSnapshot } from "./ListingsSnapshot";
+export { SellerStatusBanner } from "./SellerStatusBanner";
 export { StatCard } from "./StatCard";
 export { StatGrid } from "./StatGrid";
 export { UpcomingAppointments } from "./UpcomingAppointments";

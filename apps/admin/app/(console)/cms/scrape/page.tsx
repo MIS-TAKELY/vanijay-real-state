@@ -354,7 +354,7 @@ export default function ScrapeCmsPage() {
                       <Input
                         value={item.name}
                         onChange={(e) => setRow(idx, { name: e.target.value })}
-                        className="h-9 bg-surface"
+                        className="h-9 bg-surface min-w-[120px]"
                       />
                     </AdminDataTable.Cell>
                     <AdminDataTable.Cell className="py-2">
@@ -363,7 +363,7 @@ export default function ScrapeCmsPage() {
                         onChange={(e) =>
                           setRow(idx, { nepali: e.target.value })
                         }
-                        className="h-9 w-24 bg-surface"
+                        className="h-9 min-w-[120px] bg-surface"
                         placeholder="नेपाली"
                       />
                     </AdminDataTable.Cell>

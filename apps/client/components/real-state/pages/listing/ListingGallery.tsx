@@ -489,15 +489,6 @@ export function ListingGallery({
                 </span>
               </div>
               <div className="flex items-center gap-2 shrink-0">
-                <a
-                  href={activeDoc.url}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-surface/80 text-on-surface transition-transform hover:scale-105"
-                  title="Open full size"
-                >
-                  <Icon name="open_in_new" className="text-[16px]" />
-                </a>
                 <button
                   type="button"
                   onClick={openDocLightbox}

@@ -16,6 +16,8 @@ export const API_ENDPOINTS = {
   seller: {
     register: `/api/${API_VERSION}/seller/register`,
     checkPhone: `/api/${API_VERSION}/seller/check-phone`,
+    profile: `/api/${API_VERSION}/seller/profile`,
+    submit: `/api/${API_VERSION}/seller/submit`,
   },
 
   uploads: {

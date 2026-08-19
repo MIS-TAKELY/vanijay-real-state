@@ -131,16 +131,16 @@ export function SearchBar() {
     debouncedQuery.trim().length >= 2;
 
   return (
-    <section className="relative z-10 pt-6 pb-4 md:pt-8 md:pb-4">
-      <div className="mx-auto max-w-containe px-gutter">
+    <section className="relative z-10 pt-4 pb-3 px-sm sm:px-0 md:pt-8 md:pb-4">
+      <div className="mx-auto max-w-container px-gutter">
         <form
           aria-label="Search verified property listings"
           onSubmit={handleSubmit}
-          className="mx-auto flex max-w-xl items-center gap-1 rounded-xl border border-outline-variant bg-surface p-1.5 shadow-sm transition-shadow duration-200 focus-within:ring-2 focus-within:ring-primary/20 sm:p-2"
+          className="mx-auto flex max-w-xl items-center gap-1 rounded-xl border border-outline-variant bg-surface p-1.5 shadow-sm transition-shadow duration-200 focus-within:ring-2 focus-within:ring-primary/20 sm:p-2 h-11 sm:h-auto"
         >
           <div
             ref={searchWrapRef}
-            className="relative flex min-w-[160px] flex-1 items-center gap-2 pl-2"
+            className="relative flex min-w-0 flex-1 items-center gap-2 pl-2"
           >
             <Icon
               name="search"

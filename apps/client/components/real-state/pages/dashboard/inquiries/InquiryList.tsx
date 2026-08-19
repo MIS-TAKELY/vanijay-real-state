@@ -41,26 +41,25 @@ export function InquiryList() {
     <div className="flex flex-col">
       <InquiryTabs active={tab} counts={counts} onChange={setTab} />
 
-      <div className="overflow-x-auto rounded-2xl border border-outline-variant bg-surface">
-        <div className="min-w-[640px]">
-          {/* Header */}
-          <div className="grid grid-cols-[auto_minmax(160px,1.5fr)_1fr_auto_auto] items-center gap-sm border-b border-outline-variant bg-surface-container-low px-sm py-2.5">
-            <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
-              Type
-            </span>
-            <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
-              Person
-            </span>
-            <span className="hidden font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep md:block">
-              Message
-            </span>
-            <span className="hidden font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep sm:block">
-              Status
-            </span>
-            <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
-              Date
-            </span>
-          </div>
+      <div className="rounded-2xl border border-outline-variant bg-surface">
+        {/* Desktop header — visible md+ */}
+        <div className="hidden md:grid grid-cols-[auto_minmax(160px,1.5fr)_1fr_auto_auto] items-center gap-sm border-b border-outline-variant bg-surface-container-low px-sm py-2.5">
+          <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
+            Type
+          </span>
+          <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
+            Person
+          </span>
+          <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
+            Message
+          </span>
+          <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
+            Status
+          </span>
+          <span className="font-label-sm text-[11px] font-bold uppercase tracking-[0.16em] text-gold-deep">
+            Date
+          </span>
+        </div>
 
           {items.length === 0 ? (
             <div className="px-sm py-md text-sm text-on-surface-variant">
@@ -75,8 +74,7 @@ export function InquiryList() {
                 onToggle={toggle}
               />
             ))
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

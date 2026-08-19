@@ -5,7 +5,7 @@ import { Button } from "@repo/ui";
 function CallToActionBanner() {
   const router = useRouter();
   return (
-    <section className="relative py-16 md:py-24 overflow-hidden">
+    <section className="relative py-10 md:py-24 overflow-hidden">
       {/* Background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -18,14 +18,14 @@ function CallToActionBanner() {
 
       {/* Content */}
       <div className="relative z-10 max-w-container-max mx-auto px-gutter text-center">
-        <h2 className="font-display-lg text-display-lg text-white leading-tight mb-4">
+        <h2 className="font-display-lg text-2xl md:text-display-lg text-white leading-tight mb-3 md:mb-4">
           Can&apos;t find what you&apos;re looking for?
         </h2>
-        <p className="font-body-lg text-white/80 leading-relaxed max-w-2xl mx-auto mb-8">
+        <p className="font-body-lg text-sm md:text-body-lg text-white/80 leading-relaxed max-w-2xl mx-auto mb-6 md:mb-8">
           Let our agents help you find your perfect property. Tell us your
           requirements and we will match you with the best options.
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-3 md:gap-4">
           <Button
             size="lg"
             className="shadow-xl"

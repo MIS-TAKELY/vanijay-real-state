@@ -1,6 +1,7 @@
 "use client";
 import { Icon } from "@repo/ui";
 import { appModes } from "constants/varibles-constants";
+import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
@@ -65,7 +66,7 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
   if (compact) {
     return (
       <nav aria-label="Apps" className="flex flex-col gap-0.5 p-2">
-        {appModes.map((mode) => {
+        {appModes.map((mode, index) => {
           const active = isActive(mode.href);
 
           const row = (
@@ -94,7 +95,17 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
           );
 
           return (
-            <div key={mode.id}>
+            <motion.div
+              key={mode.id}
+              initial={{ opacity: 0, x: -12 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                delay: 0.05 + index * 0.04,
+                type: "spring",
+                stiffness: 420,
+                damping: 26,
+              }}
+            >
               {mode.soon ? (
                 <div aria-disabled="true" className="cursor-not-allowed opacity-60">
                   {row}
@@ -108,7 +119,7 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
                   {row}
                 </Link>
               )}
-            </div>
+            </motion.div>
           );
         })}
       </nav>

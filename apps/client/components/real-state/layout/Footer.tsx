@@ -25,10 +25,10 @@ const headingClass =
 
 export function Footer() {
   return (
-    <footer className="relative z-10 w-full mt-xl border-t border-gold/20 bg-navy-deep text-white">
-      <div className="mx-auto grid max-w-container-max grid-cols-1 gap-md px-gutter py-xl md:grid-cols-4">
+    <footer className="relative z-10 w-full mt-xl border-t border-gold/20 bg-navy-deep text-white safe-bottom">
+      <div className="mx-auto grid max-w-container-max grid-cols-1 gap-lg px-gutter py-lg md:grid-cols-4 md:gap-md md:py-xl">
         <div className="col-span-1">
-          <div className="mb-md flex items-center gap-3">
+          <div className="mb-lg flex items-center gap-3 md:mb-md">
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0.5 ring-1 ring-gold/50">
               <Image
                 src={logo}
@@ -59,7 +59,7 @@ export function Footer() {
 
         <div>
           <h4 className={headingClass}>The Archive</h4>
-          <div className="flex flex-col gap-sm">
+          <div className="flex flex-col gap-base">
             {footerLinks["The Archive"].map((link) => (
               <a
                 key={link.label}
@@ -74,7 +74,7 @@ export function Footer() {
 
         <div>
           <h4 className={headingClass}>Compliance</h4>
-          <div className="flex flex-col gap-sm">
+          <div className="flex flex-col gap-base">
             {footerLinks.Compliance.map((link) => (
               <a
                 key={link.label}
@@ -93,7 +93,7 @@ export function Footer() {
 
         <div>
           <h4 className={headingClass}>Contact</h4>
-          <p className="font-body-md text-sm text-white/70 mono-stat mb-md">
+          <p className="font-body-md text-sm text-white/70 mono-stat mb-lg md:mb-md">
             Durbar Marg, Kathmandu
             <br />
             info@lekhaprati.com
@@ -121,8 +121,8 @@ export function Footer() {
         </div>
       </div>
 
-      <div className="border-t border-white/10 py-md">
-        <div className="mx-auto flex max-w-container-max flex-col items-center justify-between gap-md px-gutter md:flex-row">
+      <div className="border-t border-white/10 py-sm md:py-md">
+        <div className="mx-auto flex max-w-container-max flex-col items-center justify-between gap-sm px-gutter md:flex-row md:gap-md">
           <p className="font-label-sm text-[11px] text-white/50">
             © 2024 MALPOTH. All Rights Reserved. RAPD Unit Ref: LP-9921-X.
           </p>

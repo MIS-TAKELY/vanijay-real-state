@@ -2,12 +2,12 @@
 
 import { Button, Icon } from "@repo/ui";
 import { useSessionWithServer } from "components/real-state/layout/session-context";
-import { PhoneVerificationModal } from "components/real-state/modals/PhoneVerificationModal";
 import {
   ActivityFeed,
   DashboardHeader,
   GreetingRow,
   ListingsSnapshot,
+  SellerStatusBanner,
   StatGrid,
   UpcomingAppointments,
   VerificationBanner,
@@ -83,6 +83,8 @@ export default function DashboardPage() {
       />
 
       <VerificationBanner show={true} />
+
+      <SellerStatusBanner />
 
       {loading ? (
         <div className="grid grid-cols-1 gap-md sm:grid-cols-2 lg:grid-cols-4 mb-md">
