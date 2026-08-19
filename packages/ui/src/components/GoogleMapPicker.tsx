@@ -28,6 +28,28 @@ const DEFAULT_CENTER: LatLng = [27.7172, 85.324];
 const DEFAULT_HELPER =
   "Click anywhere on the map to drop a pin, or drag the marker to adjust.";
 
+type MapStyle = "satellite" | "street";
+
+const TILE_LAYERS: Record<
+  MapStyle,
+  { url: string; options: { maxZoom: number; attribution?: string } }
+> = {
+  satellite: {
+    url: "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+    options: {
+      maxZoom: 19,
+      attribution: "Tiles © Esri",
+    },
+  },
+  street: {
+    url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+    options: {
+      maxZoom: 19,
+      attribution: "© OpenStreetMap",
+    },
+  },
+};
+
 function loadLeafletScript(): Promise<any> {
   if (typeof window === "undefined") return Promise.resolve(null);
   if ((window as any).L) return Promise.resolve((window as any).L);
@@ -63,11 +85,16 @@ export function GoogleMapPicker({
   className,
 }: GoogleMapPickerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const wrapperRef = useRef<HTMLDivElement | null>(null);
   /* eslint-disable @typescript-eslint/no-explicit-any */
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
+  const tileLayerRef = useRef<any>(null);
   const [L, setL] = useState<any>(null);
   /* eslint-enable @typescript-eslint/no-explicit-any */
+
+  const [mapStyle, setMapStyle] = useState<MapStyle>("satellite");
+  const [expanded, setExpanded] = useState(false);
 
   const onChangeRef = useRef(onChange);
   useEffect(() => {
@@ -111,9 +138,8 @@ export function GoogleMapPicker({
       attributionControl: false,
     });
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-    }).addTo(map);
+    const provider = TILE_LAYERS[mapStyle];
+    tileLayerRef.current = L.tileLayer(provider.url, provider.options).addTo(map);
 
     L.control.zoom({ position: "bottomleft" }).addTo(map);
 
@@ -175,6 +201,7 @@ export function GoogleMapPicker({
       map.remove();
       mapRef.current = null;
       markerRef.current = null;
+      tileLayerRef.current = null;
     };
   }, [L, center, zoom, minZoom]);
 
@@ -220,6 +247,18 @@ export function GoogleMapPicker({
     }
   }, [value, L]);
 
+  // Switch tile layer when mapStyle changes
+  useEffect(() => {
+    if (!L || !mapRef.current) return;
+
+    if (tileLayerRef.current) {
+      tileLayerRef.current.remove();
+    }
+
+    const provider = TILE_LAYERS[mapStyle];
+    tileLayerRef.current = L.tileLayer(provider.url, provider.options).addTo(mapRef.current);
+  }, [mapStyle, L]);
+
   const handleLocateMe = useCallback(() => {
     if (typeof navigator === "undefined" || !navigator.geolocation) return;
     navigator.geolocation.getCurrentPosition(
@@ -241,36 +280,102 @@ export function GoogleMapPicker({
     );
   }, [L]);
 
+  // Invalidate map size when expanded state changes
+  useEffect(() => {
+    if (mapRef.current) {
+      const timer = setTimeout(() => mapRef.current.invalidateSize(), 350);
+      return () => clearTimeout(timer);
+    }
+  }, [expanded]);
+
   const heightStyle = typeof height === "number" ? `${height}px` : height;
 
   return (
     <div className={cn("flex flex-col gap-xs", className)}>
       <div className="flex items-center justify-between">
         <Label>{label}</Label>
-        {showLocateMe && (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleLocateMe}
-            className="text-[13px]"
-          >
-            <Icon name="my_location" className="mr-1 text-[16px]" />
-            Locate me
-          </Button>
-        )}
+        <div className="flex items-center gap-1.5">
+          {showLocateMe && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleLocateMe}
+              className="text-[13px]"
+            >
+              <Icon name="my_location" className="mr-1 text-[16px]" />
+              Locate me
+            </Button>
+          )}
+        </div>
       </div>
 
-      <div className="relative z-0 overflow-hidden rounded-2xl border border-outline-variant bg-surface">
+      <div
+        ref={wrapperRef}
+        className={cn(
+          "relative z-0 overflow-hidden rounded-2xl border border-outline-variant bg-surface transition-all duration-300",
+          expanded &&
+            "fixed inset-4 z-50 rounded-2xl border-2 border-navy/20 shadow-2xl",
+        )}
+      >
+        {/* Map style toggle — top right */}
+        <div className="absolute right-2 top-2 z-[1000] flex flex-col gap-1.5">
+          <div className="flex overflow-hidden rounded-lg border border-outline-variant bg-surface/90 shadow-sm backdrop-blur-sm">
+            {(["satellite", "street"] as const).map((style) => (
+              <button
+                key={style}
+                type="button"
+                onClick={() => setMapStyle(style)}
+                className={cn(
+                  "px-2.5 py-1.5 text-[11px] font-semibold transition-colors",
+                  mapStyle === style
+                    ? "bg-navy text-white"
+                    : "text-on-surface-variant hover:bg-surface-container",
+                )}
+              >
+                {style === "satellite" ? "🛰️ Sat" : "🗺️ Map"}
+              </button>
+            ))}
+          </div>
+
+          {/* Expand / collapse button */}
+          <button
+            type="button"
+            onClick={() => setExpanded((prev) => !prev)}
+            className="flex items-center justify-center rounded-lg border border-outline-variant bg-surface/90 p-1.5 text-on-surface-variant shadow-sm backdrop-blur-sm transition-colors hover:bg-surface-container"
+            title={expanded ? "Collapse map" : "Expand map"}
+          >
+            <Icon
+              name={expanded ? "fullscreen_exit" : "fullscreen"}
+              className="text-[16px]"
+            />
+          </button>
+        </div>
+
         <div
           ref={containerRef}
-          style={{ height: heightStyle, width: "100%" }}
+          style={{
+            height: expanded ? "100%" : heightStyle,
+            width: "100%",
+          }}
         />
 
         {showCoordinates && value && (
-          <div className="absolute bottom-3 right-3 z-10 rounded-lg bg-surface/90 px-2.5 py-1 text-xs font-bold text-on-surface shadow-sm backdrop-blur-sm border border-outline-variant">
+          <div className="absolute bottom-3 right-3 z-[1000] rounded-lg bg-surface/90 px-2.5 py-1 text-xs font-bold text-on-surface shadow-sm backdrop-blur-sm border border-outline-variant">
             📍 {value[0].toFixed(5)}, {value[1].toFixed(5)}
           </div>
+        )}
+
+        {/* Close button when expanded */}
+        {expanded && (
+          <button
+            type="button"
+            onClick={() => setExpanded(false)}
+            className="absolute left-2 top-2 z-[1000] flex items-center gap-1 rounded-lg border border-outline-variant bg-surface/90 px-2.5 py-1.5 text-[12px] font-semibold text-on-surface shadow-sm backdrop-blur-sm transition-colors hover:bg-surface-container"
+          >
+            <Icon name="fullscreen_exit" className="text-[14px]" />
+            Close
+          </button>
         )}
       </div>
 
