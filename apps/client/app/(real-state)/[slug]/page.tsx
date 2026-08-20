@@ -225,25 +225,37 @@ export default async function ListingDetailPage({ params }: PageProps) {
   );
   const p = property;
 
+  const subCategoryLabel = labelEnum(property.subCategory, TYPE_LABELS);
+  const roadAccess =
+    [
+      property.roadAccessWidthFt ? `${property.roadAccessWidthFt} ft` : null,
+      property.roadType ? labelEnum(property.roadType, {}) : null,
+    ]
+      .filter(Boolean)
+      .join(" · ") || null;
+  const facingLabel = property.facing
+    ? labelEnum(property.facing, {})
+    : null;
+
+  // Key Facts — surface the four essentials under the header as chips. These are
+  // the canonical values; the spec table below intentionally does NOT repeat
+  // them, so the same data is never rendered twice.
+  const keyFacts: Array<[string, string | null | undefined]> = (
+    [
+      ["Land Area", hasLand ? area : null],
+      ["Road Access", roadAccess],
+      ["Facing", facingLabel],
+      ["Property Type", subCategoryLabel],
+    ] as Array<[string, string | null | undefined]>
+  ).filter(([, value]) => Boolean(value));
+
   const specs: Array<[string, string | null | undefined]> = [
     ...(hasLand
       ? ([
-          ["Land Area", area],
           ["Total Area", `${formatNumber(p.landArea?.totalSqFt)} sq ft`],
           ["Total Area (m²)", `${formatNumber(p.landArea?.totalSqMeters)} m²`],
         ] as Array<[string, string | null | undefined]>)
       : []),
-    ["Property Type", labelEnum(property.subCategory, TYPE_LABELS)],
-    [
-      "Road Access",
-      [
-        property.roadAccessWidthFt ? `${property.roadAccessWidthFt} ft` : null,
-        property.roadType ? labelEnum(property.roadType, {}) : null,
-      ]
-        .filter(Boolean)
-        .join(" · ") || null,
-    ],
-    ["Facing", property.facing ? labelEnum(property.facing, {}) : null],
     ["Corner Plot", property.isCornerPlot ? "Yes" : null],
   ];
 
@@ -427,7 +439,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 href={category ? `/category/${category.slug}` : "/search"}
                 className="transition-colors hover:text-primary"
               >
-                {labelEnum(property.subCategory, TYPE_LABELS)}
+                {subCategoryLabel}
               </Link>
             </li>
             <li aria-hidden className="flex items-center">
@@ -469,6 +481,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
             )}
           </div>
         </header>
+
 
         {/* Media + decision card — stacked on mobile, side-by-side from sm up */}
         <div className="grid min-w-0 items-start gap-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(13rem,17rem)] sm:gap-4 lg:grid-cols-3 lg:gap-5">

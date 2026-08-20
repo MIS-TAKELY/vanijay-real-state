@@ -42,7 +42,7 @@ const searchForm = (
   <form
     action="/search"
     role="search"
-    className="flex h-9 items-center gap-1.5 rounded-xl border border-outline-variant bg-white pl-2.5 pr-1.5 shadow-sm transition-shadow focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/30"
+    className="flex h-11 items-center gap-1.5 rounded-xl border border-outline-variant bg-white pl-2.5 pr-1.5 shadow-sm transition-shadow focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/30 sm:h-9"
   >
     <Icon
       name="search"
@@ -52,6 +52,7 @@ const searchForm = (
     <Input
       type="search"
       name="q"
+      enterKeyHint="search"
       aria-label="Search properties"
       placeholder="Search listings…"
       className="h-8 min-w-0 flex-1 appearance-none border-0 !bg-white px-0 text-sm shadow-none focus-visible:ring-0 dark:!bg-white"
@@ -142,25 +143,27 @@ export function Navbar() {
         <div className="flex items-center gap-2 md:gap-0.5">
           <Link
             href="/"
-            className="group flex items-center "
+            className="group flex shrink-0 items-center gap-2"
             aria-label="MALPOTH home"
           >
-            <span className="flex h-10 w-10 sm:h-12 sm:w-12 rounded-full border border-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105">
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105 sm:h-12 sm:w-12">
               <Image
                 src={logo}
-                alt="MALPOTH"
+                alt=""
+                aria-hidden
                 width={46}
                 height={46}
                 className="h-full w-full rounded-full object-contain"
               />
             </span>
-            <span className="hidden md:block">
+            <span className="hidden h-7 w-auto shrink-0 md:block lg:h-8">
               <Image
                 src={logoText}
-                alt="MALPOTH"
+                alt=""
+                aria-hidden
                 width={120}
                 height={36}
-                className="h-full w-full rounded-full object-contain"
+                className="h-full w-auto object-contain object-left"
               />
             </span>
           </Link>

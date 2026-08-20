@@ -8,6 +8,7 @@ import { METAL_META } from "../../constants/gold/metals";
 import type { MetalId } from "../../constants/gold/metals";
 import logo from "../../public/logo.webp";
 import logoText from "../../public/logo-text.webp";
+import Image from "next/image";
 
 /** Primary navigation for the Precious Metals app (gold group). */
 const NAV_LINKS: Array<{ label: string; href: string; metalId?: MetalId }> = [
@@ -32,7 +33,7 @@ export function MetalsNavbar() {
       <div className="mx-auto flex h-16 w-full max-w-[1280px] items-center gap-6 px-4 sm:h-20 md:px-6">
         {/* Brand + app switcher (shared bouncing dropdown) */}
         <div className="flex shrink-0 items-center gap-1">
-          <BrandLogo
+          {/* <BrandLogo
             logoSrc={logo}
             logoTextSrc={logoText}
             href="/gold"
@@ -41,7 +42,34 @@ export function MetalsNavbar() {
             variant="light"
             logoClassName="h-11 w-11 sm:h-14 sm:w-14"
             wordmarkClassName="h-8 sm:h-9"
-          />
+          /> */}
+
+          <Link
+            href="/gold"
+            className="group flex shrink-0 items-center gap-2"
+            aria-label="MALPOTH home"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105 sm:h-12 sm:w-12">
+              <Image
+                src={logo}
+                alt=""
+                aria-hidden
+                width={46}
+                height={46}
+                className="h-full w-full rounded-full object-contain"
+              />
+            </span>
+            <span className="hidden h-7 w-auto shrink-0 md:block lg:h-8">
+              <Image
+                src={logoText}
+                alt=""
+                aria-hidden
+                width={120}
+                height={36}
+                className="h-full w-auto object-contain object-left"
+              />
+            </span>
+          </Link>
           <BouncingAppSwitcher label="Switch app">
             <p className="flex items-center gap-2 px-2 pb-2 pt-2 font-label-sm text-[11px] font-semibold uppercase tracking-[0.18em] text-gold-deep">
               <span aria-hidden="true" className="size-1.5 rounded-full bg-gold" />

@@ -27,7 +27,7 @@ function PricePerUnit({ pricing }: { pricing: PriceContext }) {
 
   return (
     <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-      <span className="mono-stat text-lg font-bold text-navy sm:text-xl lg:text-2xl">
+      <span className="mono-stat text-lg font-bold text-gold-deep sm:text-xl lg:text-2xl">
         {perUnit != null ? formatNPR(perUnit) : "—"}
       </span>
       <span className="text-xs font-medium text-on-surface-variant sm:text-sm">
@@ -85,7 +85,7 @@ export function ListingDecisionCard({
             </p>
           </>
         ) : (
-          <p className="mono-stat break-words text-lg font-bold leading-tight text-navy sm:text-xl lg:text-2xl">
+          <p className="mono-stat break-words text-lg font-bold leading-tight text-gold-deep sm:text-xl lg:text-2xl">
             {formatNPR(pricing.askingPrice)}
           </p>
         )}
@@ -123,7 +123,7 @@ export function ListingDecisionCard({
         <CallSellerButton
           propertyId={propertyId}
           variant="default"
-          className="min-h-11 w-full rounded-md bg-navy px-2 text-sm font-semibold text-white hover:bg-navy-deep hover:text-white"
+          className="min-h-11 w-full rounded-md bg-gold px-2 text-sm font-semibold text-on-gold hover:bg-gold/90"
         />
         <div className="flex gap-2">
           <AddToCartButton
