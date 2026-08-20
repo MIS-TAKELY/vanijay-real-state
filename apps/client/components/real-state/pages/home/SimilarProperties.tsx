@@ -48,6 +48,7 @@ export function SimilarProperties({ propertyId }: { propertyId: string }) {
       viewAllHref="/"
       accent="default"
       cardVariant="common"
+      flush
     />
   );
 }

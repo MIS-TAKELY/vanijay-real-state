@@ -216,6 +216,8 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const gradient = TYPE_GRADIENTS[property.subCategory] ?? FALLBACK_GRADIENT;
   const area = formatLandArea(property.landArea);
   const location = formatLocation(property.location);
+  const listedAt = formatFreshnessDate(property.createdAt);
+  const updatedAt = formatFreshnessDate(property.updatedAt);
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
   const pricing = priceContextFromApiProperty(property);
   const category = CATEGORY_CATALOG.find(
@@ -405,10 +407,10 @@ export default async function ListingDetailPage({ params }: PageProps) {
         }}
       />
       <PropertyViewTracker propertyId={property.id} />
-      <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
+      <main className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
-        <nav className="mb-3" aria-label="Breadcrumb">
-          <ol className="flex items-center gap-1.5 text-sm text-on-surface-variant">
+        <nav className="mb-3 min-w-0" aria-label="Breadcrumb">
+          <ol className="flex min-w-0 items-center gap-1.5 text-sm text-on-surface-variant">
             <li>
               <Link href="/" className="transition-colors hover:text-primary">
                 Home
@@ -422,11 +424,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
             </li>
             <li>
               <Link
-                href={
-                  category
-                    ? `/category/${category.slug}`
-                    : "/search"
-                }
+                href={category ? `/category/${category.slug}` : "/search"}
                 className="transition-colors hover:text-primary"
               >
                 {labelEnum(property.subCategory, TYPE_LABELS)}
@@ -444,38 +442,37 @@ export default async function ListingDetailPage({ params }: PageProps) {
           </ol>
         </nav>
 
-        {/* Header */}
-        <header className="mb-4">
-          {/* Title + Location */}
-          <div className="min-w-0">
+        {/* Header — title, location, and freshness on one wrapping row */}
+        <header className="mb-4 min-w-0">
+          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-2.5">
             <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
               {property.title}
             </h1>
-            <div className="mt-1.5 flex flex-wrap items-center gap-2">
-              <p className="flex min-w-0 max-w-full items-center gap-1.5 text-sm leading-6 text-on-surface-variant">
-                <Icon name="location_on" className="shrink-0 text-[16px]" />
-                <span className="truncate text-pretty">{location}</span>
-              </p>
-            </div>
-            {/* Visible freshness signal — extractable by AI answer engines */}
-            {(formatFreshnessDate(property.createdAt) ||
-              formatFreshnessDate(property.updatedAt)) && (
-              <p className="mt-1 text-xs leading-5 text-on-surface-variant/80">
-                {formatFreshnessDate(property.createdAt) &&
-                  `Listed ${formatFreshnessDate(property.createdAt)}`}
-                {formatFreshnessDate(property.createdAt) &&
-                  formatFreshnessDate(property.updatedAt) &&
-                  " · "}
-                {formatFreshnessDate(property.updatedAt) &&
-                  `Updated ${formatFreshnessDate(property.updatedAt)}`}
-              </p>
+
+            {location && (
+              <>
+                <span
+                  aria-hidden
+                  className="select-none text-base text-on-surface-variant/35 sm:text-lg"
+                >
+                  ·
+                </span>
+                <p className="inline-flex min-w-0 max-w-full items-center gap-1 text-sm text-on-surface-variant sm:max-w-[min(100%,28rem)]">
+                  <Icon
+                    name="location_on"
+                    className="shrink-0 text-[16px]"
+                    aria-hidden
+                  />
+                  <span className="truncate">{location}</span>
+                </p>
+              </>
             )}
           </div>
         </header>
 
-        <div className="grid gap-5 lg:grid-cols-3">
-          {/* Main content */}
-          <div className="lg:col-span-2">
+        {/* Media + decision card — stacked on mobile, side-by-side from sm up */}
+        <div className="grid min-w-0 items-start gap-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(13rem,17rem)] sm:gap-4 lg:grid-cols-3 lg:gap-5">
+          <div className="min-w-0 lg:col-span-2">
             <ListingGallery
               images={images}
               videos={videos}
@@ -483,122 +480,9 @@ export default async function ListingDetailPage({ params }: PageProps) {
               title={property.title}
               fallbackGradient={gradient}
             />
-
-            {/* Description */}
-            {property.description && (
-              <ListingDescription html={property.description} />
-            )}
-
-            {/* Location details */}
-            {locationSpecs.some(([, value]) => Boolean(value)) && (
-              <section className="mt-8">
-                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                  Location
-                </h2>
-                <dl className="divide-y divide-outline-variant">
-                  {locationSpecs
-                    .filter(([, value]) => value)
-                    .map(([label, value]) => (
-                      <div
-                        key={label}
-                        className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
-                      >
-                        <dt className="text-sm text-on-surface-variant">
-                          {label}
-                        </dt>
-                        <dd className="text-sm font-medium text-on-surface">
-                          {value as string}
-                        </dd>
-                      </div>
-                    ))}
-                </dl>
-              </section>
-            )}
-
-            {/* Specifications */}
-            {allSpecs.some(([, value]) => Boolean(value)) && (
-              <section className="mt-8">
-                <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                  Specifications
-                </h2>
-                <dl className="divide-y divide-outline-variant">
-                  {allSpecs
-                    .filter(([, value]) => value)
-                    .map(([label, value]) => (
-                      <div
-                        key={label}
-                        className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
-                      >
-                        <dt className="text-sm text-on-surface-variant">
-                          {label}
-                        </dt>
-                        <dd className="text-sm font-medium text-on-surface">
-                          {value as string}
-                        </dd>
-                      </div>
-                    ))}
-                </dl>
-                {chipGroups.length > 0 && (
-                  <div className="flex flex-col gap-4 pt-4">
-                    {chipGroups.map((group) => (
-                      <div key={group.label} className="flex flex-col gap-2">
-                        <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
-                          {group.label}
-                        </h3>
-                        <div className="flex flex-wrap gap-1.5">
-                          {group.values.map((v) => (
-                            <span
-                              key={v}
-                              className="rounded-md bg-surface-container px-2.5 py-1 text-[13px] font-medium text-on-surface-variant"
-                            >
-                              {v}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </section>
-            )}
-
-            {/* Seller-defined custom specs */}
-            {property.customSpecs && property.customSpecs.length > 0 && (
-              <section className="mt-8">
-                <div className="flex flex-col gap-6">
-                  {property.customSpecs.map((table, tIdx) => (
-                    <div key={tIdx}>
-                      {table.heading && (
-                        <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                          {table.heading}
-                        </h2>
-                      )}
-                      <dl className="divide-y divide-outline-variant">
-                        {table.rows
-                          .filter(([detail, value]) => detail || value)
-                          .map(([detail, value], rIdx) => (
-                            <div
-                              key={rIdx}
-                              className="grid gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
-                            >
-                              <dt className="text-sm text-on-surface-variant">
-                                {detail}
-                              </dt>
-                              <dd className="text-sm font-medium text-on-surface">
-                                {value}
-                              </dd>
-                            </div>
-                          ))}
-                      </dl>
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
           </div>
 
-          {/* Decision card — price, map, docs, CTAs */}
-          <aside>
+          <aside className="min-w-0">
             <ListingDecisionCard
               propertyId={property.id}
               title={property.title}
@@ -606,6 +490,120 @@ export default async function ListingDetailPage({ params }: PageProps) {
               location={property.location}
             />
           </aside>
+        </div>
+
+        <div className="mt-8 min-w-0">
+          {/* Description */}
+          {property.description && (
+            <ListingDescription html={property.description} />
+          )}
+
+          {/* Location details */}
+          {locationSpecs.some(([, value]) => Boolean(value)) && (
+            <section className="mt-8">
+              <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                Location
+              </h2>
+              <dl className="divide-y divide-outline-variant">
+                {locationSpecs
+                  .filter(([, value]) => value)
+                  .map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="grid grid-cols-[minmax(0,1fr)_2fr] gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
+                    >
+                      <dt className="text-sm text-on-surface-variant">
+                        {label}
+                      </dt>
+                      <dd className="text-sm font-medium text-on-surface">
+                        {value as string}
+                      </dd>
+                    </div>
+                  ))}
+              </dl>
+            </section>
+          )}
+
+          {/* Specifications */}
+          {allSpecs.some(([, value]) => Boolean(value)) && (
+            <section className="mt-8">
+              <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                Specifications
+              </h2>
+              <dl className="divide-y divide-outline-variant">
+                {allSpecs
+                  .filter(([, value]) => value)
+                  .map(([label, value]) => (
+                    <div
+                      key={label}
+                      className="grid grid-cols-[minmax(0,1fr)_2fr] gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
+                    >
+                      <dt className="text-sm text-on-surface-variant">
+                        {label}
+                      </dt>
+                      <dd className="text-sm font-medium text-on-surface">
+                        {value as string}
+                      </dd>
+                    </div>
+                  ))}
+              </dl>
+              {chipGroups.length > 0 && (
+                <div className="flex flex-col gap-4 pt-4">
+                  {chipGroups.map((group) => (
+                    <div key={group.label} className="flex flex-col gap-2">
+                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
+                        {group.label}
+                      </h3>
+                      <div className="flex flex-wrap gap-1.5">
+                        {group.values.map((v) => (
+                          <span
+                            key={v}
+                            className="rounded-md bg-surface-container px-2.5 py-1 text-[13px] font-medium text-on-surface-variant"
+                          >
+                            {v}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </section>
+          )}
+
+          {/* Seller-defined custom specs */}
+          {property.customSpecs && property.customSpecs.length > 0 && (
+            <section className="mt-8">
+              <div className="flex flex-col gap-6">
+                {property.customSpecs.map((table, tIdx) => (
+                  <div key={tIdx}>
+                    {table.heading && (
+                      <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                        {table.heading}
+                      </h2>
+                    )}
+                    <dl className="divide-y divide-outline-variant">
+                      {table.rows
+                        .filter(([detail, value]) => detail || value)
+                        .map(([detail, value], rIdx) => (
+                          <div
+                            key={rIdx}
+                            className="grid grid-cols-[minmax(0,1fr)_2fr] gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
+                          >
+                            <dt className="text-sm text-on-surface-variant">
+                              {detail}
+                            </dt>
+                            <dd className="text-sm font-medium text-on-surface">
+                              {value}
+                            </dd>
+                          </div>
+                        ))}
+                    </dl>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
 
         {/* Similar Properties Section */}

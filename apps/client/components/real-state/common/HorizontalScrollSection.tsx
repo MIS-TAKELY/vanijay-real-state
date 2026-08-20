@@ -23,6 +23,8 @@ export interface HorizontalScrollSectionProps {
   /** When true, only the scroll row is rendered (no section wrapper or header).
    *  `title`, `eyebrow`, and `viewAllHref` are ignored in this mode. */
   bare?: boolean;
+  /** Skip outer max-width + gutter padding when already inside a padded page shell. */
+  flush?: boolean;
 }
 
 export function HorizontalScrollSection({
@@ -33,6 +35,7 @@ export function HorizontalScrollSection({
   accent = "default",
   cardVariant = "horizontal",
   bare = false,
+  flush = false,
 }: HorizontalScrollSectionProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -69,7 +72,7 @@ export function HorizontalScrollSection({
   const scrollRow = (
     <div
       ref={scrollRef}
-      className="flex gap-3 md:gap-4 overflow-x-auto snap-x snap-mandatory no-scrollbar pb-3 md:pb-4 pt-1 md:pt-2"
+      className="flex min-w-0 gap-3 overflow-x-auto overscroll-x-contain snap-x snap-mandatory no-scrollbar pb-3 pt-1 md:gap-4 md:pb-4 md:pt-2"
       style={{
         scrollbarWidth: "none",
         msOverflowStyle: "none",
@@ -101,9 +104,15 @@ export function HorizontalScrollSection({
 
   return (
     <section
-      className={`py-6 md:py-14 relative z-10 ${accent === "trending" ? "" : ""}`}
+      className={`py-6 md:py-14 relative z-10 min-w-0 ${accent === "trending" ? "" : ""}`}
     >
-      <div className="max-w-container-max mx-auto px-gutter">
+      <div
+        className={
+          flush
+            ? "w-full min-w-0"
+            : "mx-auto max-w-container-max px-gutter"
+        }
+      >
         {/* Header */}
         <div className="flex items-end justify-between mb-4 md:mb-6 gap-3">
           <div className="min-w-0">

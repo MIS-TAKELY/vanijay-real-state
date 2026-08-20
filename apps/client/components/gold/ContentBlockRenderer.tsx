@@ -12,7 +12,7 @@ function renderBody(body: string) {
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return (
-        <strong key={i} className="text-[#E8E6E1] font-semibold">
+        <strong key={i} className="font-semibold text-on-surface">
           {part.slice(2, -2)}
         </strong>
       );
@@ -36,55 +36,35 @@ export function ContentBlockRenderer({ blocks }: ContentBlockRendererProps) {
       {blocks.map((block) => (
         <article
           key={block.id}
-          className="rounded-xl border border-white/[0.06] bg-[#1A1D23]/50 p-6 md:p-8"
+          className="rounded-xl border border-outline-variant bg-surface p-6 shadow-sm md:p-8"
         >
-          {block.type === "comparison" ? (
-            <div>
-              <h3
-                className="mb-2 text-xl font-medium tracking-tight text-[#E8E6E1]"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {block.title}
-              </h3>
-              {block.subtitle && (
-                <p className="mb-4 text-sm text-white/40">{block.subtitle}</p>
-              )}
-              <div className="overflow-x-auto">
-                <div
-                  className="whitespace-pre-line text-sm leading-relaxed text-white/60"
-                  style={{ fontFamily: "var(--font-body)" }}
-                >
-                  {renderBody(block.body)}
-                </div>
-              </div>
+          <div>
+            <h3
+              className="mb-2 text-xl font-medium tracking-tight text-on-surface"
+              style={{ fontFamily: "var(--font-display)" }}
+            >
+              {block.title}
+            </h3>
+            {block.subtitle && (
+              <p className="mb-4 text-sm text-on-surface-variant">
+                {block.subtitle}
+              </p>
+            )}
+            <div
+              className="text-sm leading-relaxed text-on-surface-variant"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              {renderBody(block.body)}
             </div>
-          ) : (
-            <div>
-              <h3
-                className="mb-2 text-xl font-medium tracking-tight text-[#E8E6E1]"
-                style={{ fontFamily: "var(--font-display)" }}
+            {block.ctaText && block.ctaLink && (
+              <a
+                href={block.ctaLink}
+                className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-gold-deep transition-colors hover:text-gold"
               >
-                {block.title}
-              </h3>
-              {block.subtitle && (
-                <p className="mb-4 text-sm text-white/40">{block.subtitle}</p>
-              )}
-              <div
-                className="text-sm leading-relaxed text-white/60"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                {renderBody(block.body)}
-              </div>
-              {block.ctaText && block.ctaLink && (
-                <a
-                  href={block.ctaLink}
-                  className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-[#C9A84C] hover:text-[#D4AF37] transition-colors"
-                >
-                  {block.ctaText}
-                </a>
-              )}
-            </div>
-          )}
+                {block.ctaText}
+              </a>
+            )}
+          </div>
         </article>
       ))}
     </div>

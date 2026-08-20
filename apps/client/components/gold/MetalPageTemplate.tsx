@@ -13,27 +13,30 @@ import { METAL_FAQS } from "../../constants/gold/faq-data";
 import type { ContentBlock } from "../../constants/gold/content-blocks";
 import { useContentStore } from "store/content";
 import { useLiveMetalPrices } from "../../hooks/use-live-metal-prices";
+import type { FenegosidaTodayRate } from "lib/fenegosida";
 import { Breadcrumb } from "./Breadcrumb";
 import { HeroPricePanel } from "./HeroPricePanel";
-import { MetalChart } from "./MetalChart";
+import { MarketOverview } from "./MarketOverview";
 import { PriceHistoryChart } from "./PriceHistoryChart";
 import { PriceConverter } from "./PriceConverter";
 import { AnalyticsGrid } from "./AnalyticsGrid";
 import { ContentBlockRenderer } from "./ContentBlockRenderer";
 import { FAQAccordion } from "./FAQAccordion";
 import { HistoricalTable } from "./HistoricalTable";
-import { CurrencyToggle } from "./CurrencyToggle";
-import { UnitToggle } from "./UnitToggle";
-import { TickerRibbon } from "./TickerRibbon";
 
 interface MetalPageTemplateProps {
   metalId: MetalId;
+  /** Official Fenegosida NPR rate for the hero "Today's Price" (gold/silver only). */
+  todayRate?: FenegosidaTodayRate | null;
 }
 
-export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
+export function MetalPageTemplate({
+  metalId,
+  todayRate,
+}: MetalPageTemplateProps) {
   const { metals, loading, error, lastUpdated } = useLiveMetalPrices();
   const [currency, setCurrency] = useState<CurrencyCode>("NPR");
-  const [unit, setUnit] = useState<WeightUnit>("oz");
+  const [unit, setUnit] = useState<WeightUnit>("tola");
 
   const activeMetal = useMemo(() => {
     const found = metals.find((m) => m.id === metalId);
@@ -63,66 +66,25 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
 
   return (
     <main className="flex flex-col gap-0">
-      {/* Live Ticker Ribbon — clicking any metal navigates to its page */}
-      <TickerRibbon metals={metals} currency={currency} activeId={metalId} />
-
       <div className="mx-auto w-full max-w-[1280px] px-6 pt-8 pb-6 md:pt-12 md:pb-10">
         {/* Breadcrumb */}
         <Breadcrumb items={breadcrumbItems} />
 
-        {/* Header with toggles */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <div className="flex items-center gap-3 mb-2">
-              <span
-                className="h-3 w-3 rounded-full"
-                style={{ backgroundColor: meta?.accentColor }}
-                aria-hidden="true"
-              />
-              <h1
-                className="text-3xl font-semibold tracking-tight text-[#E8E6E1] md:text-4xl"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                {meta?.name} Price Today
-              </h1>
-              {/* Live badge */}
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#34D399]/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-[#34D399]">
-                <span
-                  className="h-1.5 w-1.5 rounded-full bg-[#34D399] animate-pulse"
-                  aria-hidden="true"
-                />
-                Live
-              </span>
-            </div>
-            <p
-              className="text-sm text-white/40"
-              style={{ fontFamily: "var(--font-body)" }}
-            >
-              Track real-time {meta?.name.toLowerCase()} rates per{" "}
-              {meta?.unit ?? unit} in {currency}
-              {lastUpdated && (
-                <time
-                  dateTime={lastUpdated.toISOString()}
-                  className="ml-2 text-white/25 tabular-nums"
-                >
-                  · Updated {lastUpdated.toLocaleTimeString()}
-                </time>
-              )}
-            </p>
-          </div>
-          <div className="flex flex-wrap items-center gap-3">
-            <CurrencyToggle
-              currency={currency}
-              onCurrencyChange={setCurrency}
-            />
-            <UnitToggle unit={unit} onUnitChange={setUnit} />
-          </div>
-        </div>
-
-        {/* Hero Section: Price Panel + Chart */}
-        <section className="mb-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
-          <HeroPricePanel metal={activeMetal} currency={currency} />
-          <MetalChart metal={activeMetal} currency={currency} />
+        {/* Hero Section: Today's Price + unit/currency choosers + market overview */}
+        <section className="mb-10 grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
+          <HeroPricePanel
+            metal={activeMetal}
+            currency={currency}
+            onCurrencyChange={setCurrency}
+            unit={unit}
+            onUnitChange={setUnit}
+            todayRate={todayRate}
+          />
+          <MarketOverview
+            metals={metals}
+            activeId={metalId}
+            currency={currency}
+          />
         </section>
 
         {/* Full-width Price History chart (lightweight-charts + gold-api.com) */}
@@ -133,7 +95,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         {/* Error banner — surfaced near the top so users see it immediately */}
         {error && (
           <div
-            className="mb-10 rounded-lg border border-[#F87171]/20 bg-[#F87171]/5 px-4 py-3 text-sm text-[#F87171]"
+            className="mb-10 rounded-lg border border-red-500/25 bg-red-500/5 px-4 py-3 text-sm text-red-600"
             role="alert"
           >
             Live feed unavailable — showing cached quotes. {error}
@@ -141,7 +103,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         )}
 
         {/* Divider */}
-        <div className="h-px w-full bg-white/[0.06] mb-10" />
+        <div className="mb-10 h-px w-full bg-outline-variant" />
 
         {/* Price Converter */}
         <div className="mb-10">
@@ -158,7 +120,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         </div>
 
         {/* Divider */}
-        <div className="h-px w-full bg-white/[0.06] mb-10" />
+        <div className="mb-10 h-px w-full bg-outline-variant" />
 
         {/* Content Blocks (Admin-managed) */}
         {contentBlocks.length > 0 && (
@@ -168,7 +130,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         )}
 
         {/* Divider */}
-        <div className="h-px w-full bg-white/[0.06] mb-10" />
+        <div className="mb-10 h-px w-full bg-outline-variant" />
 
         {/* Historical Data Table */}
         <div className="mb-10">
@@ -176,7 +138,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         </div>
 
         {/* Divider */}
-        <div className="h-px w-full bg-white/[0.06] mb-10" />
+        <div className="mb-10 h-px w-full bg-outline-variant" />
 
         {/* FAQ Section */}
         {faqs.length > 0 && (
@@ -188,7 +150,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
 
       {/* Footer */}
       <footer
-        className="border-t border-white/[0.06] py-8 text-center text-xs text-white/40"
+        className="border-t border-outline-variant py-8 text-center text-xs text-on-surface-variant/70"
         style={{ fontFamily: "var(--font-body)" }}
       >
         <p className={loading ? "price-live" : ""}>
@@ -206,7 +168,7 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         <p className="mt-3">
           <Link
             href="/admin/content"
-            className="inline-flex items-center gap-1 rounded-lg border border-white/[0.08] px-3 py-1.5 text-xs text-white/40 transition-colors hover:border-white/20 hover:text-[#E8E6E1]"
+            className="inline-flex items-center gap-1 rounded-lg border border-outline-variant bg-surface px-3 py-1.5 text-xs text-on-surface-variant shadow-sm transition-colors hover:border-gold/40 hover:text-primary"
           >
             <Settings2 size={13} aria-hidden="true" />
             Content admin

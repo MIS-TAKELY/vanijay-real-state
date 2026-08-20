@@ -42,6 +42,9 @@ export function ListingGallery({
   const [activeDocIndex, setActiveDocIndex] = useState(0);
   const lightboxRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
+  const thumbStripRef = useRef<HTMLDivElement>(null);
+  const photoTrackRef = useRef<HTMLDivElement>(null);
+  const trackPhotosTabRef = useRef<boolean | null>(null);
 
   const showPrevPhoto = () => {
     setActiveImage((i) => (i === 0 ? images.length - 1 : i - 1));
@@ -49,6 +52,32 @@ export function ListingGallery({
   const showNextPhoto = () => {
     setActiveImage((i) => (i === images.length - 1 ? 0 : i + 1));
   };
+
+  // Scroll the swipable photo track to a slide. Used by the arrows, thumbnails,
+  // and lightbox-close sync so every navigation converges on `activeImage`.
+  const scrollToPhoto = (index: number) => {
+    if (images.length === 0) return;
+    const target = Math.min(Math.max(index, 0), images.length - 1);
+    const track = photoTrackRef.current;
+    if (!track || track.clientWidth === 0) {
+      setActiveImage(target);
+      return;
+    }
+    track.scrollTo({ left: target * track.clientWidth, behavior: "smooth" });
+  };
+
+  // Keep `activeImage` in sync with the slide the user swiped to. The track is
+  // full-width per slide, so the visible index is the rounded scroll offset.
+  const handlePhotoTrackScroll = () => {
+    const track = photoTrackRef.current;
+    if (!track || track.clientWidth === 0) return;
+    const target = Math.round(track.scrollLeft / track.clientWidth);
+    setActiveImage(Math.min(Math.max(target, 0), images.length - 1));
+  };
+
+  // Declared up here so the track-mount effect below (which runs before the
+  // media early-return) can read it without hitting a temporal-dead-zone error.
+  const showingPhotos = activeTab === "photos" && hasImages;
 
   useEffect(() => {
     if (!lightboxOpen) return;
@@ -107,6 +136,43 @@ export function ListingGallery({
     };
   }, []);
 
+  // Keep the active photo thumb visible in the horizontal strip.
+  useEffect(() => {
+    if (activeTab !== "photos" || images.length <= 1) return;
+    const active = thumbStripRef.current?.querySelector<HTMLElement>(
+      `[data-thumb-index="${activeImage}"]`,
+    );
+    active?.scrollIntoView({
+      behavior: "smooth",
+      inline: "nearest",
+      block: "nearest",
+    });
+  }, [activeImage, activeTab, images.length]);
+
+  // When the photos tab (re)mounts, move the track to the current slide. It
+  // returns early unless the tab just switched, so a finger drag is never
+  // fought by an activeImage change that originated from the scroll itself.
+  useEffect(() => {
+    const wasShowingPhotos = trackPhotosTabRef.current;
+    trackPhotosTabRef.current = showingPhotos;
+    if (wasShowingPhotos === null) return;
+    if (wasShowingPhotos === showingPhotos) return;
+    if (!showingPhotos) return;
+    const track = photoTrackRef.current;
+    if (!track || track.clientWidth === 0) return;
+    track.scrollTo({
+      left: activeImage * track.clientWidth,
+      behavior: "auto",
+    });
+  }, [showingPhotos, activeImage, images.length]);
+
+  // Clamp the index if the media list shrinks while viewing.
+  useEffect(() => {
+    setActiveImage((prev) =>
+      Math.min(Math.max(prev, 0), Math.max(images.length - 1, 0)),
+    );
+  }, [images.length]);
+
   if (!hasImages && !hasVideos && !hasDocs) {
     return (
       <div
@@ -119,7 +185,6 @@ export function ListingGallery({
     );
   }
 
-  const showingPhotos = activeTab === "photos" && hasImages;
   const showingVideos = activeTab === "videos" && hasVideos;
   const showingDocs = activeTab === "documents" && hasDocs;
 
@@ -131,14 +196,33 @@ export function ListingGallery({
     ? cadastralMaps[Math.min(activeDocIndex, cadastralMaps.length - 1)]
     : null;
 
+  const docTitle = (() => {
+    const raw = activeDoc?.altText?.trim();
+    if (!raw) return "Cadastral map";
+    // Uploaded screenshots often keep the file name as alt text — show a
+    // human label instead of "Screenshot From … .png".
+    if (
+      /\.(png|jpe?g|webp|gif|pdf)$/i.test(raw) ||
+      /^screenshot\b/i.test(raw)
+    ) {
+      return "Cadastral map";
+    }
+    return raw;
+  })();
+
   const availableTabsCount =
     (hasImages ? 1 : 0) + (hasVideos ? 1 : 0) + (hasDocs ? 1 : 0);
 
   const closeLightbox = () => {
+    const wasPhotoGallery = !lightboxImageSrc;
     setLightboxOpen(false);
     document.body.style.overflow = "";
     openerRef.current?.focus();
     openerRef.current = null;
+    // Re-sync the swipable track with the photo the lightbox settled on.
+    if (wasPhotoGallery && showingPhotos && images.length > 1) {
+      scrollToPhoto(activeImage);
+    }
   };
 
   const openPhotoLightbox = () => {
@@ -158,12 +242,60 @@ export function ListingGallery({
     setLightboxOpen(true);
   };
 
+  const openPhotoLightboxAt = (index: number) => {
+    setActiveImage(index);
+    openPhotoLightbox();
+  };
+
+  const tabButtonClass = (isActive: boolean) =>
+    cn(
+      "inline-flex h-10 min-h-10 min-w-0 flex-1 items-center justify-center gap-1 rounded-lg px-1.5 text-xs font-medium transition-colors duration-150",
+      "@min-[22rem]:gap-1.5 @min-[22rem]:px-2 @min-[28rem]:px-2.5 @min-[28rem]:text-sm",
+      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+      isActive
+        ? "bg-primary text-on-primary shadow-sm"
+        : "text-on-surface-variant hover:bg-surface/70 hover:text-on-surface",
+    );
+
   return (
-    <section>
-      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="font-headline-md text-lg font-semibold tracking-tight text-navy">
-          Media &amp; Documents
-        </h2>
+    <section className="@container min-w-0">
+      {/* Title + media-type tabs share one responsive header */}
+      <header className="mb-3 flex min-w-0 flex-col gap-2.5 @min-[36rem]:mb-4 @min-[36rem]:flex-row @min-[36rem]:items-center @min-[36rem]:justify-between @min-[36rem]:gap-3">
+        <div className="flex min-w-0 shrink-0 items-center justify-between gap-2 @min-[36rem]:justify-start">
+          <h2 className="font-headline-md text-base font-semibold tracking-tight text-navy @min-[22rem]:text-lg">
+            <span className="@max-[19.9rem]:hidden">Media &amp; Documents</span>
+            <span className="hidden @max-[19.9rem]:inline">Media</span>
+          </h2>
+          {availableTabsCount === 1 && (
+            <span className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant">
+              {hasImages && (
+                <>
+                  <Icon name="photo_library" className="text-[16px]" />
+                  <span className="tabular-nums">
+                    {images.length} photo{images.length === 1 ? "" : "s"}
+                  </span>
+                </>
+              )}
+              {hasVideos && (
+                <>
+                  <Icon name="videocam" className="text-[16px]" />
+                  <span className="tabular-nums">
+                    {videos.length} video{videos.length === 1 ? "" : "s"}
+                  </span>
+                </>
+              )}
+              {hasDocs && (
+                <>
+                  <Icon name="map" className="text-[16px]" />
+                  <span className="tabular-nums">
+                    {cadastralMaps.length} naksa
+                    {cadastralMaps.length === 1 ? "" : "s"}
+                  </span>
+                </>
+              )}
+            </span>
+          )}
+        </div>
 
         {availableTabsCount > 1 && (
           <div
@@ -184,32 +316,29 @@ export function ListingGallery({
                 setActiveTab(order[(idx - 1 + order.length) % order.length]!);
               }
             }}
-            className="flex gap-1 rounded-lg bg-surface-container p-1 shadow-inner"
+            className="flex w-full min-w-0 flex-nowrap gap-0.5 rounded-xl bg-surface-container p-1 @min-[28rem]:gap-1 @min-[36rem]:ml-auto @min-[36rem]:w-auto @min-[36rem]:min-w-[min(100%,18rem)] @min-[36rem]:max-w-lg @min-[36rem]:flex-1"
           >
             {hasImages && (
               <button
                 type="button"
                 role="tab"
                 id="tab-photos"
+                aria-label={`Photos ${images.length}`}
                 aria-selected={activeTab === "photos"}
                 aria-controls="panel-photos"
                 tabIndex={activeTab === "photos" ? 0 : -1}
                 onClick={() => setActiveTab("photos")}
-                className={cn(
-                  "inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150 sm:flex-none",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                  activeTab === "photos"
-                    ? "bg-primary text-on-primary shadow-sm"
-                    : "text-on-surface-variant hover:text-on-surface",
-                )}
+                className={tabButtonClass(activeTab === "photos")}
               >
                 <Icon
                   name="photo_library"
-                  className="text-[16px]"
+                  className="shrink-0 text-[16px] @min-[22rem]:text-[18px]"
                   aria-hidden
                 />
-                Photos
-                <span className="tabular-nums">({images.length})</span>
+                <span className="truncate @max-[17.9rem]:hidden">Photos</span>
+                <span className="shrink-0 tabular-nums opacity-80">
+                  {images.length}
+                </span>
               </button>
             )}
             {hasVideos && (
@@ -217,21 +346,22 @@ export function ListingGallery({
                 type="button"
                 role="tab"
                 id="tab-videos"
+                aria-label={`Videos ${videos.length}`}
                 aria-selected={activeTab === "videos"}
                 aria-controls="panel-videos"
                 tabIndex={activeTab === "videos" ? 0 : -1}
                 onClick={() => setActiveTab("videos")}
-                className={cn(
-                  "inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150 sm:flex-none",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                  activeTab === "videos"
-                    ? "bg-primary text-on-primary shadow-sm"
-                    : "text-on-surface-variant hover:text-on-surface",
-                )}
+                className={tabButtonClass(activeTab === "videos")}
               >
-                <Icon name="videocam" className="text-[16px]" aria-hidden />
-                Videos
-                <span className="tabular-nums">({videos.length})</span>
+                <Icon
+                  name="videocam"
+                  className="shrink-0 text-[16px] @min-[22rem]:text-[18px]"
+                  aria-hidden
+                />
+                <span className="truncate @max-[17.9rem]:hidden">Videos</span>
+                <span className="shrink-0 tabular-nums opacity-80">
+                  {videos.length}
+                </span>
               </button>
             )}
             {hasDocs && (
@@ -239,56 +369,30 @@ export function ListingGallery({
                 type="button"
                 role="tab"
                 id="tab-documents"
+                aria-label={`Documents ${cadastralMaps.length}`}
                 aria-selected={activeTab === "documents"}
                 aria-controls="panel-documents"
                 tabIndex={activeTab === "documents" ? 0 : -1}
                 onClick={() => setActiveTab("documents")}
-                className={cn(
-                  "inline-flex h-9 flex-1 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium transition-all duration-150 sm:flex-none",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                  activeTab === "documents"
-                    ? "bg-primary text-on-primary shadow-sm"
-                    : "text-on-surface-variant hover:text-on-surface",
-                )}
+                className={tabButtonClass(activeTab === "documents")}
               >
-                <Icon name="map" className="text-[16px]" aria-hidden />
-                Documents
-                <span className="tabular-nums">({cadastralMaps.length})</span>
+                <Icon
+                  name="map"
+                  className="shrink-0 text-[16px] @min-[22rem]:text-[18px]"
+                  aria-hidden
+                />
+                <span className="truncate @max-[17.9rem]:hidden">
+                  <span className="@min-[28rem]:hidden">Docs</span>
+                  <span className="hidden @min-[28rem]:inline">Documents</span>
+                </span>
+                <span className="shrink-0 tabular-nums opacity-80">
+                  {cadastralMaps.length}
+                </span>
               </button>
             )}
           </div>
         )}
-
-        {availableTabsCount === 1 && (
-          <span className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant">
-            {hasImages && (
-              <>
-                <Icon name="photo_library" className="text-[16px]" />
-                <span className="tabular-nums">
-                  {images.length} photo{images.length === 1 ? "" : "s"}
-                </span>
-              </>
-            )}
-            {hasVideos && (
-              <>
-                <Icon name="videocam" className="text-[16px]" />
-                <span className="tabular-nums">
-                  {videos.length} video{videos.length === 1 ? "" : "s"}
-                </span>
-              </>
-            )}
-            {hasDocs && (
-              <>
-                <Icon name="map" className="text-[16px]" />
-                <span className="tabular-nums">
-                  {cadastralMaps.length} naksa
-                  {cadastralMaps.length === 1 ? "" : "s"}
-                </span>
-              </>
-            )}
-          </span>
-        )}
-      </div>
+      </header>
 
       {/* Photos View */}
       {showingPhotos && currentImage && (
@@ -296,54 +400,79 @@ export function ListingGallery({
           role="tabpanel"
           id="panel-photos"
           aria-labelledby="tab-photos"
-          className="flex flex-col gap-2"
+          className="flex min-w-0 flex-col gap-3"
         >
-          <div className="relative aspect-video overflow-hidden rounded-2xl bg-surface-container shadow-sm">
-            <button
-              type="button"
-              onClick={openPhotoLightbox}
-              className="group block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40"
-              aria-label="Open photo gallery"
+          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-surface-container sm:aspect-video">
+            {/* Swipeable slider — a native scroll-snap track so fingers can
+                drag between photos on any screen. Arrows and thumbnails scroll
+                this same track, so `activeImage` stays the single source of
+                truth (lightbox included). */}
+            <div
+              ref={photoTrackRef}
+              onScroll={handlePhotoTrackScroll}
+              aria-label="Photo viewer — swipe to browse"
+              className="no-scrollbar flex h-full w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
+              style={{
+                scrollSnapType: "x mandatory",
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+                touchAction: "pan-y",
+              }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={currentImage.url}
-                alt={currentImage.altText ?? title}
-                draggable={false}
-                onContextMenu={(e) => e.preventDefault()}
-                onDragStart={(e) => e.preventDefault()}
-                className="h-full w-full object-cover outline outline-1 -outline-offset-1 outline-black/10 transition-transform duration-200 group-hover:scale-[1.01]"
-              />
-            </button>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/55 to-transparent px-3 pb-3 pt-10">
+              {images.map((image, idx) => (
+                <button
+                  key={`slide-${image.url}-${idx}`}
+                  type="button"
+                  onClick={() => openPhotoLightboxAt(idx)}
+                  className="group relative h-full w-full shrink-0 cursor-zoom-in snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40"
+                  aria-label={`Open photo ${idx + 1}`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.url}
+                    alt=""
+                    loading={idx === activeImage ? "eager" : "lazy"}
+                    decoding="async"
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onDragStart={(e) => e.preventDefault()}
+                    className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-[1.01]"
+                  />
+                </button>
+              ))}
+            </div>
+
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/50 to-transparent px-3 pb-3 pt-12">
               <span className="rounded-full bg-surface/95 px-2.5 py-1 text-[11px] font-medium tabular-nums text-on-surface backdrop-blur-sm">
                 {activeImage + 1} / {images.length}
               </span>
             </div>
+
             {images.length > 1 && (
-              <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-3">
+              <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3">
                 <button
                   type="button"
                   aria-label="Previous photo"
-                  className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
-                  onClick={showPrevPhoto}
+                  className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-11 sm:w-11"
+                  onClick={() => scrollToPhoto(activeImage - 1)}
                 >
                   <Icon name="chevron_left" className="text-[22px]" />
                 </button>
                 <button
                   type="button"
                   aria-label="Next photo"
-                  className="pointer-events-auto flex h-11 w-11 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
-                  onClick={showNextPhoto}
+                  className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-11 sm:w-11"
+                  onClick={() => scrollToPhoto(activeImage + 1)}
                 >
                   <Icon name="chevron_right" className="text-[22px]" />
                 </button>
               </div>
             )}
+
             <button
               type="button"
               onClick={openPhotoLightbox}
-              className="absolute right-3 top-3 flex h-11 w-11 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
+              className="absolute right-2 top-2 flex h-10 w-10 items-center justify-center rounded-full bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:right-3 sm:top-3 sm:h-11 sm:w-11"
               aria-label="View all photos"
             >
               <Icon name="fullscreen" className="text-[18px]" />
@@ -351,33 +480,35 @@ export function ListingGallery({
           </div>
 
           {images.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <div
+              ref={thumbStripRef}
+              className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain pb-0.5 no-scrollbar"
+            >
               {images.map((image, idx) => (
                 <button
                   key={`thumb-${image.url}-${idx}`}
                   type="button"
-                  onClick={() => setActiveImage(idx)}
+                  data-thumb-index={idx}
+                  onClick={() => scrollToPhoto(idx)}
                   className={cn(
-                    "flex-shrink-0 overflow-hidden rounded-lg border transition-all",
-                    "w-24 sm:w-28",
+                    "relative h-16 w-[4.5rem] shrink-0 overflow-hidden rounded-xl border bg-surface-container transition-all sm:h-[4.5rem] sm:w-28",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                     idx === activeImage
-                      ? "border-primary ring-1 ring-primary/40"
-                      : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                      ? "border-primary ring-2 ring-primary/30"
+                      : "border-outline-variant/80 opacity-75 hover:border-primary/35 hover:opacity-100",
                   )}
                   aria-label={`View photo ${idx + 1}`}
                   aria-pressed={idx === activeImage}
                 >
-                  <div className="aspect-video">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={image.url}
-                      alt=""
-                      draggable={false}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onDragStart={(e) => e.preventDefault()}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.url}
+                    alt=""
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
+                    onDragStart={(e) => e.preventDefault()}
+                    className="h-full w-full object-cover"
+                  />
                 </button>
               ))}
             </div>
@@ -391,12 +522,9 @@ export function ListingGallery({
           role="tabpanel"
           id="panel-videos"
           aria-labelledby="tab-videos"
-          className="flex flex-col gap-2"
+          className="flex min-w-0 flex-col gap-3"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
-            {/* No fixed aspect wrapper here — ListingVideo picks the right
-                container shape per platform (16:9 for YouTube, portrait for
-                Instagram Reels and TikTok, etc.). */}
+          <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container">
             <ListingVideo
               url={activeVideo.url}
               title={activeVideo.altText ?? `${title} — video walkthrough`}
@@ -404,7 +532,7 @@ export function ListingGallery({
           </div>
 
           {videos.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <div className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain pb-0.5 no-scrollbar">
               {videos.map((video, idx) => {
                 const isActive = idx === activeVideoIndex;
                 return (
@@ -413,33 +541,28 @@ export function ListingGallery({
                     type="button"
                     onClick={() => setActiveVideoIndex(idx)}
                     className={cn(
-                      "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
-                      "w-24 sm:w-28",
+                      "group relative h-16 w-[4.5rem] shrink-0 overflow-hidden rounded-xl border bg-surface-container transition-all sm:h-[4.5rem] sm:w-28",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
-                        ? "border-primary ring-1 ring-primary/40"
-                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                        ? "border-primary ring-2 ring-primary/30"
+                        : "border-outline-variant/80 opacity-75 hover:border-primary/35 hover:opacity-100",
                     )}
                     aria-label={`Play video ${idx + 1}`}
                     aria-pressed={isActive}
                   >
-                    <div className="aspect-video bg-surface-container">
-                      <VideoPoster
-                        url={video.url}
-                        alt={video.altText ?? `Video ${idx + 1} thumbnail`}
+                    <VideoPoster
+                      url={video.url}
+                      alt={video.altText ?? `Video ${idx + 1} thumbnail`}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/25 transition-opacity group-hover:bg-black/35">
+                      <Icon
+                        name="play_circle"
+                        className={cn(
+                          "text-[28px] text-white drop-shadow-md",
+                          isActive && "text-primary",
+                        )}
                       />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/20 transition-opacity group-hover:bg-black/30">
-                        <Icon
-                          name="play_circle"
-                          className={cn(
-                            "text-[24px] text-white drop-shadow-md",
-                            isActive && "text-primary",
-                          )}
-                        />
-                      </div>
                     </div>
-                    {isActive && (
-                      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
-                    )}
                   </button>
                 );
               })}
@@ -458,13 +581,36 @@ export function ListingGallery({
           role="tabpanel"
           id="panel-documents"
           aria-labelledby="tab-documents"
-          className="flex flex-col gap-2"
+          className="flex min-w-0 flex-col gap-3"
         >
-          <div className="relative aspect-video overflow-hidden rounded-2xl border border-outline-variant bg-surface-container shadow-sm">
+          <div className="overflow-hidden rounded-2xl border border-outline-variant bg-surface">
+            <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-3 py-2.5 sm:px-4">
+              <div className="flex min-w-0 items-center gap-2">
+                <span className="inline-flex shrink-0 items-center rounded-md bg-primary/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary">
+                  Naksa
+                </span>
+              </div>
+              <div className="flex shrink-0 items-center gap-2">
+                {cadastralMaps.length > 1 && (
+                  <span className="text-xs tabular-nums text-on-surface-variant">
+                    {activeDocIndex + 1} / {cadastralMaps.length}
+                  </span>
+                )}
+                <button
+                  type="button"
+                  onClick={openDocLightbox}
+                  className="flex h-10 w-10 items-center justify-center rounded-full text-on-surface transition-colors hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                  aria-label="Open naksa full view"
+                >
+                  <Icon name="fullscreen" className="text-[18px]" />
+                </button>
+              </div>
+            </div>
+
             <button
               type="button"
               onClick={openDocLightbox}
-              className="group block h-full w-full cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40"
+              className="group relative block aspect-[4/3] w-full cursor-zoom-in bg-surface-container/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40 sm:aspect-video"
               aria-label="Open naksa full view"
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -474,43 +620,13 @@ export function ListingGallery({
                 draggable={false}
                 onContextMenu={(e) => e.preventDefault()}
                 onDragStart={(e) => e.preventDefault()}
-                className="h-full w-full bg-black/5 object-contain"
+                className="h-full w-full object-contain p-3 transition-transform duration-200 group-hover:scale-[1.01] sm:p-4"
               />
             </button>
-
-            {/* Document Header Bar */}
-            <div className="absolute inset-x-0 top-0 flex items-center justify-between gap-2 bg-gradient-to-b from-black/60 via-black/20 to-transparent p-3 text-white">
-              <div className="flex items-center gap-2 truncate">
-                <span className="rounded-md bg-primary/90 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground backdrop-blur-sm">
-                  Naksa
-                </span>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  type="button"
-                  onClick={openDocLightbox}
-                  className="flex h-8 w-8 items-center justify-center rounded-full bg-surface/80 text-on-surface transition-transform hover:scale-105"
-                  title="Fullscreen preview"
-                >
-                  <Icon name="fullscreen" className="text-[16px]" />
-                </button>
-              </div>
-            </div>
-
-            {/* Document Footer */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/55 to-transparent px-3 pb-3 pt-8 text-white">
-              <span className="inline-flex items-center gap-1 rounded-full bg-surface/90 px-2.5 py-1 text-xs font-medium text-on-surface backdrop-blur-sm">
-                <Icon name="map" className="text-[14px] text-primary" />
-                Cadastral Map (Naksa)
-              </span>
-              <span className="rounded-full bg-surface/90 px-2.5 py-1 text-[11px] font-medium tabular-nums text-on-surface backdrop-blur-sm">
-                {activeDocIndex + 1} / {cadastralMaps.length}
-              </span>
-            </div>
           </div>
 
           {cadastralMaps.length > 1 && (
-            <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+            <div className="flex min-w-0 gap-2 overflow-x-auto overscroll-x-contain pb-0.5 no-scrollbar">
               {cadastralMaps.map((map, idx) => {
                 const isActive = idx === activeDocIndex;
                 return (
@@ -519,29 +635,24 @@ export function ListingGallery({
                     type="button"
                     onClick={() => setActiveDocIndex(idx)}
                     className={cn(
-                      "group relative flex-shrink-0 overflow-hidden rounded-lg border transition-all",
-                      "w-24 sm:w-28",
+                      "relative h-16 w-[4.5rem] shrink-0 overflow-hidden rounded-xl border bg-surface-container transition-all sm:h-[4.5rem] sm:w-28",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
-                        ? "border-primary ring-1 ring-primary/40"
-                        : "border-outline-variant opacity-70 hover:border-primary/40 hover:opacity-100",
+                        ? "border-primary ring-2 ring-primary/30"
+                        : "border-outline-variant/80 opacity-75 hover:border-primary/35 hover:opacity-100",
                     )}
                     aria-label={`View naksa ${idx + 1}`}
                     aria-pressed={isActive}
                   >
-                    <div className="aspect-video bg-surface-container">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={map.url}
-                        alt=""
-                        draggable={false}
-                        onContextMenu={(e) => e.preventDefault()}
-                        onDragStart={(e) => e.preventDefault()}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    {isActive && (
-                      <div className="absolute inset-x-0 bottom-0 h-0.5 bg-primary" />
-                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={map.url}
+                      alt=""
+                      draggable={false}
+                      onContextMenu={(e) => e.preventDefault()}
+                      onDragStart={(e) => e.preventDefault()}
+                      className="h-full w-full object-contain p-1"
+                    />
                   </button>
                 );
               })}

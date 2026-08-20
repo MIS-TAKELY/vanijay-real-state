@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import "./metals.css";
+import { MetalsNavbar } from "../../components/gold/MetalsNavbar";
 
 export const metadata: Metadata = {
   title: "Malpoth | Precious Metals Market",
@@ -13,7 +13,8 @@ export default function MetalsLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="metals-app min-h-screen bg-[#0F1114] text-[#E8E6E1]">
+    <div className="min-h-screen bg-surface text-on-surface">
+      <MetalsNavbar />
       {children}
     </div>
   );

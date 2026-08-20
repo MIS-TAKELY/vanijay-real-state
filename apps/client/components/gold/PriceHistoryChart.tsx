@@ -102,35 +102,35 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
       autoSize: true,
       layout: {
         background: { type: ColorType.Solid, color: "transparent" },
-        textColor: "rgba(255,255,255,0.4)",
+        textColor: "rgba(23,26,31,0.45)",
         fontFamily: MONO_FONT,
         fontSize: 11,
       },
       grid: {
-        vertLines: { color: "rgba(255,255,255,0.04)" },
-        horzLines: { color: "rgba(255,255,255,0.06)" },
+        vertLines: { color: "rgba(16,48,80,0.05)" },
+        horzLines: { color: "rgba(16,48,80,0.07)" },
       },
       crosshair: {
         mode: CrosshairMode.Magnet,
         vertLine: {
-          color: "rgba(255,255,255,0.2)",
+          color: "rgba(16,48,80,0.25)",
           width: 1,
           style: 3,
-          labelBackgroundColor: "#2A2E36",
+          labelBackgroundColor: "#103050",
         },
         horzLine: {
-          color: "rgba(255,255,255,0.2)",
+          color: "rgba(16,48,80,0.25)",
           width: 1,
           style: 3,
-          labelBackgroundColor: "#2A2E36",
+          labelBackgroundColor: "#103050",
         },
       },
       rightPriceScale: {
-        borderColor: "rgba(255,255,255,0.08)",
+        borderColor: "rgba(16,48,80,0.12)",
         scaleMargins: { top: 0.12, bottom: 0.08 },
       },
       timeScale: {
-        borderColor: "rgba(255,255,255,0.08)",
+        borderColor: "rgba(16,48,80,0.12)",
         timeVisible: false,
         rightOffset: 2,
       },
@@ -139,7 +139,7 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
 
     const series = chart.addSeries(AreaSeries, {
       lineColor,
-      topColor: `${lineColor}55`,
+      topColor: `${lineColor}40`,
       bottomColor: `${lineColor}05`,
       lineWidth: 2,
       priceLineColor: `${lineColor}80`,
@@ -218,24 +218,24 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
         <div>
           <h2
-            className="text-2xl font-medium tracking-tight md:text-3xl"
+            className="text-2xl font-medium tracking-tight text-on-surface md:text-3xl"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Price History
-            <span className="ml-3 text-base font-normal text-white/30">
+            <span className="ml-3 text-base font-normal text-on-surface-variant">
               {metal.name} ({metal.symbol}) · {currency}
             </span>
           </h2>
           {headline && (
             <div className="mt-2 flex flex-wrap items-baseline gap-x-3 gap-y-1">
               <span
-                className="text-xs uppercase tracking-wider text-white/30"
+                className="text-xs uppercase tracking-wider text-on-surface-variant"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {headline.label}
               </span>
               <span
-                className="text-lg font-semibold tabular-nums text-[#E8E6E1]"
+                className="text-lg font-semibold tabular-nums text-on-surface"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 {headline.value}
@@ -243,7 +243,7 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
               {stats && !hover && (
                 <span
                   className={`text-sm font-medium tabular-nums ${
-                    isUp ? "text-[#34D399]" : "text-[#F87171]"
+                    isUp ? "text-emerald-600" : "text-red-600"
                   }`}
                   style={{ fontFamily: "var(--font-mono)" }}
                 >
@@ -257,7 +257,7 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
 
         {/* Timeframe toggle */}
         <div
-          className="flex shrink-0 gap-0.5 self-start rounded-full border border-white/[0.08] p-0.5 sm:self-auto"
+          className="flex shrink-0 gap-0.5 self-start rounded-full border border-outline-variant bg-surface p-0.5 shadow-sm sm:self-auto"
           role="group"
           aria-label="Chart timeframe"
         >
@@ -268,8 +268,8 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
               aria-pressed={range === r}
               className={`rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors ${
                 range === r
-                  ? "bg-white/[0.12] text-[#E8E6E1]"
-                  : "text-white/40 hover:text-white/70"
+                  ? "bg-gold text-on-gold shadow-sm"
+                  : "text-on-surface-variant hover:text-primary"
               }`}
               style={{ fontFamily: "var(--font-mono)" }}
             >
@@ -279,13 +279,13 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-xl border border-white/[0.06] bg-[#1A1D23]">
+      <div className="relative overflow-hidden rounded-xl border border-outline-variant bg-surface shadow-sm">
         <div ref={containerRef} className="h-[380px] w-full md:h-[440px]" />
 
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-[#1A1D23]/70">
+          <div className="absolute inset-0 flex items-center justify-center bg-surface/70">
             <span
-              className="animate-pulse text-xs uppercase tracking-wider text-white/40"
+              className="animate-pulse text-xs uppercase tracking-wider text-on-surface-variant"
               style={{ fontFamily: "var(--font-body)" }}
             >
               Loading {range} history…
@@ -295,7 +295,7 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
       </div>
 
       <p
-        className="mt-3 text-xs text-white/25"
+        className="mt-3 text-xs text-on-surface-variant/70"
         style={{ fontFamily: "var(--font-body)" }}
       >
         {isRealData ? (

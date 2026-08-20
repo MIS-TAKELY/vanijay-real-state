@@ -161,3 +161,158 @@
   --sidebar-border: hsl(240 3.7% 15.9%);
   --sidebar-ring: hsl(217.2 91.2% 59.8%);
 }
+
+/* ------------------------------------------------------------------ */
+/* Brand navbar animations (shared by client, metals, and admin)        */
+/* ------------------------------------------------------------------ */
+
+/* Attention-grabbing float for navbar elements */
+@keyframes gentleFloat {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.04);
+  }
+}
+
+.animate-gentle-float {
+  animation: gentleFloat 3s cubic-bezier(0.45, 0.05, 0.55, 0.95) infinite;
+}
+
+.animate-gentle-float:hover,
+.animate-gentle-float[data-state="open"] {
+  animation-play-state: paused;
+}
+
+/* App-switcher panel open/close */
+@keyframes appSwitcherIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-28px) scale(0.86);
+  }
+  60% {
+    opacity: 1;
+    transform: translateY(3px) scale(1.02);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes appSwitcherOut {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+}
+
+.animate-app-switcher-in {
+  animation: appSwitcherIn 0.28s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.animate-app-switcher-out {
+  animation: appSwitcherOut 0.18s cubic-bezier(0.4, 0, 1, 1) both;
+}
+
+/* Bouncing-ball chevron rotation — dramatic elastic overshoot with squash-stretch */
+@keyframes bounceRotate {
+  0% {
+    transform: rotate(0deg) scaleY(1) scaleX(1);
+  }
+  12% {
+    transform: rotate(70deg) scaleY(0.72) scaleX(1.18);
+  }
+  30% {
+    transform: rotate(215deg) scaleY(1.12) scaleX(0.9);
+  }
+  46% {
+    transform: rotate(160deg) scaleY(0.88) scaleX(1.06);
+  }
+  60% {
+    transform: rotate(192deg) scaleY(1.05) scaleX(0.96);
+  }
+  74% {
+    transform: rotate(173deg) scaleY(0.95) scaleX(1.02);
+  }
+  86% {
+    transform: rotate(184deg) scaleY(1.02) scaleX(0.99);
+  }
+  100% {
+    transform: rotate(180deg) scaleY(1) scaleX(1);
+  }
+}
+
+.animate-bounce-rotate {
+  animation: bounceRotate 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* Continuous bouncing ball with realistic squash & stretch */
+@keyframes bounceBall {
+  0%, 10% {
+    transform: translateY(0) scaleX(1) scaleY(1);
+  }
+  14% {
+    transform: translateY(-5px) scaleX(0.96) scaleY(1.06);
+  }
+  22% {
+    transform: translateY(-4px) scaleX(1) scaleY(1);
+  }
+  30% {
+    transform: translateY(-0.5px) scaleX(1.01) scaleY(0.99);
+  }
+  33% {
+    transform: translateY(0) scaleX(1.08) scaleY(0.88);
+  }
+  38% {
+    transform: translateY(-3px) scaleX(0.97) scaleY(1.04);
+  }
+  46% {
+    transform: translateY(-2px) scaleX(1) scaleY(1);
+  }
+  52% {
+    transform: translateY(-0.3px) scaleX(1.005) scaleY(0.995);
+  }
+  55% {
+    transform: translateY(0) scaleX(1.04) scaleY(0.94);
+  }
+  60% {
+    transform: translateY(-1.5px) scaleX(0.985) scaleY(1.02);
+  }
+  68% {
+    transform: translateY(0) scaleX(1.01) scaleY(0.99) rotate(-1deg);
+  }
+  72% {
+    transform: translateY(0) scaleX(1) scaleY(1) rotate(0.5deg);
+  }
+  76% {
+    transform: translateY(0) scaleX(1) scaleY(1) rotate(-0.3deg);
+  }
+  80% {
+    transform: translateY(0) scaleX(1) scaleY(1) rotate(0.15deg);
+  }
+  84%, 100% {
+    transform: translateY(0) scaleX(1) scaleY(1) rotate(0deg);
+  }
+}
+
+.animate-bounce-ball {
+  animation: bounceBall 3.5s cubic-bezier(0.33, 0, 0.67, 1) infinite;
+  transform-origin: center bottom;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-gentle-float,
+  .animate-app-switcher-in,
+  .animate-app-switcher-out,
+  .animate-bounce-rotate,
+  .animate-bounce-ball {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

@@ -205,7 +205,7 @@ export function ListingSidebarMap({
           ref={containerRef}
           className={cn(
             "w-full bg-surface-container",
-            expanded ? "h-full" : "h-40",
+            expanded ? "h-full" : "h-28 sm:h-40",
           )}
           aria-label={`Map showing ${title}`}
         />

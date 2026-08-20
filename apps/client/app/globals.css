@@ -90,6 +90,11 @@
   --font-data-table: "IBM Plex Mono", monospace;
   --font-data-price: "IBM Plex Mono", monospace;
 
+  /* Aliases used by the metals (gold group) components */
+  --font-display: "Fraunces", serif;
+  --font-body: "Public Sans", sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+
   --text-display-lg: 48px;
   --text-headline-md: 28px;
   --text-body-lg: 18px;
@@ -126,6 +131,9 @@ body {
   color: #1b1c19;
   /* Prevent elastic overscroll bounce on mobile */
   overscroll-behavior-y: contain;
+  /* Clamp horizontal overflow to viewport — horizontal scroll is
+     intentional only inside .overflow-x-auto containers */
+  overflow-x: hidden;
 }
 
 /* ── Mobile-first responsive foundations ────────────────────────────── */
@@ -296,6 +304,34 @@ body {
 .animate-gentle-float:hover,
 .animate-gentle-float[data-state="open"] {
   animation-play-state: paused;
+}
+
+/* Sparkline draw-in for metal overview/comparison charts */
+.sparkline-path {
+  stroke-dasharray: 260;
+  stroke-dashoffset: 260;
+  animation: sparkline-draw 0.9s ease-out forwards;
+}
+
+@keyframes sparkline-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+/* Live-rate pulse in the metals footer */
+.price-live {
+  animation: price-live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes price-live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.55;
+  }
 }
 
 /* App-switcher panel open/close (replaces framer-motion AnimatePresence) */

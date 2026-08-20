@@ -34,9 +34,11 @@ values). Chip = `border-outline-variant bg-surface`, tiny uppercase label +
 
 ### Light spec grid (no ledger box)
 Specifications & Location: a `<dl>` with soft `divide-y divide-outline-variant`
-rows, `grid gap-1 sm:grid-cols-[200px_1fr] sm:gap-6`, labels
-`text-on-surface-variant`, values `text-on-surface font-medium`.
-No enclosing box, no border-t-gold.
+rows, `grid grid-cols-[minmax(0,1fr)_2fr] gap-1 py-3 sm:grid-cols-[200px_1fr]
+sm:gap-6`, labels `text-on-surface-variant`, values `text-on-surface font-medium`.
+Label and value stay on the same row on mobile too — the base `grid-cols-` rule
+(1fr/2fr) makes the small screen a proper two-column table, and `sm:` widens the
+label track to 200px on larger screens. No enclosing box, no border-t-gold.
 
 ### Touch & layout
 - Mobile sticky bottom bar (`MobilePriceBar`, `z-40`): price + Call Seller +
@@ -47,6 +49,11 @@ No enclosing box, no border-t-gold.
   gap-2` (8px) for Add to Cart + Save. Per-unit price select `min-h-10`.
 - Gallery tabs `h-9`, full-width on mobile; thumbnails `w-24 sm:w-28`, active
   indicator `ring-primary` (navy), not gold.
+- **Photos swipeable on touch:** the autoplay view is a full-bleed scroll-snap
+  track (`snap-x snap-mandatory`, `overflow-x-auto overscroll-x-contain`,
+  `touch-action: pan-y`) so a finger drag moves between photos with native
+  momentum. `activeImage` syncs from the scroll offset; arrows, thumbnails, and
+  the lightbox all drive the same track (lightbox close re-syncs).
 
 ### A11y
 - Gallery header = real `role="tablist"` → `role="tab"` (with `aria-selected`,

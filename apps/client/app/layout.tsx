@@ -1,9 +1,15 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Toaster } from "@repo/ui";
 import { Suspense } from "react";
 import { AuthModalListener } from "components/real-state/auth/AuthModalListener";
 import { SITE_URL } from "lib/site";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  minimumScale: 1,
+};
 
 export const metadata: Metadata = {
   // Without metadataBase, relative canonicals (`alternates.canonical`) and

@@ -16,6 +16,12 @@ export type { StatProps } from "./components/Stat";
 export { Icon, iconVariants } from "./components/Icon";
 export type { IconProps } from "./components/Icon";
 
+export { BrandLogo } from "./components/BrandLogo";
+export type { BrandLogoProps } from "./components/BrandLogo";
+
+export { BouncingAppSwitcher } from "./components/BouncingAppSwitcher";
+export type { BouncingAppSwitcherProps } from "./components/BouncingAppSwitcher";
+
 /* ------------------------------------------------------------------ */
 /* Lucide icons commonly used by apps                                  */
 /* ------------------------------------------------------------------ */

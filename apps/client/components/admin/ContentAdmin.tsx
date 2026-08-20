@@ -32,7 +32,7 @@ function cx(...parts: (string | false | undefined)[]) {
 }
 
 const inputClass =
-  "w-full rounded-lg border border-white/[0.08] bg-[#0F1114] px-3 py-2 text-sm text-[#E8E6E1] placeholder:text-white/25 focus:border-[#C9A84C]/60 focus:outline-none focus:ring-2 focus:ring-[#C9A84C]/20 transition-colors";
+  "w-full rounded-lg border border-outline-variant bg-white px-3 py-2 text-sm text-on-surface placeholder:text-on-surface-variant/50 focus:border-gold/60 focus:outline-none focus:ring-2 focus:ring-gold/20 transition-colors";
 
 function Field({
   label,
@@ -45,7 +45,7 @@ function Field({
 }) {
   return (
     <label className={cx("block", className)}>
-      <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-wider text-white/40">
+      <span className="mb-1.5 block text-[11px] font-medium uppercase tracking-wider text-on-surface-variant">
         {label}
       </span>
       {children}
@@ -70,16 +70,18 @@ function Toggle({
       aria-label={label}
       onClick={() => onChange(!checked)}
       className={cx(
-        "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[#C9A84C]/40",
+        "relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-gold/40",
         checked
-          ? "border-[#C9A84C]/60 bg-[#C9A84C]"
-          : "border-white/[0.12] bg-white/[0.06]",
+          ? "border-gold/60 bg-gold"
+          : "border-outline-variant bg-surface-container",
       )}
     >
       <span
         className={cx(
-          "inline-block h-4 w-4 transform rounded-full bg-[#0F1114] transition-transform",
-          checked ? "translate-x-[22px]" : "translate-x-[3px]",
+          "inline-block h-4 w-4 transform rounded-full transition-transform",
+          checked
+            ? "translate-x-[22px] bg-on-gold"
+            : "translate-x-[3px] bg-white shadow-sm",
         )}
       />
     </button>
@@ -107,12 +109,12 @@ function IconButton({
       aria-label={label}
       title={label}
       className={cx(
-        "inline-flex size-8 items-center justify-center rounded-lg border border-white/[0.08] text-white/50 transition-colors",
+        "inline-flex size-8 items-center justify-center rounded-lg border border-outline-variant bg-surface text-on-surface-variant transition-colors",
         danger
-          ? "cursor-pointer hover:border-[#F87171]/40 hover:text-[#F87171]"
-          : "cursor-pointer hover:border-white/20 hover:text-[#E8E6E1]",
+          ? "cursor-pointer hover:border-red-500/40 hover:text-red-600"
+          : "cursor-pointer hover:border-gold/40 hover:text-primary",
         disabled &&
-          "cursor-not-allowed opacity-30 hover:border-white/[0.08] hover:text-white/50",
+          "cursor-not-allowed opacity-40 hover:border-outline-variant hover:text-on-surface-variant",
       )}
     >
       {children}
@@ -122,7 +124,7 @@ function IconButton({
 
 function EditedBadge() {
   return (
-    <span className="inline-flex items-center rounded-full bg-[#C9A84C]/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-[#C9A84C]">
+    <span className="inline-flex items-center rounded-full bg-gold/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-gold-deep">
       Edited
     </span>
   );
@@ -131,7 +133,7 @@ function EditedBadge() {
 function HiddenBanner({ children }: { children: React.ReactNode }) {
   return (
     <div
-      className="mb-5 rounded-lg border border-[#F87171]/20 bg-[#F87171]/5 px-4 py-3 text-sm text-[#F87171]"
+      className="mb-5 rounded-lg border border-red-500/25 bg-red-500/5 px-4 py-3 text-sm text-red-600"
       role="status"
     >
       {children}
@@ -161,12 +163,12 @@ function SectionShell({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
           <h2
-            className="text-xl font-semibold tracking-tight text-[#E8E6E1]"
+            className="text-xl font-semibold tracking-tight text-on-surface"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {title}
           </h2>
-          <p className="mt-0.5 text-sm text-white/40">{description}</p>
+          <p className="mt-0.5 text-sm text-on-surface-variant">{description}</p>
         </div>
         <div className="flex items-center gap-2">
           {edited && <EditedBadge />}
@@ -174,7 +176,7 @@ function SectionShell({
             href={viewHref}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 py-1.5 text-xs font-medium text-white/60 transition-colors hover:border-white/20 hover:text-[#E8E6E1]"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-outline-variant bg-surface px-3 py-1.5 text-xs font-medium text-on-surface-variant shadow-sm transition-colors hover:border-gold/40 hover:text-primary"
           >
             <ExternalLink size={14} aria-hidden="true" />
             {viewLabel}
@@ -182,7 +184,7 @@ function SectionShell({
           <button
             type="button"
             onClick={onReset}
-            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-white/[0.08] px-3 py-1.5 text-xs font-medium text-white/60 transition-colors hover:border-[#F87171]/40 hover:text-[#F87171]"
+            className="inline-flex cursor-pointer items-center gap-1.5 rounded-lg border border-outline-variant bg-surface px-3 py-1.5 text-xs font-medium text-on-surface-variant shadow-sm transition-colors hover:border-red-500/40 hover:text-red-600"
           >
             <RotateCcw size={14} aria-hidden="true" />
             Reset to defaults
@@ -243,10 +245,10 @@ function HeroBannerEditor() {
       viewHref="/"
       viewLabel="View homepage"
     >
-      <div className="mb-5 flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-4 py-3">
+      <div className="mb-5 flex items-center justify-between gap-3 rounded-lg border border-outline-variant bg-surface-container/60 px-4 py-3">
         <div>
-          <p className="text-sm font-medium text-[#E8E6E1]">Show hero banner</p>
-          <p className="text-xs text-white/40">
+          <p className="text-sm font-medium text-on-surface">Show hero banner</p>
+          <p className="text-xs text-on-surface-variant">
             {heroSlides.length} slide{heroSlides.length === 1 ? "" : "s"} ·{" "}
             {heroEnabled ? "visible on the homepage" : "hidden"}
           </p>
@@ -269,10 +271,10 @@ function HeroBannerEditor() {
         {heroSlides.map((slide, index) => (
           <div
             key={index}
-            className="rounded-xl border border-white/[0.06] bg-[#1A1D23]/50 p-5"
+            className="rounded-xl border border-outline-variant bg-surface p-5 shadow-sm"
           >
             <div className="mb-4 flex items-center justify-between gap-3">
-              <span className="text-xs font-semibold uppercase tracking-wider text-white/40">
+              <span className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant">
                 Slide {index + 1}
               </span>
               <div className="flex items-center gap-2">
@@ -355,7 +357,7 @@ function HeroBannerEditor() {
       <button
         type="button"
         onClick={add}
-        className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-white/[0.15] px-4 py-2.5 text-sm font-medium text-white/60 transition-colors hover:border-[#C9A84C]/50 hover:text-[#C9A84C]"
+        className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-outline-variant px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:border-gold/50 hover:text-gold-deep"
       >
         <Plus size={16} aria-hidden="true" />
         Add slide
@@ -411,12 +413,12 @@ function CategoriesEditor() {
       viewHref="/"
       viewLabel="View homepage"
     >
-      <div className="mb-5 flex items-center justify-between gap-3 rounded-lg border border-white/[0.06] bg-white/[0.03] px-4 py-3">
+      <div className="mb-5 flex items-center justify-between gap-3 rounded-lg border border-outline-variant bg-surface-container/60 px-4 py-3">
         <div>
-          <p className="text-sm font-medium text-[#E8E6E1]">
+          <p className="text-sm font-medium text-on-surface">
             Show category strip
           </p>
-          <p className="text-xs text-white/40">
+          <p className="text-xs text-on-surface-variant">
             {categories.length} categor{categories.length === 1 ? "y" : "ies"} ·{" "}
             {categoriesEnabled ? "visible on the homepage" : "hidden"}
           </p>
@@ -439,7 +441,7 @@ function CategoriesEditor() {
         {categories.map((cat, index) => (
           <div
             key={index}
-            className="rounded-xl border border-white/[0.06] bg-[#1A1D23]/50 p-4"
+            className="rounded-xl border border-outline-variant bg-surface p-4 shadow-sm"
           >
             <div className="flex items-start justify-between gap-3">
               <div className="grid flex-1 gap-3 sm:grid-cols-2">
@@ -491,7 +493,7 @@ function CategoriesEditor() {
       <button
         type="button"
         onClick={add}
-        className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-white/[0.15] px-4 py-2.5 text-sm font-medium text-white/60 transition-colors hover:border-[#C9A84C]/50 hover:text-[#C9A84C]"
+        className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-outline-variant px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:border-gold/50 hover:text-gold-deep"
       >
         <Plus size={16} aria-hidden="true" />
         Add category
@@ -582,7 +584,7 @@ function ContentBlocksEditor() {
       viewLabel="View gold page"
     >
       <div className="mb-5 flex flex-wrap items-center gap-2">
-        <span className="text-xs font-medium uppercase tracking-wider text-white/40">
+        <span className="text-xs font-medium uppercase tracking-wider text-on-surface-variant">
           Filter:
         </span>
         <button
@@ -592,8 +594,8 @@ function ContentBlocksEditor() {
           className={cx(
             "cursor-pointer rounded-full px-3 py-1 text-xs font-medium transition-colors",
             metalFilter.value === "all"
-              ? "bg-white/[0.12] text-[#E8E6E1]"
-              : "text-white/40 hover:text-white/70",
+              ? "bg-gold text-on-gold shadow-sm"
+              : "text-on-surface-variant hover:text-primary",
           )}
         >
           All
@@ -607,8 +609,8 @@ function ContentBlocksEditor() {
             className={cx(
               "cursor-pointer rounded-full px-3 py-1 text-xs font-medium capitalize transition-colors",
               metalFilter.value === metal
-                ? "bg-white/[0.12] text-[#E8E6E1]"
-                : "text-white/40 hover:text-white/70",
+                ? "bg-gold text-on-gold shadow-sm"
+                : "text-on-surface-variant hover:text-primary",
             )}
           >
             {metal}
@@ -620,24 +622,24 @@ function ContentBlocksEditor() {
         {visible.map((block) => (
           <div
             key={block.id}
-            className="rounded-xl border border-white/[0.06] bg-[#1A1D23]/50 p-5"
+            className="rounded-xl border border-outline-variant bg-surface p-5 shadow-sm"
           >
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white/50">
+                <span className="rounded-full bg-surface-container px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-on-surface-variant">
                   {block.metal === "all" ? "Shared" : block.metal}
                 </span>
-                <span className="rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-white/50">
+                <span className="rounded-full bg-surface-container px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-on-surface-variant">
                   {BLOCK_TYPE_LABELS[block.type]}
                 </span>
                 {!block.isPublished && (
-                  <span className="rounded-full bg-[#F87171]/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-[#F87171]">
+                  <span className="rounded-full bg-red-500/10 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-wider text-red-600">
                     Hidden
                   </span>
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs text-white/30">
+                <span className="text-xs text-on-surface-variant/70">
                   {block.isPublished ? "Live" : "Draft"}
                 </span>
                 <Toggle
@@ -731,7 +733,7 @@ function ContentBlocksEditor() {
       <button
         type="button"
         onClick={add}
-        className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-white/[0.15] px-4 py-2.5 text-sm font-medium text-white/60 transition-colors hover:border-[#C9A84C]/50 hover:text-[#C9A84C]"
+        className="mt-5 inline-flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-outline-variant px-4 py-2.5 text-sm font-medium text-on-surface-variant transition-colors hover:border-gold/50 hover:text-gold-deep"
       >
         <Plus size={16} aria-hidden="true" />
         Add block
@@ -764,13 +766,13 @@ export function ContentAdmin() {
       <div className="mb-8 flex flex-wrap items-end justify-between gap-4">
         <div>
           <h1
-            className="text-3xl font-semibold tracking-tight text-[#E8E6E1]"
+            className="text-3xl font-semibold tracking-tight text-on-surface"
             style={{ fontFamily: "var(--font-display)" }}
           >
             Content Management
           </h1>
           <p
-            className="mt-1 text-sm text-white/40"
+            className="mt-1 text-sm text-on-surface-variant"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Control how content is displayed on the client. Changes save
@@ -780,7 +782,7 @@ export function ContentAdmin() {
         <button
           type="button"
           onClick={resetAll}
-          className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-[#F87171]/30 px-4 py-2 text-sm font-medium text-[#F87171] transition-colors hover:bg-[#F87171]/10"
+          className="inline-flex cursor-pointer items-center gap-2 rounded-lg border border-red-500/30 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-500/10"
         >
           <RotateCcw size={15} aria-hidden="true" />
           Reset all content
@@ -788,7 +790,7 @@ export function ContentAdmin() {
       </div>
 
       <div
-        className="mb-6 flex flex-wrap items-center gap-1.5 rounded-xl border border-white/[0.06] bg-[#1A1D23]/50 p-1.5"
+        className="mb-6 flex flex-wrap items-center gap-1.5 rounded-xl border border-outline-variant bg-surface-container/60 p-1.5"
         role="tablist"
         aria-label="Content sections"
       >
@@ -802,12 +804,12 @@ export function ContentAdmin() {
             className={cx(
               "cursor-pointer rounded-lg px-4 py-2 text-left transition-colors",
               tab === item.id
-                ? "bg-white/[0.08] text-[#E8E6E1]"
-                : "text-white/40 hover:text-white/70",
+                ? "bg-surface text-on-surface shadow-sm"
+                : "text-on-surface-variant hover:text-primary",
             )}
           >
             <span className="block text-sm font-medium">{item.label}</span>
-            <span className="block text-[10px] uppercase tracking-wider text-white/30">
+            <span className="block text-[10px] uppercase tracking-wider text-on-surface-variant/60">
               {item.hint}
             </span>
           </button>

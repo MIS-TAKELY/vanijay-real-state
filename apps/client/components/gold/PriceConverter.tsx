@@ -1,14 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import type {
-  CurrencyCode,
-  MetalData,
-  WeightUnit,
-} from "../../constants/gold/metals";
+import type { CurrencyCode, MetalData, WeightUnit } from "../../constants/gold/metals";
 import {
-  convertUnit,
   CURRENCY_SYMBOLS,
+  convertUnit,
   formatPrice,
   priceInCurrency,
 } from "../../constants/gold/metals";
@@ -16,110 +12,140 @@ import {
 interface PriceConverterProps {
   metal: MetalData;
   currency: CurrencyCode;
-  /** Page-level unit from the UnitToggle — converter defaults to this. */
   defaultUnit?: WeightUnit;
 }
+
+const CONVERTER_UNITS: Array<{ value: WeightUnit; label: string }> = [
+  { value: "tola", label: "Tola" },
+  { value: "gram", label: "Gram" },
+  { value: "oz", label: "Troy Ounce" },
+  { value: "kilo", label: "Kilogram" },
+  { value: "anna", label: "Anna" },
+  { value: "sukhi", label: "Sukhi" },
+];
 
 export function PriceConverter({
   metal,
   currency,
   defaultUnit,
 }: PriceConverterProps) {
-  const [amount, setAmount] = useState<string>("1");
-  const [unit, setUnit] = useState<WeightUnit>(defaultUnit ?? "gram");
+  const [weight, setWeight] = useState("1");
+  const [unit, setUnit] = useState<WeightUnit>(defaultUnit ?? metal.unit);
+  const [convertedUnit, setConvertedUnit] = useState<WeightUnit>("gram");
 
-  const numericAmount = parseFloat(amount) || 0;
-  // Same live quote as the hero (NPR from feed; other currencies from USD).
-  const spotInCurrency = priceInCurrency(metal, currency);
-  const pricePerSelectedUnit = convertUnit(spotInCurrency, metal.unit, unit);
-  const totalInCurrency = pricePerSelectedUnit * numericAmount;
+  const amount = Number.parseFloat(weight) || 0;
+  const basePrice = priceInCurrency(metal, currency);
+  const priceInDisplayUnit = convertUnit(basePrice, metal.unit, unit);
+  const value = amount * priceInDisplayUnit;
+
+  const convertedPricePerUnit = convertUnit(basePrice, metal.unit, convertedUnit);
+  const equivalentWeight = amount > 0 ? value / convertedPricePerUnit : 0;
 
   return (
-    <section
-      aria-labelledby="converter-heading"
-      className="rounded-xl border border-white/[0.06] bg-[#1A1D23] p-6"
-    >
-      <h2
-        id="converter-heading"
-        className="mb-4 text-lg font-medium tracking-tight text-[#E8E6E1]"
+    <div className="rounded-2xl border border-outline-variant bg-surface p-6 shadow-sm md:p-8">
+      <h3
+        className="mb-1 text-2xl font-medium tracking-tight text-on-surface"
         style={{ fontFamily: "var(--font-display)" }}
       >
-        {metal.name} Price Converter
-      </h2>
+        Price Converter
+      </h3>
+      <p
+        className="mb-6 text-sm text-on-surface-variant"
+        style={{ fontFamily: "var(--font-body)" }}
+      >
+        Convert {metal.name} weight into its current market value.
+      </p>
 
-      <div className="flex flex-wrap items-end gap-4">
-        <div className="flex-1 min-w-[120px]">
+      <div className="grid gap-4 sm:grid-cols-2">
+        <div>
           <label
-            htmlFor="converter-amount"
-            className="mb-1.5 block text-xs uppercase tracking-wider text-white/30"
+            htmlFor="pc-weight"
+            className="mb-1.5 block text-xs font-medium text-on-surface-variant"
             style={{ fontFamily: "var(--font-body)" }}
           >
-            Amount
+            Weight
           </label>
           <input
-            id="converter-amount"
+            id="pc-weight"
             type="number"
             min="0"
             step="any"
-            value={amount}
-            onChange={(e) => setAmount(e.target.value)}
-            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm font-medium text-[#E8E6E1] outline-none focus:border-[#C9A84C]/50 focus:ring-1 focus:ring-[#C9A84C]/30"
+            inputMode="decimal"
+            value={weight}
+            onChange={(e) => setWeight(e.target.value)}
+            className="w-full rounded-lg border border-outline-variant bg-white px-3 py-2 text-sm font-medium text-on-surface tabular-nums outline-none transition-colors focus:border-gold/60 focus:ring-1 focus:ring-gold/30"
             style={{ fontFamily: "var(--font-mono)" }}
           />
         </div>
 
-        <div className="min-w-[100px]">
+        <div>
           <label
-            htmlFor="converter-unit"
-            className="mb-1.5 block text-xs uppercase tracking-wider text-white/30"
+            htmlFor="pc-unit"
+            className="mb-1.5 block text-xs font-medium text-on-surface-variant"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Unit
           </label>
           <select
-            id="converter-unit"
+            id="pc-unit"
             value={unit}
             onChange={(e) => setUnit(e.target.value as WeightUnit)}
-            className="w-full rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-sm font-medium text-[#E8E6E1] outline-none focus:border-[#C9A84C]/50"
+            className="w-full rounded-lg border border-outline-variant bg-white px-3 py-2 text-sm font-medium text-on-surface outline-none transition-colors focus:border-gold/60 focus:ring-1 focus:ring-gold/30"
             style={{ fontFamily: "var(--font-mono)" }}
           >
-            <option value="oz">Troy Ounce</option>
-            <option value="gram">Gram</option>
-            <option value="kilo">Kilogram</option>
-            <option value="tola">Tola (तोल)</option>
-            <option value="anna">Anna (आन)</option>
-            <option value="sukhi">Sukhi (सुक)</option>
+            {CONVERTER_UNITS.map((u) => (
+              <option key={u.value} value={u.value}>
+                {u.label}
+              </option>
+            ))}
           </select>
-        </div>
-
-        <div className="flex-1 min-w-[150px]">
-          <span
-            className="mb-1.5 block text-xs uppercase tracking-wider text-white/30"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
-            Value in {currency}
-          </span>
-          <div
-            className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-lg font-semibold text-[#C9A84C] tabular-nums"
-            style={{ fontFamily: "var(--font-mono)" }}
-            aria-live="polite"
-          >
-            {CURRENCY_SYMBOLS[currency]}
-            {totalInCurrency.toLocaleString("en-US", {
-              minimumFractionDigits: 2,
-              maximumFractionDigits: 2,
-            })}
-          </div>
         </div>
       </div>
 
-      <p
-        className="mt-3 text-xs text-white/25"
+      <div
+        className="mt-4 rounded-xl border border-gold/30 bg-gold-soft/40 p-5 text-center"
+        aria-live="polite"
+      >
+        <p
+          className="text-xs uppercase tracking-[0.14em] text-gold-deep"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
+          Market Value
+        </p>
+        <p
+          className="mt-1 text-3xl font-semibold tabular-nums text-on-surface"
+          style={{ fontFamily: "var(--font-mono)" }}
+        >
+          {formatPrice(value, currency)}
+        </p>
+        <p
+          className="mt-1 text-xs text-on-surface-variant"
+          style={{ fontFamily: "var(--font-body)" }}
+        >
+          {CURRENCY_SYMBOLS[currency]} {formatPrice(priceInDisplayUnit, currency)} per{" "}
+          {unit} ({metal.symbol})
+        </p>
+      </div>
+
+      <div
+        className="mt-4 flex flex-wrap items-center justify-center gap-3 rounded-xl border border-outline-variant bg-surface-container/50 p-4 text-sm text-on-surface-variant"
         style={{ fontFamily: "var(--font-body)" }}
       >
-        Based on live {metal.name} spot price of{" "}
-        {formatPrice(spotInCurrency, currency)} per {metal.unit}
-      </p>
-    </section>
+        <span>≈ {equivalentWeight.toFixed(2)} {convertedUnit}s</span>
+        <span className="hidden text-on-surface-variant/50 sm:inline">·</span>
+        <select
+          aria-label="Convert to unit"
+          value={convertedUnit}
+          onChange={(e) => setConvertedUnit(e.target.value as WeightUnit)}
+          className="rounded-lg border border-outline-variant bg-white px-2 py-1 text-xs font-medium text-on-surface outline-none focus:border-gold/60"
+        >
+          {CONVERTER_UNITS.map((u) => (
+            <option key={u.value} value={u.value}>
+              {u.label}
+            </option>
+          ))}
+        </select>
+      </div>
+    </div>
   );
 }

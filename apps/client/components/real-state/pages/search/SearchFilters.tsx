@@ -864,7 +864,7 @@ export function SearchFilters() {
             e.preventDefault();
             navigateWithParams({ minS: sizeMin, maxS: sizeMax });
           }}
-          className="flex flex-wrap items-end gap-x-4 gap-y-3 rounded-2xl border border-outline-variant bg-surface px-4 py-3 shadow-sm"
+          className="flex flex-nowrap items-end gap-x-2 gap-y-2 overflow-x-auto rounded-2xl border border-outline-variant bg-surface px-2 py-2 shadow-sm sm:flex-wrap sm:overflow-x-visible sm:gap-x-3 sm:gap-y-3 sm:px-4 sm:py-3"
         >
           {/* Type */}
           <FilterField label="Type" icon="home">
@@ -872,7 +872,7 @@ export function SearchFilters() {
               <SelectTrigger
                 id="filter-type"
                 className={cn(
-                  "h-9 w-full min-w-[130px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0",
+                  "h-9 w-full min-w-[110px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0 sm:min-w-[130px]",
                   type !== "all" && "border-gold/50 font-medium text-gold-deep",
                 )}
               >
@@ -900,7 +900,7 @@ export function SearchFilters() {
               <SelectTrigger
                 id="filter-price"
                 className={cn(
-                  "h-9 w-full min-w-[130px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0",
+                  "h-9 w-full min-w-[110px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0 sm:min-w-[130px]",
                   price !== "any" && "border-gold/50 font-medium text-gold-deep",
                 )}
               >
@@ -929,7 +929,7 @@ export function SearchFilters() {
               placeholder="All Districts"
               searchPlaceholder="Search districts…"
               triggerClassName={cn(
-                "h-9 w-full min-w-[140px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0",
+                "h-9 w-full min-w-[120px] rounded-lg border border-outline-variant bg-white px-3 text-xs shadow-none focus-visible:ring-0 sm:min-w-[140px]",
                 district !== "any" && "border-gold/50 font-medium text-gold-deep",
               )}
             />
@@ -948,7 +948,7 @@ export function SearchFilters() {
                 value={sizeMinTxt}
                 onChange={(e) => handleSizeMinChange(e.target.value)}
                 placeholder="Min"
-                className="h-9 w-[4.5rem] rounded-lg border border-outline-variant bg-white px-2.5 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
+                className="h-9 w-[3.5rem] rounded-lg border border-outline-variant bg-white px-2 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60 sm:w-[4.5rem] sm:px-2.5"
               />
               <span className="text-xs text-on-surface-variant">–</span>
               <Label htmlFor="size-max" className="sr-only">
@@ -961,12 +961,12 @@ export function SearchFilters() {
                 value={sizeMaxTxt}
                 onChange={(e) => handleSizeMaxChange(e.target.value)}
                 placeholder="Max"
-                className="h-9 w-[4.5rem] rounded-lg border border-outline-variant bg-white px-2.5 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60"
+                className="h-9 w-[3.5rem] rounded-lg border border-outline-variant bg-white px-2 text-xs shadow-none focus-visible:ring-0 placeholder:text-on-surface-variant/60 sm:w-[4.5rem] sm:px-2.5"
               />
               <Select value={unit} onValueChange={handleUnitChange}>
                 <SelectTrigger
                   id="filter-size-unit"
-                  className="h-9 w-[6.5rem] shrink-0 rounded-lg border border-outline-variant bg-white px-2.5 text-xs shadow-none focus-visible:ring-0"
+                  className="hidden h-9 w-[5.5rem] shrink-0 rounded-lg border border-outline-variant bg-white px-2.5 text-xs shadow-none focus-visible:ring-0 sm:block sm:w-[6.5rem]"
                 >
                   <SelectValue />
                 </SelectTrigger>
@@ -1152,7 +1152,7 @@ function FilterField({
   children: React.ReactNode;
 }) {
   return (
-    <div className={cn("flex flex-col gap-1.5", className)}>
+    <div className={cn("flex shrink flex-col gap-1.5 md:shrink-0", className)}>
       <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-[0.14em] text-on-surface-variant">
         <Icon name={icon} className="text-[13px]" />
         {label}

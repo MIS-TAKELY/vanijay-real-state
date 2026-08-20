@@ -33,12 +33,12 @@ export function RichTextContent({
   if (!html) return null;
 
   return (
-    <div className={cn("relative", className)}>
+    <div className={cn("relative min-w-0", className)}>
       {/* Content container with truncation */}
       <div
         ref={contentRef}
         className={cn(
-          "suneditor-content prose prose-sm max-w-none text-on-surface [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_p]:last:mb-0 [&_ul]:list-disc [&_ul]:pl-5",
+          "suneditor-content prose prose-sm max-w-none min-w-0 break-words text-pretty text-on-surface [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80 [&_img]:h-auto [&_img]:max-w-full [&_li]:my-1 [&_ol]:list-decimal [&_ol]:pl-5 [&_p]:mb-3 [&_p]:last:mb-0 [&_pre]:max-w-full [&_pre]:overflow-x-auto [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_ul]:list-disc [&_ul]:pl-5",
           !isExpanded && needsTruncation && "overflow-hidden",
         )}
         style={{

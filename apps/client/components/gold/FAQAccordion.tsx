@@ -31,11 +31,11 @@ export function FAQAccordion({ items, metalName }: FAQAccordionProps) {
     <section aria-labelledby="faq-heading">
       <h2
         id="faq-heading"
-        className="mb-6 text-2xl font-medium tracking-tight md:text-3xl"
+        className="mb-6 text-2xl font-medium tracking-tight text-on-surface md:text-3xl"
         style={{ fontFamily: "var(--font-display)" }}
       >
         Frequently Asked Questions
-        <span className="ml-3 text-base font-normal text-white/30">
+        <span className="ml-3 text-base font-normal text-on-surface-variant">
           About {metalName}
         </span>
       </h2>
@@ -50,12 +50,12 @@ export function FAQAccordion({ items, metalName }: FAQAccordionProps) {
           <AccordionItem
             key={i}
             value={`faq-${i}`}
-            className="border-b border-white/[0.06] bg-[#1A1D23]/50 px-4 py-1 rounded-lg data-[state=open]:bg-[#1A1D23]"
+            className="rounded-lg border border-outline-variant bg-surface px-4 py-1 shadow-sm data-[state=open]:bg-surface-container/60"
           >
-            <AccordionTrigger className="text-left text-sm font-medium text-[#E8E6E1] hover:text-[#C9A84C] transition-colors py-3 [&>svg]:text-white/30">
+            <AccordionTrigger className="py-3 text-left text-sm font-medium text-on-surface transition-colors hover:text-gold-deep [&>svg]:text-on-surface-variant/50">
               {item.question}
             </AccordionTrigger>
-            <AccordionContent className="text-sm leading-relaxed text-white/60 pb-4 pt-1">
+            <AccordionContent className="pb-4 pt-1 text-sm leading-relaxed text-on-surface-variant">
               {item.answer}
             </AccordionContent>
           </AccordionItem>

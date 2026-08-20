@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { METAL_SEO_DATA } from "../../../constants/gold/seo-data";
 import { MetalPageTemplate } from "../../../components/gold/MetalPageTemplate";
+import { getTodayRates } from "lib/fenegosida";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = METAL_SEO_DATA.silver;
@@ -24,6 +25,7 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function SilverPage() {
-  return <MetalPageTemplate metalId="silver" />;
+export default async function SilverPage() {
+  const todayRates = await getTodayRates();
+  return <MetalPageTemplate metalId="silver" todayRate={todayRates?.silver ?? null} />;
 }

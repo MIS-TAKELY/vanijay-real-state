@@ -16,7 +16,7 @@ export function CurrencyToggle({
 }: CurrencyToggleProps) {
   return (
     <div
-      className="flex shrink-0 flex-wrap gap-0.5 rounded-full border border-white/[0.08] p-0.5"
+      className="flex shrink-0 flex-wrap gap-0.5 rounded-full border border-outline-variant bg-surface p-0.5 shadow-sm"
       role="group"
       aria-label="Display currency"
     >
@@ -29,8 +29,8 @@ export function CurrencyToggle({
             rounded-full px-2.5 py-1 text-[11px] font-medium transition-colors
             ${
               currency === c
-                ? "bg-white/[0.12] text-[#E8E6E1]"
-                : "text-white/40 hover:text-white/70"
+                ? "bg-gold text-on-gold shadow-sm"
+                : "text-on-surface-variant hover:text-primary"
             }
           `}
           style={{ fontFamily: "var(--font-mono)" }}

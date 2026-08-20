@@ -26,17 +26,19 @@ function PricePerUnit({ pricing }: { pricing: PriceContext }) {
   );
 
   return (
-    <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
-      <span className="mono-stat text-2xl font-bold text-navy">
+    <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+      <span className="mono-stat text-lg font-bold text-navy sm:text-xl lg:text-2xl">
         {perUnit != null ? formatNPR(perUnit) : "—"}
       </span>
-      <span className="text-sm font-medium text-on-surface-variant">per</span>
+      <span className="text-xs font-medium text-on-surface-variant sm:text-sm">
+        per
+      </span>
       <span className="relative inline-flex min-h-11 items-center">
         <select
           value={unit}
           onChange={(e) => setUnit(e.target.value)}
           aria-label="Price unit"
-          className="h-11 cursor-pointer appearance-none border-0 bg-transparent py-0 pr-6 pl-0 text-sm font-medium text-on-surface shadow-none outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md"
+          className="h-11 max-w-full cursor-pointer appearance-none border-0 bg-transparent py-0 pr-6 pl-0 text-xs font-medium text-on-surface shadow-none outline-none focus-visible:ring-2 focus-visible:ring-ring/50 rounded-md sm:text-sm"
         >
           {PRICE_UNITS.map((u) => (
             <option key={u.key} value={u.key}>
@@ -72,18 +74,18 @@ export function ListingDecisionCard({
   const isBuilding = isBuildingType(pricing.subCategory);
 
   return (
-    <div className="sticky top-24 flex flex-col gap-5 rounded-lg border border-outline-variant bg-surface p-6 shadow-sm">
+    <div className="sticky top-24 flex flex-col gap-3 rounded-lg border border-outline-variant bg-surface p-3 shadow-sm sm:gap-4 sm:p-4 lg:gap-5 lg:p-6">
       {/* Price */}
-      <div>
+      <div className="min-w-0">
         {!isBuilding && hasPricingArea(pricing) && pricing.askingPrice > 0 ? (
           <>
             <PricePerUnit pricing={pricing} />
-            <p className="mt-1 text-sm text-on-surface-variant">
+            <p className="mt-1 truncate text-xs text-on-surface-variant sm:text-sm">
               {formatNPR(pricing.askingPrice)}
             </p>
           </>
         ) : (
-          <p className="mono-stat text-2xl font-bold text-navy">
+          <p className="mono-stat break-words text-lg font-bold leading-tight text-navy sm:text-xl lg:text-2xl">
             {formatNPR(pricing.askingPrice)}
           </p>
         )}
@@ -101,33 +103,52 @@ export function ListingDecisionCard({
             href={`https://www.google.com/maps/search/?api=1&query=${location!.latitude},${location!.longitude}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex min-h-11 items-center justify-center gap-1.5 border-t border-outline-variant bg-surface-container py-2 text-xs font-semibold text-on-surface transition-[background-color,color] duration-150 hover:bg-navy hover:text-white"
+            className="flex min-h-11 items-center justify-center gap-1.5 border-t border-outline-variant bg-surface-container px-2 py-2 text-[11px] font-semibold text-on-surface transition-[background-color,color] duration-150 hover:bg-navy hover:text-white sm:text-xs"
           >
-            <Icon name="map" className="text-[14px]" />
-            Open in Google Maps
-            <Icon name="open_in_new" className="text-[12px]" />
+            <Icon name="map" className="shrink-0 text-[14px]" />
+            <span className="truncate">
+              <span className="sm:hidden">Maps</span>
+              <span className="hidden sm:inline">Open in Google Maps</span>
+            </span>
+            <Icon
+              name="open_in_new"
+              className="hidden shrink-0 text-[12px] sm:inline"
+            />
           </Link>
         </div>
       )}
 
-      {/* CTAs */}
+      {/* CTAs — icon-only secondary actions while the card column is narrow */}
       <div className="flex flex-col gap-2">
         <CallSellerButton
           propertyId={propertyId}
           variant="default"
-          className="min-h-11 w-full rounded-md bg-navy font-semibold text-white hover:bg-navy-deep hover:text-white"
+          className="min-h-11 w-full rounded-md bg-navy px-2 text-sm font-semibold text-white hover:bg-navy-deep hover:text-white"
         />
         <div className="flex gap-2">
           <AddToCartButton
             propertyId={propertyId}
             title={title}
             variant="outline"
-            className="min-h-11 w-[40%] rounded-md border-outline-variant font-semibold"
+            iconOnly
+            className="min-h-11 min-w-11 shrink-0 rounded-md border border-outline-variant sm:hidden"
           />
           <SaveToFavoritesButton
             propertyId={propertyId}
             variant="outline"
-            className="min-h-11 w-[57%] rounded-md border-outline-variant font-semibold"
+            iconOnly
+            className="min-h-11 min-w-11 flex-1 rounded-md border border-outline-variant sm:hidden"
+          />
+          <AddToCartButton
+            propertyId={propertyId}
+            title={title}
+            variant="outline"
+            className="hidden min-h-11 w-[38%] shrink-0 rounded-md border-outline-variant font-semibold sm:inline-flex"
+          />
+          <SaveToFavoritesButton
+            propertyId={propertyId}
+            variant="outline"
+            className="hidden min-h-11 flex-1 rounded-md border-outline-variant font-semibold sm:inline-flex"
           />
         </div>
       </div>

@@ -23,10 +23,10 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
         : "Neutral";
   const sentimentColor =
     sentiment === "Bullish"
-      ? "#34D399"
+      ? "#16a34a"
       : sentiment === "Bearish"
-        ? "#F87171"
-        : "#A8A9AD";
+        ? "#dc2626"
+        : "#55637a";
 
   const stats = [
     {
@@ -46,7 +46,7 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
     {
       label: "24h Change",
       value: `${metal.changePercent >= 0 ? "+" : ""}${metal.changePercent.toFixed(2)}%`,
-      color: metal.changePercent >= 0 ? "#34D399" : "#F87171",
+      color: metal.changePercent >= 0 ? "#16a34a" : "#dc2626",
     },
   ];
 
@@ -54,11 +54,11 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
     <section aria-labelledby="analytics-heading">
       <h2
         id="analytics-heading"
-        className="mb-6 text-2xl font-medium tracking-tight md:text-3xl"
+        className="mb-6 text-2xl font-medium tracking-tight text-on-surface md:text-3xl"
         style={{ fontFamily: "var(--font-display)" }}
       >
         Key Statistics
-        <span className="ml-3 text-base font-normal text-white/30">
+        <span className="ml-3 text-base font-normal text-on-surface-variant">
           {metal.name} ({metal.symbol})
         </span>
       </h2>
@@ -67,10 +67,10 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
         {stats.map((stat) => (
           <div
             key={stat.label}
-            className="rounded-xl border border-white/[0.06] bg-[#1A1D23] p-4"
+            className="rounded-xl border border-outline-variant bg-surface p-4 shadow-sm"
           >
             <span
-              className="block text-[10px] uppercase tracking-wider text-white/30 mb-1.5"
+              className="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {stat.label}
@@ -79,7 +79,7 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
               className="text-lg font-semibold tabular-nums"
               style={{
                 fontFamily: "var(--font-mono)",
-                color: stat.color || "#E8E6E1",
+                color: stat.color || "var(--color-on-surface)",
               }}
             >
               {stat.value}
@@ -89,16 +89,16 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
       </div>
 
       {/* 52-week range visual bar */}
-      <div className="mt-4 rounded-xl border border-white/[0.06] bg-[#1A1D23] p-4">
+      <div className="mt-4 rounded-xl border border-outline-variant bg-surface p-4 shadow-sm">
         <div
-          className="flex items-center justify-between text-xs text-white/30 mb-2"
+          className="flex items-center justify-between text-xs text-on-surface-variant mb-2"
           style={{ fontFamily: "var(--font-body)" }}
         >
           <span>52W Low</span>
           <span className="uppercase tracking-wider">52-Week Range</span>
           <span>52W High</span>
         </div>
-        <div className="relative h-2 w-full rounded-full bg-white/[0.06]">
+        <div className="relative h-2 w-full rounded-full bg-surface-container-high">
           <div
             className="absolute left-0 top-0 h-full rounded-full"
             style={{
@@ -108,7 +108,7 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
             }}
           />
           <div
-            className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-[#0F1114]"
+            className="absolute top-1/2 h-3 w-3 -translate-y-1/2 rounded-full border-2 border-surface"
             style={{
               left: `${Math.min(98, Math.max(2, ((usdPrice - low52w) / (high52w - low52w)) * 100))}%`,
               backgroundColor: metal.accentColor,
@@ -119,13 +119,13 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
           className="flex items-center justify-between mt-2 text-xs font-medium tabular-nums"
           style={{ fontFamily: "var(--font-mono)" }}
         >
-          <span className="text-white/40">
+          <span className="text-on-surface-variant">
             {formatPrice(convertCurrency(low52w, currency), currency)}
           </span>
           <span style={{ color: metal.accentColor }}>
             {formatPrice(convertCurrency(usdPrice, currency), currency)}
           </span>
-          <span className="text-white/40">
+          <span className="text-on-surface-variant">
             {formatPrice(convertCurrency(high52w, currency), currency)}
           </span>
         </div>

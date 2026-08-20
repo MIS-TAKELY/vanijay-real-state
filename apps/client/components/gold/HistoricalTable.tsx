@@ -21,22 +21,22 @@ export function HistoricalTable({ metal, currency }: HistoricalTableProps) {
   return (
     <div>
       <h2
-        className="mb-6 text-2xl font-medium tracking-tight md:text-3xl"
+        className="mb-6 text-2xl font-medium tracking-tight text-on-surface md:text-3xl"
         style={{ fontFamily: "var(--font-display)" }}
       >
         Historical Data
-        <span className="ml-3 text-base font-normal text-white/30">
+        <span className="ml-3 text-base font-normal text-on-surface-variant">
           {metal.name} ({metal.symbol})
         </span>
       </h2>
 
-      <div className="overflow-x-auto rounded-xl border border-white/[0.06] bg-[#1A1D23]">
+      <div className="overflow-x-auto rounded-xl border border-outline-variant bg-surface shadow-sm">
         <table
           className="w-full text-left"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           <thead>
-            <tr className="border-b border-white/[0.06] text-xs uppercase tracking-wider text-white/30">
+            <tr className="border-b border-outline-variant text-xs uppercase tracking-wider text-on-surface-variant">
               <th
                 className="px-5 py-3 font-medium"
                 style={{ fontFamily: "var(--font-body)" }}
@@ -81,25 +81,25 @@ export function HistoricalTable({ metal, currency }: HistoricalTableProps) {
               return (
                 <tr
                   key={i}
-                  className="border-b border-white/[0.04] text-sm tabular-nums transition-colors last:border-0 hover:bg-white/[0.03]"
+                  className="border-b border-outline-variant/60 text-sm tabular-nums transition-colors last:border-0 hover:bg-surface-container/60"
                 >
-                  <td className="whitespace-nowrap px-5 py-3 text-white/60">
+                  <td className="whitespace-nowrap px-5 py-3 text-on-surface-variant">
                     {row.date}
                   </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right text-white/70">
+                  <td className="whitespace-nowrap px-5 py-3 text-right text-on-surface-variant">
                     {formatPrice(row.open, currency)}
                   </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right text-white/70">
+                  <td className="whitespace-nowrap px-5 py-3 text-right text-on-surface-variant">
                     {formatPrice(row.high, currency)}
                   </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right text-white/70">
+                  <td className="whitespace-nowrap px-5 py-3 text-right text-on-surface-variant">
                     {formatPrice(row.low, currency)}
                   </td>
-                  <td className="whitespace-nowrap px-5 py-3 text-right font-medium text-[#E8E6E1]">
+                  <td className="whitespace-nowrap px-5 py-3 text-right font-medium text-on-surface">
                     {formatPrice(row.close, currency)}
                   </td>
                   <td
-                    className={`whitespace-nowrap px-5 py-3 text-right font-medium ${isUp ? "text-[#34D399]" : "text-[#F87171]"}`}
+                    className={`whitespace-nowrap px-5 py-3 text-right font-medium ${isUp ? "text-emerald-600" : "text-red-600"}`}
                   >
                     {formatChange(row.change)}
                   </td>
@@ -111,7 +111,7 @@ export function HistoricalTable({ metal, currency }: HistoricalTableProps) {
       </div>
 
       <p
-        className="mt-3 text-xs text-white/25"
+        className="mt-3 text-xs text-on-surface-variant/70"
         style={{ fontFamily: "var(--font-body)" }}
       >
         Showing last 14 trading days. Prices in {currency} per {metal.unit}.

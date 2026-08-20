@@ -47,13 +47,13 @@ const searchForm = (
     <Icon
       name="search"
       aria-hidden="true"
-      className="shrink-0 text-[14px] text-on-surface-variant"
+      className="hidden shrink-0 text-[14px] text-on-surface-variant sm:inline"
     />
     <Input
       type="search"
       name="q"
       aria-label="Search properties"
-      placeholder="Search properties or locations…"
+      placeholder="Search listings…"
       className="h-8 min-w-0 flex-1 appearance-none border-0 !bg-white px-0 text-sm shadow-none focus-visible:ring-0 dark:!bg-white"
     />
     <Button
@@ -206,9 +206,9 @@ export function Navbar() {
           </DropdownMenu>
         </div>
 
-        {/* Search bar — always visible, shrinks to fill on mobile */}
-        <div className="flex min-w-0 flex-1 justify-center px-1 sm:px-3">
-          <div className="w-full max-w-[180px] sm:max-w-md">{searchForm}</div>
+        {/* Search bar — always visible, fills remaining space on mobile */}
+        <div className="flex min-w-0 flex-1 justify-center px-2 sm:px-3">
+          <div className="w-full min-w-0 max-w-md">{searchForm}</div>
         </div>
 
         {/* Right cluster */}

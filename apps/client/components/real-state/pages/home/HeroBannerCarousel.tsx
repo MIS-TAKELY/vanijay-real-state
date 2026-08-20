@@ -91,7 +91,7 @@ function HeroBannerCarousel() {
 
   return (
     <section
-      className="relative w-full h-[220px] sm:h-[280px] md:h-[40vh] md:min-h-[380px] md:max-h-[520px] overflow-hidden"
+      className="relative w-full h-[260px] sm:h-[300px] md:h-[40vh] md:min-h-[380px] md:max-h-[520px] overflow-hidden"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
@@ -105,10 +105,15 @@ function HeroBannerCarousel() {
           onTouchEnd={handleTouchEnd}
           aria-hidden={index !== current}
         >
-          {/* Background image */}
-          <div
-            className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(${slide.image})` }}
+          {/* Background image — <img> with object-cover gives better
+              mobile crop control than background-image */}
+          {/* eslint-disable-next-line @next/next/no-img-element -- hero slide image */}
+          <img
+            src={slide.image}
+            alt=""
+            aria-hidden
+            draggable={false}
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
           {/* Gradient overlay — navy-tinted to echo the brand roundel */}
           <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/85 via-navy/45 to-navy/5" />

@@ -11,26 +11,26 @@ export function Breadcrumb({ items }: BreadcrumbProps) {
   return (
     <nav aria-label="Breadcrumb" className="mb-6">
       <ol
-        className="flex flex-wrap items-center gap-1 text-xs text-white/40"
+        className="flex flex-wrap items-center gap-1 text-xs text-on-surface-variant"
         style={{ fontFamily: "var(--font-body)" }}
       >
         {items.map((item, i) => (
           <li key={i} className="flex items-center gap-1">
             {i > 0 && (
               <ChevronRight
-                className="h-3 w-3 text-white/20"
+                className="h-3 w-3 text-on-surface-variant/50"
                 aria-hidden="true"
               />
             )}
             {item.href ? (
               <Link
                 href={item.href}
-                className="transition-colors hover:text-white/70 focus:outline-none focus-visible:text-[#C9A84C]"
+                className="transition-colors hover:text-primary focus:outline-none focus-visible:text-gold-deep"
               >
                 {item.label}
               </Link>
             ) : (
-              <span className="text-white/60" aria-current="page">
+              <span className="font-medium text-gold-deep" aria-current="page">
                 {item.label}
               </span>
             )}
