@@ -16,6 +16,7 @@ import { useLiveMetalPrices } from "../../hooks/use-live-metal-prices";
 import { Breadcrumb } from "./Breadcrumb";
 import { HeroPricePanel } from "./HeroPricePanel";
 import { MetalChart } from "./MetalChart";
+import { PriceHistoryChart } from "./PriceHistoryChart";
 import { PriceConverter } from "./PriceConverter";
 import { AnalyticsGrid } from "./AnalyticsGrid";
 import { ContentBlockRenderer } from "./ContentBlockRenderer";
@@ -123,6 +124,11 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
           <HeroPricePanel metal={activeMetal} currency={currency} />
           <MetalChart metal={activeMetal} currency={currency} />
         </section>
+
+        {/* Full-width Price History chart (lightweight-charts + gold-api.com) */}
+        <div className="mb-10">
+          <PriceHistoryChart metal={activeMetal} currency={currency} />
+        </div>
 
         {/* Error banner — surfaced near the top so users see it immediately */}
         {error && (

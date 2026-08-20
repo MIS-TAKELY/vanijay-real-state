@@ -4,18 +4,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@repo/ui";
-import { about_stats } from "constants/varibles-constants";
-import Link from "next/link";
-
-/**
- * Server-rendered, AI-extractable text block for the homepage.
- *
- * The rest of the homepage is carousel/cards with no crawlable prose; this
- * section gives AI answer engines (and search engines) a self-contained
- * definition of MALPOTH, the verification methodology, the archive stats and
- * an FAQ. The FAQ is also emitted as FAQPage JSON-LD by the homepage — both
- * are built from HOME_FAQ_ITEMS so they never drift.
- */
 
 export const HOME_FAQ_ITEMS: Array<{ q: string; a: string }> = [
   {
@@ -40,104 +28,11 @@ export const HOME_FAQ_ITEMS: Array<{ q: string; a: string }> = [
   },
 ];
 
-const VERIFICATION_STEPS: Array<{ title: string; desc: string }> = [
-  {
-    title: "Cadastral cross-reference",
-    desc: "The plot is reconciled against the official cadastral map (Naksa) held at the Land Revenue Office.",
-  },
-  {
-    title: "Malpot ledger check",
-    desc: "Ownership is traced through the Malpot land ownership ledger — disputes, liens and encumbrances screened out.",
-  },
-  {
-    title: "Field verification",
-    desc: "On-site surveyors verify boundaries, road access and physical condition before the listing enters the archive.",
-  },
-];
-
-
 export function AboutArchive() {
   return (
     <section className="border-t border-outline-variant bg-surface-container-low">
       <div className="mx-auto max-w-container-max px-gutter py-xl">
-        {/* Definition block — the extractable answer to "What is MALPOTH?" */}
-        <div className="max-w-3xl">
-          <p className="font-label-sm mb-xs text-[11px] font-bold uppercase tracking-[0.8px] text-gold-deep">
-            The archive of record
-          </p>
-          <h2 className="font-display mb-sm text-2xl font-semibold tracking-tight text-navy md:text-3xl">
-            What is MALPOTH?
-          </h2>
-          <p className="text-base leading-relaxed text-on-surface-variant">
-            MALPOTH is Nepal&apos;s archive of record for land and property
-            &mdash; a marketplace where every listing is field-verified and
-            cross-referenced against the official cadastral record (Naksa) and
-            the Malpot land ownership ledger before publication. It covers
-            land, homes, commercial and industrial property across 74 districts
-            of Nepal, with zero title disputes.
-          </p>
-        </div>
-
-        {/* Archive stats — citable numbers */}
-        <div className="mt-10 grid grid-cols-2 gap-4 md:grid-cols-4">
-          {about_stats.map((s) => (
-            <div
-              key={s.label}
-              className="rounded-lg border border-outline-variant bg-surface p-4 text-center"
-            >
-              <p className="mono-stat text-2xl font-bold text-navy md:text-3xl">
-                {s.value}
-              </p>
-              <p className="font-label-sm mt-1 text-[11px] font-medium uppercase tracking-[0.08em] text-on-surface-variant">
-                {s.label}
-              </p>
-            </div>
-          ))}
-        </div>
-
         <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-2">
-          {/* Verification methodology */}
-          <div>
-            <h3 className="font-headline-md mb-4 text-lg font-semibold tracking-tight text-navy">
-              How every listing is verified
-            </h3>
-            <ol className="space-y-4">
-              {VERIFICATION_STEPS.map((step, i) => (
-                <li key={step.title} className="flex gap-4">
-                  <span className="mono-stat flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold/40 bg-gold-soft/30 text-sm font-bold text-gold-deep">
-                    {i + 1}
-                  </span>
-                  <div>
-                    <p className="text-sm font-semibold text-on-surface">
-                      {step.title}
-                    </p>
-                    <p className="mt-0.5 text-sm leading-relaxed text-on-surface-variant">
-                      {step.desc}
-                    </p>
-                  </div>
-                </li>
-              ))}
-            </ol>
-            <p className="mt-6 text-sm text-on-surface-variant">
-              Read the full standard on our{" "}
-              <Link
-                href="/legal/land-act-compliance"
-                className="font-medium text-primary underline-offset-2 hover:underline"
-              >
-                Land Act Compliance
-              </Link>{" "}
-              page, or learn{" "}
-              <Link
-                href="/about"
-                className="font-medium text-primary underline-offset-2 hover:underline"
-              >
-                about MALPOTH
-              </Link>
-              .
-            </p>
-          </div>
-
-          {/* FAQ — visible content mirrored by FAQPage JSON-LD */}
           <div>
             <h3 className="font-headline-md mb-4 text-lg font-semibold tracking-tight text-navy">
               Frequently asked questions

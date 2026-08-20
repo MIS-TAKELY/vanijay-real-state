@@ -484,9 +484,6 @@ export function ListingGallery({
                 <span className="rounded-md bg-primary/90 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-primary-foreground backdrop-blur-sm">
                   Naksa
                 </span>
-                <span className="truncate text-sm font-medium">
-                  {activeDoc.altText ?? "Cadastral Map (Naksa)"}
-                </span>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <button
