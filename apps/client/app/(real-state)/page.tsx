@@ -5,6 +5,10 @@ import {
   RecentlyAdded,
   RecentlyViewed,
 } from "components/real-state/pages/home";
+import {
+  AboutArchive,
+  HOME_FAQ_ITEMS,
+} from "components/real-state/pages/home/AboutArchive";
 import NepalmapWrapper from "components/real-state/pages/home/NepalmapWrapper";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
@@ -54,12 +58,27 @@ const breadcrumbSchema = {
   ],
 };
 
+/** FAQPage schema — mirrors the visible FAQ in AboutArchive. */
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: HOME_FAQ_ITEMS.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default async function HomePage() {
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <main className="flex flex-col">
         <div
@@ -75,12 +94,10 @@ export default async function HomePage() {
         <ListingsMarketplace />
         <RecentlyAdded />
         <RecentlyViewed />
-        <section className="py-6 md:py-14 relative z-10">
-          <div className="max-w-container-max mx-auto px-gutter">
-            <NepalmapWrapper />
-          </div>
+        <section className="py-6 md:py-14 relative z-10 w-full">
+          <NepalmapWrapper />
         </section>
-        {/* <CallToActionBanner /> */}
+        <AboutArchive />
       </main>
     </>
   );

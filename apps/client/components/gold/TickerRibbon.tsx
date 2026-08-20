@@ -10,6 +10,7 @@ import {
   METAL_SLUGS,
   formatChangePercent,
   formatPrice,
+  priceInCurrency,
 } from "../../constants/gold/metals";
 
 interface TickerRibbonProps {
@@ -64,13 +65,13 @@ export function TickerRibbon({
               </span>
 
               {/* Price */}
-              <span className="text-sm font-semibold text-[#E8E6E1]">
-                {formatPrice(metal.price, currency)}
+              <span className="text-sm font-semibold text-[#E8E6E1] tabular-nums">
+                {formatPrice(priceInCurrency(metal, currency), currency)}
               </span>
 
               {/* Change */}
               <span
-                className={`text-xs font-medium ${isUp ? "text-[#34D399]" : "text-[#F87171]"}`}
+                className={`text-xs font-medium tabular-nums ${isUp ? "text-[#34D399]" : "text-[#F87171]"}`}
               >
                 {formatChangePercent(metal.changePercent)}
               </span>

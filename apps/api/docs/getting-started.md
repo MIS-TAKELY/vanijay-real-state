@@ -88,7 +88,7 @@ The server starts on `PORT` (default **8000**).
 
 - REST base: `http://localhost:8000/api/...`
 - Better Auth base: `http://localhost:8000/api/auth/...`
-- GraphQL endpoint: `http://localhost:8000/api/v1/vanijay-real-state`
+- GraphQL endpoint: `http://localhost:8000/api/v1/malpoth`
 - GraphQL Playground: enabled in development (`NODE_ENV !== 'production'`)
 
 ## Daily development commands
@@ -123,10 +123,10 @@ pnpm check-types  # typecheck everything
 curl http://localhost:8000/
 
 # GraphQL introspection (dev only)
-curl 'http://localhost:8000/api/v1/vanijay-real-state' \
+curl 'http://localhost:8000/api/v1/malpoth' \
   -H 'Content-Type: application/json' \
   -d '{"query":"{ __typename }"}'
 ```
 
 Open the GraphQL Playground in your browser at
-`http://localhost:8000/api/v1/vanijay-real-state` (dev only).
+`http://localhost:8000/api/v1/malpoth` (dev only).

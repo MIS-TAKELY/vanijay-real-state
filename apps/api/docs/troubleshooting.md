@@ -19,7 +19,7 @@ Common pitfalls and their fixes, grounded in the current codebase.
 
 ## Debugging GraphQL
 
-- Open Playground at `http://localhost:8000/api/v1/vanijay-real-state` (dev).
+- Open Playground at `http://localhost:8000/api/v1/vmalpoth` (dev).
 - Use `__schema` introspection to inspect generated types.
 - If a resolver/guard throws, the global error shape (once a
   [global exception filter](./scalability-roadmap.md) is added) will normalize it.

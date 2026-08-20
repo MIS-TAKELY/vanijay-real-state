@@ -60,7 +60,7 @@ export function OperationsSidebar() {
             Archive Staff
           </span>
           <span className="ml-auto mono-stat truncate text-[11px] font-medium text-sidebar-foreground/60 group-data-[collapsible=icon]:hidden">
-            verifiers@lekhaprati
+            verifiers@malpoth
           </span>
         </div>
       </SidebarFooter>

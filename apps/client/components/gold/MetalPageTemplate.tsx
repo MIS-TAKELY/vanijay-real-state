@@ -33,9 +33,6 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
   const { metals, loading, error, lastUpdated } = useLiveMetalPrices();
   const [currency, setCurrency] = useState<CurrencyCode>("NPR");
   const [unit, setUnit] = useState<WeightUnit>("oz");
-  const [timeRange, setTimeRange] = useState<"1D" | "1W" | "1M" | "3M" | "1Y">(
-    "1M",
-  );
 
   const activeMetal = useMemo(() => {
     const found = metals.find((m) => m.id === metalId);
@@ -100,12 +97,12 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
               className="text-sm text-white/40"
               style={{ fontFamily: "var(--font-body)" }}
             >
-              Track real-time {meta?.name.toLowerCase()} rates per {unit} in{" "}
-              {currency}
+              Track real-time {meta?.name.toLowerCase()} rates per{" "}
+              {meta?.unit ?? unit} in {currency}
               {lastUpdated && (
                 <time
                   dateTime={lastUpdated.toISOString()}
-                  className="ml-2 text-white/25"
+                  className="ml-2 text-white/25 tabular-nums"
                 >
                   · Updated {lastUpdated.toLocaleTimeString()}
                 </time>
@@ -122,20 +119,20 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         </div>
 
         {/* Hero Section: Price Panel + Chart */}
-        <section className="grid grid-cols-1 gap-8 lg:grid-cols-[340px_1fr] mb-10">
-          <HeroPricePanel
-            metal={activeMetal}
-            metals={metals}
-            currency={currency}
-            onCurrencyChange={setCurrency}
-          />
-          <MetalChart
-            metal={activeMetal}
-            currency={currency}
-            timeRange={timeRange}
-            onTimeRangeChange={setTimeRange}
-          />
+        <section className="mb-10 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.35fr)] lg:items-start">
+          <HeroPricePanel metal={activeMetal} currency={currency} />
+          <MetalChart metal={activeMetal} currency={currency} />
         </section>
+
+        {/* Error banner — surfaced near the top so users see it immediately */}
+        {error && (
+          <div
+            className="mb-10 rounded-lg border border-[#F87171]/20 bg-[#F87171]/5 px-4 py-3 text-sm text-[#F87171]"
+            role="alert"
+          >
+            Live feed unavailable — showing cached quotes. {error}
+          </div>
+        )}
 
         {/* Divider */}
         <div className="h-px w-full bg-white/[0.06] mb-10" />
@@ -179,16 +176,6 @@ export function MetalPageTemplate({ metalId }: MetalPageTemplateProps) {
         {faqs.length > 0 && (
           <div className="mb-10">
             <FAQAccordion items={faqs} metalName={meta?.name ?? metalId} />
-          </div>
-        )}
-
-        {/* Error banner */}
-        {error && (
-          <div
-            className="rounded-lg border border-[#F87171]/20 bg-[#F87171]/5 px-4 py-3 text-sm text-[#F87171]"
-            role="alert"
-          >
-            Live feed unavailable — showing cached quotes. {error}
           </div>
         )}
       </div>

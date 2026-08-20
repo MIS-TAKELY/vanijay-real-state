@@ -343,7 +343,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
   autoSchemaFile: true, // ephemeral schema
   playground: process.env.NODE_ENV !== 'production', // gated ✅
-  path: '/api/v1/vanijay-real-state',
+  path: '/api/v1/malpoth',
 });
 ```
 

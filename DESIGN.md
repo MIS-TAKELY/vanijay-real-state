@@ -1,6 +1,6 @@
-# Lekhaprati — Complete UI Design System
+# Malpoth — Complete UI Design System
 
-> **Product**: Lekhaprati (लेखाप्रति — "a true copy of the record") — Nepal's verified land & property archive.
+> **Product**: Malpoth — Nepal's verified land & property archive.
 > **Apps**: `apps/client` (public marketplace + user dashboard) · `apps/admin` (operations console)
 > **Stack**: Next.js 16 · Tailwind CSS 4 · React 19 · Leaflet (maps) · Zustand · Better Auth · NestJS/GraphQL API
 > **Last updated**: Aug 2026
@@ -25,7 +25,7 @@
 
 ## 1.1 Design Philosophy
 
-Lekhaprati is an **archive**, not a listing feed. The visual language borrows from land revenue offices, cadastral survey maps, and legal ledgers — then strips away the bureaucracy. Three principles govern every screen:
+Malpoth is an **archive**, not a listing feed. The visual language borrows from land revenue offices, cadastral survey maps, and legal ledgers — then strips away the bureaucracy. Three principles govern every screen:
 
 1. **Trust is the product** — verification states, document status, and government valuations are always visible, never buried.
 2. **Data density without clutter** — prices, areas, and plot IDs are rendered in monospace; prose stays in a warm serif/sans pair.
@@ -184,7 +184,7 @@ Hover: `-translate-y-1`, border → `primary/40`, shadow-lg. Radius `rounded-2xl
 
 ## 2.5 Navigation
 
-**Client Navbar** (exists — `Navbar.tsx`): sticky, `h-16 sm:h-20`, `bg-surface/90 backdrop-blur-md`, bottom border. Left: logo (domain icon in rounded primary square + "Lekhaprati" Fraunces). Center: nav links with animated underline (`scale-x` transition). Right: "List a Property" primary button, auth avatar dropdown / "Sign in", mobile hamburger → full-height panel. Nav items: Home, Listings, Area Guide, NRN Concierge, About.
+**Client Navbar** (exists — `Navbar.tsx`): sticky, `h-16 sm:h-20`, `bg-surface/90 backdrop-blur-md`, bottom border. Left: logo (domain icon in rounded primary square + "MALPOTH" Fraunces). Center: nav links with animated underline (`scale-x` transition). Right: "List a Property" primary button, auth avatar dropdown / "Sign in", mobile hamburger → full-height panel. Nav items: Home, Listings, Area Guide, NRN Concierge, About.
 
 **Footer**: 4-col grid (brand + tagline / Explore / Services / Contact), newsletter input, bottom bar with © + privacy/terms links in 13px variant text. `bg-surface-container-low` with top border.
 
@@ -376,7 +376,7 @@ _Left column_:
 2. **Description** — prose, 18px leading relaxed.
 3. **Location & Map** — embedded Leaflet (300px), parcel boundary polygon if `parcelBoundary` exists; address text; ward/district chips; "Street-view style photos" opens StreetViewModal.
 4. **Documents & Verification** — the trust centerpiece:
-   - Verification level banner: L3 field-verified → green banner with surveyor name + date; L2 → `secondary-container` banner "Documents verified by Lekhaprati desk — field visit pending".
+   - Verification level banner: L3 field-verified → green banner with surveyor name + date; L2 → `secondary-container` banner "Documents verified by Malpoth desk — field visit pending".
    - Document checklist table (public-safe docs only): Type chip, status chip (VERIFIED green / PENDING amber), verified date mono. Private docs (`isPrivate`) shown as "On file — available during due diligence" lock row.
    - Verification audit timeline (public entries): level transitions with mono dates.
 5. **Government valuation** — lookup from `GovValuationRate`: info card "Govt. minimum rate for Ward 10 pitched-road plots: NPR 41,00,000/aana (LRO Lalitpur, FY 2081/82)" with comparison bar: asking vs govt rate.

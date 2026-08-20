@@ -765,16 +765,16 @@ async function main() {
         brand: "MALPOTH",
         phone: "9800522234",
         phoneDisplay: "9800-KABADI",
-        email: "hello@lekhaprati.com",
+        email: "hello@malpoth.com",
       } as any,
     },
     update: {},
   });
 
   // ---------- Admin user (MALPOTH operations console) ----------
-  const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@lekhaprati.com";
+  const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@malpoth.com";
   const adminPassword =
-    process.env.ADMIN_SEED_PASSWORD || "LekhapratiAdmin@2026";
+    process.env.ADMIN_SEED_PASSWORD || "MalpothAdmin@2026";
   const adminId =
     process.env.ADMIN_SEED_ID || "admin-" + randomUUID().slice(0, 8);
   const passwordHash = await hashPassword(adminPassword);
@@ -824,17 +824,17 @@ async function main() {
   const demoOwners = [
     {
       name: "Bikash Shrestha",
-      email: "seller1@lekhaprati.com",
+      email: "seller1@malpoth.com",
       phone: "+9779800000001",
     },
     {
       name: "Sunita Rai",
-      email: "seller2@lekhaprati.com",
+      email: "seller2@malpoth.com",
       phone: "+9779800000002",
     },
     {
       name: "Ram KC",
-      email: "seller3@lekhaprati.com",
+      email: "seller3@malpoth.com",
       phone: "+9779800000003",
     },
   ];

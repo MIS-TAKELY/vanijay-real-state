@@ -13,10 +13,9 @@ const footerLinks = {
     { label: "About", href: "/about" },
   ],
   Compliance: [
-    { label: "Privacy Policy", href: "#" },
-    { label: "Terms of Service", href: "#" },
-    { label: "Land Act Compliance", href: "#", active: true },
-    { label: "Cookie Settings", href: "#" },
+    { label: "Privacy Policy", href: "/legal/privacy" },
+    { label: "Terms of Service", href: "/legal/terms" },
+    { label: "Land Act Compliance", href: "/legal/land-act-compliance", active: true },
   ],
 };
 
@@ -96,7 +95,7 @@ export function Footer() {
           <p className="font-body-md text-sm text-white/70 mono-stat mb-lg md:mb-md">
             Durbar Marg, Kathmandu
             <br />
-            info@lekhaprati.com
+            info@malpoth.com
             <br />
             +977-1-4XXXXXX
           </p>

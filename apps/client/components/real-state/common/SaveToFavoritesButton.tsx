@@ -8,8 +8,8 @@ import {
   removeFavorite,
 } from "lib/api/services/favorites";
 import type { FavoriteStatus } from "lib/api/services/favorites/types";
-import { useEffect, useState } from "react";
 import { useRequireAuth } from "lib/hooks/use-require-auth";
+import { useEffect, useState } from "react";
 
 interface SaveToFavoritesButtonProps {
   /** Real DB id of the listing. */
@@ -18,7 +18,7 @@ interface SaveToFavoritesButtonProps {
   /** Renders only the heart icon — used as a media overlay on property cards. */
   iconOnly?: boolean;
   /** Only applies with `iconOnly` — lets the heart exceed the 44px tap target. */
-  size?: "icon" | "icon-sm" |"icon-md" | "icon-lg" | "icon-xl";
+  size?: "icon" | "icon-sm" | "icon-md" | "icon-lg" | "icon-xl";
   /** Fired with the new state after a successful toggle (keeps parents in sync). */
   onChange?: (isFavorite: boolean) => void;
   className?: string;
@@ -106,7 +106,6 @@ export function SaveToFavoritesButton({
       className={cn(
         className,
         iconOnly && status.isFavorite && "text-tertiary",
-        status.isFavorite && "animate-favorite-pop",
       )}
     >
       <Icon

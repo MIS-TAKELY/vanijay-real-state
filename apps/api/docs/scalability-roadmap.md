@@ -361,7 +361,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
   autoSchemaFile: 'src/schema.gql',
   playground: process.env.NODE_ENV !== 'production',
-  path: '/api/v1/vanijay-real-state',
+  path: '/api/v1/malpoth',
   validationRules: [depthLimit(7), createComplexityRule({ maximumComplexity: 1000 })],
 }),
 ```

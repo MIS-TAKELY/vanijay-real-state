@@ -8,7 +8,6 @@ import {
   isBuildingType,
   pricePerUnitFor,
   priceUnitKey,
-  priceUnitRates,
   type PriceContext,
 } from "@repo/ui";
 import { AddToCartButton } from "components/real-state/common/AddToCartButton";
@@ -20,38 +19,11 @@ import { useMemo, useState } from "react";
 import { ListingSidebarMap } from "./ListingSidebarMap";
 
 function PricePerUnit({ pricing }: { pricing: PriceContext }) {
-  const isBuilding = isBuildingType(pricing.subCategory);
   const [unit, setUnit] = useState(() => priceUnitKey(pricing));
-  const rateLabel = useMemo(() => {
-    const rates: Record<string, string> = {};
-    for (const [key, rate] of Object.entries(priceUnitRates(pricing))) {
-      rates[key] = rate != null ? formatNPR(rate) : "—";
-    }
-    return rates;
-  }, [pricing]);
   const perUnit = useMemo(
     () => pricePerUnitFor(pricing, unit),
     [pricing, unit],
   );
-
-  if (isBuilding) {
-    return (
-      <div className="flex flex-wrap items-baseline gap-x-3 gap-y-0.5">
-        <span className="mono-stat text-2xl font-bold text-navy">
-          {rateLabel.sqft}
-          <span className="ms-1 text-sm font-medium text-on-surface-variant">
-            / sq.ft
-          </span>
-        </span>
-        <span className="mono-stat text-2xl font-bold text-navy">
-          {rateLabel.sqm}
-          <span className="ms-1 text-sm font-medium text-on-surface-variant">
-            / sq.m
-          </span>
-        </span>
-      </div>
-    );
-  }
 
   return (
     <div className="flex flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
@@ -97,20 +69,21 @@ export function ListingDecisionCard({
 }: ListingDecisionCardProps) {
   const hasCoordinates =
     location?.latitude != null && location?.longitude != null;
+  const isBuilding = isBuildingType(pricing.subCategory);
 
   return (
-    <div className="sticky top-24 flex flex-col gap-5 rounded-2xl border border-outline-variant bg-surface p-6 shadow-sm">
+    <div className="sticky top-24 flex flex-col gap-5 rounded-lg border border-outline-variant bg-surface p-6 shadow-sm">
       {/* Price */}
       <div>
-        {hasPricingArea(pricing) && pricing.askingPrice > 0 ? (
-          <PricePerUnit pricing={pricing} />
+        {!isBuilding && hasPricingArea(pricing) && pricing.askingPrice > 0 ? (
+          <>
+            <PricePerUnit pricing={pricing} />
+            <p className="mt-1 text-sm text-on-surface-variant">
+              {formatNPR(pricing.askingPrice)}
+            </p>
+          </>
         ) : (
           <p className="mono-stat text-2xl font-bold text-navy">
-            {formatNPR(pricing.askingPrice)}
-          </p>
-        )}
-        {hasPricingArea(pricing) && pricing.askingPrice > 0 && (
-          <p className="mt-1 text-sm text-on-surface-variant">
             {formatNPR(pricing.askingPrice)}
           </p>
         )}
@@ -118,7 +91,7 @@ export function ListingDecisionCard({
 
       {/* Embedded map — location is the product */}
       {hasCoordinates && (
-        <div className="overflow-hidden rounded-lg border border-outline-variant">
+        <div className="overflow-hidden rounded-xl border border-outline-variant">
           <ListingSidebarMap
             latitude={location!.latitude!}
             longitude={location!.longitude!}

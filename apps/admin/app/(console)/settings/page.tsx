@@ -509,7 +509,7 @@ export default function SettingsPage() {
                 </Label>
                 <Input
                   value={String(
-                    settings.supportEmail ?? "hello@lekhaprati.com",
+                    settings.supportEmail ?? "hello@malpoth.com",
                   )}
                   onChange={(e) =>
                     setSettings({ ...settings, supportEmail: e.target.value })

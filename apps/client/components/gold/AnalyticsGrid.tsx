@@ -76,7 +76,7 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
               {stat.label}
             </span>
             <span
-              className="text-lg font-semibold"
+              className="text-lg font-semibold tabular-nums"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: stat.color || "#E8E6E1",
@@ -116,7 +116,7 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
           />
         </div>
         <div
-          className="flex items-center justify-between mt-2 text-xs font-medium"
+          className="flex items-center justify-between mt-2 text-xs font-medium tabular-nums"
           style={{ fontFamily: "var(--font-mono)" }}
         >
           <span className="text-white/40">

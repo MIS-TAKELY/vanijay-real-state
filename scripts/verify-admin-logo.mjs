@@ -64,9 +64,9 @@ async function checkLoginPage(page, tag) {
 }
 
 async function signIn(page, tag) {
-  console.log(`\n[${tag}] Signing in as admin@lekhaprati.com`);
-  await page.fill('#email, input[type="email"]', "admin@lekhaprati.com");
-  await page.fill('#password, input[type="password"]', "LekhapratiAdmin@2026");
+  console.log(`\n[${tag}] Signing in as admin@malpoth.com`);
+  await page.fill('#email, input[type="email"]', "admin@malpoth.com");
+  await page.fill('#password, input[type="password"]', "MalpothAdmin@2026");
   await Promise.all([
     page.waitForURL((u) => !u.pathname.startsWith("/login"), { timeout: 20000 }),
     page.click('button[type="submit"]'),

@@ -111,7 +111,7 @@ pnpm --filter api dev
 The server starts on `PORT` (default **8000**).
 
 - REST base: `http://localhost:8000/api/...`
-- GraphQL endpoint: `http://localhost:8000/api/v1/vanijay-real-state`
+- GraphQL endpoint: `http://localhost:8000/api/v1/malpoth`
 - GraphQL Playground: enabled in development (`playground: true`)
 
 ---
@@ -398,7 +398,7 @@ GraphQLModule.forRoot<ApolloDriverConfig>({
   driver: ApolloDriver,
   autoSchemaFile: true, // ✅ schema generated in-memory (no file to commit)
   playground: process.env.NODE_ENV !== 'production', // ✅ already gated
-  path: '/api/v1/vanijay-real-state',
+  path: '/api/v1/malpoth',
 });
 ```
 
@@ -609,7 +609,7 @@ Example GraphQL e2e snippet:
 ```ts
 it('creates a property via GraphQL', () => {
   return request(app.getHttpServer())
-    .post('/api/v1/vanijay-real-state')
+    .post('/api/v1/malpoth')
     .send({
       query: `mutation { createProperty(createPropertyInput: { title: "House" }) { id title } }`,
     })

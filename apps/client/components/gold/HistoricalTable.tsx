@@ -6,6 +6,7 @@ import {
   formatChange,
   formatPrice,
   getHistoricalData,
+  priceInCurrency,
 } from "../../constants/gold/metals";
 
 interface HistoricalTableProps {
@@ -14,7 +15,7 @@ interface HistoricalTableProps {
 }
 
 export function HistoricalTable({ metal, currency }: HistoricalTableProps) {
-  const anchorPrice = currency === "USD" ? metal.usdPrice : metal.price;
+  const anchorPrice = priceInCurrency(metal, currency);
   const rows = useMemo(() => getHistoricalData(anchorPrice), [anchorPrice]);
 
   return (
@@ -80,7 +81,7 @@ export function HistoricalTable({ metal, currency }: HistoricalTableProps) {
               return (
                 <tr
                   key={i}
-                  className="border-b border-white/[0.04] text-sm transition-colors last:border-0 hover:bg-white/[0.03]"
+                  className="border-b border-white/[0.04] text-sm tabular-nums transition-colors last:border-0 hover:bg-white/[0.03]"
                 >
                   <td className="whitespace-nowrap px-5 py-3 text-white/60">
                     {row.date}

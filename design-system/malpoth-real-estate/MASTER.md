@@ -1,4 +1,4 @@
-# Design System Master File — Lekhaprati Real Estate
+# Design System Master File — Malpoth Real Estate
 
 > **LOGIC:** When building a specific page, first check `design-system/pages/[page-name].md`.
 > If that file exists, its rules **override** this Master file.
@@ -6,7 +6,7 @@
 
 ---
 
-**Project:** Lekhaprati Real Estate
+**Project:** Malpoth Real Estate
 **Generated:** 2026-08-17
 **Category:** Luxury/Premium Brand
 **Source:** Brand palette extracted from `apps/client/public/logo.webp` — a

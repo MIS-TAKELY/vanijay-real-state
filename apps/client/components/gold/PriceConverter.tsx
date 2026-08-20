@@ -7,10 +7,10 @@ import type {
   WeightUnit,
 } from "../../constants/gold/metals";
 import {
-  convertCurrency,
   convertUnit,
   CURRENCY_SYMBOLS,
-  formatConvertedPrice,
+  formatPrice,
+  priceInCurrency,
 } from "../../constants/gold/metals";
 
 interface PriceConverterProps {
@@ -29,15 +29,10 @@ export function PriceConverter({
   const [unit, setUnit] = useState<WeightUnit>(defaultUnit ?? "gram");
 
   const numericAmount = parseFloat(amount) || 0;
-  // metal.usdPrice is in USD per metal.unit (e.g. USD/oz for gold, USD/lb for copper)
-  const usdPriceInNativeUnit = metal.usdPrice;
-  const pricePerSelectedUnit = convertUnit(
-    usdPriceInNativeUnit,
-    metal.unit,
-    unit,
-  );
-  const totalUsd = pricePerSelectedUnit * numericAmount;
-  const totalInCurrency = convertCurrency(totalUsd, currency);
+  // Same live quote as the hero (NPR from feed; other currencies from USD).
+  const spotInCurrency = priceInCurrency(metal, currency);
+  const pricePerSelectedUnit = convertUnit(spotInCurrency, metal.unit, unit);
+  const totalInCurrency = pricePerSelectedUnit * numericAmount;
 
   return (
     <section
@@ -91,7 +86,9 @@ export function PriceConverter({
             <option value="oz">Troy Ounce</option>
             <option value="gram">Gram</option>
             <option value="kilo">Kilogram</option>
-            <option value="tola">Tola</option>
+            <option value="tola">Tola (तोल)</option>
+            <option value="anna">Anna (आन)</option>
+            <option value="sukhi">Sukhi (सुक)</option>
           </select>
         </div>
 
@@ -103,7 +100,7 @@ export function PriceConverter({
             Value in {currency}
           </span>
           <div
-            className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-lg font-semibold text-[#C9A84C]"
+            className="rounded-lg border border-white/[0.08] bg-white/[0.04] px-3 py-2.5 text-lg font-semibold text-[#C9A84C] tabular-nums"
             style={{ fontFamily: "var(--font-mono)" }}
             aria-live="polite"
           >
@@ -121,8 +118,7 @@ export function PriceConverter({
         style={{ fontFamily: "var(--font-body)" }}
       >
         Based on live {metal.name} spot price of{" "}
-        {formatConvertedPrice(metal.usdPrice, currency, "oz", metal.unit)} per{" "}
-        {metal.unit}
+        {formatPrice(spotInCurrency, currency)} per {metal.unit}
       </p>
     </section>
   );

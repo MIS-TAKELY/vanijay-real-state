@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
 import { EligibilityAndDocs } from "components/real-state/pages/nrn-concierge/EligibilityAndDocs";
+import {
+  Faq,
+  NRN_FAQ_ITEMS,
+} from "components/real-state/pages/nrn-concierge/Faq";
 import { Hero } from "components/real-state/pages/nrn-concierge/Hero";
 import { ProcessAndBooking } from "components/real-state/pages/nrn-concierge/ProcessAndBooking";
 import { RemoteWindow } from "components/real-state/pages/nrn-concierge/RemoteWindow";
@@ -131,6 +135,22 @@ const breadcrumbSchema = {
   ],
 };
 
+/**
+ * FAQPage schema — mirrors the visible FAQ rendered by <Faq />. Google no
+ * longer shows FAQ rich results for most sites, but the markup remains valid
+ * and is directly extractable by AI answer engines (the primary audience for
+ * "can NRN buy land in Nepal" style queries).
+ */
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: NRN_FAQ_ITEMS.map((item) => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+};
+
 export default function NRNConciergePage() {
   return (
     <>
@@ -142,12 +162,17 @@ export default function NRNConciergePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       <main>
         <Hero />
         <EligibilityAndDocs />
         <ProcessAndBooking />
         <VerifiedStamp />
         <RemoteWindow />
+        <Faq />
       </main>
     </>
   );

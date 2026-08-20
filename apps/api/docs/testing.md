@@ -120,7 +120,7 @@ describe('Properties (e2e)', () => {
 
   it('creates a property via GraphQL', () =>
     request(app.getHttpServer())
-      .post('/api/v1/vanijay-real-state')
+      .post('/api/v1/malpoth')
       .send({
         query: `mutation { createProperty(createPropertyInput: { title: "House", type: RESIDENTIAL_HOUSE }) { id title } }`,
       })
@@ -129,7 +129,7 @@ describe('Properties (e2e)', () => {
 ```
 
 > GraphQL requests are POSTed to the configured `path`
-> (`/api/v1/vanijay-real-state`) with a JSON body `{ query, variables }`.
+> (`/api/v1/malpoth`) with a JSON body `{ query, variables }`.
 
 ## Mocking Prisma in e2e
 

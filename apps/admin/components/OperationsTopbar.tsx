@@ -27,7 +27,7 @@ export function OperationsTopbar() {
   const { data: session, isPending } = useSession();
   const user = session?.user;
   const displayName = user?.name || "Admin";
-  const email = user?.email || "admin@lekhaprati.com";
+  const email = user?.email || "admin@malpoth.com";
   const initial = displayName.charAt(0).toUpperCase();
   return (
     <header className="sticky top-0 z-20 flex h-14 shrink-0 items-center justify-between gap-md border-b border-outline-variant bg-surface/90 px-md backdrop-blur-md">

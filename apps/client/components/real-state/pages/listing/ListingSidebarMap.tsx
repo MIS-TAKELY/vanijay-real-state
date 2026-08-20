@@ -32,13 +32,6 @@ const TILE_LAYERS: Record<
   },
 };
 
-/**
- * Lightweight Leaflet map embedded in the listing sidebar.
- * Shows a single pin at the property location with satellite/street toggle
- * and expand button for better navigation.
- *
- * Dynamically imports leaflet to avoid SSR issues.
- */
 export function ListingSidebarMap({
   latitude,
   longitude,
@@ -84,7 +77,9 @@ export function ListingSidebarMap({
       });
 
       const provider = TILE_LAYERS[mapStyle];
-      tileLayerRef.current = L.tileLayer(provider.url, provider.options).addTo(map);
+      tileLayerRef.current = L.tileLayer(provider.url, provider.options).addTo(
+        map,
+      );
 
       // Brand pin — navy roundel with a brass-gold ring, echoing the logo.
       L.marker([latitude, longitude], {
@@ -147,7 +142,6 @@ export function ListingSidebarMap({
 
   return (
     <>
-      {/* Leaflet CSS — loaded inline to avoid global import for this lightweight usage */}
       <link
         rel="stylesheet"
         href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
@@ -157,7 +151,7 @@ export function ListingSidebarMap({
       <div
         ref={wrapperRef}
         className={cn(
-          "relative overflow-hidden rounded-xl bg-surface-container",
+          "relative overflow-hidden bg-surface-container",
           expanded &&
             "fixed inset-4 z-50 rounded-2xl border-2 border-navy/20 shadow-2xl",
         )}
@@ -183,7 +177,6 @@ export function ListingSidebarMap({
             ))}
           </div>
 
-          {/* Expand / collapse button */}
           <button
             type="button"
             onClick={() => setExpanded((prev) => !prev)}
@@ -197,7 +190,6 @@ export function ListingSidebarMap({
           </button>
         </div>
 
-        {/* Close button when expanded */}
         {expanded && (
           <button
             type="button"

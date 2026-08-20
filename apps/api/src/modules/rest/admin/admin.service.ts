@@ -954,10 +954,13 @@ export class AdminService {
     const existing = await this.prisma.property.findUnique({ where: { id } });
     if (!existing) throw new NotFoundException(`Property ${id} not found`);
 
+    // Prevent slug overwrites — changing a slug would break indexed URLs.
+    const { slug: _slug, ...safeRest } = rest as any;
+
     const property = await this.prisma.property.update({
       where: { id },
       data: {
-        ...(rest as any),
+        ...safeRest,
         // Nested one-to-one records — upsert so a second edit doesn't violate
         // the @unique FK, mirroring PropertiesService.update.
         ...(location && {

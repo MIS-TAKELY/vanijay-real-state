@@ -7,7 +7,7 @@ interface UnitToggleProps {
   onUnitChange: (unit: WeightUnit) => void;
 }
 
-const UNITS: WeightUnit[] = ["oz", "gram", "kilo", "tola"];
+const UNITS: WeightUnit[] = ["oz", "gram", "kilo", "tola", "anna", "sukhi"];
 
 export function UnitToggle({ unit, onUnitChange }: UnitToggleProps) {
   return (

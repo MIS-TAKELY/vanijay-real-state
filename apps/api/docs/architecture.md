@@ -88,7 +88,7 @@ await app.listen(process.env.PORT ?? 8000);
       driver: ApolloDriver,
       autoSchemaFile: true, // ephemeral schema
       playground: process.env.NODE_ENV !== 'production', // gated ✅
-      path: '/api/v1/vanijay-real-state',
+      path: '/api/v1/malpoth',
     }),
     AuthModule,
     PropertiesModule,
@@ -102,7 +102,7 @@ export class AppModule {}
 - GraphQL is **code-first**: you write `@ObjectType`/`@InputType`/`@Resolver`
   in TypeScript and Nest generates the SDL in memory (`autoSchemaFile: true`).
 - `playground` is already gated on `NODE_ENV !== 'production'`.
-- The GraphQL endpoint is `/api/v1/vanijay-real-state`.
+- The GraphQL endpoint is `/api/v1/malpoth`.
 
 > 📌 For auditability, consider switching `autoSchemaFile: true` to a committed
 > file like `autoSchemaFile: 'src/schema.gql'` so schema diffs show up in PRs.

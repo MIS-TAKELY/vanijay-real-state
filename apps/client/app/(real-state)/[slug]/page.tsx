@@ -6,6 +6,7 @@ import { ListingDecisionCard } from "components/real-state/pages/listing/Listing
 import { ListingDescription } from "components/real-state/pages/listing/ListingDescription";
 import { ListingGallery } from "components/real-state/pages/listing/ListingGallery";
 import { MobilePriceBar } from "components/real-state/pages/listing/MobilePriceBar";
+import { CATEGORY_CATALOG } from "constants/category-catalog";
 import { ApiError } from "lib/api/core/client";
 import { fetchPropertyByGraphql } from "lib/api/services/properties";
 import {
@@ -21,6 +22,7 @@ import {
   type ApiProperty,
   type ApiPropertyMedia,
 } from "lib/api/services/properties/types";
+import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -51,6 +53,10 @@ export async function generateMetadata({
   try {
     const property = await fetchPropertyByGraphql(slug);
     const plainDesc = stripHtml(property.description);
+    // Prefer a real image for the OG card (media[0] may be a video).
+    const ogImage = (property.media ?? []).find(
+      (m) => !m.type || m.type === "IMAGE",
+    )?.url;
     return {
       title: `${property.title} | MALPOTH`,
       description:
@@ -62,7 +68,7 @@ export async function generateMetadata({
         description:
           plainDesc ||
           `${formatNPR(property.askingPrice)} — ${formatLocation(property.location)}`,
-        images: property.media?.[0]?.url ? [property.media[0].url] : undefined,
+        images: ogImage ? [ogImage] : undefined,
         type: "website",
       },
     };
@@ -73,6 +79,19 @@ export async function generateMetadata({
 
 function formatNumber(n: number | null | undefined): string | null {
   return n == null ? null : new Intl.NumberFormat("en-US").format(n);
+}
+
+/** Human-readable date for the visible freshness signal (e.g. "Jan 15, 2026"). */
+function formatFreshnessDate(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 /** Nicer display labels for construction statuses (labelEnum would render
@@ -102,6 +121,93 @@ function partitionMedia(media: ApiPropertyMedia[] = []) {
   };
 }
 
+/**
+ * JSON-LD structured data for listing detail pages:
+ * - RealEstateListing + Offer (rich results: price, availability, images)
+ * - BreadcrumbList (Home → Category → Listing)
+ * - Place with geo when coordinates are present (map rich results)
+ */
+function buildListingJsonLd(property: ApiProperty) {
+  const url = `${SITE_URL}/${property.slug}`;
+  const images = (property.media ?? [])
+    .filter((m) => !m.type || m.type === "IMAGE")
+    .map((m) => m.url);
+  const loc = property.location;
+  const category = CATEGORY_CATALOG.find(
+    (c) => c.mainCategory === property.mainCategory,
+  );
+
+  const offer: Record<string, unknown> = {
+    "@type": "Offer",
+    price: property.askingPrice,
+    priceCurrency: "NPR",
+    availability: "https://schema.org/InStock",
+    url,
+  };
+
+  const listing: Record<string, unknown> = {
+    "@context": "https://schema.org",
+    "@type": "RealEstateListing",
+    name: property.title,
+    url,
+    description: stripHtml(property.description) || undefined,
+    image: images.length > 0 ? images : undefined,
+    datePosted: property.createdAt,
+    // Freshness signal for AI engines and search engines — mirrors the
+    // visible "Listed / Updated" line in the page header.
+    dateModified: property.updatedAt || property.createdAt,
+    offers: offer,
+  };
+
+  if (loc) {
+    const address: Record<string, unknown> = {
+      "@type": "PostalAddress",
+      addressLocality: loc.municipality || undefined,
+      addressRegion: loc.district || undefined,
+      addressCountry: "NP",
+    };
+    const place: Record<string, unknown> = {
+      "@type": "Place",
+      address,
+    };
+    if (loc.latitude != null && loc.longitude != null) {
+      place.geo = {
+        "@type": "GeoCoordinates",
+        latitude: loc.latitude,
+        longitude: loc.longitude,
+      };
+    }
+    listing.address = address;
+    if (place.geo) listing.geo = place.geo;
+  }
+
+  const breadcrumbItems = [
+    { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+  ];
+  if (category) {
+    breadcrumbItems.push({
+      "@type": "ListItem",
+      position: 2,
+      name: category.name,
+      item: `${SITE_URL}/category/${category.slug}`,
+    });
+  }
+  breadcrumbItems.push({
+    "@type": "ListItem",
+    position: breadcrumbItems.length + 1,
+    name: property.title,
+    item: url,
+  });
+
+  const breadcrumb = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: breadcrumbItems,
+  };
+
+  return [listing, breadcrumb];
+}
+
 export default async function ListingDetailPage({ params }: PageProps) {
   const { slug } = await params;
   const property = await loadProperty(slug);
@@ -112,6 +218,9 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const location = formatLocation(property.location);
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
   const pricing = priceContextFromApiProperty(property);
+  const category = CATEGORY_CATALOG.find(
+    (c) => c.mainCategory === property.mainCategory,
+  );
   const p = property;
 
   const specs: Array<[string, string | null | undefined]> = [
@@ -289,6 +398,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(buildListingJsonLd(property)),
+        }}
+      />
       <PropertyViewTracker propertyId={property.id} />
       <main className="mx-auto max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
         {/* Breadcrumb */}
@@ -307,7 +422,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
             </li>
             <li>
               <Link
-                href="/search"
+                href={
+                  category
+                    ? `/category/${category.slug}`
+                    : "/search"
+                }
                 className="transition-colors hover:text-primary"
               >
                 {labelEnum(property.subCategory, TYPE_LABELS)}
@@ -338,6 +457,19 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 <span className="truncate text-pretty">{location}</span>
               </p>
             </div>
+            {/* Visible freshness signal — extractable by AI answer engines */}
+            {(formatFreshnessDate(property.createdAt) ||
+              formatFreshnessDate(property.updatedAt)) && (
+              <p className="mt-1 text-xs leading-5 text-on-surface-variant/80">
+                {formatFreshnessDate(property.createdAt) &&
+                  `Listed ${formatFreshnessDate(property.createdAt)}`}
+                {formatFreshnessDate(property.createdAt) &&
+                  formatFreshnessDate(property.updatedAt) &&
+                  " · "}
+                {formatFreshnessDate(property.updatedAt) &&
+                  `Updated ${formatFreshnessDate(property.updatedAt)}`}
+              </p>
+            )}
           </div>
         </header>
 

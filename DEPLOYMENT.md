@@ -1,13 +1,13 @@
-# Deploying Lekhaprati on Dockploy — Multi-Domain Guide
+# Deploying Malpoth on Dockploy — Multi-Domain Guide
 
-This guide walks you through deploying the **real-state** (Lekhaprati) Turborepo
+This guide walks you through deploying the **real-state** (Malpoth) Turborepo
 monorepo on a Dockploy server so that every app gets its own custom domain:
 
 | App    | Domain (edit to match yours) | Container Port |
 | ------ | ---------------------------- | -------------- |
 | API    | `api.malpoth.com`            | 5000           |
 | Client | `malpoth.com`                | 3000           |
-| Admin  | `admin.vanijay.com`          | 3000           |
+| Admin  | `prashasana.malpoth.com`          | 3000           |
 
 ---
 
@@ -86,7 +86,7 @@ interpolated into `docker-compose.yml` via `${VAR}`.
    covered by one certificate:
    - `api.malpoth.com`
    - `malpoth.com`
-   - `admin.vanijay.com`
+   - `prashasana.malpoth.com`
 3. **Save**. Dockploy / Traefik will request the certificate from Let's
    Encrypt. This usually takes a few seconds to a minute. You'll see a check
    mark when ready.
@@ -120,7 +120,7 @@ labels:
 ```
 
 The same three-router pattern repeats for `client` (port 3000, domain
-`malpoth.com`) and `admin` (port 3000, domain `admin.vanijay.com`).
+`malpoth.com`) and `admin` (port 3000, domain `prashasana.malpoth.com`).
 
 ### Key points
 
@@ -209,7 +209,7 @@ After deployment completes, test each domain:
 curl -I https://api.malpoth.com/
 
 # API GraphQL
-curl -X POST https://api.malpoth.com/api/v1/vanijay-real-state \
+curl -X POST https://api.malpoth.com/api/v1/malpoth \
   -H 'Content-Type: application/json' \
   -d '{"query":"{ __typename }"}'
 
@@ -217,7 +217,7 @@ curl -X POST https://api.malpoth.com/api/v1/vanijay-real-state \
 curl -I https://malpoth.com/
 
 # Admin
-curl -I https://admin.vanijay.com/
+curl -I https://prashasana.malpoth.com/
 ```
 
 You should get `200 OK` and, for HTTPS URLs, valid TLS certificates
@@ -255,7 +255,7 @@ You should get `200 OK` and, for HTTPS URLs, valid TLS certificates
 | ------------------------------------------------------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------------- |
 | API crash-loops with `Cannot find module 'prisma/config'`    | API image built from the wrong Dockerfile stage | The `api` build must use `target: runner` in Dockploy; `migrator` must never be the last stage |
 | `connection refused` / `role does not exist` on the database | Wrong `DATABASE_URL`                            | Set `DATABASE_URL` to the real DB (user/db may differ from the compose defaults) and redeploy  |
-| 403/401 from API on admin domain                             | `ADMIN_URL` missing from CORS                   | Add `ADMIN_URL=https://admin.vanijay.com` to `.env`, redeploy                                  |
+| 403/401 from API on admin domain                             | `ADMIN_URL` missing from CORS                   | Add `ADMIN_URL=https://prashasana.malpoth.com` to `.env`, redeploy                                  |
 | Blank page on client/admin                                   | `NEXT_PUBLIC_API_URL` not set at build time     | Ensure the build arg is set in `.env`                                                          |
 | Auth cookies not persisting                                  | `BETTER_AUTH_URL` set to wrong domain           | Must be the **public** API URL (`https://realstate-api.your-domain.com`)                       |
 | `/api/auth/*` returns 500                                    | `AUTH_API_URL` doesn't resolve                  | Set the `AUTH_API_URL` build arg to the API's internal Docker DNS name or its public URL       |

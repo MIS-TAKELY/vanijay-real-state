@@ -143,3 +143,19 @@
     animation: none;
   }
 }
+
+/* ── Interactive affordances ── */
+/* Buttons/links/controls should always look clickable. */
+.metals-app button,
+.metals-app a,
+.metals-app select,
+.metals-app [role="tab"] {
+  cursor: pointer;
+}
+
+/* Consistent gold focus ring for keyboard navigation. */
+.metals-app :where(a, button, select, input, [role="tab"]):focus-visible {
+  outline: 2px solid var(--metal-gold);
+  outline-offset: 2px;
+  border-radius: 4px;
+}

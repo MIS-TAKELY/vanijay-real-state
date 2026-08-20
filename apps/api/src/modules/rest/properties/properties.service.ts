@@ -294,6 +294,8 @@ export class PropertiesService {
       documents,
       ...rest
     } = input;
+    // Prevent slug overwrites — changing a slug would break indexed URLs.
+    delete (rest as any).slug;
     await this.exists(id);
     // Content edits (title, price, location, media, …) invalidate the previous
     // verification — drop the listing back to UNVERIFIED until the team

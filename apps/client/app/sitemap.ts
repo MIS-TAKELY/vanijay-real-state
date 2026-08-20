@@ -3,7 +3,6 @@ import { API_ENDPOINTS } from "lib/api/core/endpoints";
 import { apiUrl } from "lib/api/core/config";
 import { SITE_URL } from "lib/site";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
-import { fetchKabadiCategories } from "lib/kabadi/api";
 
 // Regenerate the sitemap at most once an hour (ISR-style). Listing detail
 // pages moved to /{slug} (SEO), so every LIVE listing gets a clean short URL.
@@ -20,8 +19,18 @@ const STATIC_ROUTES: Array<{
   { path: "/convertor", changeFrequency: "monthly", priority: 0.6 },
   { path: "/about", changeFrequency: "monthly", priority: 0.5 },
   { path: "/nrn-concierge", changeFrequency: "monthly", priority: 0.5 },
-  { path: "/compare", changeFrequency: "weekly", priority: 0.4 },
-  { path: "/scrape", changeFrequency: "weekly", priority: 0.7 },
+  { path: "/legal/privacy", changeFrequency: "yearly", priority: 0.2 },
+  { path: "/legal/terms", changeFrequency: "yearly", priority: 0.2 },
+  {
+    path: "/legal/land-act-compliance",
+    changeFrequency: "yearly",
+    priority: 0.3,
+  },
+  // NOTE: /compare is intentionally excluded — it is a utility page whose
+  // content depends on ?ids= query params; the bare URL shows an empty state.
+  // NOTE: /scrape is excluded — it is disallowed in robots.txt.
+  // NOTE: /gold (precious metals) is a separate product; left indexable but
+  // not advertised in the real-estate sitemap.
 ];
 
 // Category archive pages — one per verified register (daily as listings churn).
@@ -40,6 +49,20 @@ interface SitemapSlug {
   updatedAt: string;
 }
 
+/**
+ * Filter out obvious test/duplicate listings so the sitemap only advertises
+ * real inventory (e.g. "testing-hp22", "itahari-copy-copy-kjcd"). These
+ * thin pages dilute crawl budget and can trigger quality flags in Search
+ * Console. The proper long-term fix is to unpublish them in the admin
+ * console; this guard keeps the sitemap clean in the meantime.
+ */
+const TEST_SLUG_PATTERN =
+  /(test|testing|demo|sample|draft|copy|duplicate|temp|tmp|lorem|asdf|qwerty|zzz)/i;
+
+function isLikelyTestSlug(slug: string): boolean {
+  return TEST_SLUG_PATTERN.test(slug);
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let listingSlugs: SitemapSlug[] = [];
   try {
@@ -55,35 +78,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     listingSlugs = [];
   }
 
-  // Kabadi category pages
-  let kabadiCategoryRoutes: Array<{
-    url: string;
-    changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
-    priority: number;
-  }> = [];
-  try {
-    const cats = await fetchKabadiCategories();
-    kabadiCategoryRoutes = cats.map((c) => ({
-      url: `${SITE_URL}/scrape/${c.slug}`,
-      changeFrequency: "weekly" as const,
-      priority: 0.6,
-    }));
-  } catch {
-    // ignore
-  }
-
   return [
     ...STATIC_ROUTES.map((route) => ({
       url: `${SITE_URL}${route.path}`,
       changeFrequency: route.changeFrequency,
       priority: route.priority,
     })),
-    ...kabadiCategoryRoutes,
-    ...listingSlugs.map(({ slug, updatedAt }) => ({
-      url: `${SITE_URL}/${slug}`,
-      lastModified: updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.7,
+    ...CATEGORY_ROUTES.map((route) => ({
+      url: `${SITE_URL}${route.path}`,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
     })),
+    ...listingSlugs
+      .filter(({ slug }) => slug && !isLikelyTestSlug(slug))
+      .map(({ slug, updatedAt }) => ({
+        url: `${SITE_URL}/${slug}`,
+        lastModified: updatedAt,
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      })),
   ];
 }

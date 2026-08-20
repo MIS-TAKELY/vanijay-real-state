@@ -63,6 +63,9 @@ services:
         # NEXT_PUBLIC_* is inlined into the client JS bundle at BUILD time —
         # passing it only via `environment:` below has no effect.
         - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+        # Canonical public origin baked into metadata, robots.txt and
+        # sitemap.xml at build time. Must be the production domain in prod.
+        - NEXT_PUBLIC_SITE_URL=${NEXT_PUBLIC_SITE_URL:-https://malpoth.com}
     restart: unless-stopped
     environment:
       - NODE_ENV=production
@@ -71,6 +74,16 @@ services:
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=dokploy-network"
+      # www → apex 301: www.malpoth.com currently 404s. Route it to the same
+      # service and permanently redirect to the canonical apex domain.
+      - "traefik.http.middlewares.realstate-www-to-apex.redirectregex.regex=^https?://www\\.(.*)"
+      - "traefik.http.middlewares.realstate-www-to-apex.redirectregex.replacement=https://$${1}"
+      - "traefik.http.middlewares.realstate-www-to-apex.redirectregex.permanent=true"
+      - "traefik.http.routers.client-www.entrypoints=web,websecure"
+      - "traefik.http.routers.client-www.rule=Host(`www.${CLIENT_DOMAIN}`)"
+      - "traefik.http.routers.client-www.tls=true"
+      - "traefik.http.routers.client-www.tls.certresolver=le"
+      - "traefik.http.routers.client-www.middlewares=realstate-www-to-apex"
       - "traefik.http.routers.client.entrypoints=web"
       - "traefik.http.routers.client.rule=Host(`${CLIENT_DOMAIN}`)"
       - "traefik.http.routers.client.middlewares=realstate-redirect-to-https"

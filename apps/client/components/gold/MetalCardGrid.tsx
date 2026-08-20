@@ -11,6 +11,7 @@ import {
   formatPrice,
   formatSpread,
   getBidAsk,
+  priceInCurrency,
 } from "../../constants/gold/metals";
 
 interface MetalCardGridProps {
@@ -111,10 +112,10 @@ export function MetalCardGrid({
             {/* Price */}
             <div className="flex items-baseline gap-2">
               <span
-                className="text-2xl font-semibold text-[#E8E6E1]"
+                className="text-2xl font-semibold text-[#E8E6E1] tabular-nums"
                 style={{ fontFamily: "var(--font-mono)" }}
               >
-                {formatPrice(metal.price, currency)}
+                {formatPrice(priceInCurrency(metal, currency), currency)}
               </span>
               <span
                 className="text-xs text-white/30"
@@ -127,7 +128,7 @@ export function MetalCardGrid({
             {/* Change + spread */}
             <div className="flex items-center justify-between gap-2">
               <span
-                className={`text-xs font-medium ${isUp ? "text-[#34D399]" : "text-[#F87171]"}`}
+                className={`text-xs font-medium tabular-nums ${isUp ? "text-[#34D399]" : "text-[#F87171]"}`}
                 style={{ fontFamily: "var(--font-mono)" }}
               >
                 {formatChangePercent(metal.changePercent)} today

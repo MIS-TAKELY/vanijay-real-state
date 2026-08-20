@@ -37,6 +37,8 @@ export const UNIT_FACTORS: Record<string, number> = {
   gram: 31.1035,
   kilo: 0.0311035,
   tola: 2.6667,
+  anna: 42.6667,
+  sukhi: 170.6667,
 };
 
 export type WeightUnit = keyof typeof UNIT_FACTORS;
@@ -301,16 +303,72 @@ export function convertCurrency(
   return usdPrice * (USD_EXCHANGE_RATES[currency] ?? 1);
 }
 
+/**
+ * Live price in the requested display currency.
+ * NPR and USD are exact (served by the feed); other currencies are
+ * converted from the USD quote so the symbol and value always agree.
+ */
+export function priceInCurrency(
+  metal: Pick<MetalData, "price" | "usdPrice">,
+  currency: CurrencyCode,
+): number {
+  if (currency === "NPR") return metal.price;
+  return convertCurrency(metal.usdPrice, currency);
+}
+
+/** Absolute change in the requested display currency. */
+export function changeInCurrency(
+  metal: Pick<MetalData, "change" | "changeUsd">,
+  currency: CurrencyCode,
+): number {
+  if (currency === "NPR") return metal.change;
+  return convertCurrency(metal.changeUsd, currency);
+}
+
+/**
+ * Live price per traditional Nepali unit (tola/anna/sukhi) in the requested
+ * display currency. Uses the same live quote as the hero price (NPR from the
+ * feed; other currencies from the USD quote) so units stay consistent.
+ * Only meaningful for metals priced by weight.
+ */
+export function pricePerNepalUnit(
+  metal: Pick<MetalData, "price" | "usdPrice" | "unit">,
+  unit: NepalUnit,
+  currency: CurrencyCode,
+): number {
+  const base = priceInCurrency(metal, currency);
+  return convertUnit(base, metal.unit, unit.id);
+}
+
 /** Conversion factors: how many grams in one unit. */
 const GRAMS_PER_UNIT: Record<string, number> = {
   oz: 31.1035,
   gram: 1,
   kilo: 1000,
-  tola: 11.66,
+  tola: 11.6638038,
+  anna: 11.6638038 / 16,
+  sukhi: 11.6638038 / 64,
   lb: 453.592,
   carat: 0.2,
   ton: 1_000_000,
 };
+
+// ── Traditional Nepali weight units ──
+// Standard in Nepal's bullion/jewellery market — FEDHEN daily rates are
+// quoted per tola. 1 tola (तोल) = 180 troy grains = 11.6638038 g;
+// 1 tola = 16 anna (आन); 1 anna = 4 sukhi (सुक) → 1 tola = 64 sukhi.
+export interface NepalUnit {
+  id: "tola" | "anna" | "sukhi";
+  label: string;
+  nepali: string;
+  grams: number;
+}
+
+export const NEPAL_UNITS: NepalUnit[] = [
+  { id: "tola", label: "Tola", nepali: "तोला", grams: GRAMS_PER_UNIT.tola! },
+  { id: "anna", label: "Anna", nepali: "आना", grams: GRAMS_PER_UNIT.anna! },
+  { id: "sukhi", label: "Sukhi", nepali: "सुकी", grams: GRAMS_PER_UNIT.sukhi! },
+];
 
 /** Convert a price from one unit to another. Works for any source/target unit pair. */
 export function convertUnit(
@@ -386,9 +444,19 @@ export function getBidAsk(
   metal: Pick<MetalData, "bid" | "ask" | "usdBid" | "usdAsk">,
   currency: CurrencyCode,
 ): { bid?: number; ask?: number } {
-  return currency === "USD"
-    ? { bid: metal.usdBid, ask: metal.usdAsk }
-    : { bid: metal.bid, ask: metal.ask };
+  if (currency === "USD") return { bid: metal.usdBid, ask: metal.usdAsk };
+  if (currency === "NPR") return { bid: metal.bid, ask: metal.ask };
+  // Other display currencies: convert the USD order book.
+  return {
+    bid:
+      metal.usdBid != null
+        ? convertCurrency(metal.usdBid, currency)
+        : undefined,
+    ask:
+      metal.usdAsk != null
+        ? convertCurrency(metal.usdAsk, currency)
+        : undefined,
+  };
 }
 
 /**

@@ -1,194 +1,163 @@
 "use client";
 
-import Link from "next/link";
-import type { CurrencyCode, MetalData } from "../../constants/gold/metals";
-import { METAL_SLUGS } from "../../constants/gold/metals";
+import { useState } from "react";
+import { ArrowDownRight, ArrowUpRight, ChevronDown } from "lucide-react";
+import type {
+  CurrencyCode,
+  MetalData,
+  NepalUnit,
+} from "../../constants/gold/metals";
 import {
+  changeInCurrency,
   formatChange,
   formatChangePercent,
   formatPrice,
   formatSpread,
   getBidAsk,
+  NEPAL_UNITS,
+  priceInCurrency,
+  pricePerNepalUnit,
 } from "../../constants/gold/metals";
+
+type MetricId = "spot" | NepalUnit["id"] | "bid" | "ask" | "spread";
 
 interface HeroPricePanelProps {
   metal: MetalData;
-  metals: MetalData[];
   currency: CurrencyCode;
-  onCurrencyChange: (currency: CurrencyCode) => void;
 }
 
-export function HeroPricePanel({
-  metal,
-  metals,
-  currency,
-  onCurrencyChange,
-}: HeroPricePanelProps) {
+export function HeroPricePanel({ metal, currency }: HeroPricePanelProps) {
   const isUp = metal.change >= 0;
   const { bid, ask } = getBidAsk(metal, currency);
   const spread = formatSpread(bid, ask, currency);
+  const TrendIcon = isUp ? ArrowUpRight : ArrowDownRight;
+  const showNepalUnits = metal.unit === "oz";
+  const hasOrderBook = bid != null && ask != null && spread != null;
+
+  const options: { id: MetricId; label: string }[] = [
+    { id: "spot", label: `per ${metal.unit}` },
+    ...(showNepalUnits
+      ? NEPAL_UNITS.map((u) => ({
+          id: u.id as MetricId,
+          label: `${u.label} ${u.nepali}`,
+        }))
+      : []),
+    ...(hasOrderBook
+      ? ([
+          { id: "bid", label: "Bid" },
+          { id: "ask", label: "Ask" },
+          { id: "spread", label: "Spread" },
+        ] as const)
+      : []),
+  ];
+
+  const defaultMetric: MetricId = showNepalUnits ? "tola" : "spot";
+  const [metric, setMetric] = useState<MetricId>(defaultMetric);
+  const selected =
+    options.find((o) => o.id === metric)?.id ??
+    options.find((o) => o.id === defaultMetric)?.id ??
+    options[0]?.id ??
+    "spot";
+
+  function metricValue(id: MetricId): string {
+    if (id === "spot") {
+      return formatPrice(priceInCurrency(metal, currency), currency);
+    }
+    if (id === "bid" && bid != null) return formatPrice(bid, currency);
+    if (id === "ask" && ask != null) return formatPrice(ask, currency);
+    if (id === "spread" && spread) return spread;
+    const unit = NEPAL_UNITS.find((u) => u.id === id);
+    if (unit) {
+      return formatPrice(pricePerNepalUnit(metal, unit, currency), currency);
+    }
+    return "—";
+  }
+
+  const showTrend =
+    selected === "spot" || NEPAL_UNITS.some((u) => u.id === selected);
 
   return (
-    <div className="flex flex-col justify-between gap-6">
-      {/* Metal selector pills + currency toggle */}
-      <div className="flex items-start justify-between gap-3">
-        <div
-          className="flex flex-wrap gap-2"
-          role="tablist"
-          aria-label="Select a metal"
-        >
-          {metals.map((m) => {
-            const isActive = metal.id === m.id;
-            const slug = METAL_SLUGS[m.id];
-            const href = `/${slug}`;
-            return (
-              <Link
-                key={m.id}
-                href={href}
-                role="tab"
-                aria-selected={isActive}
-                className={`
-                  rounded-full px-3 py-1 text-xs font-medium capitalize tracking-wide transition-colors
-                  ${
-                    isActive
-                      ? "bg-white/[0.12] text-[#E8E6E1]"
-                      : "text-white/40 hover:text-white/70"
-                  }
-                `}
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                {m.name}
-              </Link>
-            );
-          })}
-        </div>
-
-        {/* Currency toggle */}
-        <div
-          className="flex shrink-0 gap-0.5 rounded-full border border-white/[0.08] p-0.5"
-          role="group"
-          aria-label="Display currency"
-        >
-          {(["NPR", "USD"] as const).map((c) => (
-            <button
-              key={c}
-              onClick={() => onCurrencyChange(c)}
-              aria-pressed={currency === c}
-              className={`
-                rounded-full px-3 py-1 text-xs font-medium transition-colors
-                ${
-                  currency === c
-                    ? "bg-white/[0.12] text-[#E8E6E1]"
-                    : "text-white/40 hover:text-white/70"
-                }
-              `}
-              style={{ fontFamily: "var(--font-mono)" }}
-            >
-              {c === "NPR" ? "रू NPR" : "$ USD"}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Large price display */}
+    <div className="flex min-w-0 flex-col gap-6">
       <div>
-        <div className="mb-1 flex items-center gap-3">
+        <div className="mb-1 flex flex-wrap items-center gap-2 sm:gap-3">
           <span
-            className="h-3 w-3 rounded-full"
+            className="h-3 w-3 shrink-0 rounded-full"
             style={{ backgroundColor: metal.accentColor }}
             aria-hidden="true"
           />
-          <h1
+          <h2
             className="text-lg font-medium tracking-tight text-white/60"
             style={{ fontFamily: "var(--font-display)" }}
           >
             {metal.name}
             <span className="ml-2 text-sm font-normal text-white/30">
-              {metal.symbol} · per {metal.unit}
+              {metal.symbol}
             </span>
-          </h1>
+          </h2>
+          <div className="relative">
+            <label htmlFor="hero-metric" className="sr-only">
+              Price metric
+            </label>
+            <select
+              id="hero-metric"
+              value={selected}
+              onChange={(e) => setMetric(e.target.value as MetricId)}
+              className="appearance-none rounded-md border border-white/[0.08] bg-white/[0.04] py-1 pl-2.5 pr-7 text-sm font-normal text-white/50 outline-none focus:border-[#C9A84C]/50 focus:ring-1 focus:ring-[#C9A84C]/30"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              {options.map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={12}
+              className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-white/35"
+              aria-hidden="true"
+            />
+          </div>
         </div>
 
         <div
-          className="text-5xl font-semibold tracking-tight text-[#E8E6E1] md:text-6xl"
+          className="text-4xl font-semibold tracking-tight text-[#E8E6E1] tabular-nums sm:text-5xl lg:text-[clamp(2.25rem,4vw,3.75rem)]"
           style={{ fontFamily: "var(--font-mono)" }}
+          aria-live="polite"
         >
-          {formatPrice(metal.price, currency)}
+          {metricValue(selected)}
         </div>
 
-        <div className="mt-3 flex items-center gap-3">
-          <span
-            className={`text-lg font-medium ${isUp ? "text-[#34D399]" : "text-[#F87171]"}`}
-            style={{ fontFamily: "var(--font-mono)" }}
-          >
-            {formatChange(currency === "USD" ? metal.changeUsd : metal.change)}{" "}
-            {formatChangePercent(metal.changePercent)})
-          </span>
-          <span
-            className="text-xs text-white/30"
-            style={{ fontFamily: "var(--font-body)" }}
-          >
-            today
-          </span>
-        </div>
-
-        {/* Bid / Ask / Spread */}
-        {bid != null && ask != null && spread ? (
-          <div className="mt-4 grid grid-cols-3 gap-2 rounded-lg border border-white/[0.06] bg-white/[0.03] px-3 py-2.5">
-            <div>
-              <span
-                className="block text-[10px] uppercase tracking-wider text-white/30"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                Bid
-              </span>
-              <span
-                className="text-sm font-medium text-[#E8E6E1]"
-                style={{ fontFamily: "var(--font-mono)" }}
-              >
-                {formatPrice(bid, currency)}
-              </span>
-            </div>
-            <div>
-              <span
-                className="block text-[10px] uppercase tracking-wider text-white/30"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                Ask
-              </span>
-              <span
-                className="text-sm font-medium text-[#E8E6E1]"
-                style={{ fontFamily: "var(--font-mono)" }}
-              >
-                {formatPrice(ask, currency)}
-              </span>
-            </div>
-            <div>
-              <span
-                className="block text-[10px] uppercase tracking-wider text-white/30"
-                style={{ fontFamily: "var(--font-body)" }}
-              >
-                Spread
-              </span>
-              <span
-                className="text-sm font-medium text-[#E8E6E1]"
-                style={{ fontFamily: "var(--font-mono)" }}
-              >
-                {spread}
-              </span>
-            </div>
+        {showTrend ? (
+          <div className="mt-3 flex flex-wrap items-center gap-3">
+            <span
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-sm font-medium tabular-nums ${
+                isUp
+                  ? "bg-[#34D399]/10 text-[#34D399]"
+                  : "bg-[#F87171]/10 text-[#F87171]"
+              }`}
+              style={{ fontFamily: "var(--font-mono)" }}
+            >
+              <TrendIcon size={14} aria-hidden="true" />
+              {formatChange(changeInCurrency(metal, currency))} (
+              {formatChangePercent(metal.changePercent)})
+            </span>
+            <span
+              className="text-xs text-white/30"
+              style={{ fontFamily: "var(--font-body)" }}
+            >
+              today
+            </span>
           </div>
-        ) : (
+        ) : !hasOrderBook && !showNepalUnits ? (
           <p
             className="mt-4 text-xs text-white/25"
             style={{ fontFamily: "var(--font-body)" }}
           >
             Spot price only — no order book available for {metal.name}.
           </p>
-        )}
+        ) : null}
       </div>
 
-      {/* Description */}
       <p
         className="text-sm leading-relaxed text-white/50"
         style={{ fontFamily: "var(--font-body)" }}

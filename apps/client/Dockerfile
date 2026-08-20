@@ -8,9 +8,13 @@ FROM base AS builder
 ARG NEXT_PUBLIC_API_URL=https://api.malpoth.com
 ARG AUTH_API_URL=http://api:5000
 ARG NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=
+# Canonical public origin baked into metadata, robots.txt and sitemap.xml.
+# Override per deployment (must be the production domain in prod builds).
+ARG NEXT_PUBLIC_SITE_URL=https://malpoth.com
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV AUTH_API_URL=$AUTH_API_URL
 ENV NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=$NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 COPY package.json package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
 COPY apps/client ./apps/client
 COPY packages ./packages 

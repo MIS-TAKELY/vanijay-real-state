@@ -120,9 +120,17 @@ function HeroBannerCarousel() {
                 <span className="h-px w-5 md:w-8 bg-gold/70" aria-hidden />
                 Nepal&apos;s Verified Land Archive
               </p>
-              <h1 className="font-display-lg text-[22px] sm:text-3xl md:text-display-lg leading-[1.15] md:leading-tight mb-2 md:mb-4 line-clamp-2 md:line-clamp-none">
-                {slide.headline}
-              </h1>
+              {/* Only the active slide renders the page's single <h1>;
+                  inactive slides use <p> so the DOM never has multiple H1s. */}
+              {index === current ? (
+                <h1 className="font-display-lg text-[22px] sm:text-3xl md:text-display-lg leading-[1.15] md:leading-tight mb-2 md:mb-4 line-clamp-2 md:line-clamp-none">
+                  {slide.headline}
+                </h1>
+              ) : (
+                <p className="font-display-lg text-[22px] sm:text-3xl md:text-display-lg leading-[1.15] md:leading-tight mb-2 md:mb-4 line-clamp-2 md:line-clamp-none">
+                  {slide.headline}
+                </p>
+              )}
               <p className="font-body-lg text-xs sm:text-sm md:text-body-lg text-white/85 leading-snug md:leading-relaxed mb-3 md:mb-8 line-clamp-2 md:line-clamp-none">
                 {slide.subheadline}
               </p>

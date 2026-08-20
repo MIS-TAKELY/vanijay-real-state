@@ -3,6 +3,12 @@ import {
   SearchResults,
 } from "components/real-state/pages/search";
 import { PAGE_SIZE, fetchFeedPageGraphql, type FeedPage } from "lib/api";
+import {
+  formatLocation,
+  formatNPR,
+  type ApiProperty,
+} from "lib/api/services/properties/types";
+import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -12,6 +18,52 @@ export const metadata: Metadata = {
   alternates: { canonical: "/search" },
   robots: { index: true, follow: true },
 };
+
+/**
+ * CollectionPage + ItemList schema for the search results page. Enumerates
+ * the server-rendered result set so AI engines can extract listings, prices
+ * and locations directly from the initial HTML.
+ */
+const searchSchema = (items: ApiProperty[], query: string) => ({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${SITE_URL}/search#collection`,
+      url: `${SITE_URL}/search`,
+      name: query
+        ? `Search results for "${query}" on MALPOTH`
+        : "Search verified properties on MALPOTH",
+      description:
+        "Search field-verified land, residential, commercial & apartment listings across Nepal by location, price, type, and size.",
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+    },
+    {
+      "@type": "ItemList",
+      name: query
+        ? `MALPOTH search results for "${query}"`
+        : "MALPOTH verified property listings",
+      numberOfItems: items.length,
+      itemListElement: items.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${SITE_URL}/${p.slug}`,
+        name: p.title,
+        item: {
+          "@type": "RealEstateListing",
+          name: p.title,
+          url: `${SITE_URL}/${p.slug}`,
+          description: `${p.title} — ${formatLocation(p.location)} — asking price ${formatNPR(p.askingPrice)}.`,
+          offers: {
+            "@type": "Offer",
+            price: p.askingPrice,
+            priceCurrency: "NPR",
+          },
+        },
+      })),
+    },
+  ],
+});
 
 export default async function SearchPage({
   searchParams,
@@ -73,6 +125,12 @@ export default async function SearchPage({
 
   return (
     <main className="flex flex-col">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(searchSchema(initial.items, params.q ?? "")),
+        }}
+      />
       <SearchFilters />
       <SearchResults
         initialItems={initial.items}

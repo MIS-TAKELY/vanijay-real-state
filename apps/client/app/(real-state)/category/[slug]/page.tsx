@@ -9,6 +9,11 @@ import {
   fetchFeedPageGraphql,
   type FeedPage,
 } from "lib/api/services/properties";
+import {
+  formatLocation,
+  formatNPR,
+  type ApiProperty,
+} from "lib/api/services/properties/types";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -45,7 +50,7 @@ export async function generateMetadata({
   };
 }
 
-const breadcrumbSchema = (slug: string) => ({
+const breadcrumbSchema = (slug: string, name: string) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
   itemListElement: [
@@ -53,8 +58,53 @@ const breadcrumbSchema = (slug: string) => ({
     {
       "@type": "ListItem",
       position: 2,
-      name: slug,
+      name,
       item: `${SITE_URL}/category/${slug}`,
+    },
+  ],
+});
+
+/**
+ * CollectionPage + ItemList schema — tells AI engines and search engines this
+ * page is a curated collection, and enumerates the server-rendered listings
+ * (name, URL, price, location) so they are extractable without JS.
+ */
+const collectionSchema = (
+  category: { slug: string; name: string; title: string; description: string },
+  items: ApiProperty[],
+) => ({
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "CollectionPage",
+      "@id": `${SITE_URL}/category/${category.slug}#collection`,
+      url: `${SITE_URL}/category/${category.slug}`,
+      name: category.title,
+      description: category.description,
+      isPartOf: { "@id": `${SITE_URL}/#website` },
+    },
+    {
+      "@type": "ItemList",
+      name: `${category.name} listings on MALPOTH`,
+      itemListOrder: "https://schema.org/ItemListOrderAscending",
+      numberOfItems: items.length,
+      itemListElement: items.map((p, i) => ({
+        "@type": "ListItem",
+        position: i + 1,
+        url: `${SITE_URL}/${p.slug}`,
+        name: p.title,
+        item: {
+          "@type": "RealEstateListing",
+          name: p.title,
+          url: `${SITE_URL}/${p.slug}`,
+          description: `${p.title} — ${formatLocation(p.location)} — asking price ${formatNPR(p.askingPrice)}.`,
+          offers: {
+            "@type": "Offer",
+            price: p.askingPrice,
+            priceCurrency: "NPR",
+          },
+        },
+      })),
     },
   ],
 });
@@ -86,7 +136,13 @@ export default async function CategoryPage({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(breadcrumbSchema(slug)),
+          __html: JSON.stringify(breadcrumbSchema(slug, category.name)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(collectionSchema(category, initial.items)),
         }}
       />
       <main className="flex flex-col">

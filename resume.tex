@@ -1,0 +1,152 @@
+\documentclass[a4paper,11pt]{article}
+
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[2]{
+  \item\small{
+    \textbf{#1}{: #2 \vspace{-2pt}}
+  }
+}
+
+\newcommand{\resumeSubheading}[4]{
+  \vspace{-1pt}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+      \textbf{#1} & #2 \\
+      \textit{\small#3} & \textit{\small #4} \\
+    \end{tabular*}\vspace{-5pt}
+}
+
+\newcommand{\resumeSubItem}[2]{\resumeItem{#1}{#2}\vspace{-4pt}}
+
+\renewcommand{\labelitemii}{$\bullet$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=*]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+%-------------------------------------------
+%%%%%%  CV STARTS HERE  %%%%%%%%%%%%%%%%%%%%
+
+\begin{document}
+
+%----------HEADING-----------
+\begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+  \textbf{\href{https://malpoth.com}{\Large Malpoth}} & Email : \href{mailto:hello@malpoth.com}{hello@malpoth.com}\\
+  \href{https://malpoth.com}{malpoth.com} & Mobile : +977-XXXXXXXXX \\
+\end{tabular*}
+
+%-----------EDUCATION-----------
+\section{Education}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {University Name}{City, Country}
+      {B.Tech in Computer Science}{Aug 20XX -- May 20XX}
+  \resumeSubHeadingListEnd
+
+%------EXPERIENCE------
+\section{Experience}
+  \resumeSubHeadingListStart
+    \resumeSubheading
+      {Software Engineer}{Company Name}
+      {City, Country}{Month YYYY -- Present}
+      \resumeItemListStart
+        \resumeItem{Description}
+          {Did something impactful}
+      \resumeItemListEnd
+  \resumeSubHeadingListEnd
+
+%-----------PROJECTS-----------
+\section{Projects}
+\resumeSubHeadingListStart
+
+% ---------- Project 1: Vanijay ----------
+\resumeProjectHeading
+{\textbf{Vanijay} $|$ \emph{Next.js 16, GraphQL, PostgreSQL, Prisma ORM, Redis} \hfill $|$ vanijay.com $|$ seller.vanijay.com}
+{}
+
+{\small\textit{A high-performance, multi-tenant e-commerce ecosystem featuring dedicated microservices for real-time tracking and automated notifications.}}
+
+\resumeItemListStart
+  \resumeItem{Implemented an \textbf{AI-powered recommendation engine} using \textbf{OpenAI embeddings} and \textbf{pgvector}, implementing a hybrid search algorithm that combines vector similarity with real-time user intent signals to increase cross-sell opportunities by \textbf{20\%}.}
+  \resumeItem{Engineered a high-performance data layer using \textbf{PostgreSQL} and \textbf{Redis}, optimizing complex database queries with \textbf{Prisma ORM}, reducing API response latency.}
+  \resumeItem{Developed a dedicated real-time microservice using \textbf{Node.js}, \textbf{Upstash Realtime}, and \textbf{WhatsApp} to automate order notifications and chat, increasing user engagement.}
+  \resumeItem{Designed a dynamic product specification engine with \textbf{GraphQL} and \textbf{Apollo Client}, enabling efficient data fetching for 50+ categories and improving client-side state management by \textbf{30\%}.}
+  \resumeItem{Streamlined deployment by implementing an automated \textbf{CI/CD pipeline} using \textbf{GitHub Actions} and \textbf{Dockploy}, reducing manual deployment time by \textbf{90\%}.}
+\resumeItemListEnd
+
+% ---------- Project 2: Malpoth ----------
+\resumeProjectHeading
+{\textbf{Malpoth} $|$ \emph{Next.js 16, NestJS, GraphQL, PostgreSQL, Prisma ORM, Zustand, Leaflet} \hfill $|$ malpoth.com}
+{}
+
+{\small\textit{A verified land \& property archive for Nepal --- a Turborepo monorepo with a public marketplace, seller onboarding, admin operations console, and multi-domain production deployment across 3 services.}}
+
+\resumeItemListStart
+  \resumeItem{Architected a \textbf{Turborepo monorepo} spanning \textbf{3 apps} (client, admin, API) and \textbf{5 shared packages} (db, auth, ui, eslint-config, typescript-config), enabling code reuse and independent deployments via Docker + Traefik multi-domain routing.}
+  \resumeItem{Built a \textbf{NestJS/GraphQL API} with 18+ modules (properties, analytics, admin, seller, uploads, favorites, cart, saved-searches, CMS, gold, kabadi, settings) using \textbf{Apollo Driver} code-first schema generation, \textbf{ThrottlerModule} rate limiting, and \textbf{nestjs-pino} structured logging.}
+  \resumeItem{Implemented a \textbf{multi-level property verification system} (UNVERIFIED $\rightarrow$ LEVEL\_1 $\rightarrow$ LEVEL\_2\_DOC\_VERIFIED $\rightarrow$ LEVEL\_3\_FIELD\_VERIFIED) with document checklists, cadastral map validation, and audit trails, ensuring cadastral-cleared listings.}
+  \resumeItem{Engineered \textbf{advanced search \& filtering} with 15+ filter dimensions (category, district, municipality, ward, road type, facing, bedrooms, price bands, amenities), cursor-based pagination, and GraphQL-powered feed queries with debounced client-side state via \textbf{Zustand}.}
+  \resumeItem{Developed a \textbf{real-time Leaflet mapping system} rendering Nepal border GeoJSON with dynamic property markers, district hover states, and interactive parcel boundary polygons for individual listings.}
+  \resumeItem{Integrated \textbf{Cloudinary} for media management (images, video walkthroughs, cadastral maps) with upload buffering, download-prevention transforms, and multi-format support (image/video/raw).}
+  \resumeItem{Built \textbf{WhatsApp \& email notification pipelines} using \textbf{Better Auth} OTP verification, \textbf{Nodemailer} SMTP transport with Ethereal dev fallback, and a WhatsApp gateway for order alerts and seller onboarding confirmations.}
+  \resumeItem{Designed an \textbf{SEO-first architecture} with dynamic \texttt{generateMetadata} per page, JSON-LD structured data (RealEstateListing, BreadcrumbList, Place with GeoCoordinates), \texttt{robots.txt}, \texttt{sitemap.xml}, and a \texttt{NEXT\_PUBLIC\_SITE\_URL} build-time constant for canonical URLs.}
+  \resumeItem{Implemented a \textbf{property comparison engine} allowing side-by-side analysis of up to 4 listings with persisted Zustand state, and a \textbf{unit converter} for Nepali land measurement units (Ropani/Aana/Paisa/Daam $\leftrightarrow$ sq.\ ft/sq.\ m).}
+  \resumeItem{Created an \textbf{admin operations console} with settings management, email configuration, CMS content blocks (hero banners, categories), and audit logging --- deployed at a dedicated subdomain (\texttt{prashasana.malpoth.com}).}
+\resumeItemListEnd
+
+\resumeSubHeadingListEnd
+
+%--------SKILLS--------
+\section{Skills}
+  \resumeSubHeadingListStart
+    \resumeSubItem{Languages}
+      {TypeScript, JavaScript, SQL, HTML, CSS}
+    \resumeSubItem{Frontend}
+      {React 19, Next.js 16, Tailwind CSS 4, Leaflet, Zustand, Apollo Client}
+    \resumeSubItem{Backend}
+      {NestJS, GraphQL (Apollo), Prisma ORM, Node.js, Better Auth}
+    \resumeSubItem{Database}
+      {PostgreSQL, Redis}
+    \resumeSubItem{DevOps}
+      {Docker, Turborepo, Dockploy, Traefik, GitHub Actions}
+    \resumeSubItem{Services}
+      {Cloudinary, WhatsApp API, Nodemailer (SMTP), Google Maps Platform}
+  \resumeSubHeadingListEnd
+
+%-------------------------------------------
+\end{document}
