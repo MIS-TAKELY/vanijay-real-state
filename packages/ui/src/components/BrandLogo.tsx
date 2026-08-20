@@ -31,7 +31,7 @@ interface BrandLogoProps {
 }
 
 function BrandLogo({
-  // logoSrc,
+  logoSrc,
   logoTextSrc,
   alt = "MALPOTH",
   ariaLabel,
