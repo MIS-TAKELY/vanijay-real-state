@@ -177,7 +177,7 @@ export function ListingGallery({
     return (
       <div
         className={cn(
-          "aspect-video overflow-hidden rounded-2xl bg-gradient-to-br",
+          "aspect-video overflow-hidden rounded-md bg-gradient-to-br",
           fallbackGradient,
         )}
         aria-label="No media available"
@@ -249,7 +249,7 @@ export function ListingGallery({
 
   const tabButtonClass = (isActive: boolean) =>
     cn(
-      "inline-flex h-10 min-h-10 min-w-0 flex-1 items-center justify-center gap-1 rounded-lg px-1.5 text-xs font-medium transition-colors duration-150",
+      "inline-flex h-10 min-h-10 min-w-0 flex-1 items-center justify-center gap-1 rounded-md px-1.5 text-xs font-medium transition-colors duration-150",
       "@min-[22rem]:gap-1.5 @min-[22rem]:px-2 @min-[28rem]:px-2.5 @min-[28rem]:text-sm",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
       isActive
@@ -316,7 +316,7 @@ export function ListingGallery({
                 setActiveTab(order[(idx - 1 + order.length) % order.length]!);
               }
             }}
-            className="flex w-full min-w-0 flex-nowrap gap-0.5 rounded-xl bg-surface-container p-1 @min-[28rem]:gap-1 @min-[36rem]:ml-auto @min-[36rem]:w-auto @min-[36rem]:min-w-[min(100%,18rem)] @min-[36rem]:max-w-lg @min-[36rem]:flex-1"
+            className="flex w-full min-w-0 flex-nowrap gap-0.5 rounded-md bg-surface-container p-1 @min-[28rem]:gap-1 @min-[36rem]:ml-auto @min-[36rem]:w-auto @min-[36rem]:min-w-[min(100%,18rem)] @min-[36rem]:max-w-lg @min-[36rem]:flex-1"
           >
             {hasImages && (
               <button
@@ -402,7 +402,7 @@ export function ListingGallery({
           aria-labelledby="tab-photos"
           className="flex min-w-0 flex-col gap-3"
         >
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-surface-container sm:aspect-video">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-md bg-surface-container sm:aspect-video">
             {/* Swipeable slider — a native scroll-snap track so fingers can
                 drag between photos on any screen. Arrows and thumbnails scroll
                 this same track, so `activeImage` stays the single source of
@@ -413,10 +413,9 @@ export function ListingGallery({
               aria-label="Photo viewer — swipe to browse"
               className="no-scrollbar flex h-full w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
               style={{
-                scrollSnapType: "x mandatory",
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
-                touchAction: "pan-y",
+                touchAction: "pan-x pan-y pinch-zoom",
               }}
             >
               {images.map((image, idx) => (
@@ -443,7 +442,7 @@ export function ListingGallery({
             </div>
 
             <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/50 to-transparent px-3 pb-3 pt-12">
-              <span className="rounded-full bg-surface/95 px-2.5 py-1 text-[11px] font-medium tabular-nums text-on-surface backdrop-blur-sm">
+              <span className="rounded-md bg-surface/95 px-2.5 py-1 text-[11px] font-medium tabular-nums text-on-surface backdrop-blur-sm">
                 {activeImage + 1} / {images.length}
               </span>
             </div>
@@ -453,7 +452,7 @@ export function ListingGallery({
                 <button
                   type="button"
                   aria-label="Previous photo"
-                  className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-11 sm:w-11"
+                  className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-md bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-11 sm:w-11"
                   onClick={() => scrollToPhoto(activeImage - 1)}
                 >
                   <Icon name="chevron_left" className="text-[22px]" />
@@ -461,7 +460,7 @@ export function ListingGallery({
                 <button
                   type="button"
                   aria-label="Next photo"
-                  className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-full bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-11 sm:w-11"
+                  className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-md bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-11 sm:w-11"
                   onClick={() => scrollToPhoto(activeImage + 1)}
                 >
                   <Icon name="chevron_right" className="text-[22px]" />
@@ -491,7 +490,7 @@ export function ListingGallery({
                   data-thumb-index={idx}
                   onClick={() => scrollToPhoto(idx)}
                   className={cn(
-                    "relative h-16 w-[4.5rem] shrink-0 overflow-hidden rounded-xl border bg-surface-container transition-all sm:h-[4.5rem] sm:w-28",
+                    "relative h-16 w-[4.5rem] shrink-0 overflow-hidden rounded-md border bg-surface-container transition-all sm:h-[4.5rem] sm:w-28",
                     "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                     idx === activeImage
                       ? "border-primary ring-2 ring-primary/30"
@@ -524,7 +523,7 @@ export function ListingGallery({
           aria-labelledby="tab-videos"
           className="flex min-w-0 flex-col gap-3"
         >
-          <div className="relative overflow-hidden rounded-2xl border border-outline-variant bg-surface-container">
+          <div className="relative overflow-hidden rounded-md border border-outline-variant bg-surface-container">
             <ListingVideo
               url={activeVideo.url}
               title={activeVideo.altText ?? `${title} — video walkthrough`}

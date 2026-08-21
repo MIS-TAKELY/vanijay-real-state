@@ -131,13 +131,13 @@ export function ListingDecisionCard({
             title={title}
             variant="outline"
             iconOnly
-            className="min-h-11 min-w-11 shrink-0 rounded-md border border-outline-variant sm:hidden"
+            className="min-h-11 flex-1 rounded-md border border-outline-variant sm:hidden"
           />
           <SaveToFavoritesButton
             propertyId={propertyId}
             variant="outline"
             iconOnly
-            className="min-h-11 min-w-11 flex-1 rounded-md border border-outline-variant sm:hidden"
+            className="min-h-11 flex-1 rounded-md border border-outline-variant sm:hidden"
           />
           <AddToCartButton
             propertyId={propertyId}

@@ -42,7 +42,7 @@ const searchForm = (
   <form
     action="/search"
     role="search"
-    className="flex h-11 items-center gap-1.5 rounded-xl border border-outline-variant bg-white pl-2.5 pr-1.5 shadow-sm transition-shadow focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/30 sm:h-9"
+    className="flex h-8 items-center gap-1 rounded-full border border-outline-variant bg-white pl-2.5 pr-1 shadow-sm transition-shadow focus-within:border-gold/60 focus-within:ring-2 focus-within:ring-gold/30 sm:h-9 sm:gap-1.5 sm:pr-1.5"
   >
     <Icon
       name="search"
@@ -55,7 +55,7 @@ const searchForm = (
       enterKeyHint="search"
       aria-label="Search properties"
       placeholder="Search listings…"
-      className="h-8 min-w-0 flex-1 appearance-none border-0 !bg-white px-0 text-sm shadow-none focus-visible:ring-0 dark:!bg-white"
+      className="h-7 flex-1 appearance-none border-0 !bg-white px-0 text-sm shadow-none focus-visible:ring-0 dark:!bg-white sm:h-8"
     />
     <Button
       type="submit"
@@ -210,7 +210,7 @@ export function Navbar() {
         </div>
 
         {/* Search bar — always visible, fills remaining space on mobile */}
-        <div className="flex min-w-0 flex-1 justify-center px-2 sm:px-3">
+        <div className="flex min-w-0 flex-1 justify-center px-2 ">
           <div className="w-full min-w-0 max-w-md">{searchForm}</div>
         </div>
 
