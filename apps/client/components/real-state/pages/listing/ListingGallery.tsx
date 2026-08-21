@@ -14,11 +14,13 @@ export type GalleryImage = {
 type ListingGalleryProps = {
   images: GalleryImage[];
   videos?: ApiPropertyMedia[];
-  /** Cadastral maps (Naksa) — the only documents shown on the listing page. */
+  /** Cadastral maps (Naksa) — the documents shown on the listing page. */
   cadastralMaps?: ApiPropertyMedia[];
   title: string;
   fallbackGradient: string;
 };
+
+type MediaType = "photos" | "videos" | "documents";
 
 export function ListingGallery({
   images,
@@ -31,202 +33,310 @@ export function ListingGallery({
   const hasVideos = videos.length > 0;
   const hasDocs = cadastralMaps.length > 0;
 
-  const [activeTab, setActiveTab] = useState<"photos" | "videos" | "documents">(
-    hasImages ? "photos" : hasVideos ? "videos" : "documents",
-  );
-  const [activeImage, setActiveImage] = useState(0);
-  const [lightboxOpen, setLightboxOpen] = useState(false);
-  const [lightboxImageSrc, setLightboxImageSrc] = useState<string | null>(null);
-  const [lightboxCaption, setLightboxCaption] = useState<string | null>(null);
+  const defaultTab: MediaType = hasImages
+    ? "photos"
+    : hasVideos
+      ? "videos"
+      : "documents";
+
+  const [activeTab, setActiveTab] = useState<MediaType>(defaultTab);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [activeVideoIndex, setActiveVideoIndex] = useState(0);
   const [activeDocIndex, setActiveDocIndex] = useState(0);
-  const lightboxRef = useRef<HTMLDivElement>(null);
-  const openerRef = useRef<HTMLElement | null>(null);
+
+  // Lightbox state
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxTab, setLightboxTab] = useState<MediaType>("photos");
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Deep zoom & pan state for Lightbox
+  const [zoomScale, setZoomScale] = useState(1);
+  const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
+  const [rotation, setRotation] = useState(0);
+  const [isPanning, setIsPanning] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // DOM Refs
   const thumbStripRef = useRef<HTMLDivElement>(null);
-  const photoTrackRef = useRef<HTMLDivElement>(null);
-  const trackPhotosTabRef = useRef<boolean | null>(null);
-  // Tracks whether a scroll-teleport is in progress to avoid recursive loops.
-  const teleportingRef = useRef(false);
+  const docThumbStripRef = useRef<HTMLDivElement>(null);
+  const videoThumbStripRef = useRef<HTMLDivElement>(null);
+  const lightboxThumbStripRef = useRef<HTMLDivElement>(null);
+  const lightboxContainerRef = useRef<HTMLDivElement>(null);
+  const openerRef = useRef<HTMLElement | null>(null);
 
-  // Video / Doc swipe detection state.
-  const videoSwipeRef = useRef<number | null>(null);
-  const docSwipeRef = useRef<number | null>(null);
+  // Touch gesture state for main card carousel
+  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(
+    null,
+  );
+  const touchDeltaRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
 
-  // --- Infinite photo track helpers ---
-  // The track renders [lastClone, ...slides, firstClone] — total = n+2 slots.
-  // Slot 0            → clone of last real slide  (sentinel-left)
-  // Slots 1 … n       → real slides (index 0 … n-1)
-  // Slot n+1          → clone of first real slide (sentinel-right)
-  //
-  // scrollToPhoto(realIndex) scrolls to slot realIndex+1.
-  const scrollToPhoto = useCallback(
-    (realIndex: number, animated = true) => {
-      if (images.length === 0) return;
-      const wrapped =
-        ((realIndex % images.length) + images.length) % images.length;
-      const track = photoTrackRef.current;
-      if (!track || track.clientWidth === 0) {
-        setActiveImage(wrapped);
-        return;
+  // Touch & Pan refs for Lightbox
+  const panStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const panCurrentOffsetRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const lightboxTouchStartRef = useRef<{
+    x: number;
+    y: number;
+    time: number;
+  } | null>(null);
+
+  // Reset zoom & pan when switching items in lightbox
+  const resetZoom = useCallback(() => {
+    setZoomScale(1);
+    setPanOffset({ x: 0, y: 0 });
+    setRotation(0);
+    panCurrentOffsetRef.current = { x: 0, y: 0 };
+  }, []);
+
+  const handleZoomIn = useCallback(() => {
+    setZoomScale((prev) => Math.min(prev + 0.5, 4));
+  }, []);
+
+  const handleZoomOut = useCallback(() => {
+    setZoomScale((prev) => {
+      const next = Math.max(prev - 0.5, 1);
+      if (next === 1) {
+        setPanOffset({ x: 0, y: 0 });
+        panCurrentOffsetRef.current = { x: 0, y: 0 };
       }
-      // slot index for a real image is realIndex + 1 (because of the left clone)
-      track.scrollTo({
-        left: (wrapped + 1) * track.clientWidth,
-        behavior: animated ? "smooth" : "instant",
+      return next;
+    });
+  }, []);
+
+  const handleRotate = useCallback(() => {
+    setRotation((prev) => (prev + 90) % 360);
+  }, []);
+
+  const toggleDoubleTapZoom = useCallback(
+    (clientX?: number, clientY?: number) => {
+      setZoomScale((prev) => {
+        if (prev > 1) {
+          setPanOffset({ x: 0, y: 0 });
+          panCurrentOffsetRef.current = { x: 0, y: 0 };
+          return 1;
+        } else {
+          // Double-click/tap zoom in to 2.5x
+          if (clientX != null && clientY != null) {
+            // Slight bias towards click position
+            const centerX = window.innerWidth / 2;
+            const centerY = window.innerHeight / 2;
+            const offsetX = (centerX - clientX) * 0.75;
+            const offsetY = (centerY - clientY) * 0.75;
+            setPanOffset({ x: offsetX, y: offsetY });
+            panCurrentOffsetRef.current = { x: offsetX, y: offsetY };
+          }
+          return 2.5;
+        }
       });
     },
-    [images.length],
+    [],
   );
 
-  const showPrevPhoto = useCallback(() => {
-    setActiveImage((i) => {
-      const next = (i - 1 + images.length) % images.length;
-      scrollToPhoto(next);
-      return next;
-    });
-  }, [images.length, scrollToPhoto]);
-
-  const showNextPhoto = useCallback(() => {
-    setActiveImage((i) => {
-      const next = (i + 1) % images.length;
-      scrollToPhoto(next);
-      return next;
-    });
-  }, [images.length, scrollToPhoto]);
-
-  // On scroll-settle: detect when the user has swiped to a sentinel clone and
-  // silently teleport back to the real slide so the loop feels infinite.
-  const handlePhotoTrackScroll = useCallback(() => {
-    const track = photoTrackRef.current;
-    if (!track || track.clientWidth === 0) return;
-    if (teleportingRef.current) return;
-
-    const slotIndex = Math.round(track.scrollLeft / track.clientWidth);
-    const total = images.length + 2; // sentinels on each side
-
-    if (slotIndex === 0) {
-      // Swiped left past the first real slide → teleport to last real slide.
-      teleportingRef.current = true;
-      const realIdx = images.length - 1;
-      track.scrollTo({ left: (realIdx + 1) * track.clientWidth, behavior: "instant" });
-      setActiveImage(realIdx);
-      teleportingRef.current = false;
-    } else if (slotIndex === total - 1) {
-      // Swiped right past the last real slide → teleport to first real slide.
-      teleportingRef.current = true;
-      track.scrollTo({ left: track.clientWidth, behavior: "instant" });
-      setActiveImage(0);
-      teleportingRef.current = false;
+  // Toggle browser fullscreen
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      if (lightboxContainerRef.current?.requestFullscreen) {
+        lightboxContainerRef.current.requestFullscreen().catch(() => {});
+      }
     } else {
-      setActiveImage(slotIndex - 1);
+      if (document.exitFullscreen) {
+        document.exitFullscreen().catch(() => {});
+      }
     }
-  }, [images.length]);
-
-  // Declared up here so the track-mount effect below (which runs before the
-  // media early-return) can read it without hitting a temporal-dead-zone error.
-  const showingPhotos = activeTab === "photos" && hasImages;
+  }, []);
 
   useEffect(() => {
+    const handleFullscreenChange = () => {
+      setIsFullscreen(Boolean(document.fullscreenElement));
+    };
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+  }, []);
+
+  // Slide navigation for main photo carousel
+  const nextPhoto = useCallback(() => {
+    if (images.length <= 1) return;
+    setActiveImageIndex((prev) => (prev + 1) % images.length);
+  }, [images.length]);
+
+  const prevPhoto = useCallback(() => {
+    if (images.length <= 1) return;
+    setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
+  }, [images.length]);
+
+  // Lightbox opening/closing
+  const openLightbox = useCallback((tab: MediaType, index = 0) => {
+    openerRef.current = document.activeElement as HTMLElement | null;
+    setLightboxTab(tab);
+    setLightboxIndex(index);
+    resetZoom();
+    setLightboxOpen(true);
+    document.body.style.overflow = "hidden";
+  }, [resetZoom]);
+
+  const closeLightbox = useCallback(() => {
+    setLightboxOpen(false);
+    resetZoom();
+    document.body.style.overflow = "";
+    if (document.fullscreenElement && document.exitFullscreen) {
+      document.exitFullscreen().catch(() => {});
+    }
+    // Sync main card indices with where the lightbox ended
+    if (lightboxTab === "photos") {
+      setActiveImageIndex(lightboxIndex);
+    } else if (lightboxTab === "documents") {
+      setActiveDocIndex(lightboxIndex);
+    } else if (lightboxTab === "videos") {
+      setActiveVideoIndex(lightboxIndex);
+    }
+    openerRef.current?.focus();
+    openerRef.current = null;
+  }, [lightboxIndex, lightboxTab, resetZoom]);
+
+  // Lightbox next/prev navigation
+  const getLightboxMediaCount = useCallback(() => {
+    if (lightboxTab === "photos") return images.length;
+    if (lightboxTab === "documents") return cadastralMaps.length;
+    if (lightboxTab === "videos") return videos.length;
+    return 0;
+  }, [cadastralMaps.length, images.length, lightboxTab, videos.length]);
+
+  const nextLightboxItem = useCallback(() => {
+    const count = getLightboxMediaCount();
+    if (count <= 1) return;
+    resetZoom();
+    setLightboxIndex((prev) => (prev + 1) % count);
+  }, [getLightboxMediaCount, resetZoom]);
+
+  const prevLightboxItem = useCallback(() => {
+    const count = getLightboxMediaCount();
+    if (count <= 1) return;
+    resetZoom();
+    setLightboxIndex((prev) => (prev - 1 + count) % count);
+  }, [getLightboxMediaCount, resetZoom]);
+
+  // Keyboard navigation for lightbox
+  useEffect(() => {
     if (!lightboxOpen) return;
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        e.preventDefault();
         closeLightbox();
         return;
       }
-      if (activeTab === "photos" && images.length > 1) {
-        if (event.key === "ArrowLeft") {
-          event.preventDefault();
-          setActiveImage((i) => (i === 0 ? images.length - 1 : i - 1));
+
+      if (e.key === "ArrowLeft") {
+        if (zoomScale <= 1) {
+          e.preventDefault();
+          prevLightboxItem();
         }
-        if (event.key === "ArrowRight") {
-          event.preventDefault();
-          setActiveImage((i) => (i === images.length - 1 ? 0 : i + 1));
+      } else if (e.key === "ArrowRight") {
+        if (zoomScale <= 1) {
+          e.preventDefault();
+          nextLightboxItem();
         }
+      } else if (e.key === "+" || e.key === "=") {
+        e.preventDefault();
+        handleZoomIn();
+      } else if (e.key === "-") {
+        e.preventDefault();
+        handleZoomOut();
+      } else if (e.key === "0") {
+        e.preventDefault();
+        resetZoom();
+      } else if (e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        handleRotate();
+      } else if (e.key === "f" || e.key === "F") {
+        e.preventDefault();
+        toggleFullscreen();
       }
     };
+
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [lightboxOpen, images.length, activeTab]);
+  }, [
+    lightboxOpen,
+    zoomScale,
+    closeLightbox,
+    prevLightboxItem,
+    nextLightboxItem,
+    handleZoomIn,
+    handleZoomOut,
+    resetZoom,
+    handleRotate,
+    toggleFullscreen,
+  ]);
 
-  // Focus the close button on open and trap Tab focus inside the dialog.
-  useEffect(() => {
-    if (!lightboxOpen) return;
-    const dialog = lightboxRef.current;
-    dialog
-      ?.querySelector<HTMLButtonElement>('button[aria-label="Close gallery"]')
-      ?.focus();
-
-    const onTab = (event: KeyboardEvent) => {
-      if (event.key !== "Tab" || !dialog) return;
-      const focusables = dialog.querySelectorAll<HTMLElement>(
-        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
-      );
-      if (focusables.length === 0) return;
-      const first = focusables[0]!;
-      const last = focusables[focusables.length - 1]!;
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
-    };
-    window.addEventListener("keydown", onTab);
-    return () => window.removeEventListener("keydown", onTab);
-  }, [lightboxOpen]);
-
-  // Release the body scroll lock if the gallery unmounts while open.
+  // Lock body scroll cleanup on unmount
   useEffect(() => {
     return () => {
       document.body.style.overflow = "";
     };
   }, []);
 
-  // Keep the active photo thumb visible in the horizontal strip.
+  // Smooth scroll active thumbnail into view in card thumbnail strip (container only)
   useEffect(() => {
-    if (activeTab !== "photos" || images.length <= 1) return;
-    const active = thumbStripRef.current?.querySelector<HTMLElement>(
-      `[data-thumb-index="${activeImage}"]`,
-    );
-    active?.scrollIntoView({
-      behavior: "smooth",
-      inline: "nearest",
-      block: "nearest",
-    });
-  }, [activeImage, activeTab, images.length]);
+    if (activeTab === "photos" && thumbStripRef.current) {
+      const container = thumbStripRef.current;
+      const activeEl = container.querySelector<HTMLElement>(
+        `[data-thumb-index="${activeImageIndex}"]`,
+      );
+      if (activeEl) {
+        const cRect = container.getBoundingClientRect();
+        const aRect = activeEl.getBoundingClientRect();
+        // Horizontal scroll
+        if (container.scrollWidth > container.clientWidth) {
+          const leftDiff = aRect.left - cRect.left;
+          if (leftDiff < 0 || leftDiff + aRect.width > cRect.width) {
+            container.scrollTo({
+              left:
+                container.scrollLeft +
+                leftDiff -
+                cRect.width / 2 +
+                aRect.width / 2,
+              behavior: "smooth",
+            });
+          }
+        }
+        // Vertical scroll
+        if (container.scrollHeight > container.clientHeight) {
+          const topDiff = aRect.top - cRect.top;
+          if (topDiff < 0 || topDiff + aRect.height > cRect.height) {
+            container.scrollTo({
+              top:
+                container.scrollTop +
+                topDiff -
+                cRect.height / 2 +
+                aRect.height / 2,
+              behavior: "smooth",
+            });
+          }
+        }
+      }
+    }
+  }, [activeImageIndex, activeTab]);
 
-  // On the very first render, position the track at slot 1 (first real slide)
-  // so the left sentinel clone (slot 0) is never visible on load.
+  // Smooth scroll active thumbnail in Lightbox filmstrip
   useEffect(() => {
-    const track = photoTrackRef.current;
-    if (!track || images.length <= 1) return;
-    track.scrollTo({ left: track.clientWidth, behavior: "instant" });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // intentionally runs once on mount only
-
-  // When the photos tab (re)mounts after a tab switch, restore the active slide.
-  // Offset by +1 to account for the left sentinel clone.
-  useEffect(() => {
-    const wasShowingPhotos = trackPhotosTabRef.current;
-    trackPhotosTabRef.current = showingPhotos;
-    if (wasShowingPhotos === null) return;
-    if (wasShowingPhotos === showingPhotos) return;
-    if (!showingPhotos) return;
-    const track = photoTrackRef.current;
-    if (!track || track.clientWidth === 0) return;
-    track.scrollTo({
-      left: (activeImage + 1) * track.clientWidth,
-      behavior: "instant",
-    });
-  }, [showingPhotos, activeImage, images.length]);
-
-  // Clamp the index if the media list shrinks while viewing.
-  useEffect(() => {
-    setActiveImage((prev) =>
-      Math.min(Math.max(prev, 0), Math.max(images.length - 1, 0)),
-    );
-  }, [images.length]);
+    if (lightboxOpen && lightboxThumbStripRef.current) {
+      const container = lightboxThumbStripRef.current;
+      const activeEl = container.querySelector<HTMLElement>(
+        `[data-lb-thumb-index="${lightboxIndex}"]`,
+      );
+      if (activeEl) {
+        const cRect = container.getBoundingClientRect();
+        const aRect = activeEl.getBoundingClientRect();
+        const leftDiff = aRect.left - cRect.left;
+        container.scrollTo({
+          left:
+            container.scrollLeft + leftDiff - cRect.width / 2 + aRect.width / 2,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [lightboxIndex, lightboxOpen, lightboxTab]);
 
   if (!hasImages && !hasVideos && !hasDocs) {
     return (
@@ -240,81 +350,63 @@ export function ListingGallery({
     );
   }
 
+  const showingPhotos = activeTab === "photos" && hasImages;
   const showingVideos = activeTab === "videos" && hasVideos;
   const showingDocs = activeTab === "documents" && hasDocs;
 
   const currentImage = showingPhotos
-    ? images[Math.min(activeImage, images.length - 1)]!
+    ? images[Math.min(activeImageIndex, images.length - 1)]!
     : null;
   const activeVideo = showingVideos ? videos[activeVideoIndex] : null;
   const activeDoc = showingDocs
     ? cadastralMaps[Math.min(activeDocIndex, cadastralMaps.length - 1)]
     : null;
 
-  const docTitle = (() => {
-    const raw = activeDoc?.altText?.trim();
-    if (!raw) return "Cadastral map";
-    // Uploaded screenshots often keep the file name as alt text — show a
-    // human label instead of "Screenshot From … .png".
-    if (
-      /\.(png|jpe?g|webp|gif|pdf)$/i.test(raw) ||
-      /^screenshot\b/i.test(raw)
-    ) {
-      return "Cadastral map";
-    }
-    return raw;
-  })();
-
   const availableTabsCount =
     (hasImages ? 1 : 0) + (hasVideos ? 1 : 0) + (hasDocs ? 1 : 0);
 
-  const closeLightbox = () => {
-    const wasPhotoGallery = !lightboxImageSrc;
-    setLightboxOpen(false);
-    document.body.style.overflow = "";
-    openerRef.current?.focus();
-    openerRef.current = null;
-    // Re-sync the swipable track with the photo the lightbox settled on.
-    if (wasPhotoGallery && showingPhotos && images.length > 1) {
-      scrollToPhoto(activeImage);
-    }
-  };
-
-  const openPhotoLightbox = () => {
-    openerRef.current = document.activeElement as HTMLElement | null;
-    document.body.style.overflow = "hidden";
-    setLightboxImageSrc(null);
-    setLightboxCaption(null);
-    setLightboxOpen(true);
-  };
-
-  const openDocLightbox = () => {
-    if (!activeDoc) return;
-    openerRef.current = document.activeElement as HTMLElement | null;
-    document.body.style.overflow = "hidden";
-    setLightboxImageSrc(activeDoc.url);
-    setLightboxCaption(activeDoc.altText ?? "Naksa (Cadastral Map)");
-    setLightboxOpen(true);
-  };
-
-  const openPhotoLightboxAt = (index: number) => {
-    setActiveImage(index);
-    openPhotoLightbox();
-  };
-
   const tabButtonClass = (isActive: boolean) =>
     cn(
-      "inline-flex h-7 min-h-7 min-w-0 flex-1 items-center justify-center gap-1 rounded-sm px-1.5 text-xs font-medium transition-colors duration-150",
-      "@min-[22rem]:gap-1.5 @min-[22rem]:px-2 @min-[28rem]:px-2.5 @min-[28rem]:text-sm",
+      "inline-flex h-8 min-h-8 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-sm px-2 text-xs font-semibold transition-all duration-150",
+      "@min-[22rem]:px-2.5 @min-[28rem]:px-3 @min-[28rem]:text-sm",
       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
       isActive
         ? "bg-primary text-on-primary shadow-xs"
-        : "text-on-surface-variant hover:bg-surface/70 hover:text-on-surface",
+        : "text-on-surface-variant hover:bg-surface/80 hover:text-on-surface",
     );
+
+  // Get current active item in Lightbox
+  const lightboxCurrentMedia = (() => {
+    if (lightboxTab === "photos") {
+      const item = images[lightboxIndex];
+      return {
+        url: item?.url || "",
+        alt: item?.altText || `${title} - Photo ${lightboxIndex + 1}`,
+        type: "photo" as const,
+      };
+    }
+    if (lightboxTab === "documents") {
+      const item = cadastralMaps[lightboxIndex];
+      return {
+        url: item?.url || "",
+        alt: item?.altText || `Naksa (Cadastral Map) ${lightboxIndex + 1}`,
+        type: "document" as const,
+      };
+    }
+    if (lightboxTab === "videos") {
+      const item = videos[lightboxIndex];
+      return {
+        url: item?.url || "",
+        alt: item?.altText || `Video walkthrough ${lightboxIndex + 1}`,
+        type: "video" as const,
+      };
+    }
+    return { url: "", alt: "", type: "photo" as const };
+  })();
 
   return (
     <section className="@container min-w-0">
-      {/* Title + media-type tabs share one responsive header */}
+      {/* Header with Title & Media Tabs */}
       <header className="mb-2 flex min-w-0 flex-col gap-2.5 @min-[36rem]:mb-3 @min-[36rem]:flex-row @min-[36rem]:items-center @min-[36rem]:justify-between @min-[36rem]:gap-3">
         <div className="flex min-w-0 shrink-0 items-center justify-between gap-2 @min-[36rem]:justify-start">
           <h2 className="font-headline-md text-base font-semibold tracking-tight text-navy @min-[22rem]:text-lg">
@@ -322,7 +414,7 @@ export function ListingGallery({
             <span className="hidden @max-[19.9rem]:inline">Media</span>
           </h2>
           {availableTabsCount === 1 && (
-            <span className="inline-flex items-center gap-1.5 text-sm text-on-surface-variant">
+            <span className="inline-flex items-center gap-1.5 text-xs font-medium text-on-surface-variant sm:text-sm">
               {hasImages && (
                 <>
                   <Icon name="photo_library" className="text-[16px]" />
@@ -356,29 +448,14 @@ export function ListingGallery({
           <div
             role="tablist"
             aria-label="Media type"
-            onKeyDown={(e) => {
-              const order: Array<"photos" | "videos" | "documents"> = [];
-              if (hasImages) order.push("photos");
-              if (hasVideos) order.push("videos");
-              if (hasDocs) order.push("documents");
-              if (order.length === 0) return;
-              const idx = order.indexOf(activeTab);
-              if (e.key === "ArrowRight") {
-                e.preventDefault();
-                setActiveTab(order[(idx + 1) % order.length]!);
-              } else if (e.key === "ArrowLeft") {
-                e.preventDefault();
-                setActiveTab(order[(idx - 1 + order.length) % order.length]!);
-              }
-            }}
-            className="flex w-full min-w-0 flex-nowrap gap-0.5 rounded-sm bg-surface-container p-1 @min-[28rem]:gap-1 @min-[36rem]:ml-auto @min-[36rem]:w-auto @min-[36rem]:min-w-[min(100%,18rem)] @min-[36rem]:max-w-lg @min-[36rem]:flex-1"
+            className="flex w-full min-w-0 flex-nowrap gap-1 rounded-md bg-surface-container p-1 shadow-2xs @min-[36rem]:ml-auto @min-[36rem]:w-auto @min-[36rem]:min-w-[min(100%,19rem)] @min-[36rem]:max-w-lg @min-[36rem]:flex-1"
           >
             {hasImages && (
               <button
                 type="button"
                 role="tab"
                 id="tab-photos"
-                aria-label={`Photos ${images.length}`}
+                aria-label={`Photos (${images.length})`}
                 aria-selected={activeTab === "photos"}
                 aria-controls="panel-photos"
                 tabIndex={activeTab === "photos" ? 0 : -1}
@@ -391,8 +468,8 @@ export function ListingGallery({
                   aria-hidden
                 />
                 <span className="truncate @max-[17.9rem]:hidden">Photos</span>
-                <span className="shrink-0 tabular-nums opacity-80">
-                  {images.length}
+                <span className="shrink-0 tabular-nums opacity-85">
+                  ({images.length})
                 </span>
               </button>
             )}
@@ -401,7 +478,7 @@ export function ListingGallery({
                 type="button"
                 role="tab"
                 id="tab-videos"
-                aria-label={`Videos ${videos.length}`}
+                aria-label={`Videos (${videos.length})`}
                 aria-selected={activeTab === "videos"}
                 aria-controls="panel-videos"
                 tabIndex={activeTab === "videos" ? 0 : -1}
@@ -414,8 +491,8 @@ export function ListingGallery({
                   aria-hidden
                 />
                 <span className="truncate @max-[17.9rem]:hidden">Videos</span>
-                <span className="shrink-0 tabular-nums opacity-80">
-                  {videos.length}
+                <span className="shrink-0 tabular-nums opacity-85">
+                  ({videos.length})
                 </span>
               </button>
             )}
@@ -424,7 +501,7 @@ export function ListingGallery({
                 type="button"
                 role="tab"
                 id="tab-documents"
-                aria-label={`Documents ${cadastralMaps.length}`}
+                aria-label={`Documents / Naksa (${cadastralMaps.length})`}
                 aria-selected={activeTab === "documents"}
                 aria-controls="panel-documents"
                 tabIndex={activeTab === "documents" ? 0 : -1}
@@ -438,10 +515,10 @@ export function ListingGallery({
                 />
                 <span className="truncate @max-[17.9rem]:hidden">
                   <span className="@min-[28rem]:hidden">Docs</span>
-                  <span className="hidden @min-[28rem]:inline">Documents</span>
+                  <span className="hidden @min-[28rem]:inline">Naksa / Docs</span>
                 </span>
-                <span className="shrink-0 tabular-nums opacity-80">
-                  {cadastralMaps.length}
+                <span className="shrink-0 tabular-nums opacity-85">
+                  ({cadastralMaps.length})
                 </span>
               </button>
             )}
@@ -449,7 +526,7 @@ export function ListingGallery({
         )}
       </header>
 
-      {/* Photos View */}
+      {/* ─── PHOTOS VIEW ──────────────────────────────────────────────────────── */}
       {showingPhotos && currentImage && (
         <div
           role="tabpanel"
@@ -457,159 +534,147 @@ export function ListingGallery({
           aria-labelledby="tab-photos"
           className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-stretch sm:gap-3"
         >
+          {/* Thumbnails list */}
           {images.length > 1 && (
             <div
               ref={thumbStripRef}
-              className="no-scrollbar flex w-full flex-row gap-2 overflow-x-auto overscroll-x-contain py-1 snap-x sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:snap-y sm:py-0.5"
+              className="no-scrollbar flex w-full flex-row gap-2 overflow-x-auto overscroll-x-contain py-1 sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:py-0.5"
               aria-label="Photo thumbnails"
             >
-              {images.map((image, idx) => (
-                <button
-                  key={`thumb-${image.url}-${idx}`}
-                  type="button"
-                  data-thumb-index={idx}
-                  onClick={() => scrollToPhoto(idx)}
-                  className={cn(
-                    "relative aspect-[4/3] w-14 sm:w-full shrink-0 snap-start overflow-hidden rounded-sm border bg-surface-container transition-all",
-                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
-                    idx === activeImage
-                      ? "border-primary ring-2 ring-primary/30"
-                      : "border-outline-variant/80 opacity-75 hover:border-primary/35 hover:opacity-100",
-                  )}
-                  aria-label={`View photo ${idx + 1}`}
-                  aria-pressed={idx === activeImage}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={image.url}
-                    alt=""
-                    draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onDragStart={(e) => e.preventDefault()}
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))}
+              {images.map((image, idx) => {
+                const isActive = idx === activeImageIndex;
+                return (
+                  <button
+                    key={`photo-thumb-${idx}-${image.url}`}
+                    type="button"
+                    data-thumb-index={idx}
+                    onClick={() => setActiveImageIndex(idx)}
+                    className={cn(
+                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm border bg-surface-container transition-all duration-150 sm:w-full",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
+                      isActive
+                        ? "border-primary ring-2 ring-primary/40 opacity-100 shadow-xs"
+                        : "border-outline-variant/70 opacity-70 hover:border-primary/40 hover:opacity-100",
+                    )}
+                    aria-label={`View photo ${idx + 1}`}
+                    aria-pressed={isActive}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={image.url}
+                      alt=""
+                      draggable={false}
+                      onContextMenu={(e) => e.preventDefault()}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
+                );
+              })}
             </div>
           )}
 
-          <div className="relative w-full min-w-0 flex-1 aspect-[4/3] overflow-hidden rounded-sm border border-outline-variant bg-surface-container sm:aspect-[16/11]">
-            {/* Infinite swipeable slider — renders [lastClone, ...slides, firstClone]
-                so native scroll-snap can loop seamlessly. On settling at either
-                sentinel the onScroll handler instantly teleports to the real slide. */}
+          {/* Main Photo Card Carousel */}
+          <div
+            className="relative aspect-[4/3] w-full min-w-0 flex-1 overflow-hidden rounded-sm border border-outline-variant bg-surface-container select-none sm:aspect-[16/11]"
+            onTouchStart={(e) => {
+              const t = e.touches[0];
+              if (!t) return;
+              touchStartRef.current = {
+                x: t.clientX,
+                y: t.clientY,
+                time: Date.now(),
+              };
+              touchDeltaRef.current = { x: 0, y: 0 };
+            }}
+            onTouchMove={(e) => {
+              const t = e.touches[0];
+              if (!t || !touchStartRef.current) return;
+              touchDeltaRef.current = {
+                x: t.clientX - touchStartRef.current.x,
+                y: t.clientY - touchStartRef.current.y,
+              };
+            }}
+            onTouchEnd={() => {
+              if (!touchStartRef.current) return;
+              const { x: dx, y: dy } = touchDeltaRef.current;
+              // Check if horizontal swipe
+              if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+                if (dx < 0) {
+                  nextPhoto();
+                } else {
+                  prevPhoto();
+                }
+              }
+              touchStartRef.current = null;
+              touchDeltaRef.current = { x: 0, y: 0 };
+            }}
+          >
+            {/* Slide Image Container */}
             <div
-              ref={photoTrackRef}
-              onScroll={handlePhotoTrackScroll}
-              aria-label="Photo viewer — swipe to browse"
-              className="no-scrollbar flex h-full w-full snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
-              style={{
-                scrollbarWidth: "none",
-                msOverflowStyle: "none",
-                touchAction: "pan-x pan-y pinch-zoom",
-              }}
+              className="relative h-full w-full cursor-zoom-in overflow-hidden"
+              onClick={() => openLightbox("photos", activeImageIndex)}
             >
-              {/* Left sentinel — clone of last slide */}
-              {images.length > 1 && (() => {
-                const clone = images[images.length - 1]!;
-                return (
-                  <div
-                    aria-hidden
-                    className="relative h-full w-full shrink-0 snap-start"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={clone.url}
-                      alt=""
-                      draggable={false}
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                );
-              })()}
-
-              {images.map((image, idx) => (
-                <button
-                  key={`slide-${image.url}-${idx}`}
-                  type="button"
-                  onClick={() => openPhotoLightboxAt(idx)}
-                  className="group relative h-full w-full shrink-0 cursor-zoom-in snap-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40"
-                  aria-label={`Open photo ${idx + 1}`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={image.url}
-                    alt=""
-                    loading={idx === activeImage ? "eager" : "lazy"}
-                    decoding="async"
-                    draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onDragStart={(e) => e.preventDefault()}
-                    className="h-full w-full object-contain transition-transform duration-200 group-hover:scale-[1.01]"
-                  />
-                </button>
-              ))}
-
-              {/* Right sentinel — clone of first slide */}
-              {images.length > 1 && (() => {
-                const clone = images[0]!;
-                return (
-                  <div
-                    aria-hidden
-                    className="relative h-full w-full shrink-0 snap-start"
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={clone.url}
-                      alt=""
-                      draggable={false}
-                      className="h-full w-full object-contain"
-                    />
-                  </div>
-                );
-              })()}
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                key={currentImage.url}
+                src={currentImage.url}
+                alt={currentImage.altText ?? `${title} - photo ${activeImageIndex + 1}`}
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+                className="h-full w-full object-contain transition-transform duration-250 ease-out hover:scale-[1.01]"
+              />
             </div>
 
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-2 bg-gradient-to-t from-black/50 to-transparent px-3 pb-3 pt-12">
-              <span className="rounded-sm bg-surface/95 px-2.5 py-1 text-[11px] font-medium tabular-nums text-on-surface shadow-xs backdrop-blur-sm">
-                {activeImage + 1} / {images.length}
+            {/* Counter Badge */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 pt-8">
+              <span className="rounded-sm bg-black/65 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-white backdrop-blur-md">
+                {activeImageIndex + 1} / {images.length}
               </span>
             </div>
 
+            {/* Left/Right Navigation Arrows */}
             {images.length > 1 && (
               <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3">
                 <button
                   type="button"
                   aria-label="Previous photo"
-                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-xs backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-10 sm:w-10"
-                  onClick={showPrevPhoto}
+                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    prevPhoto();
+                  }}
                 >
-                  <Icon name="chevron_left" className="text-[20px]" />
+                  <Icon name="chevron_left" className="text-[22px]" />
                 </button>
                 <button
                   type="button"
                   aria-label="Next photo"
-                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-xs backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:h-10 sm:w-10"
-                  onClick={showNextPhoto}
+                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    nextPhoto();
+                  }}
                 >
-                  <Icon name="chevron_right" className="text-[20px]" />
+                  <Icon name="chevron_right" className="text-[22px]" />
                 </button>
               </div>
             )}
 
+            {/* Expand / Lightbox Trigger Button */}
             <button
               type="button"
-              onClick={openPhotoLightbox}
-              className="absolute right-2 top-2 flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-xs backdrop-blur-sm transition-all duration-150 hover:bg-surface focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95 sm:right-3 sm:top-3 sm:h-10 sm:w-10"
-              aria-label="View all photos"
+              onClick={() => openLightbox("photos", activeImageIndex)}
+              className="absolute right-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
+              aria-label="Open fullscreen gallery"
+              title="Open full view"
             >
-              <Icon name="fullscreen" className="text-[17px]" />
+              <Icon name="fullscreen" className="text-[19px]" />
             </button>
           </div>
-
         </div>
       )}
 
-      {/* Videos View */}
+      {/* ─── VIDEOS VIEW ──────────────────────────────────────────────────────── */}
       {showingVideos && activeVideo && (
         <div
           role="tabpanel"
@@ -618,20 +683,24 @@ export function ListingGallery({
           className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-stretch sm:gap-3"
         >
           {videos.length > 1 && (
-            <div className="no-scrollbar flex w-full flex-row gap-2 overflow-x-auto overscroll-x-contain py-1 snap-x sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:snap-y sm:py-0.5" aria-label="Video thumbnails">
+            <div
+              ref={videoThumbStripRef}
+              className="no-scrollbar flex w-full flex-row gap-2 overflow-x-auto overscroll-x-contain py-1 sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:py-0.5"
+              aria-label="Video thumbnails"
+            >
               {videos.map((video, idx) => {
                 const isActive = idx === activeVideoIndex;
                 return (
                   <button
-                    key={`vid-thumb-${idx}`}
+                    key={`vid-thumb-${idx}-${video.url}`}
                     type="button"
                     onClick={() => setActiveVideoIndex(idx)}
                     className={cn(
-                      "group relative aspect-[4/3] w-14 sm:w-full shrink-0 snap-start overflow-hidden rounded-sm border bg-surface-container transition-all",
+                      "group relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm border bg-surface-container transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
-                        ? "border-primary ring-2 ring-primary/30"
-                        : "border-outline-variant/80 opacity-75 hover:border-primary/35 hover:opacity-100",
+                        ? "border-primary ring-2 ring-primary/40 opacity-100 shadow-xs"
+                        : "border-outline-variant/70 opacity-70 hover:border-primary/40 hover:opacity-100",
                     )}
                     aria-label={`Play video ${idx + 1}`}
                     aria-pressed={isActive}
@@ -640,11 +709,11 @@ export function ListingGallery({
                       url={video.url}
                       alt={video.altText ?? `Video ${idx + 1} thumbnail`}
                     />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/25 transition-opacity group-hover:bg-black/35">
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/30 transition-opacity group-hover:bg-black/45">
                       <Icon
                         name="play_circle"
                         className={cn(
-                          "text-[22px] sm:text-[28px] text-white drop-shadow-md",
+                          "text-[22px] text-white drop-shadow-md sm:text-[26px]",
                           isActive && "text-primary",
                         )}
                       />
@@ -654,56 +723,47 @@ export function ListingGallery({
               })}
             </div>
           )}
-          <div
-            className="relative w-full min-w-0 flex-1 overflow-hidden rounded-sm border border-outline-variant bg-surface-container"
-            onTouchStart={(e) => { videoSwipeRef.current = e.touches[0]?.clientX ?? null; }}
-            onTouchEnd={(e) => {
-              const startX = videoSwipeRef.current;
-              if (startX === null) return;
-              const dx = (e.changedTouches[0]?.clientX ?? startX) - startX;
-              if (Math.abs(dx) < 40) return;
-              setActiveVideoIndex((i) =>
-                dx < 0
-                  ? (i + 1) % videos.length
-                  : (i - 1 + videos.length) % videos.length,
-              );
-              videoSwipeRef.current = null;
-            }}
-          >
+
+          <div className="relative w-full min-w-0 flex-1 overflow-hidden rounded-sm border border-outline-variant bg-surface-container">
             <ListingVideo
               url={activeVideo.url}
               title={activeVideo.altText ?? `${title} — video walkthrough`}
             />
+
             {videos.length > 1 && (
-              <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
+              <div className="pointer-events-none absolute inset-x-0 bottom-2.5 flex items-center justify-between px-3">
                 <button
                   type="button"
                   aria-label="Previous video"
-                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/90 text-on-surface shadow-xs backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
-                  onClick={() => setActiveVideoIndex((i) => (i - 1 + videos.length) % videos.length)}
+                  className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-sm bg-surface/90 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
+                  onClick={() =>
+                    setActiveVideoIndex(
+                      (i) => (i - 1 + videos.length) % videos.length,
+                    )
+                  }
                 >
-                  <Icon name="chevron_left" className="text-[20px]" />
+                  <Icon name="chevron_left" className="text-[18px]" />
                 </button>
+                <span className="rounded-sm bg-black/60 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                  Video {activeVideoIndex + 1} of {videos.length}
+                </span>
                 <button
                   type="button"
                   aria-label="Next video"
-                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/90 text-on-surface shadow-xs backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
-                  onClick={() => setActiveVideoIndex((i) => (i + 1) % videos.length)}
+                  className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-sm bg-surface/90 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
+                  onClick={() =>
+                    setActiveVideoIndex((i) => (i + 1) % videos.length)
+                  }
                 >
-                  <Icon name="chevron_right" className="text-[20px]" />
+                  <Icon name="chevron_right" className="text-[18px]" />
                 </button>
               </div>
             )}
           </div>
-
-          <p className="text-xs leading-5 text-on-surface-variant">
-            Video walkthroughs show the property as-is. Verify dimensions and
-            condition during your site visit.
-          </p>
         </div>
       )}
 
-      {/* Documents View — naksa (cadastral map) only */}
+      {/* ─── DOCUMENTS / NAKSA (CADASTRAL MAP) VIEW ──────────────────────────── */}
       {showingDocs && activeDoc && (
         <div
           role="tabpanel"
@@ -712,22 +772,26 @@ export function ListingGallery({
           className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-stretch sm:gap-3"
         >
           {cadastralMaps.length > 1 && (
-            <div className="no-scrollbar flex w-full flex-row gap-2 overflow-x-auto overscroll-x-contain py-1 snap-x sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:snap-y sm:py-0.5" aria-label="Naksa thumbnails">
+            <div
+              ref={docThumbStripRef}
+              className="no-scrollbar flex w-full flex-row gap-2 overflow-x-auto overscroll-x-contain py-1 sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:py-0.5"
+              aria-label="Naksa thumbnails"
+            >
               {cadastralMaps.map((map, idx) => {
                 const isActive = idx === activeDocIndex;
                 return (
                   <button
-                    key={`naksa-thumb-${map.url}-${idx}`}
+                    key={`naksa-thumb-${idx}-${map.url}`}
                     type="button"
                     onClick={() => setActiveDocIndex(idx)}
                     className={cn(
-                      "relative aspect-[4/3] w-14 sm:w-full shrink-0 snap-start overflow-hidden rounded-sm border bg-surface-container transition-all",
+                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm border bg-surface transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
-                        ? "border-primary ring-2 ring-primary/30"
-                        : "border-outline-variant/80 opacity-75 hover:border-primary/35 hover:opacity-100",
+                        ? "border-primary ring-2 ring-primary/40 opacity-100 shadow-xs"
+                        : "border-outline-variant/70 opacity-70 hover:border-primary/40 hover:opacity-100",
                     )}
-                    aria-label={`View naksa ${idx + 1}`}
+                    aria-label={`View cadastral map ${idx + 1}`}
                     aria-pressed={isActive}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -736,7 +800,6 @@ export function ListingGallery({
                       alt=""
                       draggable={false}
                       onContextMenu={(e) => e.preventDefault()}
-                      onDragStart={(e) => e.preventDefault()}
                       className="h-full w-full object-contain p-1"
                     />
                   </button>
@@ -744,189 +807,429 @@ export function ListingGallery({
               })}
             </div>
           )}
+
           <div className="min-w-0 flex-1 overflow-hidden rounded-sm border border-outline-variant bg-surface">
-            <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-3 py-2.5 sm:px-4">
+            {/* Top Toolbar inside Document Card */}
+            <div className="flex items-center justify-between gap-3 border-b border-outline-variant bg-surface-container/40 px-3.5 py-2 sm:px-4">
               <div className="flex min-w-0 items-center gap-2">
-                <span className="inline-flex shrink-0 items-center rounded-sm bg-primary/10 px-2 py-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-primary">
+                <span className="inline-flex shrink-0 items-center rounded-sm bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
                   Naksa
+                </span>
+                <span className="truncate text-xs font-semibold text-navy">
+                  Cadastral Map (Parcel Record)
                 </span>
               </div>
               <div className="flex shrink-0 items-center gap-2">
                 {cadastralMaps.length > 1 && (
-                  <span className="text-xs tabular-nums text-on-surface-variant">
+                  <span className="text-xs font-medium tabular-nums text-on-surface-variant">
                     {activeDocIndex + 1} / {cadastralMaps.length}
                   </span>
                 )}
-                <button
+                <Button
                   type="button"
-                  onClick={openDocLightbox}
-                  className="flex h-9 w-9 items-center justify-center rounded-sm text-on-surface transition-colors hover:bg-surface-container focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
-                  aria-label="Open naksa full view"
+                  variant="outline"
+                  size="sm"
+                  onClick={() => openLightbox("documents", activeDocIndex)}
+                  className="h-7 gap-1 px-2 text-xs font-medium text-navy hover:border-primary hover:text-primary"
                 >
-                  <Icon name="fullscreen" className="text-[17px]" />
-                </button>
+                  <Icon name="zoom_in" className="text-[16px]" />
+                  <span>Inspect &amp; Zoom</span>
+                </Button>
               </div>
             </div>
 
+            {/* Document Interactive Preview Card */}
             <div
-              className="relative"
-              onTouchStart={(e) => { docSwipeRef.current = e.touches[0]?.clientX ?? null; }}
-              onTouchEnd={(e) => {
-                const startX = docSwipeRef.current;
-                if (startX === null) return;
-                const dx = (e.changedTouches[0]?.clientX ?? startX) - startX;
-                if (Math.abs(dx) < 40) return;
-                setActiveDocIndex((i) =>
-                  dx < 0
-                    ? (i + 1) % cadastralMaps.length
-                    : (i - 1 + cadastralMaps.length) % cadastralMaps.length,
-                );
-                docSwipeRef.current = null;
-              }}
+              className="group relative aspect-[4/3] w-full cursor-zoom-in bg-surface-container/20 sm:aspect-[16/11]"
+              onClick={() => openLightbox("documents", activeDocIndex)}
             >
-              <button
-                type="button"
-                onClick={openDocLightbox}
-                className="group relative block aspect-[4/3] w-full cursor-zoom-in bg-surface-container/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-primary/40 sm:aspect-[16/11]"
-                aria-label="Open naksa full view"
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={activeDoc.url}
-                  alt={activeDoc.altText ?? "Naksa (Cadastral Map)"}
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
-                  className="h-full w-full object-contain p-3 transition-transform duration-200 group-hover:scale-[1.01] sm:p-4"
-                />
-              </button>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={activeDoc.url}
+                alt={activeDoc.altText ?? "Naksa (Cadastral Map)"}
+                draggable={false}
+                onContextMenu={(e) => e.preventDefault()}
+                className="h-full w-full object-contain p-3 transition-transform duration-200 group-hover:scale-[1.015] sm:p-4"
+              />
+
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-150 group-hover:bg-black/5">
+                <div className="pointer-events-none flex items-center gap-1.5 rounded-sm bg-surface/90 px-3 py-1.5 text-xs font-semibold text-navy shadow-sm backdrop-blur-sm opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                  <Icon name="zoom_in" className="text-[16px] text-primary" />
+                  <span>Click to zoom &amp; inspect boundaries</span>
+                </div>
+              </div>
+
               {cadastralMaps.length > 1 && (
                 <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
                   <button
                     type="button"
                     aria-label="Previous document"
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-md bg-surface/90 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
-                    onClick={() => setActiveDocIndex((i) => (i - 1 + cadastralMaps.length) % cadastralMaps.length)}
+                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDocIndex(
+                        (i) =>
+                          (i - 1 + cadastralMaps.length) % cadastralMaps.length,
+                      );
+                    }}
                   >
-                    <Icon name="chevron_left" className="text-[22px]" />
+                    <Icon name="chevron_left" className="text-[20px]" />
                   </button>
                   <button
                     type="button"
                     aria-label="Next document"
-                    className="pointer-events-auto flex h-10 w-10 items-center justify-center rounded-md bg-surface/90 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
-                    onClick={() => setActiveDocIndex((i) => (i + 1) % cadastralMaps.length)}
+                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setActiveDocIndex(
+                        (i) => (i + 1) % cadastralMaps.length,
+                      );
+                    }}
                   >
-                    <Icon name="chevron_right" className="text-[22px]" />
+                    <Icon name="chevron_right" className="text-[20px]" />
                   </button>
                 </div>
               )}
             </div>
+
+            <div className="border-t border-outline-variant/60 bg-surface-container/20 px-3.5 py-2">
+              <p className="text-[11px] leading-relaxed text-on-surface-variant">
+                Naksa (cadastral map) is the official public land record showing
+                parcel boundaries and access roads. Click to zoom in high
+                resolution.
+              </p>
+            </div>
           </div>
-
-
-          <p className="text-xs leading-5 text-on-surface-variant">
-            Naksa (cadastral map) is a public land record showing the parcel
-            boundaries. Verify it during your site visit.
-          </p>
         </div>
       )}
 
-      {/* Lightbox Dialog */}
-      {lightboxOpen && (currentImage || lightboxImageSrc) && (
+      {/* ─── FULL-FEATURED UNIFIED LIGHTBOX MODAL ────────────────────────────── */}
+      {lightboxOpen && (
         <div
+          ref={lightboxContainerRef}
           role="dialog"
           aria-modal="true"
-          aria-label="Media gallery viewer"
-          ref={lightboxRef}
-          className="fixed inset-0 z-50 flex flex-col bg-on-surface/95 p-4 sm:p-6 backdrop-blur-md"
-          onClick={closeLightbox}
+          aria-label="Media Lightbox Viewer"
+          className="fixed inset-0 z-50 flex flex-col bg-navy-deep/95 text-surface select-none backdrop-blur-xl animate-in fade-in duration-200"
+          onClick={(e) => {
+            if (e.target === e.currentTarget && zoomScale <= 1) {
+              closeLightbox();
+            }
+          }}
         >
-          <div className="mb-3 flex items-center justify-between text-surface">
-            <p className="text-sm font-medium tabular-nums">
-              {lightboxImageSrc
-                ? (lightboxCaption ?? "Naksa (Cadastral Map)")
-                : `${activeImage + 1} of ${images.length} photos`}
-            </p>
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              aria-label="Close gallery"
-              className="text-surface hover:bg-surface/10"
-              onClick={closeLightbox}
-            >
-              <Icon name="close" className="text-[22px]" />
-            </Button>
-          </div>
-
-          <div
-            className="mx-auto flex min-h-0 w-full max-w-6xl flex-1 items-center gap-3 sm:gap-4"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {!lightboxImageSrc && images.length > 1 && (
-              <button
-                type="button"
-                aria-label="Previous photo"
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
-                onClick={showPrevPhoto}
-              >
-                <Icon name="chevron_left" className="text-[24px]" />
-              </button>
-            )}
-
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={lightboxImageSrc ?? (currentImage ? currentImage.url : "")}
-              alt={lightboxCaption ?? currentImage?.altText ?? title}
-              draggable={false}
-              onContextMenu={(e) => e.preventDefault()}
-              onDragStart={(e) => e.preventDefault()}
-              className="mx-auto max-h-full min-w-0 flex-1 rounded-lg object-contain"
-            />
-
-            {!lightboxImageSrc && images.length > 1 && (
-              <button
-                type="button"
-                aria-label="Next photo"
-                className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-surface text-on-surface shadow-md transition-all duration-150 hover:bg-surface-container hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 active:scale-95"
-                onClick={showNextPhoto}
-              >
-                <Icon name="chevron_right" className="text-[24px]" />
-              </button>
-            )}
-          </div>
-
-          {!lightboxImageSrc && images.length > 1 && (
-            <div
-              className="mx-auto mt-3 grid max-w-5xl grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {images.map((image, idx) => (
-                <button
-                  key={`lb-${image.url}-${idx}`}
-                  type="button"
-                  onClick={() => setActiveImage(idx)}
-                  aria-label={`View photo ${idx + 1}`}
-                  aria-current={idx === activeImage ? "true" : undefined}
-                  className={cn(
-                    "aspect-video overflow-hidden rounded-md transition-all",
-                    idx === activeImage
-                      ? "ring-2 ring-primary"
-                      : "opacity-70 hover:opacity-100",
-                  )}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={image.url}
-                    alt=""
-                    draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onDragStart={(e) => e.preventDefault()}
-                    className="h-full w-full object-cover"
-                  />
-                </button>
-              ))}
+          {/* Top Bar: Title, Category Badge, Zoom Controls, Actions */}
+          <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-black/40 px-3.5 py-2.5 backdrop-blur-md sm:px-6">
+            <div className="flex min-w-0 items-center gap-3">
+              <span className="inline-flex shrink-0 items-center rounded-sm bg-primary/25 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+                {lightboxTab === "photos"
+                  ? "Photo"
+                  : lightboxTab === "documents"
+                    ? "Naksa"
+                    : "Video"}
+              </span>
+              <div className="min-w-0">
+                <p className="truncate text-xs font-semibold text-surface sm:text-sm">
+                  {lightboxCurrentMedia.alt || title}
+                </p>
+                <p className="text-[11px] font-medium tabular-nums text-surface-variant/80">
+                  {lightboxIndex + 1} of {getLightboxMediaCount()}
+                </p>
+              </div>
             </div>
+
+            {/* Center / Right Controls Toolbar */}
+            <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+              {/* Zoom controls for Photos and Documents */}
+              {lightboxTab !== "videos" && (
+                <div className="flex items-center gap-0.5 rounded-md border border-white/10 bg-white/5 p-0.5">
+                  <button
+                    type="button"
+                    onClick={handleZoomOut}
+                    disabled={zoomScale <= 1}
+                    className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 disabled:opacity-30 sm:h-8 sm:w-8"
+                    title="Zoom out (-)"
+                    aria-label="Zoom out"
+                  >
+                    <Icon name="zoom_out" className="text-[18px]" />
+                  </button>
+
+                  <span className="min-w-[3rem] text-center text-[11px] font-semibold tabular-nums text-surface/90">
+                    {Math.round(zoomScale * 100)}%
+                  </span>
+
+                  <button
+                    type="button"
+                    onClick={handleZoomIn}
+                    disabled={zoomScale >= 4}
+                    className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 disabled:opacity-30 sm:h-8 sm:w-8"
+                    title="Zoom in (+)"
+                    aria-label="Zoom in"
+                  >
+                    <Icon name="zoom_in" className="text-[18px]" />
+                  </button>
+
+                  {zoomScale > 1 && (
+                    <button
+                      type="button"
+                      onClick={resetZoom}
+                      className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 sm:h-8 sm:w-8"
+                      title="Reset zoom (0)"
+                      aria-label="Reset zoom"
+                    >
+                      <Icon name="restart_alt" className="text-[18px]" />
+                    </button>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={handleRotate}
+                    className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 sm:h-8 sm:w-8"
+                    title="Rotate 90° (r)"
+                    aria-label="Rotate"
+                  >
+                    <Icon name="rotate_right" className="text-[18px]" />
+                  </button>
+                </div>
+              )}
+
+              {/* Open High-Res in New Tab */}
+              {lightboxCurrentMedia.url && (
+                <a
+                  href={lightboxCurrentMedia.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hidden h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-white/5 text-surface transition-colors hover:bg-white/15 sm:flex"
+                  title="Open original file"
+                  aria-label="Open original"
+                >
+                  <Icon name="open_in_new" className="text-[17px]" />
+                </a>
+              )}
+
+              {/* Fullscreen Toggle */}
+              <button
+                type="button"
+                onClick={toggleFullscreen}
+                className="hidden h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-white/5 text-surface transition-colors hover:bg-white/15 sm:flex"
+                title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen (f)"}
+                aria-label="Toggle fullscreen"
+              >
+                <Icon
+                  name={isFullscreen ? "fullscreen_exit" : "fullscreen"}
+                  className="text-[18px]"
+                />
+              </button>
+
+              {/* Close Button */}
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                onClick={closeLightbox}
+                className="h-8 w-8 rounded-md bg-white/10 text-white hover:bg-white/20 active:scale-95"
+                aria-label="Close viewer (Esc)"
+              >
+                <Icon name="close" className="text-[20px]" />
+              </Button>
+            </div>
+          </header>
+
+          {/* Main Stage */}
+          <div
+            className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden p-2 sm:p-4"
+            onWheel={(e) => {
+              if (lightboxTab === "videos") return;
+              e.preventDefault();
+              if (e.deltaY < 0) {
+                setZoomScale((prev) => Math.min(prev + 0.25, 4));
+              } else if (e.deltaY > 0) {
+                setZoomScale((prev) => {
+                  const next = Math.max(prev - 0.25, 1);
+                  if (next === 1) {
+                    setPanOffset({ x: 0, y: 0 });
+                    panCurrentOffsetRef.current = { x: 0, y: 0 };
+                  }
+                  return next;
+                });
+              }
+            }}
+            onMouseDown={(e) => {
+              if (zoomScale <= 1 || lightboxTab === "videos") return;
+              e.preventDefault();
+              setIsPanning(true);
+              panStartRef.current = {
+                x: e.clientX - panOffset.x,
+                y: e.clientY - panOffset.y,
+              };
+            }}
+            onMouseMove={(e) => {
+              if (!isPanning || zoomScale <= 1) return;
+              const newX = e.clientX - panStartRef.current.x;
+              const newY = e.clientY - panStartRef.current.y;
+              setPanOffset({ x: newX, y: newY });
+              panCurrentOffsetRef.current = { x: newX, y: newY };
+            }}
+            onMouseUp={() => setIsPanning(false)}
+            onMouseLeave={() => setIsPanning(false)}
+            onTouchStart={(e) => {
+              const t = e.touches[0];
+              if (!t) return;
+              if (zoomScale > 1) {
+                setIsPanning(true);
+                panStartRef.current = {
+                  x: t.clientX - panOffset.x,
+                  y: t.clientY - panOffset.y,
+                };
+              } else {
+                lightboxTouchStartRef.current = {
+                  x: t.clientX,
+                  y: t.clientY,
+                  time: Date.now(),
+                };
+              }
+            }}
+            onTouchMove={(e) => {
+              const t = e.touches[0];
+              if (!t) return;
+              if (zoomScale > 1 && isPanning) {
+                const newX = t.clientX - panStartRef.current.x;
+                const newY = t.clientY - panStartRef.current.y;
+                setPanOffset({ x: newX, y: newY });
+                panCurrentOffsetRef.current = { x: newX, y: newY };
+              }
+            }}
+            onTouchEnd={(e) => {
+              setIsPanning(false);
+              if (zoomScale <= 1 && lightboxTouchStartRef.current) {
+                const t = e.changedTouches[0];
+                if (t) {
+                  const dx = t.clientX - lightboxTouchStartRef.current.x;
+                  const dy = t.clientY - lightboxTouchStartRef.current.y;
+                  if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
+                    if (dx < 0) {
+                      nextLightboxItem();
+                    } else {
+                      prevLightboxItem();
+                    }
+                  }
+                }
+                lightboxTouchStartRef.current = null;
+              }
+            }}
+          >
+            {/* Left Nav Arrow */}
+            {getLightboxMediaCount() > 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  prevLightboxItem();
+                }}
+                className="absolute left-3 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white shadow-xl backdrop-blur-md transition-all duration-150 hover:bg-black/85 hover:scale-105 active:scale-95 sm:left-6 sm:h-13 sm:w-13"
+                aria-label="Previous item"
+              >
+                <Icon name="chevron_left" className="text-[26px] sm:text-[30px]" />
+              </button>
+            )}
+
+            {/* Media Content Display */}
+            <div
+              className={cn(
+                "relative flex h-full w-full items-center justify-center transition-transform duration-100",
+                isPanning && "cursor-grabbing",
+                zoomScale > 1 && !isPanning && "cursor-grab",
+              )}
+            >
+              {lightboxTab === "videos" ? (
+                <div className="h-full max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-xl bg-black shadow-2xl">
+                  <ListingVideo
+                    url={lightboxCurrentMedia.url}
+                    title={lightboxCurrentMedia.alt}
+                  />
+                </div>
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={lightboxCurrentMedia.url}
+                  alt={lightboxCurrentMedia.alt}
+                  draggable={false}
+                  onContextMenu={(e) => e.preventDefault()}
+                  onDoubleClick={(e) => {
+                    toggleDoubleTapZoom(e.clientX, e.clientY);
+                  }}
+                  style={{
+                    transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
+                    transformOrigin: "center center",
+                    transition: isPanning ? "none" : "transform 150ms ease-out",
+                  }}
+                  className="max-h-full max-w-full rounded-md object-contain shadow-2xl"
+                />
+              )}
+            </div>
+
+            {/* Right Nav Arrow */}
+            {getLightboxMediaCount() > 1 && (
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  nextLightboxItem();
+                }}
+                className="absolute right-3 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white shadow-xl backdrop-blur-md transition-all duration-150 hover:bg-black/85 hover:scale-105 active:scale-95 sm:right-6 sm:h-13 sm:w-13"
+                aria-label="Next item"
+              >
+                <Icon name="chevron_right" className="text-[26px] sm:text-[30px]" />
+              </button>
+            )}
+          </div>
+
+          {/* Bottom Filmstrip Thumbnails */}
+          {getLightboxMediaCount() > 1 && (
+            <footer className="border-t border-white/10 bg-black/50 px-4 py-2.5 backdrop-blur-md">
+              <div
+                ref={lightboxThumbStripRef}
+                className="no-scrollbar mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto py-1"
+                aria-label="Lightbox thumbnails filmstrip"
+              >
+                {(lightboxTab === "photos"
+                  ? images
+                  : lightboxTab === "documents"
+                    ? cadastralMaps
+                    : videos
+                ).map((item, idx) => {
+                  const isActive = idx === lightboxIndex;
+                  return (
+                    <button
+                      key={`lb-thumb-${idx}-${item.url}`}
+                      type="button"
+                      data-lb-thumb-index={idx}
+                      onClick={() => {
+                        resetZoom();
+                        setLightboxIndex(idx);
+                      }}
+                      className={cn(
+                        "relative aspect-[4/3] h-14 shrink-0 overflow-hidden rounded-sm border bg-black/40 transition-all duration-150",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                        isActive
+                          ? "border-primary ring-2 ring-primary/80 opacity-100 scale-105 shadow-md"
+                          : "border-white/20 opacity-55 hover:border-white/60 hover:opacity-100",
+                      )}
+                      aria-label={`Go to item ${idx + 1}`}
+                      aria-pressed={isActive}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.url}
+                        alt=""
+                        draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        className="h-full w-full object-cover"
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </footer>
           )}
         </div>
       )}
