@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { Button, Icon } from "@repo/ui";
+import { Icon } from "@repo/ui";
 import { useContentStore } from "store/content";
 import { fetchCmsHeroBanners, type CmsHeroSlide } from "lib/api/services/cms";
 import type { HeroSlide } from "constants/varibles-constants";
@@ -22,7 +21,6 @@ function toSlide(item: CmsHeroSlide): Slide {
 }
 
 function HeroBannerCarousel() {
-  const router = useRouter();
   const heroEnabled = useContentStore((s) => s.heroEnabled);
   const storeSlides = useContentStore((s) => s.heroSlides);
   const [cmsSlides, setCmsSlides] = useState<CmsHeroSlide[] | null>(null);
@@ -70,6 +68,8 @@ function HeroBannerCarousel() {
 
   if (!heroEnabled || heroSlides.length === 0) return null;
 
+  const activeSlide = heroSlides[current];
+
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches[0]) {
       setTouchStart(e.touches[0].clientX);
@@ -91,10 +91,25 @@ function HeroBannerCarousel() {
 
   return (
     <section
-      className="relative w-full h-[260px] sm:h-[300px] md:h-[40vh] md:min-h-[380px] md:max-h-[520px] overflow-hidden"
+      className="relative w-full overflow-hidden bg-navy-deep"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
+      aria-label={activeSlide?.headline || "Hero banner"}
     >
+      {/* Visually hidden page H1 — banner art carries the visible messaging */}
+      <h1 className="sr-only">{activeSlide?.headline}</h1>
+
+      {/* Intrinsic-height spacer: sizes the banner to the full image aspect
+          so wide desktop artwork isn't cropped on mobile (object-cover). */}
+      {/* eslint-disable-next-line @next/next/no-img-element -- height driver */}
+      <img
+        src={activeSlide?.image}
+        alt=""
+        aria-hidden
+        draggable={false}
+        className="block w-full h-auto opacity-0 pointer-events-none select-none"
+      />
+
       {heroSlides.map((slide, index) => (
         <div
           key={slide.key ?? index}
@@ -105,59 +120,17 @@ function HeroBannerCarousel() {
           onTouchEnd={handleTouchEnd}
           aria-hidden={index !== current}
         >
-          {/* Background image — <img> with object-cover gives better
-              mobile crop control than background-image */}
           {/* eslint-disable-next-line @next/next/no-img-element -- hero slide image */}
           <img
             src={slide.image}
             alt=""
             aria-hidden
             draggable={false}
-            className="absolute inset-0 h-full w-full object-cover object-center"
+            className="absolute inset-0 h-full w-full object-contain object-center"
           />
-          {/* Gradient overlay — navy-tinted to echo the brand roundel */}
-          <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/85 via-navy/45 to-navy/5" />
-          <div className="absolute inset-x-0 bottom-0 h-16 md:h-40 bg-gradient-to-t from-navy-deep/70 to-transparent" />
-          {/* Content */}
-          <div className="relative z-20 flex items-center h-full max-w-container-max mx-auto px-gutter py-4 md:py-0">
-            <div className="text-white max-w-2xl">
-              <p className="mb-2 md:mb-4 flex items-center gap-2 md:gap-3 font-label-sm text-[9px] md:text-[11px] font-bold uppercase tracking-[0.16em] md:tracking-[0.22em] text-gold">
-                <span className="h-px w-5 md:w-8 bg-gold/70" aria-hidden />
-                Nepal&apos;s Verified Land Archive
-              </p>
-              {/* Only the active slide renders the page's single <h1>;
-                  inactive slides use <p> so the DOM never has multiple H1s. */}
-              {index === current ? (
-                <h1 className="font-display-lg text-[22px] sm:text-3xl md:text-display-lg leading-[1.15] md:leading-tight mb-2 md:mb-4 line-clamp-2 md:line-clamp-none">
-                  {slide.headline}
-                </h1>
-              ) : (
-                <p className="font-display-lg text-[22px] sm:text-3xl md:text-display-lg leading-[1.15] md:leading-tight mb-2 md:mb-4 line-clamp-2 md:line-clamp-none">
-                  {slide.headline}
-                </p>
-              )}
-              <p className="font-body-lg text-xs sm:text-sm md:text-body-lg text-white/85 leading-snug md:leading-relaxed mb-3 md:mb-8 line-clamp-2 md:line-clamp-none">
-                {slide.subheadline}
-              </p>
-              <div className="flex flex-wrap gap-2 md:gap-3">
-                <Button
-                  size="sm"
-                  className="h-8 px-4 text-xs md:h-10 md:px-6 md:text-sm bg-gold text-on-gold shadow-lg shadow-navy-deep/30 hover:bg-gold/90"
-                  onClick={() => router.push(slide.ctaHref || "/")}
-                >
-                  {slide.ctaPrimary}
-                </Button>
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="hidden sm:inline-flex h-8 px-4 text-xs md:h-10 md:px-6 md:text-sm border-white/40 text-white hover:border-gold/70 hover:bg-white/10 shadow-lg"
-                  onClick={() => router.push("/nrn-concierge")}
-                >
-                  {slide.ctaSecondary}
-                </Button>
-              </div>
-            </div>
-          </div>
+          {/* Soft overlays so carousel controls stay readable */}
+          <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/25 via-transparent to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-16 md:h-28 bg-gradient-to-t from-navy-deep/50 to-transparent" />
         </div>
       ))}
 
