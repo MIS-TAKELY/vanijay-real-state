@@ -2,12 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Hero,
-  CTA,
-  HowItWorks,
-  CategoryGrid,
-  RateCatalog,
-  Calculator,
+  ScrapeHome,
   type CTAContent,
   type HowItWorksStep,
   type TrustBadge,
@@ -21,7 +16,6 @@ import { cmsListItems, cmsUpsertItem } from "lib/api";
 /* ── Types ── */
 
 interface ScrapeCmsData {
-  hero: Record<string, string>;
   cta: Partial<CTAContent>;
   howItWorks: {
     heading?: string;
@@ -30,18 +24,6 @@ interface ScrapeCmsData {
     trust?: TrustBadge[];
   };
 }
-
-const DEFAULT_CTA: CTAContent = {
-  heading: "Your kabadi is worth",
-  headingHighlight: "more than you think.",
-  description:
-    "Check the rates, run the calculator, then book a pickup. We collect from your doorstep — same day in the Valley — and pay cash on the spot.",
-  primaryButtonText: "Book a pickup",
-  primaryButtonHref: "#how-it-works",
-  secondaryButtonText: "9702634469",
-  secondaryButtonHref: "tel:9800522234",
-  phone: "9702634469",
-};
 
 const DEFAULT_STEPS: HowItWorksStep[] = [
   {
@@ -93,7 +75,6 @@ export function ScrapeVisualEditor({
   onSaved,
 }: ScrapeVisualEditorProps) {
   const [data, setData] = useState<ScrapeCmsData>({
-    hero: {},
     cta: {},
     howItWorks: {},
   });
@@ -110,13 +91,11 @@ export function ScrapeVisualEditor({
       setLoading(true);
       try {
         const items = await cmsListItems("KABADI");
-        const merged: ScrapeCmsData = { hero: {}, cta: {}, howItWorks: {} };
+        const merged: ScrapeCmsData = { cta: {}, howItWorks: {} };
 
         for (const item of items) {
           const meta = (item.metadata as Record<string, unknown>) ?? {};
-          if (item.slot === "HERO") {
-            merged.hero = meta as Record<string, string>;
-          } else if (item.slot === "CTA") {
+          if (item.slot === "CTA") {
             merged.cta = meta as Partial<CTAContent>;
           } else if (item.slot === "HOW_IT_WORKS") {
             merged.howItWorks = meta as ScrapeCmsData["howItWorks"];
@@ -135,10 +114,6 @@ export function ScrapeVisualEditor({
 
   // Merge edits on top of loaded data for live preview
   const previewData: ScrapeCmsData = {
-    hero: {
-      ...data.hero,
-      ...(editsRef.current["hero"] as Record<string, string> | undefined) ?? {},
-    },
     cta: {
       ...data.cta,
       ...(editsRef.current["cta"] as Partial<CTAContent> | undefined) ?? {},
@@ -172,12 +147,7 @@ export function ScrapeVisualEditor({
 
   const handleFieldChange = useCallback(
     (section: string, field: string, value: unknown) => {
-      if (section === "hero") {
-        editsRef.current["hero"] = {
-          ...((editsRef.current["hero"] as Record<string, string>) ?? {}),
-          [field]: value as string,
-        };
-      } else if (section === "cta") {
+      if (section === "cta") {
         editsRef.current["cta"] = {
           ...((editsRef.current["cta"] as Partial<CTAContent>) ?? {}),
           [field]: value as string,
@@ -207,18 +177,6 @@ export function ScrapeVisualEditor({
     setSaving(true);
     try {
       const edits = editsRef.current;
-
-      // Build hero metadata
-      const heroEdits = edits["hero"] as Record<string, string> | undefined;
-      if (heroEdits && Object.keys(heroEdits).length > 0) {
-        await cmsUpsertItem({
-          placement: "KABADI",
-          slot: "HERO",
-          key: "hero",
-          metadata: { ...data.hero, ...heroEdits },
-          published: true,
-        });
-      }
 
       // Build CTA metadata
       const ctaEdits = edits["cta"] as Partial<CTAContent> | undefined;
@@ -287,12 +245,10 @@ export function ScrapeVisualEditor({
 
       // Reload fresh data
       const items = await cmsListItems("KABADI");
-      const merged: ScrapeCmsData = { hero: {}, cta: {}, howItWorks: {} };
+      const merged: ScrapeCmsData = { cta: {}, howItWorks: {} };
       for (const item of items) {
         const meta = (item.metadata as Record<string, unknown>) ?? {};
-        if (item.slot === "HERO")
-          merged.hero = meta as Record<string, string>;
-        else if (item.slot === "CTA")
+        if (item.slot === "CTA")
           merged.cta = meta as Partial<CTAContent>;
         else if (item.slot === "HOW_IT_WORKS")
           merged.howItWorks = meta as ScrapeCmsData["howItWorks"];
@@ -316,8 +272,6 @@ export function ScrapeVisualEditor({
       </div>
     );
   }
-
-  const allItems = categories.flatMap((c) => c.items ?? []);
 
   return (
     <div className="flex flex-col gap-4">
@@ -352,23 +306,19 @@ export function ScrapeVisualEditor({
         </div>
       </div>
 
-      {/* Render the exact client UI with editable=true */}
+      {/*
+        Render the EXACT same template the public /scrape page uses, with
+        inline editing switched on. `ScrapeHome` is shared from @repo/ui so the
+        admin preview and the live client can never drift.
+      */}
       <div className="overflow-hidden rounded-2xl border border-outline bg-white">
-        <Hero editable onFieldChange={handleFieldChange} />
-        <CategoryGrid categories={categories} />
-        <Calculator items={allItems} />
-        <RateCatalog categories={categories} />
-        <HowItWorks
-          steps={previewSteps}
-          trust={previewTrust}
-          editable
-          onFieldChange={handleFieldChange}
-        />
-        <CTA
-          content={{
-            ...DEFAULT_CTA,
-            ...previewData.cta,
+        <ScrapeHome
+          categories={categories}
+          howItWorks={{
+            steps: previewSteps,
+            trust: previewTrust,
           }}
+          cta={previewData.cta}
           editable
           onFieldChange={handleFieldChange}
         />

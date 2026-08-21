@@ -1,6 +1,9 @@
-import { MapPin, Phone, Recycle } from "lucide-react";
+import { MapPin, Phone } from "lucide-react";
 import { Separator } from "@repo/ui";
 import { RATES_LAST_UPDATED } from "lib/kabadi/rates";
+import Image from "next/image";
+import logo from "../../../public/logo.webp";
+import logoText from "../../../public/logo-text.webp";
 
 const FOOTER_COLS = [
   {
@@ -29,12 +32,24 @@ export function KabadiFooter() {
       <div className="mx-auto max-w-container-max px-gutter py-12">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <div className="flex items-center gap-2.5">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-                <Recycle className="size-5" />
+            <div className="mb-md flex items-center gap-3">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full p-0.5 ring-1 ring-gold/50">
+                <Image
+                  src={logo}
+                  alt="MALPOTH"
+                  width={40}
+                  height={40}
+                  className="h-full w-full rounded-full object-contain"
+                />
               </span>
-              <span className="font-display-lg text-headline-md font-bold text-primary">
-                Kabadi
+              <span className="flex h-9 shrink-0 items-center rounded-lg bg-white px-3 shadow-sm">
+                <Image
+                  src={logoText}
+                  alt="MALPOTH"
+                  width={120}
+                  height={28}
+                  className="h-5.5 w-auto object-contain"
+                />
               </span>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">

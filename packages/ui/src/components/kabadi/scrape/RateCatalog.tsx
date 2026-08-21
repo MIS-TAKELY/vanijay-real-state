@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Flame, Search } from "lucide-react";
+import { Flame, Search, X } from "lucide-react";
 import { Badge } from "../../ui/badge";
+import { Button } from "../../ui/button";
 import { Input } from "../../ui/input";
 import {
   Table,
@@ -18,7 +19,7 @@ import type {
   ScrapeItemSummary,
   OnSectionFieldChange,
 } from "./types";
-import { formatRate } from "./helpers";
+import { formatNepaliNumber } from "./helpers";
 import { EditableField } from "./EditableField";
 
 interface RateCatalogProps {
@@ -45,9 +46,10 @@ export function RateCatalog({
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
-  const allItems: ScrapeItemSummary[] = items && items.length > 0
-    ? items
-    : categories.flatMap((c) => c.items ?? []);
+  const allItems: ScrapeItemSummary[] =
+    items && items.length > 0
+      ? items
+      : categories.flatMap((c) => c.items ?? []);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -74,93 +76,117 @@ export function RateCatalog({
     return cat?.name ?? "";
   };
 
+  const updateQuery = (value: string) => {
+    setQuery(value);
+    if (typeof window === "undefined") return;
+    const url = new URL(window.location.href);
+    if (value.trim()) url.searchParams.set("q", value.trim());
+    else url.searchParams.delete("q");
+    window.history.replaceState({}, "", `${url.pathname}${url.search}${url.hash}`);
+  };
+
   return (
     <section
       id="rates"
       className="scroll-mt-24 border-b border-border py-16 md:py-24"
     >
-      <div className="mx-auto px-gutter">
-        <div className="flex flex-wrap items-end justify-between gap-6">
-          <div className="max-w-2xl">
-            <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-primary">
-              Today&apos;s Rates
-            </p>
-            <EditableField
-              tag="h2"
-              value="What can I sell, and for how much?"
-              onChange={(v) => onFieldChange?.("rateCatalog", "heading", v)}
-              editable={editable}
-              className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
-            />
-            <EditableField
-              tag="p"
-              value="Indicative buy rates across the Kathmandu Valley. Filter by category or search any item — Nepali names work too."
-              onChange={(v) => onFieldChange?.("rateCatalog", "description", v)}
-              editable={editable}
-              multiline
-              className="mt-3 text-base leading-relaxed text-muted-foreground"
-            />
-          </div>
+      <div className="mx-auto max-w-container-max px-gutter">
+        <div className="max-w-2xl">
+          <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-primary">
+            Today&apos;s Rates
+          </p>
+          <EditableField
+            tag="h2"
+            value="What can I sell, and for how much?"
+            onChange={(v) => onFieldChange?.("rateCatalog", "heading", v)}
+            editable={editable}
+            className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
+          />
+          <EditableField
+            tag="p"
+            value="Indicative buy rates across the Kathmandu Valley. Filter by category or search any item — Nepali names work too."
+            onChange={(v) => onFieldChange?.("rateCatalog", "description", v)}
+            editable={editable}
+            multiline
+            className="mt-3 text-base leading-relaxed text-muted-foreground"
+          />
+        </div>
 
-          <div className="relative w-full sm:w-80">
+        {/* One control strip: category filters + search */}
+        <div className="mt-8 flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <ToggleGroup
+            type="single"
+            value={filter}
+            onValueChange={(value: string) => {
+              if (value) setFilter(value as Filter);
+            }}
+            variant="outline"
+            spacing={2}
+            className="flex-wrap justify-start"
+            aria-label="Filter by category"
+          >
+            <ToggleGroupItem
+              value="all"
+              className="rounded-full px-4 font-medium"
+            >
+              All items
+            </ToggleGroupItem>
+            {categories.map((cat) => (
+              <ToggleGroupItem
+                key={cat.id}
+                value={cat.slug}
+                className="rounded-full px-4 font-medium"
+              >
+                {editable ? (
+                  <EditableField
+                    value={cat.name}
+                    onChange={(v) =>
+                      onFieldChange?.(`category:${cat.id}`, "name", v)
+                    }
+                    editable
+                  />
+                ) : (
+                  cat.name
+                )}
+              </ToggleGroupItem>
+            ))}
+          </ToggleGroup>
+
+          <div className="relative w-full shrink-0 sm:max-w-xs lg:w-72">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
               value={query}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                updateQuery(e.target.value)
+              }
               aria-label="Search scrap items"
               placeholder="Search an item or Nepali name…"
-              className="h-11 pl-9"
+              className="h-11 rounded-xl border-border bg-card pl-9 pr-9"
             />
+            {query ? (
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="Clear search"
+                className="absolute right-1.5 top-1/2 -translate-y-1/2 text-muted-foreground"
+                onClick={() => updateQuery("")}
+              >
+                <X className="size-3.5" />
+              </Button>
+            ) : null}
           </div>
         </div>
 
-        <ToggleGroup
-          type="single"
-          value={filter}
-          onValueChange={(value: string) => {
-            if (value) setFilter(value as Filter);
-          }}
-          variant="outline"
-          spacing={2}
-          className="mt-6 flex-wrap"
-          aria-label="Filter by category"
-        >
-          <ToggleGroupItem
-            value="all"
-            className="rounded-full px-4 font-medium"
-          >
-            All items
-          </ToggleGroupItem>
-          {categories.map((cat) => (
-            <ToggleGroupItem
-              key={cat.id}
-              value={cat.slug}
-              className="rounded-full px-4 font-medium"
-            >
-              {editable ? (
-                <EditableField
-                  value={cat.name}
-                  onChange={(v) =>
-                    onFieldChange?.(`category:${cat.id}`, "name", v)
-                  }
-                  editable
-                />
-              ) : (
-                cat.name
-              )}
-            </ToggleGroupItem>
-          ))}
-        </ToggleGroup>
-
-        <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <Table>
             <TableHeader>
-              <TableRow className="border-border bg-muted">
-                <TableHead className="pl-5 font-label-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+              <TableRow className="border-border bg-muted/60 hover:bg-muted/60">
+                <TableHead className="h-11 pl-5 font-label-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   Item
                 </TableHead>
-                <TableHead className="pr-5 text-right font-label-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
+                <TableHead className="h-11 pr-5 text-right font-label-sm text-label-sm font-semibold uppercase tracking-wider text-muted-foreground">
                   You receive
                 </TableHead>
               </TableRow>
@@ -169,43 +195,43 @@ export function RateCatalog({
               {filteredItems.map((item) => (
                 <TableRow
                   key={item.id}
-                  className="border-border hover:bg-accent/50"
+                  className="border-border hover:bg-accent/40"
                 >
-                  <TableCell className="py-3.5 pl-5">
-                    <p className="flex items-center gap-2 text-[15px] font-medium text-foreground">
-                      {editable ? (
-                        <EditableField
-                          value={item.name}
-                          onChange={(v) =>
-                            onFieldChange?.(`item:${item.id}`, "name", v)
-                          }
-                          editable
-                        />
-                      ) : (
-                        item.name
-                      )}
-                      {item.popular && (
-                        <Badge className="bg-gold/15 text-gold-deep">
-                          <Flame />
+                  <TableCell className="py-4 pl-5 align-middle">
+                    <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1">
+                      <span className="text-[15px] font-medium text-foreground">
+                        {editable ? (
+                          <EditableField
+                            value={item.name}
+                            onChange={(v) =>
+                              onFieldChange?.(`item:${item.id}`, "name", v)
+                            }
+                            editable
+                          />
+                        ) : (
+                          item.name
+                        )}
+                      </span>
+                      {item.popular ? (
+                        <Badge className="shrink-0 bg-gold/15 font-label-sm text-label-sm text-gold-deep">
+                          <Flame className="size-3" aria-hidden />
                           popular
                         </Badge>
-                      )}
-                    </p>
-                    <p className="mt-0.5 truncate font-label-sm text-label-sm text-muted-foreground">
-                      {item.nepali && (
-                        <span className="mr-2 text-primary">
-                          {item.nepali}
-                        </span>
-                      )}
+                      ) : null}
+                    </div>
+                    <p className="mt-1 truncate font-label-sm text-label-sm text-muted-foreground">
+                      {item.nepali ? (
+                        <span className="mr-2 text-primary">{item.nepali}</span>
+                      ) : null}
                       {item.note ?? getCategoryName(item.category)}
                     </p>
                   </TableCell>
-                  <TableCell className="py-3.5 pr-5 text-right">
-                    <p className="whitespace-nowrap font-data-table text-lg font-semibold text-primary">
-                      {formatRate({ rate: item.rate, unit: item.unit })}
+                  <TableCell className="py-4 pr-5 text-right align-middle">
+                    <p className="font-data-table text-lg font-semibold tabular-nums text-primary">
+                      Rs {formatNepaliNumber(item.rate)}
                     </p>
-                    <p className="font-label-sm text-label-sm text-muted-foreground">
-                      {item.unit === "kg" ? "per kilogram" : "per piece"}
+                    <p className="mt-0.5 font-label-sm text-label-sm text-muted-foreground">
+                      {item.unit === "kg" ? "per kg" : "per piece"}
                     </p>
                   </TableCell>
                 </TableRow>
@@ -216,16 +242,28 @@ export function RateCatalog({
           {filteredItems.length === 0 && (
             <div className="p-12 text-center">
               <p className="text-base text-muted-foreground">
-                No items match &ldquo;{query}&rdquo;. Try &ldquo;copper&rdquo;, &ldquo;pet&rdquo;, &ldquo;fridge&rdquo; or a Nepali name.
+                No items match &ldquo;{query || "your filters"}&rdquo;. Try
+                &ldquo;copper&rdquo;, &ldquo;pet&rdquo;, &ldquo;fridge&rdquo; or
+                a Nepali name.
               </p>
+              {query ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => updateQuery("")}
+                >
+                  Clear search
+                </Button>
+              ) : null}
             </div>
           )}
         </div>
 
         <p className="mt-4 font-label-sm text-label-sm text-muted-foreground">
-          {filteredItems.length} item{filteredItems.length === 1 ? "" : "s"} · rates indicative
-          as of {ratesLastUpdated} · final price depends on condition,
-          quantity &amp; market — confirmed at weigh-in.
+          {filteredItems.length} item{filteredItems.length === 1 ? "" : "s"} ·
+          rates indicative as of {ratesLastUpdated} · final price depends on
+          condition, quantity &amp; market — confirmed at weigh-in.
         </p>
       </div>
     </section>

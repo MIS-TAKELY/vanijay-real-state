@@ -92,7 +92,7 @@ export function Navbar() {
   const { open: openAuth } = useAuthModalStore();
   const cartCount = useCartStore((state) => state.count);
   const loadCart = useCartStore((state) => state.load);
-  const { canInstall, isInstalled, install } = usePwaInstall();
+  const { isInstalled, install } = usePwaInstall();
 
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [showAttention, setShowAttention] = useState(false);
@@ -252,7 +252,7 @@ export function Navbar() {
           </div>
 
           {/* Download App (md+) — PWA install button */}
-          {!isInstalled && canInstall && (
+          {!isInstalled && (
             <Button
               variant="ghost"
               size="sm"
@@ -471,7 +471,7 @@ export function Navbar() {
                   </div>
 
                   {/* Download App (mobile) — PWA install button */}
-                  {!isInstalled && canInstall && (
+                  {!isInstalled && (
                     <>
                       <Separator className="my-2" />
                       <SheetClose asChild>

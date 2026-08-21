@@ -38,7 +38,7 @@ export function CTA({
         aria-hidden
       />
 
-      <div className="relative mx-auto px-gutter text-center">
+      <div className="relative mx-auto max-w-container-max px-gutter text-center">
         <span className="mx-auto inline-flex size-16 items-center justify-center rounded-2xl bg-gold text-on-gold shadow-lg shadow-[color-mix(in_oklab,var(--color-gold)_30%,transparent)]">
           <Truck className="size-8" />
         </span>
@@ -58,7 +58,7 @@ export function CTA({
             />
           </span>
         </h2>
-        <p className="mx-auto mt-5 text-base leading-relaxed text-muted-foreground">
+        <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground">
           <EditableField
             tag="span"
             value={c.description}

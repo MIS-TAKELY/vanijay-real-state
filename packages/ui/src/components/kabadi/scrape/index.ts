@@ -1,6 +1,9 @@
 export { EditableField } from "./EditableField";
 export type { EditableFieldProps } from "./EditableField";
 
+export { ScrapeHome } from "./ScrapeHome";
+export type { ScrapeHomeProps } from "./ScrapeHome";
+
 export { Hero } from "./Hero";
 export { CategoryGrid } from "./CategoryGrid";
 export { RateCatalog } from "./RateCatalog";

@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { toast } from "@repo/ui";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
@@ -13,7 +14,8 @@ interface BeforeInstallPromptEvent extends Event {
  * Returns:
  * - `canInstall` — true when the browser has a deferred install prompt
  * - `isInstalled` — true when the app is running in standalone mode
- * - `install()` — triggers the native install prompt
+ * - `install()` — triggers the native install prompt, or shows manual
+ *   instructions when the browser doesn't support the prompt API (iOS, HTTP)
  */
 export function usePwaInstall() {
   const [deferredPrompt, setDeferredPrompt] =
@@ -55,14 +57,36 @@ export function usePwaInstall() {
   }, []);
 
   const install = useCallback(async () => {
-    if (!deferredPrompt) return false;
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
 
-    deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setDeferredPrompt(null);
+        return true;
+      }
+      return false;
+    }
 
-    if (outcome === "accepted") {
-      setDeferredPrompt(null);
-      return true;
+    // Fallback: show manual-install instructions via toast
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    if (isIOS) {
+      toast.info(
+        "Tap the Share button (↗) below, then choose 'Add to Home Screen'.",
+        { duration: 8000 },
+      );
+    } else if (isAndroid) {
+      toast.info(
+        "Tap the ⋮ menu in your browser, then tap 'Install app' or 'Add to Home Screen'.",
+        { duration: 8000 },
+      );
+    } else {
+      toast.info(
+        "Use your browser's menu to install this app, or visit this page on HTTPS for automatic install.",
+        { duration: 8000 },
+      );
     }
     return false;
   }, [deferredPrompt]);

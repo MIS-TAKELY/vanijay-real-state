@@ -1,14 +1,5 @@
 import type { Metadata } from "next";
-import {
-  Calculator,
-  CategoryGrid,
-  CTA,
-  Hero,
-  HowItWorks,
-  RateCatalog,
-  type ScrapeCategorySummary,
-  type ScrapeItemSummary,
-} from "@repo/ui";
+import { ScrapeHome, type ScrapeCategorySummary } from "@repo/ui";
 import { fetchKabadiCategories, type KabadiCategoryData } from "lib/kabadi/api";
 
 export const metadata: Metadata = {
@@ -105,7 +96,6 @@ export default async function KabadiHomePage() {
   }
 
   const categories = mapCategories(rawCategories);
-  const allItems = categories.flatMap((c) => c.items ?? []);
 
   return (
     <>
@@ -117,11 +107,7 @@ export default async function KabadiHomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
-      <CategoryGrid categories={categories} />
-      <Calculator items={allItems} />
-      <RateCatalog categories={categories} />
-      <HowItWorks />
-      <CTA />
+      <ScrapeHome categories={categories} />
     </>
   );
 }

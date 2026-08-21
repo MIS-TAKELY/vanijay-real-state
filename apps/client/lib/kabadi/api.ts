@@ -37,9 +37,14 @@ export interface KabadiItemData {
 /**
  * Fetch published kabadi categories with their items.
  * Server-side: uses internal API URL. Client-side: uses NEXT_PUBLIC_API_URL.
+ *
+ * skipServerCookies: these are public endpoints. Reading cookies() inside
+ * generateMetadata / generateStaticParams pages makes Next throw
+ * "Page changed from static to dynamic at runtime … reason: cookies".
  */
 export async function fetchKabadiCategories(): Promise<KabadiCategoryData[]> {
   return apiFetch<KabadiCategoryData[]>("/api/v1/kabadi/categories", {
+    skipServerCookies: true,
     cache: "force-cache",
     next: { revalidate: 3600, tags: ["kabadi"] },
   });
@@ -55,6 +60,7 @@ export async function fetchKabadiCategoryBySlug(
     return await apiFetch<KabadiCategoryData>(
       `/api/v1/kabadi/categories/${slug}`,
       {
+        skipServerCookies: true,
         cache: "force-cache",
         next: { revalidate: 3600, tags: ["kabadi", `kabadi-${slug}`] },
       },
