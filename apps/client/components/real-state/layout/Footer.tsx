@@ -138,12 +138,7 @@ export function Footer() {
           <p className="font-label-sm text-[11px] text-white/50">
             © 2024 MALPOTH. All Rights Reserved. RAPD Unit Ref: LP-9921-X.
           </p>
-          <div className="flex items-center gap-sm">
-            <span className="h-2 w-2 animate-pulse rounded-full bg-gold" />
-            <span className="mono-stat text-[11px] uppercase tracking-wider font-bold text-white/60">
-              Systems Nominal: Archival v2.4
-            </span>
-          </div>
+        
         </div>
       </div>
     </footer>
