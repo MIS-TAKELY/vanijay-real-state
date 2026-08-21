@@ -724,38 +724,44 @@ export function ListingGallery({
             </div>
           )}
 
-          <div className="relative w-full min-w-0 flex-1 overflow-hidden rounded-sm border border-outline-variant bg-surface-container">
-            <ListingVideo
-              url={activeVideo.url}
-              title={activeVideo.altText ?? `${title} — video walkthrough`}
-            />
+          {/* Video player + navigation stacked vertically */}
+          <div className="flex min-w-0 flex-1 flex-col gap-2">
+            {/* aspect-video gives the player a proper 16:9 height so ListingVideo renders correctly */}
+            <div className="aspect-video w-full overflow-hidden rounded-sm border border-outline-variant bg-black">
+              <ListingVideo
+                url={activeVideo.url}
+                title={activeVideo.altText ?? `${title} — video walkthrough`}
+                className="h-full w-full"
+              />
+            </div>
 
+            {/* Pagination sits BELOW the player — never overlaps video controls */}
             {videos.length > 1 && (
-              <div className="pointer-events-none absolute inset-x-0 bottom-2.5 flex items-center justify-between px-3">
+              <div className="flex items-center justify-between gap-3 rounded-sm border border-outline-variant/60 bg-surface-container/50 px-3 py-2">
                 <button
                   type="button"
                   aria-label="Previous video"
-                  className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-sm bg-surface/90 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
+                  className="flex h-8 w-8 items-center justify-center rounded-sm bg-surface text-on-surface shadow-xs transition-all duration-150 hover:bg-surface-container active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   onClick={() =>
                     setActiveVideoIndex(
                       (i) => (i - 1 + videos.length) % videos.length,
                     )
                   }
                 >
-                  <Icon name="chevron_left" className="text-[18px]" />
+                  <Icon name="chevron_left" className="text-[20px]" />
                 </button>
-                <span className="rounded-sm bg-black/60 px-2 py-0.5 text-[11px] font-semibold text-white backdrop-blur-sm">
+                <span className="text-xs font-semibold tabular-nums text-on-surface-variant">
                   Video {activeVideoIndex + 1} of {videos.length}
                 </span>
                 <button
                   type="button"
                   aria-label="Next video"
-                  className="pointer-events-auto flex h-8 w-8 items-center justify-center rounded-sm bg-surface/90 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
+                  className="flex h-8 w-8 items-center justify-center rounded-sm bg-surface text-on-surface shadow-xs transition-all duration-150 hover:bg-surface-container active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
                   onClick={() =>
                     setActiveVideoIndex((i) => (i + 1) % videos.length)
                   }
                 >
-                  <Icon name="chevron_right" className="text-[18px]" />
+                  <Icon name="chevron_right" className="text-[20px]" />
                 </button>
               </div>
             )}
