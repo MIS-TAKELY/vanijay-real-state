@@ -31,6 +31,7 @@ import { ChevronDown, LogOut, User } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { usePwaInstall } from "hooks/use-pwa-install";
 import { useAuthModalStore } from "store/auth-modal";
 import { useCartStore } from "store/cart";
 
@@ -91,6 +92,7 @@ export function Navbar() {
   const { open: openAuth } = useAuthModalStore();
   const cartCount = useCartStore((state) => state.count);
   const loadCart = useCartStore((state) => state.load);
+  const { canInstall, isInstalled, install } = usePwaInstall();
 
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
   const [showAttention, setShowAttention] = useState(false);
@@ -248,6 +250,19 @@ export function Navbar() {
               />
             )}
           </div>
+
+          {/* Download App (md+) — PWA install button */}
+          {!isInstalled && canInstall && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={install}
+              className="hidden md:inline-flex items-center gap-1.5 rounded-lg border border-outline-variant px-3 text-xs font-medium text-on-surface-variant hover:bg-surface-container hover:text-on-surface cursor-pointer"
+            >
+              <Icon name="download" className="text-[16px]" />
+              Get App
+            </Button>
+          )}
 
           {/* Cart (md+) — on mobile it lives in the side menu */}
           <Button
@@ -454,6 +469,29 @@ export function Navbar() {
                   <div className="-mx-2">
                     <AppModeStrip compact />
                   </div>
+
+                  {/* Download App (mobile) — PWA install button */}
+                  {!isInstalled && canInstall && (
+                    <>
+                      <Separator className="my-2" />
+                      <SheetClose asChild>
+                        <button
+                          onClick={install}
+                          className="flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-surface-container w-full"
+                        >
+                          <Icon
+                            name="download"
+                            className="text-[20px] text-on-surface-variant"
+                          />
+                          <span className="flex-1 text-left">Get App</span>
+                          <Icon
+                            name="open_in_new"
+                            className="text-[14px] text-on-surface-variant/50"
+                          />
+                        </button>
+                      </SheetClose>
+                    </>
+                  )}
                 </nav>
               </ScrollArea>
 

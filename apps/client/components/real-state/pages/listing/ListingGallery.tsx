@@ -3,6 +3,7 @@
 import { Button, Icon, cn } from "@repo/ui";
 import type { ApiPropertyMedia } from "lib/api/services/properties/types";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ListingVideo } from "./ListingVideo";
 import { VideoPoster } from "./VideoPoster";
 
@@ -63,12 +64,11 @@ export function ListingGallery({
   const lightboxThumbStripRef = useRef<HTMLDivElement>(null);
   const lightboxContainerRef = useRef<HTMLDivElement>(null);
   const openerRef = useRef<HTMLElement | null>(null);
-
-  // Touch gesture state for main card carousel
-  const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(
-    null,
-  );
-  const touchDeltaRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  // Scroll-snap carousel refs (photos + docs)
+  const photoScrollRef = useRef<HTMLDivElement>(null);
+  const docScrollRef = useRef<HTMLDivElement>(null);
+  // Flag to distinguish programmatic scrolls from user swipes
+  const programmaticScrollRef = useRef(false);
 
   // Touch & Pan refs for Lightbox
   const panStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -153,16 +153,59 @@ export function ListingGallery({
       document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
 
-  // Slide navigation for main photo carousel
+  // Scroll-snap helpers — scroll the track to any slide by index
+  const scrollToPhoto = useCallback(
+    (idx: number, animated = true) => {
+      const el = photoScrollRef.current;
+      if (!el) { setActiveImageIndex(idx); return; }
+      programmaticScrollRef.current = true;
+      el.scrollTo({ left: idx * el.clientWidth, behavior: animated ? "smooth" : "instant" });
+      setActiveImageIndex(idx);
+      // Clear the flag after the animation settles
+      setTimeout(() => { programmaticScrollRef.current = false; }, 450);
+    },
+    [],
+  );
+
+  const scrollToDoc = useCallback(
+    (idx: number, animated = true) => {
+      const el = docScrollRef.current;
+      if (!el) { setActiveDocIndex(idx); return; }
+      programmaticScrollRef.current = true;
+      el.scrollTo({ left: idx * el.clientWidth, behavior: animated ? "smooth" : "instant" });
+      setActiveDocIndex(idx);
+      setTimeout(() => { programmaticScrollRef.current = false; }, 450);
+    },
+    [],
+  );
+
+  // onScroll handler — keeps activeIndex in sync during native touch swipes
+  const handlePhotoScroll = useCallback(() => {
+    if (programmaticScrollRef.current) return;
+    const el = photoScrollRef.current;
+    if (!el || el.clientWidth === 0) return;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    setActiveImageIndex(Math.max(0, Math.min(idx, images.length - 1)));
+  }, [images.length]);
+
+  const handleDocScroll = useCallback(() => {
+    if (programmaticScrollRef.current) return;
+    const el = docScrollRef.current;
+    if (!el || el.clientWidth === 0) return;
+    const idx = Math.round(el.scrollLeft / el.clientWidth);
+    setActiveDocIndex(Math.max(0, Math.min(idx, cadastralMaps.length - 1)));
+  }, [cadastralMaps.length]);
+
+  // Slide navigation — delegate to scroll helpers
   const nextPhoto = useCallback(() => {
     if (images.length <= 1) return;
-    setActiveImageIndex((prev) => (prev + 1) % images.length);
-  }, [images.length]);
+    scrollToPhoto((activeImageIndex + 1) % images.length);
+  }, [activeImageIndex, images.length, scrollToPhoto]);
 
   const prevPhoto = useCallback(() => {
     if (images.length <= 1) return;
-    setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  }, [images.length]);
+    scrollToPhoto((activeImageIndex - 1 + images.length) % images.length);
+  }, [activeImageIndex, images.length, scrollToPhoto]);
 
   // Lightbox opening/closing
   const openLightbox = useCallback((tab: MediaType, index = 0) => {
@@ -276,47 +319,70 @@ export function ListingGallery({
     };
   }, []);
 
-  // Smooth scroll active thumbnail into view in card thumbnail strip (container only)
+  // Smooth-scroll the thumbnail strip so the active thumb stays visible
   useEffect(() => {
-    if (activeTab === "photos" && thumbStripRef.current) {
-      const container = thumbStripRef.current;
-      const activeEl = container.querySelector<HTMLElement>(
-        `[data-thumb-index="${activeImageIndex}"]`,
-      );
-      if (activeEl) {
-        const cRect = container.getBoundingClientRect();
-        const aRect = activeEl.getBoundingClientRect();
-        // Horizontal scroll
-        if (container.scrollWidth > container.clientWidth) {
-          const leftDiff = aRect.left - cRect.left;
-          if (leftDiff < 0 || leftDiff + aRect.width > cRect.width) {
-            container.scrollTo({
-              left:
-                container.scrollLeft +
-                leftDiff -
-                cRect.width / 2 +
-                aRect.width / 2,
-              behavior: "smooth",
-            });
-          }
-        }
-        // Vertical scroll
-        if (container.scrollHeight > container.clientHeight) {
-          const topDiff = aRect.top - cRect.top;
-          if (topDiff < 0 || topDiff + aRect.height > cRect.height) {
-            container.scrollTo({
-              top:
-                container.scrollTop +
-                topDiff -
-                cRect.height / 2 +
-                aRect.height / 2,
-              behavior: "smooth",
-            });
-          }
-        }
+    const strip =
+      activeTab === "photos"
+        ? thumbStripRef.current
+        : activeTab === "documents"
+          ? docThumbStripRef.current
+          : null;
+    const idx =
+      activeTab === "photos"
+        ? activeImageIndex
+        : activeTab === "documents"
+          ? activeDocIndex
+          : -1;
+    if (!strip || idx < 0) return;
+    const activeEl = strip.querySelector<HTMLElement>(`[data-thumb-index="${idx}"]`);
+    if (!activeEl) return;
+    const cRect = strip.getBoundingClientRect();
+    const aRect = activeEl.getBoundingClientRect();
+    if (strip.scrollWidth > strip.clientWidth) {
+      const leftDiff = aRect.left - cRect.left;
+      if (leftDiff < 0 || leftDiff + aRect.width > cRect.width) {
+        strip.scrollTo({
+          left: strip.scrollLeft + leftDiff - cRect.width / 2 + aRect.width / 2,
+          behavior: "smooth",
+        });
       }
     }
-  }, [activeImageIndex, activeTab]);
+    if (strip.scrollHeight > strip.clientHeight) {
+      const topDiff = aRect.top - cRect.top;
+      if (topDiff < 0 || topDiff + aRect.height > cRect.height) {
+        strip.scrollTo({
+          top: strip.scrollTop + topDiff - cRect.height / 2 + aRect.height / 2,
+          behavior: "smooth",
+        });
+      }
+    }
+  }, [activeImageIndex, activeDocIndex, activeTab]);
+
+  // When the photo or doc tab (re-)mounts, restore the scroll position instantly
+  // so the correct slide is visible without animating from 0.
+  useEffect(() => {
+    if (activeTab === "photos") {
+      const el = photoScrollRef.current;
+      if (el && el.clientWidth > 0) {
+        programmaticScrollRef.current = true;
+        el.scrollTo({ left: activeImageIndex * el.clientWidth, behavior: "instant" });
+        setTimeout(() => { programmaticScrollRef.current = false; }, 100);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
+
+  useEffect(() => {
+    if (activeTab === "documents") {
+      const el = docScrollRef.current;
+      if (el && el.clientWidth > 0) {
+        programmaticScrollRef.current = true;
+        el.scrollTo({ left: activeDocIndex * el.clientWidth, behavior: "instant" });
+        setTimeout(() => { programmaticScrollRef.current = false; }, 100);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeTab]);
 
   // Smooth scroll active thumbnail in Lightbox filmstrip
   useEffect(() => {
@@ -527,14 +593,14 @@ export function ListingGallery({
       </header>
 
       {/* ─── PHOTOS VIEW ──────────────────────────────────────────────────────── */}
-      {showingPhotos && currentImage && (
+      {showingPhotos && (
         <div
           role="tabpanel"
           id="panel-photos"
           aria-labelledby="tab-photos"
           className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-stretch sm:gap-3"
         >
-          {/* Thumbnails list */}
+          {/* Thumbnail strip */}
           {images.length > 1 && (
             <div
               ref={thumbStripRef}
@@ -548,7 +614,7 @@ export function ListingGallery({
                     key={`photo-thumb-${idx}-${image.url}`}
                     type="button"
                     data-thumb-index={idx}
-                    onClick={() => setActiveImageIndex(idx)}
+                    onClick={() => scrollToPhoto(idx)}
                     className={cn(
                       "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm border bg-surface-container transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
@@ -573,98 +639,77 @@ export function ListingGallery({
             </div>
           )}
 
-          {/* Main Photo Card Carousel */}
-          <div
-            className="relative aspect-[4/3] w-full min-w-0 flex-1 overflow-hidden rounded-sm border border-outline-variant bg-surface-container select-none sm:aspect-[16/11]"
-            onTouchStart={(e) => {
-              const t = e.touches[0];
-              if (!t) return;
-              touchStartRef.current = {
-                x: t.clientX,
-                y: t.clientY,
-                time: Date.now(),
-              };
-              touchDeltaRef.current = { x: 0, y: 0 };
-            }}
-            onTouchMove={(e) => {
-              const t = e.touches[0];
-              if (!t || !touchStartRef.current) return;
-              touchDeltaRef.current = {
-                x: t.clientX - touchStartRef.current.x,
-                y: t.clientY - touchStartRef.current.y,
-              };
-            }}
-            onTouchEnd={() => {
-              if (!touchStartRef.current) return;
-              const { x: dx, y: dy } = touchDeltaRef.current;
-              // Check if horizontal swipe
-              if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) {
-                if (dx < 0) {
-                  nextPhoto();
-                } else {
-                  prevPhoto();
-                }
-              }
-              touchStartRef.current = null;
-              touchDeltaRef.current = { x: 0, y: 0 };
-            }}
-          >
-            {/* Slide Image Container */}
+          {/* ── Scroll-snap carousel ── */}
+          {/* Outer wrapper keeps the aspect ratio and clips overflow */}
+          <div className="relative aspect-[4/3] w-full min-w-0 flex-1 select-none overflow-hidden rounded-sm border border-outline-variant bg-surface-container sm:aspect-[16/11]">
+            {/* The scrollable track — browser handles touch physics natively */}
             <div
-              className="relative h-full w-full cursor-zoom-in overflow-hidden"
-              onClick={() => openLightbox("photos", activeImageIndex)}
+              ref={photoScrollRef}
+              onScroll={handlePhotoScroll}
+              className="no-scrollbar absolute inset-0 flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
+              style={{ scrollBehavior: "auto" }}
+              aria-label="Photo viewer — swipe to browse"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                key={currentImage.url}
-                src={currentImage.url}
-                alt={currentImage.altText ?? `${title} - photo ${activeImageIndex + 1}`}
-                draggable={false}
-                onContextMenu={(e) => e.preventDefault()}
-                className="h-full w-full object-contain transition-transform duration-250 ease-out hover:scale-[1.01]"
-              />
+              {images.map((image, idx) => (
+                <div
+                  key={`slide-${idx}-${image.url}`}
+                  className="relative h-full w-full shrink-0 snap-start cursor-zoom-in"
+                  style={{ minWidth: "100%" }}
+                  onClick={() => {
+                    // Only open lightbox if the user isn't mid-swipe
+                    if (Math.abs(activeImageIndex - idx) === 0) {
+                      openLightbox("photos", idx);
+                    }
+                  }}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={image.url}
+                    alt={image.altText ?? `${title} - photo ${idx + 1}`}
+                    draggable={false}
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    onContextMenu={(e) => e.preventDefault()}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
+              ))}
             </div>
 
             {/* Counter Badge */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 pt-8">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 pt-8">
               <span className="rounded-sm bg-black/65 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-white backdrop-blur-md">
                 {activeImageIndex + 1} / {images.length}
               </span>
             </div>
 
-            {/* Left/Right Navigation Arrows */}
+            {/* Left / Right arrows */}
             {images.length > 1 && (
               <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3">
                 <button
                   type="button"
                   aria-label="Previous photo"
-                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    prevPhoto();
-                  }}
+                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:scale-105 hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
+                  onClick={(e) => { e.stopPropagation(); prevPhoto(); }}
                 >
                   <Icon name="chevron_left" className="text-[22px]" />
                 </button>
                 <button
                   type="button"
                   aria-label="Next photo"
-                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    nextPhoto();
-                  }}
+                  className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:scale-105 hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
+                  onClick={(e) => { e.stopPropagation(); nextPhoto(); }}
                 >
                   <Icon name="chevron_right" className="text-[22px]" />
                 </button>
               </div>
             )}
 
-            {/* Expand / Lightbox Trigger Button */}
+            {/* Fullscreen / Lightbox trigger */}
             <button
               type="button"
               onClick={() => openLightbox("photos", activeImageIndex)}
-              className="absolute right-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface hover:scale-105 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
+              className="absolute right-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:scale-105 hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
               aria-label="Open fullscreen gallery"
               title="Open full view"
             >
@@ -844,53 +889,60 @@ export function ListingGallery({
               </div>
             </div>
 
-            {/* Document Interactive Preview Card */}
-            <div
-              className="group relative aspect-[4/3] w-full cursor-zoom-in bg-surface-container/20 sm:aspect-[16/11]"
-              onClick={() => openLightbox("documents", activeDocIndex)}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={activeDoc.url}
-                alt={activeDoc.altText ?? "Naksa (Cadastral Map)"}
-                draggable={false}
-                onContextMenu={(e) => e.preventDefault()}
-                className="h-full w-full object-contain p-3 transition-transform duration-200 group-hover:scale-[1.015] sm:p-4"
-              />
-
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-150 group-hover:bg-black/5">
-                <div className="pointer-events-none flex items-center gap-1.5 rounded-sm bg-surface/90 px-3 py-1.5 text-xs font-semibold text-navy shadow-sm backdrop-blur-sm opacity-0 transition-opacity duration-150 group-hover:opacity-100">
-                  <Icon name="zoom_in" className="text-[16px] text-primary" />
-                  <span>Click to zoom &amp; inspect boundaries</span>
-                </div>
+            {/* ── Scroll-snap cadastral map carousel ── */}
+            <div className="relative aspect-[4/3] w-full select-none overflow-hidden sm:aspect-[16/11]">
+              {/* Native scroll-snap track — each map is one full-width slide */}
+              <div
+                ref={docScrollRef}
+                onScroll={handleDocScroll}
+                className="no-scrollbar absolute inset-0 flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
+                style={{ scrollBehavior: "auto" }}
+                aria-label="Cadastral map viewer — swipe to browse"
+              >
+                {cadastralMaps.map((map, idx) => (
+                  <div
+                    key={`doc-slide-${idx}-${map.url}`}
+                    className="group relative h-full w-full shrink-0 snap-start cursor-zoom-in bg-surface-container/20"
+                    style={{ minWidth: "100%" }}
+                    onClick={() => {
+                      if (activeDocIndex === idx) openLightbox("documents", idx);
+                    }}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={map.url}
+                      alt={map.altText ?? "Naksa (Cadastral Map)"}
+                      draggable={false}
+                      loading={idx === 0 ? "eager" : "lazy"}
+                      onContextMenu={(e) => e.preventDefault()}
+                      className="h-full w-full object-contain p-3 transition-transform duration-200 group-hover:scale-[1.015] sm:p-4"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
+                      <div className="pointer-events-none flex items-center gap-1.5 rounded-sm bg-surface/90 px-3 py-1.5 text-xs font-semibold text-navy shadow-sm backdrop-blur-sm">
+                        <Icon name="zoom_in" className="text-[16px] text-primary" />
+                        <span>Click to zoom &amp; inspect</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
               </div>
 
+              {/* Left / Right arrows */}
               {cadastralMaps.length > 1 && (
                 <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
                   <button
                     type="button"
                     aria-label="Previous document"
-                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDocIndex(
-                        (i) =>
-                          (i - 1 + cadastralMaps.length) % cadastralMaps.length,
-                      );
-                    }}
+                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    onClick={(e) => { e.stopPropagation(); scrollToDoc((activeDocIndex - 1 + cadastralMaps.length) % cadastralMaps.length); }}
                   >
                     <Icon name="chevron_left" className="text-[20px]" />
                   </button>
                   <button
                     type="button"
                     aria-label="Next document"
-                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setActiveDocIndex(
-                        (i) => (i + 1) % cadastralMaps.length,
-                      );
-                    }}
+                    className="pointer-events-auto flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+                    onClick={(e) => { e.stopPropagation(); scrollToDoc((activeDocIndex + 1) % cadastralMaps.length); }}
                   >
                     <Icon name="chevron_right" className="text-[20px]" />
                   </button>
@@ -910,13 +962,17 @@ export function ListingGallery({
       )}
 
       {/* ─── FULL-FEATURED UNIFIED LIGHTBOX MODAL ────────────────────────────── */}
-      {lightboxOpen && (
+      {/* Portal to body: gallery lives inside lg:sticky, which creates a stacking
+          context so page chrome (description fade, right column, navbar) paints
+          over a fixed z-50 lightbox. Portaling escapes that trap. */}
+      {lightboxOpen &&
+        createPortal(
         <div
           ref={lightboxContainerRef}
           role="dialog"
           aria-modal="true"
           aria-label="Media Lightbox Viewer"
-          className="fixed inset-0 z-50 flex flex-col bg-navy-deep/95 text-surface select-none backdrop-blur-xl animate-in fade-in duration-200"
+          className="fixed inset-0 z-[200] flex flex-col bg-navy-deep/95 text-surface select-none backdrop-blur-xl animate-in fade-in duration-200"
           onClick={(e) => {
             if (e.target === e.currentTarget && zoomScale <= 1) {
               closeLightbox();
@@ -1237,7 +1293,8 @@ export function ListingGallery({
               </div>
             </footer>
           )}
-        </div>
+        </div>,
+        document.body,
       )}
     </section>
   );
