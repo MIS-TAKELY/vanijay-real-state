@@ -1,52 +1,114 @@
 "use client";
 
-import { cn } from "@repo/ui";
+import {
+  Icon,
+  PRICE_UNITS,
+  formatNPR,
+  hasPricingArea,
+  isBuildingType,
+  pricePerUnitFor,
+  priceUnitKey,
+  type PriceContext,
+} from "@repo/ui";
+import { cn } from "@repo/ui/lib/utils";
 import { AddToCartButton } from "components/real-state/common/AddToCartButton";
 import { CallSellerButton } from "components/real-state/common/CallSellerButton";
 import { SaveToFavoritesButton } from "components/real-state/common/SaveToFavoritesButton";
+import { useMemo, useState } from "react";
 import { useCompareStore } from "store/compare";
 
 interface MobilePriceBarProps {
-  /** Formatted asking price, e.g. "NPR 85,00,000". */
-  askingPrice: string;
   propertyId: string;
   title?: string;
+  pricing: PriceContext;
 }
 
 /**
- * Mobile-only sticky bottom bar: 2-row layout
- * - Row 1: Asking Price
- * - Row 2: Primary CTAs (Call Seller, Add to Cart, Save to Favorites)
+ * Mobile-only sticky bottom bar:
+ * - Top line: "Asking Price" label + "per [Aana ▾]" selector pill
+ * - Middle line: Big prominent NPR price + Total summary
+ * - Bottom line: Full action buttons (Call Seller, Cart, Favorite)
  *
- * Hidden on lg+ where the sticky decision card takes over.
+ * Hidden on sm+ where the sidebar/grid decision card takes over.
  */
 export function MobilePriceBar({
-  askingPrice,
+  pricing,
   propertyId,
   title,
 }: MobilePriceBarProps) {
   const compareCount = useCompareStore((s) => s.items.length);
+  const isBuilding = isBuildingType(pricing.subCategory);
+  const showPerUnit =
+    !isBuilding && hasPricingArea(pricing) && pricing.askingPrice > 0;
+
+  const [unit, setUnit] = useState(() => priceUnitKey(pricing));
+  const perUnit = useMemo(
+    () => (showPerUnit ? pricePerUnitFor(pricing, unit) : null),
+    [pricing, unit, showPerUnit],
+  );
 
   return (
     <div
       className={cn(
-        "fixed inset-x-0 bottom-0 z-40 border-t border-outline-variant bg-surface/95 shadow-[0_-4px_20px_rgba(0,0,0,0.08)] backdrop-blur-md transition-[bottom] duration-200 lg:hidden",
+        "fixed inset-x-0 bottom-0 z-50 border-t border-outline-variant/80 bg-surface/98 shadow-[0_-6px_24px_rgba(0,0,0,0.14)] backdrop-blur-md transition-[bottom] duration-200 sm:hidden",
         compareCount >= 2 ? "bottom-[72px]" : "bottom-0",
       )}
     >
-      <div className="flex flex-col gap-2 px-4 pt-2.5 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
-        {/* Row 1: Asking Price */}
+      <div className="flex flex-col gap-2.5 px-4 pt-3 pb-[max(env(safe-area-inset-bottom),0.875rem)]">
+        {/* Header line: Label + Unit converter pill */}
         <div className="flex items-center justify-between min-w-0">
-          <span className="text-[10px] font-semibold uppercase tracking-wider text-on-surface-variant">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
             Asking Price
           </span>
-          <p className="mono-stat text-base font-bold text-gold-deep truncate">
-            {askingPrice}
-          </p>
+
+          {showPerUnit && (
+            <div className="relative inline-flex items-center rounded-sm border border-outline-variant bg-surface-container/80 px-2 py-0.5 shadow-2xs">
+              <span className="mr-1 text-[11px] font-medium text-on-surface-variant">
+                per
+              </span>
+              <select
+                value={unit}
+                onChange={(e) => setUnit(e.target.value)}
+                aria-label="Price unit"
+                className="cursor-pointer appearance-none bg-transparent pr-3.5 text-xs font-bold text-navy outline-none"
+              >
+                {PRICE_UNITS.map((u) => (
+                  <option key={u.key} value={u.key}>
+                    {u.label}
+                  </option>
+                ))}
+              </select>
+              <Icon
+                name="expand_more"
+                className="pointer-events-none absolute right-1 text-[13px] text-on-surface-variant"
+                aria-hidden
+              />
+            </div>
+          )}
         </div>
 
-        {/* Row 2: CTAs (Call, Cart, Fav) */}
-        <div className="flex items-center gap-2 min-w-0">
+        {/* Price display line */}
+        <div className="flex items-baseline justify-between gap-2 min-w-0">
+          <p className="mono-stat text-lg font-extrabold text-gold-deep truncate leading-none">
+            {showPerUnit
+              ? perUnit != null
+                ? formatNPR(perUnit)
+                : "—"
+              : formatNPR(pricing.askingPrice)}
+          </p>
+
+          {showPerUnit && (
+            <p className="text-[11px] font-medium text-on-surface-variant shrink-0 tabular-nums">
+              Total:{" "}
+              <span className="font-semibold text-navy">
+                {formatNPR(pricing.askingPrice)}
+              </span>
+            </p>
+          )}
+        </div>
+
+        {/* Action CTAs */}
+        <div className="flex items-center gap-2 min-w-0 pt-0.5">
           <CallSellerButton
             propertyId={propertyId}
             variant="default"

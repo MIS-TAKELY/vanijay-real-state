@@ -465,7 +465,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
               fallbackGradient={gradient}
             />
 
-            {/* Location + Price & Primary CTAs in the same row */}
+            {/* Location + Price & Primary CTAs (side-by-side on sm+, sticky bottom bar on mobile) */}
             <div
               className={cn(
                 "grid grid-cols-1 gap-3",
@@ -479,13 +479,15 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 mapHeight={105}
               />
 
-              <ListingDecisionCard
-                propertyId={property.id}
-                title={property.title}
-                pricing={pricing}
-                location={property.location}
-                showMap={false}
-              />
+              <div className="hidden sm:block">
+                <ListingDecisionCard
+                  propertyId={property.id}
+                  title={property.title}
+                  pricing={pricing}
+                  location={property.location}
+                  showMap={false}
+                />
+              </div>
             </div>
           </div>
 
@@ -650,14 +652,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
         {/* Similar Properties Section */}
         <SimilarProperties propertyId={property.id} />
-
-        {/* Clearance so the fixed mobile price bar never covers the footer */}
-        <div className="h-32 lg:hidden" aria-hidden="true" />
       </main>
 
       {/* Mobile sticky price + primary actions (desktop uses the sidebar card) */}
       <MobilePriceBar
-        askingPrice={formatNPR(property.askingPrice)}
+        pricing={pricing}
         propertyId={property.id}
         title={property.title}
       />
