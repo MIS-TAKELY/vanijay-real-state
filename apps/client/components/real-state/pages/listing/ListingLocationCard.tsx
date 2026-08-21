@@ -77,7 +77,7 @@ export function ListingLocationCard({
 
         {hasCoords ? (
           <div
-            className="overflow-hidden rounded-sm border border-outline-variant"
+            className="relative w-full overflow-hidden rounded-sm border border-outline-variant isolate [contain:paint]"
             style={{ height: mapHeight }}
           >
             <ListingSidebarMap

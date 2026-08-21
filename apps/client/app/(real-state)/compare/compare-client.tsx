@@ -94,7 +94,7 @@ function PropertySearch({
           type="text"
           placeholder="Search by title, location, or code..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={(e) => setQuery((e.target as HTMLInputElement).value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch(query)}
           className="flex-1 rounded-lg border border-outline-variant bg-surface-container px-3 sm:px-4 py-1.5 sm:py-2.5 text-xs sm:text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
         />

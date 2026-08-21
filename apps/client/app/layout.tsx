@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Toaster } from "@repo/ui";
 import { Suspense } from "react";
+import { SerwistProvider } from "@serwist/turbopack/react";
 import { AuthModalListener } from "components/real-state/auth/AuthModalListener";
 import { SITE_URL } from "lib/site";
 import "./globals.css";
@@ -9,15 +10,50 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   minimumScale: 1,
+  themeColor: "#1B5E20",
 };
+
+const APP_NAME = "MALPOTH";
+const APP_DEFAULT_TITLE = "MALPOTH | Verified Land & Property Archive";
+const APP_TITLE_TEMPLATE = "%s - MALPOTH";
+const APP_DESCRIPTION = "The archive of record for legitimate land ownership in Nepal — field-verified land and property listings cross-referenced against cadastral records.";
 
 export const metadata: Metadata = {
   // Without metadataBase, relative canonicals (`alternates.canonical`) and
   // relative OG URLs resolve against the request host (www, staging, etc.).
   // Pin them all to the canonical public origin.
   metadataBase: new URL(SITE_URL),
-  title: "MALPOTH | Verified Land & Property Archive",
-  description: "The archive of record for legitimate land ownership in Nepal.",
+  title: {
+    default: APP_DEFAULT_TITLE,
+    template: APP_TITLE_TEMPLATE,
+  },
+  description: APP_DESCRIPTION,
+  applicationName: APP_NAME,
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: APP_DEFAULT_TITLE,
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    type: "website",
+    siteName: APP_NAME,
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary",
+    title: {
+      default: APP_DEFAULT_TITLE,
+      template: APP_TITLE_TEMPLATE,
+    },
+    description: APP_DESCRIPTION,
+  },
 };
 
 /**
@@ -69,21 +105,28 @@ export default function RootLayout({
   return (
     <html lang="en" className="light">
       <head>
+        <link rel="manifest" href="/manifest.json" />
+        <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="MALPOTH" />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
       </head>
       <body className="text-on-surface">
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
-        />
-        {children}
-        <Toaster position="top-center" richColors />
-        <Suspense fallback={null}>
-          <AuthModalListener />
-        </Suspense>
+        <SerwistProvider swUrl="/sw.js">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(siteSchema) }}
+          />
+          {children}
+          <Toaster position="top-center" richColors />
+          <Suspense fallback={null}>
+            <AuthModalListener />
+          </Suspense>
+        </SerwistProvider>
       </body>
     </html>
   );

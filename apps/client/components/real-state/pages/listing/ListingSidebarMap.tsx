@@ -99,6 +99,16 @@ export function ListingSidebarMap({
         .bindPopup(title, { closeButton: false });
 
       mapInstanceRef.current = map;
+
+      // Invalidate size on container resize
+      const ro = new ResizeObserver(() => {
+        map.invalidateSize();
+      });
+      ro.observe(containerRef.current);
+
+      return () => {
+        ro.disconnect();
+      };
     }
 
     void initMap();
@@ -155,9 +165,9 @@ export function ListingSidebarMap({
       <div
         ref={wrapperRef}
         className={cn(
-          "relative overflow-hidden bg-surface-container",
+          "relative h-full w-full overflow-hidden bg-surface-container isolate z-0",
           expanded &&
-            "fixed inset-4 z-50 rounded-2xl border-2 border-navy/20 shadow-2xl",
+            "fixed inset-4 !z-50 rounded-2xl border-2 border-navy/20 shadow-2xl",
         )}
       >
         {/* Map controls — top right */}

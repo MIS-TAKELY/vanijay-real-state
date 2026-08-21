@@ -1,0 +1,52 @@
+{
+  "name": "MALPOTH | Verified Land & Property Archive",
+  "short_name": "MALPOTH",
+  "description": "The archive of record for legitimate land ownership in Nepal — field-verified land and property listings cross-referenced against cadastral records.",
+  "icons": [
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/icon-maskable-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-maskable-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "theme_color": "#1B5E20",
+  "background_color": "#FFFFFF",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "start_url": "/",
+  "lang": "en",
+  "categories": ["business", "finance"],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Search Properties",
+      "short_name": "Search",
+      "url": "/search",
+      "description": "Search verified land and property listings"
+    },
+    {
+      "name": "Gold Rates",
+      "short_name": "Gold",
+      "url": "/gold",
+      "description": "Check current gold and silver market rates"
+    }
+  ]
+}

@@ -1,9 +1,10 @@
 import path from "path";
 import { fileURLToPath } from "url";
+import { withSerwist } from "@serwist/turbopack";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const nextConfig = {
+const nextConfig = withSerwist({
   output: "standalone",
 
   transpilePackages: ["@repo/ui"],
@@ -52,6 +53,6 @@ const nextConfig = {
       },
     ];
   },
-};
+});
 
 export default nextConfig;

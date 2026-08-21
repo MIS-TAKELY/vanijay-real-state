@@ -7,6 +7,8 @@
       }
     ],
     "strictNullChecks": true,
+    "types": [],
+    "lib": ["es2022", "DOM", "DOM.Iterable", "webworker"],
     "paths": {
       "@/*": ["../../packages/ui/src/*"],
       "components/*": ["./components/*"],
@@ -23,5 +25,5 @@
     "next.config.js",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "public/sw.js"]
 }
