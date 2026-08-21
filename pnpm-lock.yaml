@@ -232,9 +232,6 @@ importers:
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui
-      '@serwist/next':
-        specifier: ^9.5.12
-        version: 9.5.12(next@16.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.9.2)(webpack@5.106.2(esbuild@0.28.2))
       '@serwist/turbopack':
         specifier: ^9.5.12
         version: 9.5.12(@swc/helpers@0.5.15)(esbuild@0.28.2)(next@16.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.9.2)
@@ -2782,20 +2779,6 @@ packages:
       typescript:
         optional: true
 
-  '@serwist/next@9.5.12':
-    resolution: {integrity: sha512-aKSDZmxC2w6mvLC1aOcO4OnZqdKIl4zrW2VndlZT12+m+nIyOWih1xqqw4LsvUGfQCx0AswtKUUQ7woRYZ2thg==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      '@serwist/cli': ^9.5.12
-      next: '>=14.0.0'
-      react: '>=18.0.0'
-      typescript: '>=5.0.0'
-    peerDependenciesMeta:
-      '@serwist/cli':
-        optional: true
-      typescript:
-        optional: true
-
   '@serwist/turbopack@9.5.12':
     resolution: {integrity: sha512-mQuk5dxYxnf7c2ZYZpyOfFj3kaTn04z9rj/en6SXvTIMyOCONKi8ITEmaplNMJbno3Tw3cPkNIAyByeD+QnR+g==}
     engines: {node: '>=18.0.0'}
@@ -2819,18 +2802,6 @@ packages:
       browserslist: '>=4'
     peerDependenciesMeta:
       browserslist:
-        optional: true
-
-  '@serwist/webpack-plugin@9.5.12':
-    resolution: {integrity: sha512-+a5Fap7wVR4oN5jg1GxVNbWW+xUv3LO7UWYfg2D8PkJZiTCcX8PwkcmdzMGVr39dyOtIMTSAANw0af1zMjVbOA==}
-    engines: {node: '>=18.0.0'}
-    peerDependencies:
-      typescript: '>=5.0.0'
-      webpack: 4.4.0 || ^5.9.0
-    peerDependenciesMeta:
-      typescript:
-        optional: true
-      webpack:
         optional: true
 
   '@serwist/window@9.5.12':
@@ -9631,25 +9602,6 @@ snapshots:
     transitivePeerDependencies:
       - browserslist
 
-  '@serwist/next@9.5.12(next@16.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.9.2)(webpack@5.106.2(esbuild@0.28.2))':
-    dependencies:
-      '@serwist/build': 9.5.12(browserslist@4.28.6)(typescript@5.9.2)
-      '@serwist/utils': 9.5.12(browserslist@4.28.6)
-      '@serwist/webpack-plugin': 9.5.12(browserslist@4.28.6)(typescript@5.9.2)(webpack@5.106.2(esbuild@0.28.2))
-      '@serwist/window': 9.5.12(browserslist@4.28.6)(typescript@5.9.2)
-      browserslist: 4.28.6
-      glob: 13.0.6
-      kolorist: 1.8.0
-      next: 16.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      react: 19.2.4
-      semver: 7.8.5
-      serwist: 9.5.12(browserslist@4.28.6)(typescript@5.9.2)
-      zod: 4.4.3
-    optionalDependencies:
-      typescript: 5.9.2
-    transitivePeerDependencies:
-      - webpack
-
   '@serwist/turbopack@9.5.12(@swc/helpers@0.5.15)(esbuild@0.28.2)(next@16.2.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.9.2)':
     dependencies:
       '@serwist/build': 9.5.12(browserslist@4.28.6)(typescript@5.9.2)
@@ -9672,18 +9624,6 @@ snapshots:
   '@serwist/utils@9.5.12(browserslist@4.28.6)':
     optionalDependencies:
       browserslist: 4.28.6
-
-  '@serwist/webpack-plugin@9.5.12(browserslist@4.28.6)(typescript@5.9.2)(webpack@5.106.2(esbuild@0.28.2))':
-    dependencies:
-      '@serwist/build': 9.5.12(browserslist@4.28.6)(typescript@5.9.2)
-      '@serwist/utils': 9.5.12(browserslist@4.28.6)
-      pretty-bytes: 6.1.1
-      zod: 4.4.3
-    optionalDependencies:
-      typescript: 5.9.2
-      webpack: 5.106.2(esbuild@0.28.2)
-    transitivePeerDependencies:
-      - browserslist
 
   '@serwist/window@9.5.12(browserslist@4.28.6)(typescript@5.9.2)':
     dependencies:
@@ -14071,17 +14011,6 @@ snapshots:
     optionalDependencies:
       '@swc/core': 1.15.46(@swc/helpers@0.5.15)
 
-  terser-webpack-plugin@5.6.1(esbuild@0.28.2)(webpack@5.106.2(esbuild@0.28.2)):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 4.3.3
-      terser: 5.49.0
-      webpack: 5.106.2(esbuild@0.28.2)
-    optionalDependencies:
-      esbuild: 0.28.2
-    optional: true
-
   terser@5.49.0:
     dependencies:
       '@jridgewell/source-map': 0.3.11
@@ -14441,47 +14370,6 @@ snapshots:
       - lightningcss
       - postcss
       - uglify-js
-
-  webpack@5.106.2(esbuild@0.28.2):
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.8
-      '@types/json-schema': 7.0.15
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.17.0
-      acorn-import-phases: 1.0.4(acorn@8.17.0)
-      browserslist: 4.28.7
-      chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.24.3
-      es-module-lexer: 2.3.1
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      loader-runner: 4.3.2
-      mime-db: 1.54.0
-      neo-async: 2.6.2
-      schema-utils: 4.3.3
-      tapable: 2.3.3
-      terser-webpack-plugin: 5.6.1(esbuild@0.28.2)(webpack@5.106.2(esbuild@0.28.2))
-      watchpack: 2.5.2
-      webpack-sources: 3.5.1
-    transitivePeerDependencies:
-      - '@minify-html/node'
-      - '@swc/core'
-      - '@swc/css'
-      - '@swc/html'
-      - clean-css
-      - cssnano
-      - csso
-      - esbuild
-      - html-minifier-terser
-      - lightningcss
-      - postcss
-      - uglify-js
-    optional: true
 
   whatwg-mimetype@4.0.0: {}
 
