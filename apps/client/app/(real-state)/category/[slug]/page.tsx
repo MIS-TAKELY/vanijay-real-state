@@ -4,6 +4,7 @@ import {
   CategoryResults,
 } from "components/real-state/pages/category";
 import { getCategoryBySlug } from "constants/category-catalog";
+import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { PAGE_SIZE } from "lib/api/core/config";
 import {
   fetchFeedPageGraphql,
@@ -34,25 +35,51 @@ export async function generateMetadata({
       robots: { index: false },
     };
   }
+
   return {
     title: `${category.title} | MALPOTH`,
     description: category.description,
     keywords: category.keywords,
-    alternates: { canonical: `/category/${category.slug}` },
+    alternates: {
+      canonical: `/category/${category.slug}`,
+      languages: buildHreflang(`/category/${category.slug}`),
+    },
     openGraph: {
       title: category.title,
       description: category.description,
       url: `${SITE_URL}/category/${category.slug}`,
       siteName: "MALPOTH",
       type: "website",
+      ...ogLocaleFor(),
     },
-    robots: { index: true, follow: true },
+    twitter: {
+      card: "summary_large_image",
+      title: category.title,
+      description: category.description,
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
+    },
   };
 }
 
+/* ──────────────────────────────────────────────────────────────────────
+ * JSON-LD STRUCTURED DATA
+ * ────────────────────────────────────────────────────────────────────── */
+
+/** BreadcrumbList — Home → Category */
 const breadcrumbSchema = (slug: string, name: string) => ({
   "@context": "https://schema.org",
   "@type": "BreadcrumbList",
+  "@id": `${SITE_URL}/category/${slug}#breadcrumb`,
   itemListElement: [
     { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
     {
@@ -82,10 +109,19 @@ const collectionSchema = (
       name: category.title,
       description: category.description,
       isPartOf: { "@id": `${SITE_URL}/#website` },
+      about: { "@id": `${SITE_URL}/#organization` },
+      mainEntity: {
+        "@id": `${SITE_URL}/category/${category.slug}#itemlist`,
+      },
+      breadcrumb: { "@id": `${SITE_URL}/category/${category.slug}#breadcrumb` },
+      inLanguage: "en",
+      dateModified: new Date().toISOString().split("T")[0],
     },
     {
       "@type": "ItemList",
+      "@id": `${SITE_URL}/category/${category.slug}#itemlist`,
       name: `${category.name} listings on MALPOTH`,
+      description: `Verified ${category.name.toLowerCase()} listings across Nepal`,
       itemListOrder: "https://schema.org/ItemListOrderAscending",
       numberOfItems: items.length,
       itemListElement: items.map((p, i) => ({
@@ -98,15 +134,62 @@ const collectionSchema = (
           name: p.title,
           url: `${SITE_URL}/${p.slug}`,
           description: `${p.title} — ${formatLocation(p.location)} — asking price ${formatNPR(p.askingPrice)}.`,
+          image: (p.media ?? []).find((m) => !m.type || m.type === "IMAGE")
+            ?.url,
           offers: {
             "@type": "Offer",
             price: p.askingPrice,
             priceCurrency: "NPR",
+            availability: "https://schema.org/InStock",
           },
+          ...(p.location?.latitude != null && p.location?.longitude != null
+            ? {
+                geo: {
+                  "@type": "GeoCoordinates",
+                  latitude: p.location.latitude,
+                  longitude: p.location.longitude,
+                },
+              }
+            : {}),
         },
       })),
     },
   ],
+});
+
+/**
+ * WebPage schema — page-level entity for the category archive.
+ */
+const webPageSchema = (category: { slug: string; title: string; description: string }) => ({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${SITE_URL}/category/${category.slug}#webpage`,
+  url: `${SITE_URL}/category/${category.slug}`,
+  name: `${category.title} | MALPOTH`,
+  description: category.description,
+  isPartOf: { "@id": `${SITE_URL}/#website` },
+  about: { "@id": `${SITE_URL}/#organization` },
+  mainEntity: { "@id": `${SITE_URL}/category/${category.slug}#collection` },
+  breadcrumb: { "@id": `${SITE_URL}/category/${category.slug}#breadcrumb` },
+  inLanguage: "en",
+  dateModified: new Date().toISOString().split("T")[0],
+  potentialAction: {
+    "@type": "ReadAction",
+    target: `${SITE_URL}/category/${category.slug}`,
+  },
+});
+
+/**
+ * Speakable schema — targeting the H1 for voice assistants / Google Assistant.
+ */
+const speakableSchema = (category: { slug: string }) => ({
+  "@context": "https://schema.org",
+  "@type": "WebPage",
+  "@id": `${SITE_URL}/category/${category.slug}#speakable`,
+  speakable: {
+    "@type": "SpeakableSpecification",
+    cssSelector: [".category-hero-title"],
+  },
 });
 
 export default async function CategoryPage({
@@ -125,7 +208,6 @@ export default async function CategoryPage({
   let initial: FeedPage = { items: [], nextCursor: null, hasMore: false };
   let initialError: string | null = null;
   try {
-    // If a subcategory is selected, filter by that subcategory; otherwise by mainCategory slug
     initial = await fetchFeedPageGraphql({ first: PAGE_SIZE, type: queryType });
   } catch (e) {
     initialError = e instanceof Error ? e.message : "Failed to load listings";
@@ -133,6 +215,7 @@ export default async function CategoryPage({
 
   return (
     <>
+      {/* JSON-LD structured data */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -143,6 +226,18 @@ export default async function CategoryPage({
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify(collectionSchema(category, initial.items)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webPageSchema(category)),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(speakableSchema(category)),
         }}
       />
       <main className="flex flex-col">

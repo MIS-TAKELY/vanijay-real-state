@@ -67,7 +67,7 @@ export function Calculator({ items, editable, onFieldChange }: CalculatorProps) 
               value="How much will I get?"
               onChange={(v) => onFieldChange?.("calculator", "heading", v)}
               editable={editable}
-              className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
+              className="mt-2 font-display-lg text-3xl tracking-tight text-foreground sm:text-4xl"
             />
             <EditableField
               tag="p"

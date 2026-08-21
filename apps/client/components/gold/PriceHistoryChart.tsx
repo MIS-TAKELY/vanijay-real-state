@@ -215,7 +215,7 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
 
   return (
     <section aria-label={`${metal.name} price history chart`}>
-      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+      <div className="mb-4 flex flex-col gap-3 sm:mb-5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
         <div>
           <h2
             className="text-2xl font-medium tracking-tight text-on-surface md:text-3xl"
@@ -257,7 +257,7 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
 
         {/* Timeframe toggle */}
         <div
-          className="flex shrink-0 gap-0.5 self-start rounded-full border border-outline-variant bg-surface p-0.5 shadow-sm sm:self-auto"
+          className="flex shrink-0 flex-nowrap gap-0.5 self-start overflow-x-auto rounded-full border border-outline-variant bg-surface p-0.5 shadow-sm sm:flex-wrap sm:overflow-x-visible sm:self-auto"
           role="group"
           aria-label="Chart timeframe"
         >
@@ -280,7 +280,7 @@ export function PriceHistoryChart({ metal, currency }: PriceHistoryChartProps) {
       </div>
 
       <div className="relative overflow-hidden rounded-xl border border-outline-variant bg-surface shadow-sm">
-        <div ref={containerRef} className="h-[380px] w-full md:h-[440px]" />
+        <div ref={containerRef} className="h-[280px] w-full sm:h-[340px] md:h-[440px]" />
 
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center bg-surface/70">

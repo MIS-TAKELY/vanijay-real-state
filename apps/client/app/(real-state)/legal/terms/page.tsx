@@ -1,3 +1,4 @@
+import { buildHreflang } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
@@ -5,7 +6,10 @@ export const metadata: Metadata = {
   title: "Terms of Service | MALPOTH",
   description:
     "The terms and conditions governing your use of MALPOTH — Nepal's verified land and property archive.",
-  alternates: { canonical: "/legal/terms" },
+  alternates: {
+    canonical: "/legal/terms",
+    languages: buildHreflang("/legal/terms"),
+  },
   openGraph: {
     title: "Terms of Service | MALPOTH",
     description:
@@ -14,7 +18,15 @@ export const metadata: Metadata = {
     siteName: "MALPOTH",
     type: "website",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+    },
+  },
 };
 
 const sectionClass = "mb-8";

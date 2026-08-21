@@ -96,7 +96,7 @@ export function HowItWorks({
             value="From doorstep to cash in four steps"
             onChange={(v) => onFieldChange?.("howItWorks", "heading", v)}
             editable={editable}
-            className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
+            className="mt-2 font-display-lg text-3xl tracking-tight text-foreground sm:text-4xl"
           />
           <EditableField
             tag="p"
@@ -160,14 +160,14 @@ export function HowItWorks({
           })}
         </ol>
 
-        <div className="mt-8 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
           {trust.map((t, idx) => {
             const Icon = ICON_MAP[t.icon] ?? ShieldCheck;
             return (
               <Badge
                 key={idx}
                 variant="outline"
-                className="justify-start gap-3 rounded-xl px-4 py-3.5 font-label-sm text-label-sm font-medium text-foreground"
+                className="justify-start gap-3 rounded-xl px-4 py-3 font-label-sm text-label-sm font-medium text-foreground"
               >
                 <Icon className="size-5 shrink-0 text-primary" />
                 {editable ? (

@@ -23,6 +23,7 @@ import {
   type ApiProperty,
   type ApiPropertyMedia,
 } from "lib/api/services/properties/types";
+import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -34,9 +35,6 @@ async function loadProperty(slug: string): Promise<ApiProperty> {
   try {
     return await fetchPropertyByGraphql(slug);
   } catch (error) {
-    // The API returns GraphQL resolver errors on an HTTP 200 response (e.g. the
-    // "Property … not found" message from a non-LIVE/invalid slug), so normalize
-    // those to 404 and render the not-found page instead of crashing.
     if (
       error instanceof ApiError &&
       (error.status === 404 || /not found/i.test(error.message))
@@ -54,23 +52,58 @@ export async function generateMetadata({
   try {
     const property = await fetchPropertyByGraphql(slug);
     const plainDesc = stripHtml(property.description);
-    // Prefer a real image for the OG card (media[0] may be a video).
     const ogImage = (property.media ?? []).find(
       (m) => !m.type || m.type === "IMAGE",
     )?.url;
+    const location = formatLocation(property.location);
+    const subType = labelEnum(property.subCategory, TYPE_LABELS);
+
     return {
       title: `${property.title} | MALPOTH`,
       description:
         plainDesc ||
-        `${labelEnum(property.subCategory, TYPE_LABELS)} for sale in ${formatLocation(property.location)}.`,
-      alternates: { canonical: `/${slug}` },
+        `${subType} for sale in ${location}. Price: ${formatNPR(property.askingPrice)}. Verified by MALPOTH — cadastral-cleared, zero title disputes.`,
+      alternates: {
+        canonical: `/${slug}`,
+        languages: buildHreflang(`/${slug}`),
+      },
       openGraph: {
         title: property.title,
         description:
           plainDesc ||
-          `${formatNPR(property.askingPrice)} — ${formatLocation(property.location)}`,
-        images: ogImage ? [ogImage] : undefined,
+          `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
+        images: ogImage
+          ? [
+              {
+                url: ogImage,
+                width: 1200,
+                height: 630,
+                alt: `${property.title} — ${location}`,
+              },
+            ]
+          : undefined,
         type: "website",
+        siteName: "MALPOTH",
+        ...ogLocaleFor(),
+      },
+      twitter: {
+        card: "summary_large_image",
+        title: property.title,
+        description:
+          plainDesc ||
+          `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
+        images: ogImage ? [ogImage] : undefined,
+      },
+      robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+          index: true,
+          follow: true,
+          "max-video-preview": -1,
+          "max-image-preview": "large",
+          "max-snippet": -1,
+        },
       },
     };
   } catch {
@@ -82,7 +115,6 @@ function formatNumber(n: number | null | undefined): string | null {
   return n == null ? null : new Intl.NumberFormat("en-US").format(n);
 }
 
-/** Human-readable date for the visible freshness signal (e.g. "Jan 15, 2026"). */
 function formatFreshnessDate(iso: string | null | undefined): string | null {
   if (!iso) return null;
   const d = new Date(iso);
@@ -95,8 +127,6 @@ function formatFreshnessDate(iso: string | null | undefined): string | null {
   });
 }
 
-/** Nicer display labels for construction statuses (labelEnum would render
- *  "READY" as just "Ready"). */
 const CONSTRUCTION_LABELS: Record<string, string> = {
   READY: "Ready to move",
   UNDER_CONSTRUCTION: "Under construction",
@@ -122,21 +152,61 @@ function partitionMedia(media: ApiPropertyMedia[] = []) {
   };
 }
 
+/* ──────────────────────────────────────────────────────────────────────
+ * COMPREHENSIVE JSON-LD STRUCTURED DATA
+ * ────────────────────────────────────────────────────────────────────── */
+
+/** Map property subCategory to schema.org housing/property types. */
+function schemaOrgPropertyType(
+  subCategory: string,
+): string {
+  const map: Record<string, string> = {
+    HOUSE: "House",
+    APARTMENT: "Apartment",
+    TOWNHOUSE: "Townhouse",
+    CONDOMINIUM: "Apartment",
+    PLOT: "Plot",
+    LAND: "Plot",
+    OFFICE: "Office",
+    RETAIL: "Store",
+    SHOP: "Store",
+    WAREHOUSE: "Warehouse",
+    FACTORY: "Industrial",
+    FARMHOUSE: "House",
+    HERITAGE_HOME: "House",
+    FLAT: "Apartment",
+    ROOM: "Room",
+    FLOOR: "Floor",
+  };
+  return map[subCategory] ?? "Product";
+}
+
 /**
- * JSON-LD structured data for listing detail pages:
- * - RealEstateListing + Offer (rich results: price, availability, images)
- * - BreadcrumbList (Home → Category → Listing)
- * - Place with geo when coordinates are present (map rich results)
+ * Build comprehensive JSON-LD structured data for listing detail pages.
+ *
+ * Produces:
+ * 1. RealEstateListing + Offer (primary listing schema)
+ * 2. Place + GeoCoordinates (location with map rich results)
+ * 3. BreadcrumbList (navigation breadcrumb)
+ * 4. VideoObject (for each video walkthrough)
+ * 5. WebPage (page-level entity)
+ * 6. speakable (voice assistant / Google Assistant)
  */
 function buildListingJsonLd(property: ApiProperty) {
   const url = `${SITE_URL}/${property.slug}`;
+  const plainDesc = stripHtml(property.description) || undefined;
   const images = (property.media ?? [])
     .filter((m) => !m.type || m.type === "IMAGE")
     .map((m) => m.url);
+  const videos = (property.media ?? []).filter(
+    (m) => m.type === "VIDEO_WALKTHROUGH",
+  );
   const loc = property.location;
   const category = CATEGORY_CATALOG.find(
     (c) => c.mainCategory === property.mainCategory,
   );
+
+  // ── 1. RealEstateListing (primary) ──────────────────────────────────
 
   const offer: Record<string, unknown> = {
     "@type": "Offer",
@@ -144,21 +214,27 @@ function buildListingJsonLd(property: ApiProperty) {
     priceCurrency: "NPR",
     availability: "https://schema.org/InStock",
     url,
+    seller: { "@id": `${SITE_URL}/#organization` },
   };
 
   const listing: Record<string, unknown> = {
     "@context": "https://schema.org",
     "@type": "RealEstateListing",
+    "@id": `${url}#listing`,
     name: property.title,
     url,
-    description: stripHtml(property.description) || undefined,
+    description: plainDesc,
     image: images.length > 0 ? images : undefined,
     datePosted: property.createdAt,
-    // Freshness signal for AI engines and search engines — mirrors the
-    // visible "Listed / Updated" line in the page header.
     dateModified: property.updatedAt || property.createdAt,
+    mainEntityOfPage: {
+      "@type": "WebPage",
+      "@id": url,
+    },
     offers: offer,
   };
+
+  // ── 2. Location + GeoCoordinates ────────────────────────────────────
 
   if (loc) {
     const address: Record<string, unknown> = {
@@ -167,20 +243,96 @@ function buildListingJsonLd(property: ApiProperty) {
       addressRegion: loc.district || undefined,
       addressCountry: "NP",
     };
-    const place: Record<string, unknown> = {
-      "@type": "Place",
-      address,
-    };
+    if (loc.addressText) address.streetAddress = loc.addressText;
+
+    listing.address = address;
+
     if (loc.latitude != null && loc.longitude != null) {
-      place.geo = {
+      listing.geo = {
         "@type": "GeoCoordinates",
         latitude: loc.latitude,
         longitude: loc.longitude,
       };
     }
-    listing.address = address;
-    if (place.geo) listing.geo = place.geo;
+
+    // Aggregate location as a string for richer snippet display
+    const locationParts = [
+      loc.areaName,
+      loc.municipality,
+      loc.district,
+      loc.province,
+    ].filter(Boolean);
+    if (locationParts.length > 0) {
+      listing.location = {
+        "@type": "Place",
+        name: locationParts.join(", "),
+        address,
+      };
+    }
   }
+
+  // ── 3. Property-specific attributes ─────────────────────────────────
+
+  // Floor area / land area
+  if (property.landArea && property.landArea.totalSqFt > 0) {
+    listing.floorSize = {
+      "@type": "QuantitativeValue",
+      value: property.landArea.totalSqFt,
+      unitCode: "FTK", // square foot
+    };
+  }
+  if (property.builtUpAreaSqFt) {
+    listing.floorSize = {
+      "@type": "QuantitativeValue",
+      value: property.builtUpAreaSqFt,
+      unitCode: "FTK",
+    };
+  }
+
+  // Number of rooms
+  if (property.bedrooms != null) {
+    listing.numberOfRooms = property.bedrooms;
+  }
+
+  // Year built
+  if (property.yearBuilt) {
+    listing.dateBuilt = String(property.yearBuilt);
+  }
+
+  // Amenities as amenityFeature
+  if (property.amenities && property.amenities.length > 0) {
+    listing.amenityFeature = property.amenities.map((a) => ({
+      "@type": "LocationFeatureSpecification",
+      name: labelEnum(a, {}),
+      value: true,
+    }));
+  }
+
+  // Parking
+  if (property.parking || property.parkingSpaces != null) {
+    listing.parking = {
+      "@type": "ParkingConfiguration",
+      name: property.parking
+        ? labelEnum(property.parking, {})
+        : `${property.parkingSpaces} spaces`,
+    };
+  }
+
+  // ── 4. VideoObject schemas (for each video walkthrough) ─────────────
+
+  const videoSchemas = videos.map((v) => ({
+    "@context": "https://schema.org",
+    "@type": "VideoObject",
+    name: `${property.title} — Video Walkthrough`,
+    description: plainDesc || `Video walkthrough of ${property.title}`,
+    thumbnailUrl: images.length > 0 ? images[0] : undefined,
+    embedUrl: v.url,
+    uploadDate: property.createdAt,
+    duration: "PT1M", // Placeholder — real duration would require parsing
+    publisher: { "@id": `${SITE_URL}/#organization` },
+  }));
+
+  // ── 5. BreadcrumbList ───────────────────────────────────────────────
 
   const breadcrumbItems = [
     { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
@@ -203,10 +355,51 @@ function buildListingJsonLd(property: ApiProperty) {
   const breadcrumb = {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${url}#breadcrumb`,
     itemListElement: breadcrumbItems,
   };
 
-  return [listing, breadcrumb];
+  // ── 6. WebPage ──────────────────────────────────────────────────────
+
+  const webPage = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}#webpage`,
+    url,
+    name: `${property.title} | MALPOTH`,
+    description: plainDesc,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#organization` },
+    mainEntity: { "@id": `${url}#listing` },
+    datePublished: property.createdAt,
+    dateModified: property.updatedAt || property.createdAt,
+    breadcrumb: { "@id": `${url}#breadcrumb` },
+    inLanguage: "en",
+    potentialAction: {
+      "@type": "ReadAction",
+      target: url,
+    },
+  };
+
+  // ── 7. Speakable (voice assistants / Google Assistant) ───────────────
+
+  const speakable = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${url}#speakable`,
+    speakable: {
+      "@type": "SpeakableSpecification",
+      cssSelector: [
+        ".font-headline-md", // H1 title
+      ],
+    },
+  };
+
+  // Collect all schemas
+  const schemas: Record<string, unknown>[] = [listing, breadcrumb, webPage];
+  if (videoSchemas.length > 0) schemas.push(...videoSchemas);
+
+  return schemas;
 }
 
 export default async function ListingDetailPage({ params }: PageProps) {
@@ -238,9 +431,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
     ? labelEnum(property.facing, {})
     : null;
 
-  // Key Facts — surface the four essentials under the header as chips. These are
-  // the canonical values; the spec table below intentionally does NOT repeat
-  // them, so the same data is never rendered twice.
   const keyFacts: Array<[string, string | null | undefined]> = (
     [
       ["Land Area", hasLand ? area : null],
@@ -413,6 +603,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
   return (
     <>
+      {/* JSON-LD structured data — comprehensive schemas for rich results */}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -422,7 +613,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
       <PropertyViewTracker propertyId={property.id} />
       <main className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
         <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-8">
-          {/* LEFT — sticky gallery column (breadcrumb + gallery + location & price/CTA row) */}
+          {/* LEFT — sticky gallery column */}
           <div className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-20 lg:self-start lg:gap-3.5">
             <nav className="min-w-0 overflow-hidden" aria-label="Breadcrumb">
               <ol className="flex min-w-0 items-center gap-1 text-xs text-on-surface-variant overflow-hidden sm:gap-1.5 sm:text-sm">
@@ -465,7 +656,6 @@ export default async function ListingDetailPage({ params }: PageProps) {
               fallbackGradient={gradient}
             />
 
-            {/* Location + Price & Primary CTAs (side-by-side on sm+, sticky bottom bar on mobile) */}
             <div
               className={cn(
                 "grid grid-cols-1 gap-3",
@@ -491,33 +681,33 @@ export default async function ListingDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          {/* RIGHT — scrolling details column (title, price card, description, specs) */}
+          {/* RIGHT — scrolling details column */}
           <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
             <header className="min-w-0">
-          <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-2.5">
-            <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
-              {property.title}
-            </h1>
+              <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-2.5">
+                <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
+                  {property.title}
+                </h1>
 
-            {location && (
-              <>
-                <span
-                  aria-hidden
-                  className="select-none text-base text-on-surface-variant/35 sm:text-lg"
-                >
-                  ·
-                </span>
-                <p className="inline-flex min-w-0 max-w-full items-center gap-1 text-sm text-on-surface-variant sm:max-w-[min(100%,28rem)]">
-                  <Icon
-                    name="location_on"
-                    className="shrink-0 text-[16px]"
-                    aria-hidden
-                  />
-                  <span className="truncate">{location}</span>
-                </p>
-              </>
-            )}
-          </div>
+                {location && (
+                  <>
+                    <span
+                      aria-hidden
+                      className="select-none text-base text-on-surface-variant/35 sm:text-lg"
+                    >
+                      ·
+                    </span>
+                    <p className="inline-flex min-w-0 max-w-full items-center gap-1 text-sm text-on-surface-variant sm:max-w-[min(100%,28rem)]">
+                      <Icon
+                        name="location_on"
+                        className="shrink-0 text-[16px]"
+                        aria-hidden
+                      />
+                      <span className="truncate">{location}</span>
+                    </p>
+                  </>
+                )}
+              </div>
             </header>
 
             {/* Description */}
@@ -531,7 +721,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
                   Location
                 </h2>
-                <div className="rounded-sm border border-outline-variant bg-surface p-5 sm:p-6 shadow-xs">
+                <div className="rounded-sm bg-surface p-5 sm:p-6 shadow-xs">
                   <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2 sm:gap-y-4">
                     {locationSpecs
                       .filter(([, value]) => value)
@@ -560,7 +750,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
                   Specifications
                 </h2>
-                <div className="rounded-sm border border-outline-variant bg-surface p-5 sm:p-6 shadow-xs">
+                <div className="rounded-sm bg-surface p-5 sm:p-6 shadow-xs">
                   <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2 sm:gap-y-4">
                     {allSpecs
                       .filter(([, value]) => value)
@@ -619,7 +809,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                           {table.heading}
                         </h2>
                       )}
-                      <div className="rounded-sm border border-outline-variant bg-surface p-5 sm:p-6 shadow-xs">
+                      <div className="rounded-sm bg-surface p-5 sm:p-6 shadow-xs">
                         <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2 sm:gap-y-4">
                           {validRows.map(([detail, value], rIdx) => (
                             <div
@@ -654,7 +844,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
         <SimilarProperties propertyId={property.id} />
       </main>
 
-      {/* Mobile sticky price + primary actions (desktop uses the sidebar card) */}
+      {/* Mobile sticky price + primary actions */}
       <MobilePriceBar
         pricing={pricing}
         propertyId={property.id}

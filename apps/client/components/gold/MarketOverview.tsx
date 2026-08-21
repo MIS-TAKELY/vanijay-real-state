@@ -189,7 +189,7 @@ export function MarketOverview({
         })}
       </ul>
 
-      <div className="mt-4 border-t border-outline-variant pt-3">
+      <div className="mt-3 border-t border-outline-variant pt-3 sm:mt-4">
         {topMover && (
           <p
             className="mb-3 text-xs leading-relaxed text-on-surface-variant"

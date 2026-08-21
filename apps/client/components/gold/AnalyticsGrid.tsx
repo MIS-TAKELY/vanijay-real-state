@@ -70,13 +70,13 @@ export function AnalyticsGrid({ metal, currency }: AnalyticsGridProps) {
             className="rounded-xl border border-outline-variant bg-surface p-4 shadow-sm"
           >
             <span
-              className="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5"
+              className="block text-[9px] uppercase tracking-wider text-on-surface-variant mb-1 sm:text-[10px]"
               style={{ fontFamily: "var(--font-body)" }}
             >
               {stat.label}
             </span>
             <span
-              className="text-lg font-semibold tabular-nums"
+              className="text-base font-semibold tabular-nums sm:text-lg"
               style={{
                 fontFamily: "var(--font-mono)",
                 color: stat.color || "var(--color-on-surface)",

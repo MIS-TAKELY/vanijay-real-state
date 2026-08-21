@@ -7,6 +7,7 @@ import {
   Timeline,
   Values,
 } from "components/real-state/pages/about";
+import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
@@ -26,6 +27,7 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: "/about",
+    languages: buildHreflang("/about"),
   },
   openGraph: {
     title: "About MALPOTH | Nepal's Verified Land & Property Archive",
@@ -34,6 +36,7 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     siteName: "MALPOTH",
     type: "website",
+    ...ogLocaleFor(),
   },
   twitter: {
     card: "summary_large_image",
@@ -41,7 +44,17 @@ export const metadata: Metadata = {
     description:
       "Nepal's first institutional land archive — rigorous field verification, cadastral cross-referencing, zero title disputes.",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 const organizationSchema = {

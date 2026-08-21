@@ -183,15 +183,15 @@ export function HeroPricePanel({
 
       {/* Order book snapshot (spot price available) */}
       {hasOrderBook && (
-        <dl className="grid grid-cols-3 gap-3 border-t border-outline-variant bg-surface-container/50 px-4 py-4 pt-4 text-center rounded-xl">
+        <dl className="grid grid-cols-3 gap-2 border-t border-outline-variant bg-surface-container/50 px-3 py-3 pt-3 text-center rounded-xl sm:gap-3 sm:px-4 sm:py-4 sm:pt-4">
           {[
             { label: "Bid", value: bid != null ? formatPrice(bid, currency) : "—" },
             { label: "Ask", value: ask != null ? formatPrice(ask, currency) : "—" },
             { label: "Spread", value: spread ?? "—" },
           ].map((row) => (
-            <div key={row.label}>
+            <div key={row.label} className="min-w-0">
               <dt
-                className="text-[10px] font-medium uppercase tracking-wider text-on-surface-variant"
+                className="text-[9px] font-medium uppercase tracking-wider text-on-surface-variant sm:text-[10px]"
                 style={{ fontFamily: "var(--font-body)" }}
               >
                 {row.label}

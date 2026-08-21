@@ -3,6 +3,7 @@ import { Toaster } from "@repo/ui";
 import { Suspense } from "react";
 import { SerwistProvider } from "@serwist/turbopack/react";
 import { AuthModalListener } from "components/real-state/auth/AuthModalListener";
+import { buildHreflang } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import "./globals.css";
 
@@ -29,6 +30,12 @@ export const metadata: Metadata = {
   },
   description: APP_DESCRIPTION,
   applicationName: APP_NAME,
+  // Site-wide hreflang — tells crawlers which language version to serve.
+  // x-default points to the English version (current fallback).
+  // When Nepali is enabled in lib/i18n.ts, a /ne/* entry is auto-added.
+  alternates: {
+    languages: buildHreflang("/"),
+  },
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
@@ -110,10 +117,15 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="MALPOTH" />
+        {/* Preconnect to external origins for faster resource loading */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
           rel="stylesheet"
         />
+        {/* DNS prefetch for API and image CDN origins */}
+        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
       </head>
       <body className="text-on-surface">
         <SerwistProvider swUrl="/sw.js">

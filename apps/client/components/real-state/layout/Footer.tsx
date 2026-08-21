@@ -1,6 +1,7 @@
 import React from "react";
 import { Button, Icon } from "@repo/ui";
 import Image from "next/image";
+import { FooterAppsSwitcher } from "./FooterAppsSwitcher";
 
 import logo from "../../../public/logo.webp";
 import logoText from "../../../public/logo-text.webp";
@@ -25,7 +26,7 @@ const headingClass =
 export function Footer() {
   return (
     <footer className="relative z-10 w-full mt-xl border-t border-gold/20 bg-navy-deep text-white safe-bottom">
-      <div className="mx-auto grid max-w-container-max grid-cols-2 gap-md px-gutter py-md md:grid-cols-4 md:gap-md md:py-xl">
+      <div className="mx-auto grid max-w-container-max grid-cols-2 gap-md px-gutter py-md md:grid-cols-5 md:gap-md md:py-xl">
         {/* Brand — full width on mobile, single col on md+ */}
         <div className="col-span-2 md:col-span-1">
           <div className="mb-md flex items-center gap-3 md:mb-md">
@@ -91,6 +92,12 @@ export function Footer() {
               </a>
             ))}
           </div>
+        </div>
+
+        {/* Switch App */}
+        <div>
+          <h4 className={headingClass}>Navigate</h4>
+          <FooterAppsSwitcher />
         </div>
 
         {/* Contact — full width on mobile, inline layout */}

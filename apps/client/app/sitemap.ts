@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { API_ENDPOINTS } from "lib/api/core/endpoints";
 import { apiUrl } from "lib/api/core/config";
+import { LANGUAGES, DEFAULT_LOCALE } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
 
@@ -78,24 +79,60 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     listingSlugs = [];
   }
 
+  // Build language alternates for each URL.
+  // For each enabled language other than the default, emit a separate
+  // sitemap entry with the locale-prefixed URL and xhtml:link alternates.
+  const enabledLangs = Object.values(LANGUAGES).filter((l) => l.enabled);
+  const hasMultipleLangs = enabledLangs.length > 1;
+
+  /**
+   * Attach language alternates to a sitemap entry when multiple languages
+   * are enabled. Each entry gets `<xhtml:link rel="alternate" ...>` for
+   * every enabled language + x-default.
+   */
+  function withAlternates(entry: MetadataRoute.Sitemap[number]): MetadataRoute.Sitemap[number] {
+    if (!hasMultipleLangs) return entry;
+
+    const languages: Record<string, string> = {};
+    for (const lang of enabledLangs) {
+      if (lang.code === DEFAULT_LOCALE) {
+        languages[lang.code] = entry.url;
+      } else {
+        // Prefix the path segment of the URL with the locale code
+        const url = new URL(entry.url);
+        url.pathname = `/${lang.code}${url.pathname}`;
+        languages[lang.code] = url.toString();
+      }
+    }
+    languages["x-default"] = entry.url;
+
+    return { ...entry, alternates: { languages } };
+  }
+
   return [
-    ...STATIC_ROUTES.map((route) => ({
-      url: `${SITE_URL}${route.path}`,
-      changeFrequency: route.changeFrequency,
-      priority: route.priority,
-    })),
-    ...CATEGORY_ROUTES.map((route) => ({
-      url: `${SITE_URL}${route.path}`,
-      changeFrequency: route.changeFrequency,
-      priority: route.priority,
-    })),
+    ...STATIC_ROUTES.map((route) =>
+      withAlternates({
+        url: `${SITE_URL}${route.path}`,
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
+      }),
+    ),
+    ...CATEGORY_ROUTES.map((route) =>
+      withAlternates({
+        url: `${SITE_URL}${route.path}`,
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
+      }),
+    ),
     ...listingSlugs
       .filter(({ slug }) => slug && !isLikelyTestSlug(slug))
-      .map(({ slug, updatedAt }) => ({
-        url: `${SITE_URL}/${slug}`,
-        lastModified: updatedAt,
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-      })),
+      .map(({ slug, updatedAt }) =>
+        withAlternates({
+          url: `${SITE_URL}/${slug}`,
+          lastModified: updatedAt,
+          changeFrequency: "weekly" as const,
+          priority: 0.7,
+        }),
+      ),
   ];
 }

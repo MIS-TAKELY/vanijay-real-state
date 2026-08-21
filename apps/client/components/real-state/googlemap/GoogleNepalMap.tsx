@@ -311,8 +311,8 @@ export function GoogleNepalMap({
 }
 
 function formatDisplayPrice(price: string): string {
-  if (!price) return "₹ 0";
-  return price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim();
+  if (!price) return "रू 0";
+  return price.replace(/₹/g, "रू").replace(/NPR/g, "रू").trim();
 }
 
 function buildPinHtml(

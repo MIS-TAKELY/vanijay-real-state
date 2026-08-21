@@ -8,6 +8,7 @@ import { Hero } from "components/real-state/pages/nrn-concierge/Hero";
 import { ProcessAndBooking } from "components/real-state/pages/nrn-concierge/ProcessAndBooking";
 import { RemoteWindow } from "components/real-state/pages/nrn-concierge/RemoteWindow";
 import { VerifiedStamp } from "components/real-state/pages/nrn-concierge/VerifiedStamp";
+import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 
 const PAGE_URL = `${SITE_URL}/nrn-concierge`;
@@ -28,6 +29,7 @@ export const metadata: Metadata = {
   ],
   alternates: {
     canonical: "/nrn-concierge",
+    languages: buildHreflang("/nrn-concierge"),
   },
   openGraph: {
     title: "NRN Concierge Service | Buy Land in Nepal from Abroad",
@@ -36,6 +38,7 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     siteName: "MALPOTH",
     type: "website",
+    ...ogLocaleFor(),
   },
   twitter: {
     card: "summary_large_image",
@@ -43,7 +46,17 @@ export const metadata: Metadata = {
     description:
       "Secure remote land purchase in Nepal as a Non-Resident Nepali. POA, title verification & escrow — no travel required.",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 /**

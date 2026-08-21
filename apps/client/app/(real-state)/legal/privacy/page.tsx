@@ -1,3 +1,4 @@
+import { buildHreflang } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
@@ -5,7 +6,10 @@ export const metadata: Metadata = {
   title: "Privacy Policy | MALPOTH",
   description:
     "How MALPOTH collects, uses and protects your personal information when you browse verified land and property listings in Nepal.",
-  alternates: { canonical: "/legal/privacy" },
+  alternates: {
+    canonical: "/legal/privacy",
+    languages: buildHreflang("/legal/privacy"),
+  },
   openGraph: {
     title: "Privacy Policy | MALPOTH",
     description:
@@ -14,7 +18,15 @@ export const metadata: Metadata = {
     siteName: "MALPOTH",
     type: "website",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+    },
+  },
 };
 
 const sectionClass = "mb-8";

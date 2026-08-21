@@ -143,8 +143,8 @@ export function DetailCard({
           }}
         >
           {m.price
-            ? m.price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim()
-            : `₹ ${m.priceValue}M`}
+            ? m.price.replace(/₹/g, "रू").replace(/NPR/g, "रू").trim()
+            : `रू ${m.priceValue}M`}
         </span>
         <span
           style={{

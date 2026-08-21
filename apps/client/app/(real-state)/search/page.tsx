@@ -2,6 +2,7 @@ import {
   SearchFilters,
   SearchResults,
 } from "components/real-state/pages/search";
+import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { PAGE_SIZE, fetchFeedPageGraphql, type FeedPage } from "lib/api";
 import {
   formatLocation,
@@ -15,8 +16,42 @@ export const metadata: Metadata = {
   title: "Search Verified Properties | MALPOTH",
   description:
     "Search field-verified land, residential, commercial & apartment listings across Nepal by location, price, type, and size.",
-  alternates: { canonical: "/search" },
-  robots: { index: true, follow: true },
+  keywords: [
+    "property search Nepal",
+    "search land for sale",
+    "find verified listings",
+    "Nepal real estate search",
+  ],
+  alternates: {
+    canonical: "/search",
+    languages: buildHreflang("/search"),
+  },
+  openGraph: {
+    title: "Search Verified Properties | MALPOTH",
+    description:
+      "Search field-verified land, residential, commercial & apartment listings across Nepal.",
+    url: `${SITE_URL}/search`,
+    siteName: "MALPOTH",
+    type: "website",
+    ...ogLocaleFor(),
+  },
+  twitter: {
+    card: "summary",
+    title: "Search Verified Properties | MALPOTH",
+    description:
+      "Search field-verified land, residential, commercial & apartment listings across Nepal.",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 /**

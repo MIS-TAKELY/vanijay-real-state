@@ -66,12 +66,12 @@ export function MetalPageTemplate({
 
   return (
     <main className="flex flex-col gap-0">
-      <div className="mx-auto w-full max-w-[1280px] px-6 pt-8 pb-6 md:pt-12 md:pb-10">
+      <div className="mx-auto w-full max-w-[1280px] px-4 pt-6 pb-4 sm:px-6 md:pt-12 md:pb-10">
         {/* Breadcrumb */}
         <Breadcrumb items={breadcrumbItems} />
 
         {/* Hero Section: Today's Price + unit/currency choosers + market overview */}
-        <section className="mb-10 grid gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
+        <section className="mb-6 grid gap-6 sm:mb-8 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
           <HeroPricePanel
             metal={activeMetal}
             currency={currency}
@@ -88,14 +88,14 @@ export function MetalPageTemplate({
         </section>
 
         {/* Full-width Price History chart (lightweight-charts + gold-api.com) */}
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <PriceHistoryChart metal={activeMetal} currency={currency} />
         </div>
 
         {/* Error banner — surfaced near the top so users see it immediately */}
         {error && (
           <div
-            className="mb-10 rounded-lg border border-red-500/25 bg-red-500/5 px-4 py-3 text-sm text-red-600"
+            className="mb-6 rounded-lg border border-red-500/25 bg-red-500/5 px-4 py-3 text-sm text-red-600 sm:mb-10"
             role="alert"
           >
             Live feed unavailable — showing cached quotes. {error}
@@ -103,10 +103,10 @@ export function MetalPageTemplate({
         )}
 
         {/* Divider */}
-        <div className="mb-10 h-px w-full bg-outline-variant" />
+        <div className="mb-6 h-px w-full bg-outline-variant sm:mb-10" />
 
         {/* Price Converter */}
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <PriceConverter
             metal={activeMetal}
             currency={currency}
@@ -115,34 +115,34 @@ export function MetalPageTemplate({
         </div>
 
         {/* Analytics Grid */}
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <AnalyticsGrid metal={activeMetal} currency={currency} />
         </div>
 
         {/* Divider */}
-        <div className="mb-10 h-px w-full bg-outline-variant" />
+        <div className="mb-6 h-px w-full bg-outline-variant sm:mb-10" />
 
         {/* Content Blocks (Admin-managed) */}
         {contentBlocks.length > 0 && (
-          <div className="mb-10">
+          <div className="mb-6 sm:mb-10">
             <ContentBlockRenderer blocks={contentBlocks} />
           </div>
         )}
 
         {/* Divider */}
-        <div className="mb-10 h-px w-full bg-outline-variant" />
+        <div className="mb-6 h-px w-full bg-outline-variant sm:mb-10" />
 
         {/* Historical Data Table */}
-        <div className="mb-10">
+        <div className="mb-6 sm:mb-10">
           <HistoricalTable metal={activeMetal} currency={currency} />
         </div>
 
         {/* Divider */}
-        <div className="mb-10 h-px w-full bg-outline-variant" />
+        <div className="mb-6 h-px w-full bg-outline-variant sm:mb-10" />
 
         {/* FAQ Section */}
         {faqs.length > 0 && (
-          <div className="mb-10">
+          <div className="mb-6 sm:mb-10">
             <FAQAccordion items={faqs} metalName={meta?.name ?? metalId} />
           </div>
         )}

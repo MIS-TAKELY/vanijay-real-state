@@ -191,7 +191,7 @@ export function MetalComparison() {
 
               <div>
                 <span
-                  className="block text-3xl font-semibold tabular-nums text-on-surface"
+                  className="block text-2xl font-semibold tabular-nums text-on-surface sm:text-3xl"
                   style={{ fontFamily: "var(--font-mono)" }}
                 >
                   {formatPrice(priceInCurrency(metal, "NPR"), "NPR")}

@@ -30,7 +30,54 @@ export function HistoricalTable({ metal, currency }: HistoricalTableProps) {
         </span>
       </h2>
 
-      <div className="overflow-x-auto rounded-xl border border-outline-variant bg-surface shadow-sm">
+      {/* Mobile: card layout */}
+      <div className="grid gap-2 md:hidden">
+        {rows.map((row, i) => {
+          const isUp = row.change >= 0;
+          return (
+            <div
+              key={i}
+              className="rounded-xl border border-outline-variant bg-surface p-3 shadow-sm"
+            >
+              <div className="mb-2 flex items-center justify-between">
+                <span
+                  className="text-xs text-on-surface-variant"
+                  style={{ fontFamily: "var(--font-body)" }}
+                >
+                  {row.date}
+                </span>
+                <span
+                  className={`text-xs font-medium tabular-nums ${isUp ? "text-emerald-600" : "text-red-600"}`}
+                  style={{ fontFamily: "var(--font-mono)" }}
+                >
+                  {formatChange(row.change)}
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs" style={{ fontFamily: "var(--font-mono)" }}>
+                <div className="flex justify-between">
+                  <span className="text-on-surface-variant">Open</span>
+                  <span className="tabular-nums text-on-surface-variant">{formatPrice(row.open, currency)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-on-surface-variant">Close</span>
+                  <span className="font-medium tabular-nums text-on-surface">{formatPrice(row.close, currency)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-on-surface-variant">High</span>
+                  <span className="tabular-nums text-on-surface-variant">{formatPrice(row.high, currency)}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-on-surface-variant">Low</span>
+                  <span className="tabular-nums text-on-surface-variant">{formatPrice(row.low, currency)}</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Desktop: table layout */}
+      <div className="hidden overflow-x-auto rounded-xl border border-outline-variant bg-surface shadow-sm md:block">
         <table
           className="w-full text-left"
           style={{ fontFamily: "var(--font-mono)" }}

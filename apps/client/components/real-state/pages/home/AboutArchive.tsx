@@ -30,13 +30,19 @@ export const HOME_FAQ_ITEMS: Array<{ q: string; a: string }> = [
 
 export function AboutArchive() {
   return (
-    <section className="border-t border-outline-variant bg-surface-container-low">
+    <section
+      className="border-t border-outline-variant bg-surface-container-low"
+      aria-labelledby="faq-heading"
+    >
       <div className="mx-auto max-w-container-max px-gutter py-xl">
         <div className="mt-12 grid grid-cols-1 gap-10 lg:grid-cols-2">
           <div>
-            <h3 className="font-headline-md mb-4 text-lg font-semibold tracking-tight text-navy">
+            <h2
+              id="faq-heading"
+              className="font-headline-md mb-4 text-lg font-semibold tracking-tight text-navy"
+            >
               Frequently asked questions
-            </h3>
+            </h2>
             <Accordion type="single" collapsible>
               {HOME_FAQ_ITEMS.map((item, idx) => (
                 <AccordionItem

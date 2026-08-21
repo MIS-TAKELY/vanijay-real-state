@@ -80,12 +80,12 @@ function useIsMobile() {
 
 function formatDisplayPrice(price: string, priceValue?: number): string {
   if (price) {
-    return price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim();
+    return price.replace(/₹/g, "रू").replace(/NPR/g, "रू").trim();
   }
   if (priceValue) {
-    return `₹ ${priceValue}M`;
+    return `रू ${priceValue}M`;
   }
-  return "₹ 0";
+  return "रू 0";
 }
 
 function buildPinHtml(

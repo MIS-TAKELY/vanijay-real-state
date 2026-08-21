@@ -42,7 +42,7 @@ export function PriceConverter({
   const equivalentWeight = amount > 0 ? value / convertedPricePerUnit : 0;
 
   return (
-    <div className="rounded-2xl border border-outline-variant bg-surface p-6 shadow-sm md:p-8">
+    <div className="rounded-2xl border border-outline-variant bg-surface p-4 shadow-sm sm:p-6 md:p-8">
       <h3
         className="mb-1 text-2xl font-medium tracking-tight text-on-surface"
         style={{ fontFamily: "var(--font-display)" }}
@@ -50,7 +50,7 @@ export function PriceConverter({
         Price Converter
       </h3>
       <p
-        className="mb-6 text-sm text-on-surface-variant"
+        className="mb-4 text-sm text-on-surface-variant sm:mb-6"
         style={{ fontFamily: "var(--font-body)" }}
       >
         Convert {metal.name} weight into its current market value.

@@ -16,7 +16,7 @@ export function CurrencyToggle({
 }: CurrencyToggleProps) {
   return (
     <div
-      className="flex shrink-0 flex-wrap gap-0.5 rounded-full border border-outline-variant bg-surface p-0.5 shadow-sm"
+      className="flex shrink-0 flex-nowrap gap-0.5 overflow-x-auto rounded-full border border-outline-variant bg-surface p-0.5 shadow-sm sm:flex-wrap sm:overflow-x-visible"
       role="group"
       aria-label="Display currency"
     >

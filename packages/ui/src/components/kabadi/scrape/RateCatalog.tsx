@@ -100,7 +100,7 @@ export function RateCatalog({
             value="What can I sell, and for how much?"
             onChange={(v) => onFieldChange?.("rateCatalog", "heading", v)}
             editable={editable}
-            className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
+            className="mt-2 font-display-lg text-3xl tracking-tight text-foreground sm:text-4xl"
           />
           <EditableField
             tag="p"
@@ -122,7 +122,7 @@ export function RateCatalog({
             }}
             variant="outline"
             spacing={2}
-            className="flex-wrap justify-start"
+            className="flex flex-nowrap overflow-x-auto sm:flex-wrap sm:justify-start"
             aria-label="Filter by category"
           >
             <ToggleGroupItem
@@ -179,7 +179,76 @@ export function RateCatalog({
           </div>
         </div>
 
-        <div className="mt-6 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
+        {/* Mobile: card layout */}
+        <div className="mt-6 grid gap-3 md:hidden">
+          {filteredItems.map((item) => (
+            <div
+              key={item.id}
+              className="rounded-2xl border border-border bg-card p-4 shadow-sm"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
+                    <span className="text-[15px] font-medium text-foreground">
+                      {editable ? (
+                        <EditableField
+                          value={item.name}
+                          onChange={(v) =>
+                            onFieldChange?.(`item:${item.id}`, "name", v)
+                          }
+                          editable
+                        />
+                      ) : (
+                        item.name
+                      )}
+                    </span>
+                    {item.popular ? (
+                      <Badge className="shrink-0 bg-gold/15 font-label-sm text-label-sm text-gold-deep">
+                        <Flame className="size-3" aria-hidden />
+                        popular
+                      </Badge>
+                    ) : null}
+                  </div>
+                  <p className="mt-1 font-label-sm text-label-sm text-muted-foreground">
+                    {item.nepali ? (
+                      <span className="mr-2 text-primary">{item.nepali}</span>
+                    ) : null}
+                    {item.note ?? getCategoryName(item.category)}
+                  </p>
+                </div>
+                <div className="shrink-0 text-right">
+                  <p className="font-data-table text-lg font-semibold tabular-nums text-primary">
+                    Rs {formatNepaliNumber(item.rate)}
+                  </p>
+                  <p className="mt-0.5 font-label-sm text-label-sm text-muted-foreground">
+                    {item.unit === "kg" ? "per kg" : "per piece"}
+                  </p>
+                </div>
+              </div>
+            </div>
+          ))}
+
+          {filteredItems.length === 0 && (
+            <div className="p-8 text-center">
+              <p className="text-base text-muted-foreground">
+                No items match &ldquo;{query || "your filters"}&rdquo;.
+              </p>
+              {query ? (
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="mt-4"
+                  onClick={() => updateQuery("")}
+                >
+                  Clear search
+                </Button>
+              ) : null}
+            </div>
+          )}
+        </div>
+
+        {/* Desktop: table layout */}
+        <div className="mt-6 hidden overflow-hidden rounded-2xl border border-border bg-card shadow-sm md:block">
           <Table>
             <TableHeader>
               <TableRow className="border-border bg-muted/60 hover:bg-muted/60">

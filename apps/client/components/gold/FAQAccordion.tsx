@@ -31,7 +31,7 @@ export function FAQAccordion({ items, metalName }: FAQAccordionProps) {
     <section aria-labelledby="faq-heading">
       <h2
         id="faq-heading"
-        className="mb-6 text-2xl font-medium tracking-tight text-on-surface md:text-3xl"
+        className="mb-4 text-xl font-medium tracking-tight text-on-surface sm:mb-6 sm:text-2xl md:text-3xl"
         style={{ fontFamily: "var(--font-display)" }}
       >
         Frequently Asked Questions

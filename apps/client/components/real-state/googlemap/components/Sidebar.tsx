@@ -122,8 +122,8 @@ export function Sidebar({
           .map((m) => {
             const isActive = m.id === selectedId;
             const formattedPrice = m.price
-              ? m.price.replace(/रू/g, "₹").replace(/NPR/g, "₹").trim()
-              : `₹ ${m.priceValue}M`;
+              ? m.price.replace(/₹/g, "रू").replace(/NPR/g, "रू").trim()
+              : `रू ${m.priceValue}M`;
             const trendColor =
               m.trend === "up"
                 ? "#f87171"

@@ -36,7 +36,7 @@ export function ContentBlockRenderer({ blocks }: ContentBlockRendererProps) {
       {blocks.map((block) => (
         <article
           key={block.id}
-          className="rounded-xl border border-outline-variant bg-surface p-6 shadow-sm md:p-8"
+          className="rounded-xl border border-outline-variant bg-surface p-4 shadow-sm sm:p-6 md:p-8"
         >
           <div>
             <h3

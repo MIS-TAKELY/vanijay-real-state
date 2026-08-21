@@ -59,7 +59,7 @@ export function CategoryGrid({
             value="Six kinds of kabadi, all with honest prices"
             onChange={(v) => onFieldChange?.("categoryGrid", "heading", v)}
             editable={editable}
-            className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
+            className="mt-2 font-display-lg text-3xl tracking-tight text-foreground sm:text-4xl"
           />
         </div>
 

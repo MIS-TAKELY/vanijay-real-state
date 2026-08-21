@@ -1,3 +1,4 @@
+import { buildHreflang } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
@@ -5,7 +6,16 @@ export const metadata: Metadata = {
   title: "Land Act Compliance | MALPOTH",
   description:
     "How MALPOTH listings comply with Nepal's land legislation — Lands Act 2021, Civil Code ownership provisions, and cadastral verification standards.",
-  alternates: { canonical: "/legal/land-act-compliance" },
+  keywords: [
+    "Nepal land act compliance",
+    "Lands Act 2021 Nepal",
+    "cadastral verification Nepal",
+    "property law Nepal",
+  ],
+  alternates: {
+    canonical: "/legal/land-act-compliance",
+    languages: buildHreflang("/legal/land-act-compliance"),
+  },
   openGraph: {
     title: "Land Act Compliance | MALPOTH",
     description:
@@ -14,7 +24,15 @@ export const metadata: Metadata = {
     siteName: "MALPOTH",
     type: "website",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-snippet": -1,
+    },
+  },
 };
 
 const sectionClass = "mb-8";

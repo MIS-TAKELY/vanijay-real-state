@@ -96,8 +96,8 @@ function HeroBannerCarousel() {
       onMouseLeave={() => setIsHovering(false)}
       aria-label={activeSlide?.headline || "Hero banner"}
     >
-      {/* Visually hidden page H1 — banner art carries the visible messaging */}
-      <h1 className="sr-only">{activeSlide?.headline}</h1>
+      {/* Static SEO H1 — stable across all carousel slides for consistent indexing */}
+      <h1 className="sr-only">Verified Land & Property Listings in Nepal — MALPOTH</h1>
 
       {heroSlides.map((slide, index) => (
         <div
@@ -112,9 +112,9 @@ function HeroBannerCarousel() {
           {/* eslint-disable-next-line @next/next/no-img-element -- hero slide image */}
           <img
             src={slide.image}
-            alt=""
-            aria-hidden
+            alt={slide.headline || "MALPOTH verified property listings in Nepal"}
             draggable={false}
+            loading={index === 0 ? "eager" : "lazy"}
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
           {/* Soft overlays so carousel controls stay readable */}

@@ -49,7 +49,7 @@ export function MetalsNavbar() {
             className="group flex shrink-0 items-center gap-2"
             aria-label="MALPOTH home"
           >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105 sm:h-12 sm:w-12">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-gold/50 shadow-sm transition-transform duration-200 group-hover:scale-105 sm:h-10 sm:w-10 md:h-12 md:w-12">
               <Image
                 src={logo}
                 alt=""

@@ -7,6 +7,7 @@ import {
   Container,
 } from "@repo/ui";
 import { ConvertorClient } from "components/real-state/pages/convertor/ConvertorClient";
+import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { formatLandNumber, LAND_UNITS } from "lib/land-units";
 import { SITE_URL } from "lib/site";
 
@@ -35,6 +36,7 @@ export const metadata: Metadata = {
   keywords: KEYWORDS,
   alternates: {
     canonical: "/convertor",
+    languages: buildHreflang("/convertor"),
   },
   openGraph: {
     title: "Land Unit Converter — Ropani, Aana, Katha to Sq. ft | MALPOTH",
@@ -43,6 +45,7 @@ export const metadata: Metadata = {
     url: PAGE_URL,
     siteName: "MALPOTH",
     type: "website",
+    ...ogLocaleFor(),
   },
   twitter: {
     card: "summary_large_image",
@@ -50,7 +53,17 @@ export const metadata: Metadata = {
     description:
       "Convert Ropani, Aana, Bigha, Katha and Dhur to sq. ft instantly. Nepal's most accurate land unit converter, free forever.",
   },
-  robots: { index: true, follow: true },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 /* ------------------------------------------------------------------ */

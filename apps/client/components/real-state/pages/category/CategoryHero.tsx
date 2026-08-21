@@ -31,6 +31,16 @@ export function CategoryHero({ category }: { category: CategoryEntry }) {
             {category.name}
           </span>
         </nav>
+
+        {/* SEO H1 — visible, keyword-rich, matches the page title */}
+        <h1 className="category-hero-title mt-4 font-headline-md text-2xl font-bold tracking-tight text-navy sm:text-3xl md:text-4xl">
+          {category.title}
+        </h1>
+
+        {/* Description — visible under the H1 for context */}
+        <p className="mt-3 max-w-2xl text-sm leading-relaxed text-on-surface-variant sm:text-base">
+          {category.description}
+        </p>
       </div>
     </header>
   );
