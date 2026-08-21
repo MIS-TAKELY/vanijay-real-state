@@ -9,7 +9,7 @@
       "types": "./src/index.ts",
       "default": "./src/index.ts"
     },
-    "./globals.css": "./src/globals.css",
+    "./styles/malpoth.css": "./src/styles/malpoth.css",
     "./lib/utils": "./src/lib/utils.ts",
     "./gmap": {
       "types": "./src/components/GoogleMapPicker.tsx",

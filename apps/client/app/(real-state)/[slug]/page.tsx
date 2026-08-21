@@ -1,10 +1,11 @@
-import { Icon } from "@repo/ui";
+import { Icon, cn } from "@repo/ui";
 import { PropertyViewTracker } from "components/real-state/common/PropertyViewTracker";
 import { stripHtml } from "components/real-state/googlemap/utils";
 import { SimilarProperties } from "components/real-state/pages/home/SimilarProperties";
 import { ListingDecisionCard } from "components/real-state/pages/listing/ListingDecisionCard";
 import { ListingDescription } from "components/real-state/pages/listing/ListingDescription";
 import { ListingGallery } from "components/real-state/pages/listing/ListingGallery";
+import { ListingLocationCard } from "components/real-state/pages/listing/ListingLocationCard";
 import { MobilePriceBar } from "components/real-state/pages/listing/MobilePriceBar";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
 import { ApiError } from "lib/api/core/client";
@@ -420,42 +421,77 @@ export default async function ListingDetailPage({ params }: PageProps) {
       />
       <PropertyViewTracker propertyId={property.id} />
       <main className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-        {/* Breadcrumb */}
-        <nav className="mb-3 min-w-0" aria-label="Breadcrumb">
-          <ol className="flex min-w-0 items-center gap-1.5 text-sm text-on-surface-variant">
-            <li>
-              <Link href="/" className="transition-colors hover:text-primary">
-                Home
-              </Link>
-            </li>
-            <li aria-hidden className="flex items-center">
-              <Icon
-                name="chevron_right"
-                className="text-on-surface-variant/60"
-              />
-            </li>
-            <li>
-              <Link
-                href={category ? `/category/${category.slug}` : "/search"}
-                className="transition-colors hover:text-primary"
-              >
-                {subCategoryLabel}
-              </Link>
-            </li>
-            <li aria-hidden className="flex items-center">
-              <Icon
-                name="chevron_right"
-                className="text-on-surface-variant/60"
-              />
-            </li>
-            <li className="min-w-0 truncate font-medium text-on-surface">
-              {property.title}
-            </li>
-          </ol>
-        </nav>
+        <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-8">
+          {/* LEFT — sticky gallery column (breadcrumb + gallery + location & price/CTA row) */}
+          <div className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-20 lg:self-start lg:gap-3.5">
+            <nav className="min-w-0 overflow-hidden" aria-label="Breadcrumb">
+              <ol className="flex min-w-0 items-center gap-1 text-xs text-on-surface-variant overflow-hidden sm:gap-1.5 sm:text-sm">
+                <li className="shrink-0">
+                  <Link href="/" className="transition-colors hover:text-primary">
+                    Home
+                  </Link>
+                </li>
+                <li aria-hidden className="flex shrink-0 items-center">
+                  <Icon
+                    name="chevron_right"
+                    className="text-on-surface-variant/60"
+                  />
+                </li>
+                <li className="min-w-0 max-w-[8rem] shrink sm:max-w-[12rem]">
+                  <Link
+                    href={category ? `/category/${category.slug}` : "/search"}
+                    className="block truncate transition-colors hover:text-primary"
+                  >
+                    {subCategoryLabel}
+                  </Link>
+                </li>
+                <li aria-hidden className="flex shrink-0 items-center">
+                  <Icon
+                    name="chevron_right"
+                    className="text-on-surface-variant/60"
+                  />
+                </li>
+                <li className="min-w-0 flex-1 truncate font-medium text-on-surface">
+                  {property.title}
+                </li>
+              </ol>
+            </nav>
 
-        {/* Header — title, location, and freshness on one wrapping row */}
-        <header className="mb-4 min-w-0">
+            <ListingGallery
+              images={images}
+              videos={videos}
+              cadastralMaps={cadastralMaps}
+              title={property.title}
+              fallbackGradient={gradient}
+            />
+
+            {/* Location + Price & Primary CTAs in the same row */}
+            <div
+              className={cn(
+                "grid grid-cols-1 gap-3",
+                property.location && "sm:grid-cols-2",
+              )}
+            >
+              <ListingLocationCard
+                location={property.location}
+                title={property.title}
+                compact
+                mapHeight={105}
+              />
+
+              <ListingDecisionCard
+                propertyId={property.id}
+                title={property.title}
+                pricing={pricing}
+                location={property.location}
+                showMap={false}
+              />
+            </div>
+          </div>
+
+          {/* RIGHT — scrolling details column (title, price card, description, specs) */}
+          <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
+            <header className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-2.5">
             <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
               {property.title}
@@ -480,156 +516,150 @@ export default async function ListingDetailPage({ params }: PageProps) {
               </>
             )}
           </div>
-        </header>
+            </header>
 
+            {/* Description */}
+            {property.description && (
+              <ListingDescription html={property.description} />
+            )}
 
-        {/* Media + decision card — stacked on mobile, side-by-side from sm up */}
-        <div className="grid min-w-0 items-start gap-2.5 sm:grid-cols-[minmax(0,1fr)_minmax(13rem,17rem)] sm:gap-4 lg:grid-cols-3 lg:gap-5">
-          <div className="min-w-0 lg:col-span-2">
-            <ListingGallery
-              images={images}
-              videos={videos}
-              cadastralMaps={cadastralMaps}
-              title={property.title}
-              fallbackGradient={gradient}
-            />
-          </div>
-
-          <aside className="min-w-0">
-            <ListingDecisionCard
-              propertyId={property.id}
-              title={property.title}
-              pricing={pricing}
-              location={property.location}
-            />
-          </aside>
-        </div>
-
-        <div className="mt-8 min-w-0">
-          {/* Description */}
-          {property.description && (
-            <ListingDescription html={property.description} />
-          )}
-
-          {/* Location details */}
-          {locationSpecs.some(([, value]) => Boolean(value)) && (
-            <section className="mt-8">
-              <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                Location
-              </h2>
-              <dl className="divide-y divide-outline-variant">
-                {locationSpecs
-                  .filter(([, value]) => value)
-                  .map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="grid grid-cols-[minmax(0,1fr)_2fr] gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
-                    >
-                      <dt className="text-sm text-on-surface-variant">
-                        {label}
-                      </dt>
-                      <dd className="text-sm font-medium text-on-surface">
-                        {value as string}
-                      </dd>
-                    </div>
-                  ))}
-              </dl>
-            </section>
-          )}
-
-          {/* Specifications */}
-          {allSpecs.some(([, value]) => Boolean(value)) && (
-            <section className="mt-8">
-              <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                Specifications
-              </h2>
-              <dl className="divide-y divide-outline-variant">
-                {allSpecs
-                  .filter(([, value]) => value)
-                  .map(([label, value]) => (
-                    <div
-                      key={label}
-                      className="grid grid-cols-[minmax(0,1fr)_2fr] gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
-                    >
-                      <dt className="text-sm text-on-surface-variant">
-                        {label}
-                      </dt>
-                      <dd className="text-sm font-medium text-on-surface">
-                        {value as string}
-                      </dd>
-                    </div>
-                  ))}
-              </dl>
-              {chipGroups.length > 0 && (
-                <div className="flex flex-col gap-4 pt-4">
-                  {chipGroups.map((group) => (
-                    <div key={group.label} className="flex flex-col gap-2">
-                      <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
-                        {group.label}
-                      </h3>
-                      <div className="flex flex-wrap gap-1.5">
-                        {group.values.map((v) => (
+            {/* Location details */}
+            {locationSpecs.some(([, value]) => Boolean(value)) && (
+              <section>
+                <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                  Location
+                </h2>
+                <div className="rounded-sm border border-outline-variant bg-surface p-5 sm:p-6 shadow-xs">
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2 sm:gap-y-4">
+                    {locationSpecs
+                      .filter(([, value]) => value)
+                      .map(([label, value]) => (
+                        <div key={label} className="flex items-start gap-2.5 text-sm">
                           <span
-                            key={v}
-                            className="rounded-md bg-surface-container px-2.5 py-1 text-[13px] font-medium text-on-surface-variant"
-                          >
-                            {v}
-                          </span>
-                        ))}
+                            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold"
+                            aria-hidden="true"
+                          />
+                          <div className="min-w-0 flex-1 leading-relaxed">
+                            <span className="font-semibold text-navy">{label}: </span>
+                            <span className="text-on-surface-variant">
+                              {value as string}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {/* Specifications */}
+            {allSpecs.some(([, value]) => Boolean(value)) && (
+              <section>
+                <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                  Specifications
+                </h2>
+                <div className="rounded-sm border border-outline-variant bg-surface p-5 sm:p-6 shadow-xs">
+                  <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2 sm:gap-y-4">
+                    {allSpecs
+                      .filter(([, value]) => value)
+                      .map(([label, value]) => (
+                        <div key={label} className="flex items-start gap-2.5 text-sm">
+                          <span
+                            className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold"
+                            aria-hidden="true"
+                          />
+                          <div className="min-w-0 flex-1 leading-relaxed">
+                            <span className="font-semibold text-navy">{label}: </span>
+                            <span className="text-on-surface-variant">
+                              {value as string}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                  {chipGroups.length > 0 && (
+                    <div className="mt-5 flex flex-col gap-4 border-t border-outline-variant/60 pt-4">
+                      {chipGroups.map((group) => (
+                        <div key={group.label} className="flex flex-col gap-2">
+                          <h3 className="text-[11px] font-semibold uppercase tracking-[0.12em] text-on-surface-variant">
+                            {group.label}
+                          </h3>
+                          <div className="flex flex-wrap gap-1.5">
+                            {group.values.map((v) => (
+                              <span
+                                key={v}
+                                className="rounded-md bg-surface-container px-2.5 py-1 text-[13px] font-medium text-on-surface-variant"
+                              >
+                                {v}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </section>
+            )}
+
+            {/* Seller-defined custom specs */}
+            {property.customSpecs && property.customSpecs.length > 0 && (
+              <section className="flex flex-col gap-6">
+                {property.customSpecs.map((table, tIdx) => {
+                  const validRows = table.rows.filter(
+                    ([detail, value]) => detail || value,
+                  );
+                  if (validRows.length === 0) return null;
+                  return (
+                    <div key={tIdx}>
+                      {table.heading && (
+                        <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                          {table.heading}
+                        </h2>
+                      )}
+                      <div className="rounded-sm border border-outline-variant bg-surface p-5 sm:p-6 shadow-xs">
+                        <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2 sm:gap-y-4">
+                          {validRows.map(([detail, value], rIdx) => (
+                            <div
+                              key={rIdx}
+                              className="flex items-start gap-2.5 text-sm"
+                            >
+                              <span
+                                className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-gold"
+                                aria-hidden="true"
+                              />
+                              <div className="min-w-0 flex-1 leading-relaxed">
+                                <span className="font-semibold text-navy">
+                                  {detail}:{" "}
+                                </span>
+                                <span className="text-on-surface-variant">
+                                  {value}
+                                </span>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     </div>
-                  ))}
-                </div>
-              )}
-            </section>
-          )}
-
-          {/* Seller-defined custom specs */}
-          {property.customSpecs && property.customSpecs.length > 0 && (
-            <section className="mt-8">
-              <div className="flex flex-col gap-6">
-                {property.customSpecs.map((table, tIdx) => (
-                  <div key={tIdx}>
-                    {table.heading && (
-                      <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
-                        {table.heading}
-                      </h2>
-                    )}
-                    <dl className="divide-y divide-outline-variant">
-                      {table.rows
-                        .filter(([detail, value]) => detail || value)
-                        .map(([detail, value], rIdx) => (
-                          <div
-                            key={rIdx}
-                            className="grid grid-cols-[minmax(0,1fr)_2fr] gap-1 py-3 sm:grid-cols-[200px_1fr] sm:gap-6"
-                          >
-                            <dt className="text-sm text-on-surface-variant">
-                              {detail}
-                            </dt>
-                            <dd className="text-sm font-medium text-on-surface">
-                              {value}
-                            </dd>
-                          </div>
-                        ))}
-                    </dl>
-                  </div>
-                ))}
-              </div>
-            </section>
-          )}
+                  );
+                })}
+              </section>
+            )}
+          </div>
         </div>
 
         {/* Similar Properties Section */}
         <SimilarProperties propertyId={property.id} />
 
         {/* Clearance so the fixed mobile price bar never covers the footer */}
-        <div className="h-28 lg:hidden" aria-hidden="true" />
+        <div className="h-32 lg:hidden" aria-hidden="true" />
       </main>
 
       {/* Mobile sticky price + primary actions (desktop uses the sidebar card) */}
       <MobilePriceBar
         askingPrice={formatNPR(property.askingPrice)}
         propertyId={property.id}
+        title={property.title}
       />
     </>
   );

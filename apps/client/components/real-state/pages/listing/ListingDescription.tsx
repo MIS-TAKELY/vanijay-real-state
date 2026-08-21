@@ -14,11 +14,11 @@ export function ListingDescription({ html }: ListingDescriptionProps) {
   if (!html) return null;
 
   return (
-    <section className="mt-8">
-      <h2 className="mb-4 font-headline-md text-lg font-semibold tracking-tight text-navy">
+    <section className="flex flex-col gap-1.5">
+      <h2 className="font-headline-md text-lg font-semibold tracking-tight text-navy">
         Description
       </h2>
-      <RichTextContent html={html} maxHeight={300} />
+      <RichTextContent html={html} maxHeight={280} />
     </section>
   );
 }

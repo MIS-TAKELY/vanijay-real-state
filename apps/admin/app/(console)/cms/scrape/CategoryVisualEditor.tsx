@@ -174,7 +174,7 @@ export function CategoryVisualEditor({
       </div>
 
       {/* ── Editable page (the actual UI) ── */}
-      <div className="kabadi-app flex-1 overflow-y-auto">
+      <div className="flex-1 overflow-y-auto">
         <KabadiCategoryView
           category={viewData}
           allCategories={allCategories}

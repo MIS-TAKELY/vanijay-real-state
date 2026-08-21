@@ -17,6 +17,8 @@ interface SaveToFavoritesButtonProps {
   variant?: "ghost" | "outline" | "default";
   /** Renders only the heart icon — used as a media overlay on property cards. */
   iconOnly?: boolean;
+  /** Compact label mode ("Favorite" / "Saved") to fit narrow cards without overflow. */
+  compact?: boolean;
   /** Only applies with `iconOnly` — lets the heart exceed the 44px tap target. */
   size?: "icon" | "icon-sm" | "icon-md" | "icon-lg" | "icon-xl";
   /** Fired with the new state after a successful toggle (keeps parents in sync). */
@@ -28,6 +30,7 @@ export function SaveToFavoritesButton({
   propertyId,
   variant = "ghost",
   iconOnly = false,
+  compact = false,
   size = "icon",
   onChange,
   className,
@@ -111,14 +114,21 @@ export function SaveToFavoritesButton({
       <Icon
         name="favorite"
         filled={status.isFavorite}
-        className={cn("text-[18px]", iconOnly && "text-[20px]")}
+        className={cn("shrink-0 text-[16px]", iconOnly && "text-[20px]")}
       />
-      {!iconOnly &&
-        (loading
-          ? "Saving…"
-          : status.isFavorite
-            ? "Saved to Favorites"
-            : "Save to Favorites")}
+      {!iconOnly && (
+        <span className="truncate">
+          {loading
+            ? "Saving…"
+            : compact
+              ? status.isFavorite
+                ? "Saved"
+                : "Favorite"
+              : status.isFavorite
+                ? "Saved to Favorites"
+                : "Save to Favorites"}
+        </span>
+      )}
     </Button>
   );
 }

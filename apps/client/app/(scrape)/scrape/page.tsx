@@ -6,7 +6,9 @@ import {
   Hero,
   HowItWorks,
   RateCatalog,
-} from "components/kabadi/pages/home";
+  type ScrapeCategorySummary,
+  type ScrapeItemSummary,
+} from "@repo/ui";
 import { fetchKabadiCategories, type KabadiCategoryData } from "lib/kabadi/api";
 
 export const metadata: Metadata = {
@@ -73,14 +75,37 @@ const itemListSchema = {
   ],
 };
 
+function mapCategories(raw: KabadiCategoryData[]): ScrapeCategorySummary[] {
+  return raw.map((c) => ({
+    id: c.id,
+    slug: c.slug,
+    name: c.name,
+    nepali: c.nepali,
+    icon: c.icon,
+    blurb: c.blurb,
+    items: c.items.map((i) => ({
+      id: i.id,
+      name: i.name,
+      nepali: i.nepali,
+      category: c.slug,
+      unit: (i.unit === "kg" ? "kg" : "piece") as "kg" | "piece",
+      rate: Number(i.rate) || 0,
+      note: i.note,
+      popular: i.popular,
+    })),
+  }));
+}
+
 export default async function KabadiHomePage() {
-  let categories: KabadiCategoryData[] = [];
+  let rawCategories: KabadiCategoryData[] = [];
   try {
-    categories = await fetchKabadiCategories();
+    rawCategories = await fetchKabadiCategories();
   } catch {
-    // Fallback to empty array if API is down
-    categories = [];
+    rawCategories = [];
   }
+
+  const categories = mapCategories(rawCategories);
+  const allItems = categories.flatMap((c) => c.items ?? []);
 
   return (
     <>
@@ -92,9 +117,8 @@ export default async function KabadiHomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(itemListSchema) }}
       />
-      <Hero />
       <CategoryGrid categories={categories} />
-      <Calculator />
+      <Calculator items={allItems} />
       <RateCatalog categories={categories} />
       <HowItWorks />
       <CTA />

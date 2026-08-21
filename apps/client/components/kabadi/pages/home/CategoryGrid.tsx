@@ -60,14 +60,14 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
   return (
     <section
       id="categories"
-      className="scroll-mt-24 border-b border-kabadi-border py-16 md:py-24"
+      className="scroll-mt-24 border-b border-border py-16 md:py-24"
     >
       <div className="mx-auto max-w-container-max px-gutter">
         <div className="max-w-2xl">
-          <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-kabadi-primary">
+          <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-primary">
             Categories
           </p>
-          <h2 className="mt-2 font-display-lg text-4xl tracking-tight text-kabadi-on-bg">
+          <h2 className="mt-2 font-display-lg text-4xl tracking-tight text-foreground">
             Six kinds of kabadi, all with honest prices
           </h2>
         </div>
@@ -83,35 +83,35 @@ export function CategoryGrid({ categories }: CategoryGridProps) {
 
             return (
               <Link key={cat.id} href={`/scrape/${cat.slug}`} className="group block">
-                <Card className="h-full rounded-2xl border-kabadi-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-kabadi-primary/40 group-hover:shadow-[0_20px_48px_-20px_rgba(26,107,60,0.35)]">
+                <Card className="h-full rounded-2xl border-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-primary/40 group-hover:shadow-[0_20px_48px_-20px_rgba(16,48,80,0.35)]">
                   <CardHeader>
                     <CardTitle>
-                      <span className="flex size-12 items-center justify-center rounded-xl bg-kabadi-primary-soft text-kabadi-primary transition-transform duration-300 group-hover:scale-110">
+                      <span className="flex size-12 items-center justify-center rounded-xl bg-accent text-primary transition-transform duration-300 group-hover:scale-110">
                         <Icon className="size-6" />
                       </span>
                     </CardTitle>
                     <CardAction>
-                      <ArrowRight className="size-5 text-kabadi-muted opacity-0 transition-opacity group-hover:opacity-100" />
+                      <ArrowRight className="size-5 text-muted-foreground opacity-0 transition-opacity group-hover:opacity-100" />
                     </CardAction>
-                    <CardTitle className="mt-3 text-lg font-semibold text-kabadi-on-bg">
+                    <CardTitle className="mt-3 text-lg font-semibold text-foreground">
                       {cat.name}
                     </CardTitle>
                   </CardHeader>
 
                   <CardContent className="pb-6">
-                    <p className="font-label-sm text-label-sm text-kabadi-primary">
+                    <p className="font-label-sm text-label-sm text-primary">
                       {cat.nepali}
                     </p>
-                    <p className="mt-2 text-sm leading-relaxed text-kabadi-muted">
+                    <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                       {cat.blurb}
                     </p>
 
                     {sample && (
-                      <div className="mt-4 flex items-center justify-between rounded-xl bg-kabadi-bg px-4 py-3">
-                        <span className="font-label-sm text-label-sm text-kabadi-muted">
+                      <div className="mt-4 flex items-center justify-between rounded-xl bg-background px-4 py-3">
+                        <span className="font-label-sm text-label-sm text-muted-foreground">
                           e.g. {sample.name}
                         </span>
-                        <span className="font-data-table text-sm font-bold text-kabadi-primary">
+                        <span className="font-data-table text-sm font-bold text-primary">
                           {formatRate({
                             rate: Number(sample.rate),
                             unit: sample.unit,

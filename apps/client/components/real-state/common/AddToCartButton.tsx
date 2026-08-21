@@ -15,6 +15,8 @@ interface AddToCartButtonProps {
   variant?: "outline" | "default" | "ghost";
   /** Renders only the cart icon — used for the compact action margin on property cards. */
   iconOnly?: boolean;
+  /** Compact label mode ("Cart" / "Added") to fit narrow cards without overflow. */
+  compact?: boolean;
   className?: string;
 }
 
@@ -23,6 +25,7 @@ export function AddToCartButton({
   title,
   variant = "outline",
   iconOnly = false,
+  compact = false,
   className,
 }: AddToCartButtonProps) {
   const { requireAuth } = useRequireAuth();
@@ -61,10 +64,18 @@ export function AddToCartButton({
     >
       <Icon
         name={added ? "check" : "add_shopping_cart"}
-        className={iconOnly ? "text-[18px]" : "text-data-table"}
+        className={cn("shrink-0", iconOnly ? "text-[18px]" : "text-[16px]")}
       />
       {!iconOnly && (
-        <>{loading ? "Adding…" : added ? "Added to Cart" : "Add to Cart"}</>
+        <span className="truncate">
+          {loading
+            ? "Adding…"
+            : added
+              ? "Added"
+              : compact
+                ? "Cart"
+                : "Add to Cart"}
+        </span>
       )}
     </Button>
   );

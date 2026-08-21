@@ -58,7 +58,7 @@ function ListingMobileCard({
   );
 
   return (
-    <div className="flex items-start gap-sm border-b border-outline-variant px-sm py-3 last:border-b-0">
+    <div className="flex items-start gap-3 border-b border-outline-variant px-3 py-3 last:border-b-0">
       <Checkbox
         aria-label={`Select ${listing.listingCode}`}
         checked={selected}
@@ -75,11 +75,12 @@ function ListingMobileCard({
         )}
       </div>
       <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-        <div className="flex items-center gap-1.5">
-          <span className="mono-stat text-[11px] text-on-surface-variant">
+        {/* Code + status — truncate long IDs, never push status chip off screen */}
+        <div className="flex min-w-0 items-center gap-1.5 overflow-hidden">
+          <span className="mono-stat shrink truncate text-[11px] text-on-surface-variant">
             {listing.listingCode}
           </span>
-          <ListingStatusChip status={listing.status} />
+          <ListingStatusChip status={listing.status} className="shrink-0 text-[11px] px-1.5 py-0.5" />
         </div>
         {publicHref ? (
           <Link
@@ -93,16 +94,18 @@ function ListingMobileCard({
             {listing.title}
           </span>
         )}
-        <div className="flex items-center gap-2">
-          <span className="mono-stat text-sm font-semibold text-gold-deep">
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-0.5">
+          <span className="mono-stat text-sm font-semibold text-gold-deep whitespace-nowrap">
             {formatNPR(listing.askingPrice)}
           </span>
-          <span className="text-[11px] text-on-surface-variant">
+          <span className="truncate text-[11px] text-on-surface-variant">
             {labelEnum(listing.subCategory, TYPE_LABELS)}
           </span>
         </div>
       </div>
-      <ListingMenu listing={listing} onChanged={onChanged} />
+      <div className="shrink-0 -mr-1">
+        <ListingMenu listing={listing} onChanged={onChanged} />
+      </div>
     </div>
   );
 }

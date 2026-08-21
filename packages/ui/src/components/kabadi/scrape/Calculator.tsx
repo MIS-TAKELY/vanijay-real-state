@@ -6,39 +6,49 @@ import {
   Alert,
   AlertDescription,
   AlertTitle,
-  Button,
+} from "../../ui/alert";
+import { Button } from "../../ui/button";
+import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
-  Input,
-  Label,
+} from "../../ui/card";
+import { Input } from "../../ui/input";
+import { Label } from "../../ui/label";
+import {
   Select,
   SelectContent,
   SelectGroup,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@repo/ui";
-import {
-  formatNepaliNumber,
-  KABADI_DEFAULT_ITEM,
-  KABADI_ITEMS,
-} from "lib/kabadi/rates";
+} from "../../ui/select";
+import type { ScrapeItemSummary, OnSectionFieldChange } from "./types";
+import { formatNepaliNumber } from "./helpers";
+import { EditableField } from "./EditableField";
 
-export function Calculator() {
-  const [itemId, setItemId] = useState(KABADI_DEFAULT_ITEM.id);
+interface CalculatorProps {
+  items: ScrapeItemSummary[];
+  editable?: boolean;
+  onFieldChange?: OnSectionFieldChange;
+}
+
+export function Calculator({ items, editable, onFieldChange }: CalculatorProps) {
+  const defaultItem = items[0];
+  const [itemId, setItemId] = useState(defaultItem?.id ?? "");
   const [quantity, setQuantity] = useState(10);
 
   const item = useMemo(
-    () => KABADI_ITEMS.find((i) => i.id === itemId) ?? KABADI_DEFAULT_ITEM,
-    [itemId],
+    () => items.find((i) => i.id === itemId) ?? defaultItem,
+    [itemId, items, defaultItem],
   );
 
-  const estimate = item.rate * quantity;
-
+  const estimate = (item?.rate ?? 0) * quantity;
   const step = 1;
-  const unitLabel = item.unit === "kg" ? "kg" : "pieces";
+  const unitLabel = item?.unit === "kg" ? "kg" : "pieces";
+
+  if (!item) return null;
 
   return (
     <section
@@ -52,14 +62,21 @@ export function Calculator() {
             <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-primary">
               Earnings Calculator
             </p>
-            <h2 className="mt-2 font-display-lg text-4xl tracking-tight text-foreground">
-              How much will I get?
-            </h2>
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-              Pick an item, enter how much you have, and see your estimated
-              payout instantly. The number you see is the number you get — we
-              weigh on a transparent digital scale at your door.
-            </p>
+            <EditableField
+              tag="h2"
+              value="How much will I get?"
+              onChange={(v) => onFieldChange?.("calculator", "heading", v)}
+              editable={editable}
+              className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
+            />
+            <EditableField
+              tag="p"
+              value="Pick an item, enter how much you have, and see your estimated payout instantly. The number you see is the number you get — we weigh on a transparent digital scale at your door."
+              onChange={(v) => onFieldChange?.("calculator", "description", v)}
+              editable={editable}
+              multiline
+              className="mt-3 text-base leading-relaxed text-muted-foreground"
+            />
 
             <div className="mt-8 rounded-2xl border border-border bg-card p-6 shadow-sm">
               {/* Item select */}
@@ -68,9 +85,9 @@ export function Calculator() {
               </Label>
               <Select
                 value={itemId}
-                onValueChange={(value) => {
+                onValueChange={(value: string) => {
                   setItemId(value);
-                  const next = KABADI_ITEMS.find((i) => i.id === value);
+                  const next = items.find((i) => i.id === value);
                   if (next) setQuantity(next.unit === "kg" ? 10 : 1);
                 }}
               >
@@ -79,7 +96,7 @@ export function Calculator() {
                 </SelectTrigger>
                 <SelectContent className="rounded-xl">
                   <SelectGroup>
-                    {KABADI_ITEMS.map((i) => (
+                    {items.map((i) => (
                       <SelectItem key={i.id} value={i.id}>
                         {i.name}
                         {i.nepali ? ` (${i.nepali})` : ""} —{" "}
@@ -121,7 +138,7 @@ export function Calculator() {
                     min={step}
                     step={item.unit === "piece" ? 1 : "any"}
                     value={quantity}
-                    onChange={(e) => {
+                    onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                       const raw = Number(e.target.value);
                       const next =
                         item.unit === "piece" ? Math.floor(raw) : raw;

@@ -1,3 +1,6 @@
+"use client";
+
+import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/Icon";
 import { WIZARD_STEPS } from "./constants";
@@ -7,13 +10,35 @@ interface WizardProgressProps {
 }
 
 export function WizardProgress({ currentStep }: WizardProgressProps) {
+  const containerRef = useRef<HTMLOListElement>(null);
+
+  useEffect(() => {
+    const el = containerRef.current?.querySelector<HTMLElement>(
+      `[data-step="${currentStep}"]`,
+    );
+    if (el) {
+      el.scrollIntoView({
+        behavior: "smooth",
+        inline: "center",
+        block: "nearest",
+      });
+    }
+  }, [currentStep]);
+
   return (
-    <ol className="flex items-center gap-xs overflow-x-auto no-scrollbar mb-md p-1">
+    <ol
+      ref={containerRef}
+      className="flex items-center gap-xs overflow-x-auto overscroll-x-contain touch-pan-x no-scrollbar mb-md p-1"
+    >
       {WIZARD_STEPS.map((step, i) => {
         const completed = i < currentStep;
         const active = i === currentStep;
         return (
-          <li key={step.id} className="flex shrink-0 items-center gap-xs">
+          <li
+            key={step.id}
+            data-step={i}
+            className="flex shrink-0 items-center gap-xs"
+          >
             <div
               className={cn(
                 "flex items-center gap-1.5",

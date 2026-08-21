@@ -58,17 +58,17 @@ export function HowItWorks() {
   return (
     <section
       id="how-it-works"
-      className="scroll-mt-24 border-b border-kabadi-border py-16 md:py-24"
+      className="scroll-mt-24 border-b border-border py-16 md:py-24"
     >
       <div className="mx-auto max-w-container-max px-gutter">
         <div className="max-w-2xl">
-          <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-kabadi-primary">
+          <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-primary">
             How it works
           </p>
-          <h2 className="mt-2 font-display-lg text-4xl tracking-tight text-kabadi-on-bg">
+          <h2 className="mt-2 font-display-lg text-4xl tracking-tight text-foreground">
             From doorstep to cash in four steps
           </h2>
-          <p className="mt-3 text-base leading-relaxed text-kabadi-muted">
+          <p className="mt-3 text-base leading-relaxed text-muted-foreground">
             Built to fix the two things everyone hates about selling kabadi:
             unfair weighing and unclear prices.
           </p>
@@ -80,23 +80,23 @@ export function HowItWorks() {
             const Icon = s.icon;
             return (
               <li key={s.step} className="group">
-                <Card className="h-full rounded-2xl border-kabadi-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-kabadi-accent/50 group-hover:shadow-[0_20px_44px_-20px_rgba(245,158,11,0.4)]">
+                <Card className="h-full rounded-2xl border-border transition-all duration-300 group-hover:-translate-y-1 group-hover:border-gold/50 group-hover:shadow-[0_20px_44px_-20px_rgba(201,162,39,0.4)]">
                   <CardHeader>
-                    <CardTitle className="font-display-lg text-4xl font-bold text-kabadi-primary/15 transition-colors group-hover:text-kabadi-primary/30">
+                    <CardTitle className="font-display-lg text-4xl font-bold text-primary/15 transition-colors group-hover:text-primary/30">
                       {s.step}
                     </CardTitle>
                     <CardAction>
-                      <span className="flex size-10 items-center justify-center rounded-xl bg-kabadi-accent/15 text-kabadi-accent-strong">
+                      <span className="flex size-10 items-center justify-center rounded-xl bg-gold/15 text-gold-deep">
                         <Icon className="size-5" />
                       </span>
                     </CardAction>
                   </CardHeader>
 
                   <CardContent className="pb-6">
-                    <h3 className="text-base font-semibold text-kabadi-on-bg">
+                    <h3 className="text-base font-semibold text-foreground">
                       {s.title}
                     </h3>
-                    <p className="mt-2 text-[13px] leading-relaxed text-kabadi-muted">
+                    <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
                       {s.detail}
                     </p>
                   </CardContent>
@@ -114,9 +114,9 @@ export function HowItWorks() {
               <Badge
                 key={t.label}
                 variant="outline"
-                className="justify-start gap-3 rounded-xl px-4 py-3.5 font-label-sm text-label-sm font-medium text-kabadi-on-bg"
+                className="justify-start gap-3 rounded-xl px-4 py-3.5 font-label-sm text-label-sm font-medium text-foreground"
               >
-                <Icon className="size-5 shrink-0 text-kabadi-primary" />
+                <Icon className="size-5 shrink-0 text-primary" />
                 {t.label}
               </Badge>
             );

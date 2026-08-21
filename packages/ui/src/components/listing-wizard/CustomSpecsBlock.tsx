@@ -150,14 +150,14 @@ export function CustomSpecsBlock({ draft, update }: StepProps) {
         {specs.map((table, tIdx) => (
           <div
             key={tIdx}
-            className="rounded-xl border border-outline-variant bg-surface p-md"
+            className="rounded-xl border border-outline-variant bg-surface p-3 sm:p-4"
           >
-            <div className="mb-sm flex items-center gap-sm">
+            <div className="mb-3 flex items-center gap-2">
               <Input
                 placeholder="Table heading (e.g. Interior Details)"
                 value={table.heading}
                 onChange={(e) => updateHeading(tIdx, e.target.value)}
-                className="flex-1 font-semibold"
+                className="flex-1 font-semibold text-sm sm:text-base"
               />
               <Button
                 type="button"
@@ -171,63 +171,54 @@ export function CustomSpecsBlock({ draft, update }: StepProps) {
               </Button>
             </div>
 
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-sm">
-                <tbody>
-                  {table.rows.map((row, rIdx) => (
-                    <tr
-                      key={rIdx}
-                      className="border-b border-outline-variant/50 last:border-0"
-                    >
-                      <td className="px-1 py-1">
-                        <Input
-                          placeholder="Detail"
-                          value={row[0]}
-                          onChange={(e) =>
-                            updateRow(tIdx, rIdx, 0, e.target.value)
-                          }
-                          onPaste={(e) => handlePaste(e, tIdx)}
-                          className="h-9 text-sm"
-                        />
-                      </td>
-                      <td className="px-1 py-1">
-                        <Input
-                          placeholder="Value"
-                          value={row[1]}
-                          onChange={(e) =>
-                            updateRow(tIdx, rIdx, 1, e.target.value)
-                          }
-                          onPaste={(e) => handlePaste(e, tIdx)}
-                          className="h-9 text-sm"
-                        />
-                      </td>
-                      <td className="px-1 py-1 text-center">
-                        <button
-                          type="button"
-                          onClick={() => removeRow(tIdx, rIdx)}
-                          className="rounded p-1 text-on-surface-variant transition-colors hover:bg-error/10 hover:text-error"
-                          aria-label="Remove row"
-                        >
-                          <Icon name="close" className="text-[16px]" />
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+            <div className="flex flex-col gap-2">
+              {table.rows.map((row, rIdx) => (
+                <div
+                  key={rIdx}
+                  className="flex min-w-0 items-center gap-1.5 sm:gap-2"
+                >
+                  <Input
+                    placeholder="Detail"
+                    value={row[0]}
+                    onChange={(e) =>
+                      updateRow(tIdx, rIdx, 0, e.target.value)
+                    }
+                    onPaste={(e) => handlePaste(e, tIdx)}
+                    className="h-9 min-w-0 flex-1 text-xs sm:text-sm"
+                  />
+                  <Input
+                    placeholder="Value"
+                    value={row[1]}
+                    onChange={(e) =>
+                      updateRow(tIdx, rIdx, 1, e.target.value)
+                    }
+                    onPaste={(e) => handlePaste(e, tIdx)}
+                    className="h-9 min-w-0 flex-1 text-xs sm:text-sm"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeRow(tIdx, rIdx)}
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded p-1 text-on-surface-variant transition-colors hover:bg-error/10 hover:text-error"
+                    aria-label="Remove row"
+                  >
+                    <Icon name="close" className="text-[16px]" />
+                  </button>
+                </div>
+              ))}
             </div>
 
-            <div className="mt-sm flex items-center gap-sm">
+            <div className="mt-3 flex flex-col items-start gap-2 sm:flex-row sm:items-center sm:gap-3">
               <Button
                 type="button"
                 variant="outline"
                 size="sm"
                 onClick={() => addRow(tIdx)}
+                className="shrink-0"
               >
                 <Icon name="add" className="text-[16px]" />
                 Add row
               </Button>
-              <span className="text-[11px] text-on-surface-variant">
+              <span className="text-[11px] text-on-surface-variant leading-tight">
                 Paste a table from Excel / Sheets into any Detail cell to bulk-add rows
               </span>
             </div>

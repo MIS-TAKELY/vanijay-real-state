@@ -346,3 +346,9 @@ export type {
 
 export { reverseGeocodeGoogle } from "./components/googleReverseGeocode";
 export type { GoogleReverseGeocodeOptions } from "./components/googleReverseGeocode";
+
+/* ------------------------------------------------------------------ */
+/* Kabadi / Scrape shared editable components                          */
+/* ------------------------------------------------------------------ */
+
+export * from "./components/kabadi/scrape";

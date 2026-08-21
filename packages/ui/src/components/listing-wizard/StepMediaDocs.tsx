@@ -300,7 +300,7 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
     <div className="flex flex-col gap-md">
       {/* ====================== Photo & Video uploader ====================== */}
       <div className="flex flex-col gap-xs">
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
           <span className="font-label-sm text-[13px] font-semibold text-on-surface">
             Photos & Videos{" "}
             <span className="font-normal text-on-surface-variant">
@@ -429,11 +429,11 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
               className={cn(DROP, "h-28 border-outline-variant")}
               onClick={() => mediaInputRef.current?.click()}
             >
-              <span className="flex flex-col items-center gap-xs ">
-                <Icon name="videocam" className="text-[28px]" />
-                <span className="text-[12px]">Add photos & videos</span>
-                <span className="text-[8px] text-on-surface-variant">
-                  JPG / PNG / WEBP / GIF · MP4 / WebM, max 50 MB
+              <span className="flex flex-col items-center gap-1 text-center px-1">
+                <Icon name="videocam" className="text-[26px]" />
+                <span className="text-[12px] font-medium leading-tight">Add photos & videos</span>
+                <span className="text-[9px] text-on-surface-variant leading-tight">
+                  Images / Videos, max 50 MB
                 </span>
               </span>
             </Button>
@@ -473,7 +473,7 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
         <div className="flex flex-col gap-2">
           {draft.videoUrls.map((url, idx) => (
             <div key={idx} className="flex items-center gap-2">
-              <div className="relative flex-1">
+              <div className="relative flex-1 min-w-0">
                 <span className="absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">
                   <Icon name="videocam" className="text-[18px]" />
                 </span>
@@ -486,7 +486,7 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
                     update({ videoUrls: next });
                   }}
                   placeholder="https://youtube.com/… or tiktok.com/…"
-                  className="h-11 pl-10 pr-3"
+                  className="h-11 pl-10 pr-3 text-xs sm:text-sm"
                 />
               </div>
               <Button
@@ -637,19 +637,21 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             onChange={(e) => handleDocumentFile(e.target.files)}
           />
 
-          <div className="flex items-center gap-2">
-            <Select value={selectedDocType} onValueChange={setSelectedDocType}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select document type…" />
-              </SelectTrigger>
-              <SelectContent>
-                {DOCUMENT_TYPE_OPTIONS.map((opt) => (
-                  <SelectItem key={opt.value} value={opt.value}>
-                    {opt.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          <div className="flex min-w-0 items-center gap-2">
+            <div className="min-w-0 flex-1">
+              <Select value={selectedDocType} onValueChange={setSelectedDocType}>
+                <SelectTrigger className="w-full min-w-0 truncate text-xs sm:text-sm">
+                  <SelectValue placeholder="Select document type…" />
+                </SelectTrigger>
+                <SelectContent>
+                  {DOCUMENT_TYPE_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <Button
               type="button"
               variant="outline"
@@ -659,7 +661,7 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
                 draft.documents.length >= MAX_DOCUMENTS
               }
               onClick={() => docInputRef.current?.click()}
-              className="shrink-0"
+              className="shrink-0 text-xs sm:text-sm"
             >
               {docUploading ? (
                 <Icon
@@ -669,7 +671,7 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
               ) : (
                 <Icon name="upload_file" className="text-[16px]" />
               )}
-              <span className="ml-1.5 text-[13px]">Upload</span>
+              <span className="ml-1 sm:ml-1.5">Upload</span>
             </Button>
           </div>
 

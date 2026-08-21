@@ -25,6 +25,7 @@ import { cn } from "@repo/ui";
 import { AdminDataTable } from "components/AdminDataTable";
 import { PageHeader } from "components/ui/PageHeader";
 import { CategoryVisualEditor } from "./CategoryVisualEditor";
+import { ScrapeVisualEditor } from "./ScrapeVisualEditor";
 import {
   kabadiCategories,
   kabadiSetRates,
@@ -53,6 +54,7 @@ export default function ScrapeCmsPage() {
   const [filter, setFilter] = useState<string>("all");
   const [items, setItems] = useState<EditableItem[]>([]);
   const [saving, setSaving] = useState(false);
+  const [viewMode, setViewMode] = useState<"table" | "visual">("table");
 
   /* ── Add item dialog ── */
   const [addOpen, setAddOpen] = useState(false);
@@ -232,6 +234,20 @@ export default function ScrapeCmsPage() {
         actions={
           <div className="flex gap-2">
             <Button
+              variant={viewMode === "visual" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("visual")}
+            >
+              Visual
+            </Button>
+            <Button
+              variant={viewMode === "table" ? "default" : "outline"}
+              size="sm"
+              onClick={() => setViewMode("table")}
+            >
+              Table
+            </Button>
+            <Button
               variant="outline"
               size="sm"
               onClick={() => {
@@ -279,166 +295,185 @@ export default function ScrapeCmsPage() {
         }
       />
 
-      <section className="mt-lg">
-        {error && (
-          <Alert className="mb-md border-error/40 text-error">{error}</Alert>
-        )}
-        {loading ? (
-          <div className="flex items-center gap-2 text-on-surface-variant">
-            <Loader2 className="size-4 animate-spin" />
-            Loading rates…
-          </div>
-        ) : (
-          <>
-            {/* Category chips + category management */}
-            <div className="mb-md flex flex-wrap items-center gap-xs">
-              <FilterChip
-                active={filter === "all"}
-                onClick={() => setFilter("all")}
-              >
-                All ({totalItems})
-              </FilterChip>
-              {cats.map((c) => (
-                <div key={c.slug} className="flex items-center gap-1">
-                  <FilterChip
-                    active={filter === c.slug}
-                    onClick={() => setFilter(c.slug)}
-                  >
-                    {c.name} ({c.items.length})
-                  </FilterChip>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setEditingCat(c);
-                      setCatEditorOpen(true);
-                    }}
-                    className="rounded p-1 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
-                    title={`Edit ${c.name}`}
-                  >
-                    <span className="material-symbols-outlined text-[14px]">
-                      edit
-                    </span>
-                  </button>
-                </div>
-              ))}
+      {viewMode === "table" && (
+        <section className="mt-lg">
+          {error && (
+            <Alert className="mb-md border-error/40 text-error">{error}</Alert>
+          )}
+          {loading ? (
+            <div className="flex items-center gap-2 text-on-surface-variant">
+              <Loader2 className="size-4 animate-spin" />
+              Loading rates…
             </div>
-
-            {/* Items table */}
-            <AdminDataTable
-              minWidth={800}
-              columns={[
-                "#",
-                "Item",
-                "Nepali",
-                "Category",
-                "Unit",
-                "Rate (NPR)",
-                "Note",
-                "Popular",
-                "Published",
-                "Actions",
-              ]}
-              empty={filtered.length === 0}
-              emptyMessage="No rates for this filter."
-            >
-              {filtered.map((item, idx) => {
-                const cat = cats.find((c) => c.id === item.categoryId);
-                return (
-                  <AdminDataTable.Row key={item.id ?? item.name}>
-                    <AdminDataTable.Cell className="py-2 w-10 text-center">
-                      <span className="mono-stat text-[11px] text-on-surface-variant">
-                        {globalIndex(item)}
+          ) : (
+            <>
+              {/* Category chips + category management */}
+              <div className="mb-md flex flex-wrap items-center gap-xs">
+                <FilterChip
+                  active={filter === "all"}
+                  onClick={() => setFilter("all")}
+                >
+                  All ({totalItems})
+                </FilterChip>
+                {cats.map((c) => (
+                  <div key={c.slug} className="flex items-center gap-1">
+                    <FilterChip
+                      active={filter === c.slug}
+                      onClick={() => setFilter(c.slug)}
+                    >
+                      {c.name} ({c.items.length})
+                    </FilterChip>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setEditingCat(c);
+                        setCatEditorOpen(true);
+                      }}
+                      className="rounded p-1 text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"
+                      title={`Edit ${c.name}`}
+                    >
+                      <span className="material-symbols-outlined text-[14px]">
+                        edit
                       </span>
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <Input
-                        value={item.name}
-                        onChange={(e) => setRow(idx, { name: e.target.value })}
-                        className="h-9 bg-surface min-w-[120px]"
-                      />
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <Input
-                        value={item.nepali ?? ""}
-                        onChange={(e) =>
-                          setRow(idx, { nepali: e.target.value })
-                        }
-                        className="h-9 min-w-[120px] bg-surface"
-                        placeholder="नेपाली"
-                      />
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2 text-on-surface-variant">
-                      <span className="text-xs">{cat?.name}</span>
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <select
-                        value={item.unit}
-                        onChange={(e) =>
-                          setRow(idx, {
-                            unit: e.target.value as "KG" | "PIECE",
-                          })
-                        }
-                        className="h-9 rounded-md border border-outline bg-surface px-2 text-sm"
-                      >
-                        <option value="KG">KG</option>
-                        <option value="PIECE">Piece</option>
-                      </select>
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <Input
-                        type="number"
-                        value={item.rate}
-                        onChange={(e) => setRow(idx, { rate: e.target.value })}
-                        className="h-9 w-28 bg-surface mono-stat"
-                      />
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <Input
-                        value={item.note ?? ""}
-                        onChange={(e) => setRow(idx, { note: e.target.value })}
-                        className="h-9 w-32 bg-surface text-xs"
-                        placeholder="Optional"
-                      />
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <input
-                        type="checkbox"
-                        checked={item.popular}
-                        onChange={(e) =>
-                          setRow(idx, { popular: e.target.checked })
-                        }
-                      />
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <input
-                        type="checkbox"
-                        checked={item.published}
-                        onChange={(e) =>
-                          setRow(idx, { published: e.target.checked })
-                        }
-                      />
-                    </AdminDataTable.Cell>
-                    <AdminDataTable.Cell className="py-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          item.id && handleDeleteItem(item.id, item.name)
-                        }
-                        className="rounded p-1 text-error/70 hover:bg-error/10 hover:text-error"
-                        title={`Delete ${item.name}`}
-                      >
-                        <span className="material-symbols-outlined text-[16px]">
-                          delete
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Items table */}
+              <AdminDataTable
+                minWidth={800}
+                columns={[
+                  "#",
+                  "Item",
+                  "Nepali",
+                  "Category",
+                  "Unit",
+                  "Rate (NPR)",
+                  "Note",
+                  "Popular",
+                  "Published",
+                  "Actions",
+                ]}
+                empty={filtered.length === 0}
+                emptyMessage="No rates for this filter."
+              >
+                {filtered.map((item, idx) => {
+                  const cat = cats.find((c) => c.id === item.categoryId);
+                  return (
+                    <AdminDataTable.Row key={item.id ?? item.name}>
+                      <AdminDataTable.Cell className="py-2 w-10 text-center">
+                        <span className="mono-stat text-[11px] text-on-surface-variant">
+                          {globalIndex(item)}
                         </span>
-                      </button>
-                    </AdminDataTable.Cell>
-                  </AdminDataTable.Row>
-                );
-              })}
-            </AdminDataTable>
-          </>
-        )}
-      </section>
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <Input
+                          value={item.name}
+                          onChange={(e) => setRow(idx, { name: e.target.value })}
+                          className="h-9 bg-surface min-w-[120px]"
+                        />
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <Input
+                          value={item.nepali ?? ""}
+                          onChange={(e) =>
+                            setRow(idx, { nepali: e.target.value })
+                          }
+                          className="h-9 min-w-[120px] bg-surface"
+                          placeholder="नेपाली"
+                        />
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2 text-on-surface-variant">
+                        <span className="text-xs">{cat?.name}</span>
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <select
+                          value={item.unit}
+                          onChange={(e) =>
+                            setRow(idx, {
+                              unit: e.target.value as "KG" | "PIECE",
+                            })
+                          }
+                          className="h-9 rounded-md border border-outline bg-surface px-2 text-sm"
+                        >
+                          <option value="KG">KG</option>
+                          <option value="PIECE">Piece</option>
+                        </select>
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <Input
+                          type="number"
+                          value={item.rate}
+                          onChange={(e) => setRow(idx, { rate: e.target.value })}
+                          className="h-9 w-28 bg-surface mono-stat"
+                        />
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <Input
+                          value={item.note ?? ""}
+                          onChange={(e) => setRow(idx, { note: e.target.value })}
+                          className="h-9 w-32 bg-surface text-xs"
+                          placeholder="Optional"
+                        />
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <input
+                          type="checkbox"
+                          checked={item.popular}
+                          onChange={(e) =>
+                            setRow(idx, { popular: e.target.checked })
+                          }
+                        />
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <input
+                          type="checkbox"
+                          checked={item.published}
+                          onChange={(e) =>
+                            setRow(idx, { published: e.target.checked })
+                          }
+                        />
+                      </AdminDataTable.Cell>
+                      <AdminDataTable.Cell className="py-2">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            item.id && handleDeleteItem(item.id, item.name)
+                          }
+                          className="rounded p-1 text-error/70 hover:bg-error/10 hover:text-error"
+                          title={`Delete ${item.name}`}
+                        >
+                          <span className="material-symbols-outlined text-[16px]">
+                            delete
+                          </span>
+                        </button>
+                      </AdminDataTable.Cell>
+                    </AdminDataTable.Row>
+                  );
+                })}
+              </AdminDataTable>
+            </>
+          )}
+        </section>
+      )}
+
+      {viewMode === "visual" && !loading && (
+        <section className="mt-lg">
+          <ScrapeVisualEditor
+            categories={cats.map((c) => ({
+              ...c,
+              items: (c.items ?? []).map((it) => ({
+                ...it,
+                category: c.slug,
+                rate: Number(it.rate) || 0,
+                unit: it.unit.toLowerCase() as "kg" | "piece",
+              })),
+            }))}
+            onSaved={load}
+          />
+        </section>
+      )}
 
       {/* ── Add Item Dialog ── */}
       <Dialog open={addOpen} onOpenChange={setAddOpen}>

@@ -31,9 +31,9 @@ const searchForm = (
   <form
     action="#rates"
     role="search"
-    className="flex h-9 items-center gap-1.5 rounded-xl border border-kabadi-border bg-kabadi-surface pl-2.5 pr-1.5 transition-shadow focus-within:ring-2 focus-within:ring-kabadi-primary/25"
+    className="flex h-9 items-center gap-1.5 rounded-xl border border-border bg-card pl-2.5 pr-1.5 transition-shadow focus-within:ring-2 focus-within:ring-primary/25"
   >
-    <Search aria-hidden="true" className="size-3.5 shrink-0 text-kabadi-muted" />
+    <Search aria-hidden="true" className="size-3.5 shrink-0 text-muted-foreground" />
     <Input
       type="search"
       name="q"
@@ -46,7 +46,7 @@ const searchForm = (
       variant="ghost"
       size="icon-sm"
       aria-label="Search"
-      className="shrink-0 rounded-lg text-kabadi-muted hover:bg-kabadi-primary-soft hover:text-kabadi-primary cursor-pointer"
+      className="shrink-0 rounded-lg text-muted-foreground hover:bg-accent hover:text-primary cursor-pointer"
     >
       <Search className="size-3.5" />
     </Button>
@@ -57,7 +57,7 @@ export function KabadiNavbar() {
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-50 border-b border-kabadi-border bg-kabadi-bg/90 backdrop-blur-md">
+    <header className="sticky top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
       <nav className="mx-auto flex max-w-container-max items-center justify-between gap-4 px-gutter py-3.5">
         {/* Brand (links to /scrape) + app switcher chevron */}
         <div className="flex items-center gap-1">
@@ -66,14 +66,14 @@ export function KabadiNavbar() {
             className="group flex items-center gap-2.5"
             aria-label="Kabadi home"
           >
-            <span className="flex size-10 items-center justify-center rounded-xl bg-kabadi-primary text-kabadi-on-primary shadow-sm transition-transform group-hover:scale-105">
+            <span className="flex size-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-transform group-hover:scale-105">
               <Recycle className="size-5" />
             </span>
             <span className="flex flex-col leading-tight">
-              <span className="font-display-lg text-headline-md font-bold tracking-tight text-kabadi-primary">
+              <span className="font-display-lg text-headline-md font-bold tracking-tight text-primary">
                 Kabadi
               </span>
-              <span className="font-label-sm text-label-sm text-kabadi-muted">
+              <span className="font-label-sm text-label-sm text-muted-foreground">
                 sell scrap · get cash
               </span>
             </span>
@@ -85,16 +85,16 @@ export function KabadiNavbar() {
                 variant="ghost"
                 size="icon-lg"
                 aria-label="Switch app"
-                className="rounded-full bg-kabadi-accent text-kabadi-on-accent shadow-sm transition-all duration-200 hover:scale-105 hover:bg-kabadi-accent-strong hover:shadow-md data-[state=open]:rotate-180 cursor-pointer"
+                className="rounded-full bg-gold text-on-gold shadow-sm transition-all duration-200 hover:scale-105 hover:bg-gold-deep hover:shadow-md data-[state=open]:rotate-180 cursor-pointer"
               >
                 <ChevronDown className="size-5" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent
               align="start"
-              className="kabadi-app w-[300px] overflow-hidden p-0 border-kabadi-border bg-kabadi-surface text-kabadi-on-bg sm:w-[340px]"
+              className="w-[300px] overflow-hidden p-0 border-border bg-card text-foreground sm:w-[340px]"
             >
-              <p className="px-4 pt-3 font-label-sm text-label-sm font-semibold uppercase tracking-widest text-kabadi-muted">
+              <p className="px-4 pt-3 font-label-sm text-label-sm font-semibold uppercase tracking-widest text-muted-foreground">
                 Switch app
               </p>
               <AppModeStrip compact />
@@ -111,7 +111,7 @@ export function KabadiNavbar() {
         <Button
           variant="ghost"
           asChild
-          className="hidden font-medium text-kabadi-muted hover:text-kabadi-primary md:inline-flex"
+          className="hidden font-medium text-muted-foreground hover:text-primary md:inline-flex"
         >
           <Link href="/">
             <Building2 />
@@ -123,7 +123,7 @@ export function KabadiNavbar() {
         <div className="flex items-center gap-2">
           <Button
             asChild
-            className="hidden bg-kabadi-accent px-4! text-kabadi-on-accent hover:bg-kabadi-accent-strong sm:inline-flex"
+            className="hidden bg-gold px-4! text-on-gold hover:bg-gold-deep sm:inline-flex"
           >
             <a href="#how-it-works">
               <Phone />
@@ -158,14 +158,14 @@ export function KabadiNavbar() {
                 <Menu className="size-6" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-80 bg-kabadi-bg">
+            <SheetContent side="right" className="w-80 bg-background">
               <SheetHeader>
                 <SheetTitle className="sr-only">Kabadi menu</SheetTitle>
               </SheetHeader>
               <div className="flex flex-col gap-3 px-4">
                 {searchForm}
 
-                <Separator className="bg-kabadi-border" />
+                <Separator className="bg-border" />
 
                 <SheetClose asChild>
                   <Button
@@ -183,7 +183,7 @@ export function KabadiNavbar() {
                 <SheetClose asChild>
                   <Button
                     asChild
-                    className="mt-2 w-full bg-kabadi-accent! text-kabadi-on-accent! hover:bg-kabadi-accent-strong!"
+                    className="mt-2 w-full bg-gold! text-on-gold! hover:bg-gold-deep!"
                   >
                     <a href="#how-it-works">
                       <Phone />
@@ -199,7 +199,7 @@ export function KabadiNavbar() {
 
       {/* Mobile search bar */}
       {mobileSearchOpen && (
-        <div className="border-t border-kabadi-border bg-kabadi-surface/95 px-gutter py-3 md:hidden">
+        <div className="border-t border-border bg-card/95 px-gutter py-3 md:hidden">
           {searchForm}
         </div>
       )}

@@ -81,33 +81,33 @@ function PropertySearch({
     handleSearch(debouncedQuery);
   }, [debouncedQuery, handleSearch]);
   return (
-    <div className="mb-8">
+    <div className="mb-4 sm:mb-8">
       <label
         htmlFor="compare-search"
-        className="mb-2 block text-sm font-medium text-on-surface"
+        className="mb-1.5 sm:mb-2 block text-xs sm:text-sm font-medium text-on-surface"
       >
         Add properties to compare
       </label>
-      <div className="flex gap-2">
+      <div className="flex gap-1.5 sm:gap-2">
         <input
           id="compare-search"
           type="text"
-          placeholder="Search by title, location, or listing code..."
+          placeholder="Search by title, location, or code..."
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && handleSearch(query)}
-          className="flex-1 rounded-lg border border-outline-variant bg-surface-container px-4 py-2.5 text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="flex-1 rounded-lg border border-outline-variant bg-surface-container px-3 sm:px-4 py-1.5 sm:py-2.5 text-xs sm:text-sm text-on-surface placeholder:text-on-surface-variant/60 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
         <Button
           onClick={() => handleSearch(query)}
           disabled={loading || !query.trim()}
-          className="bg-primary px-5 text-on-primary hover:bg-primary/90"
+          className="bg-primary px-3 sm:px-5 text-xs sm:text-sm text-on-primary hover:bg-primary/90"
         >
           {loading ? (
-            <Icon name="progress_activity" className="animate-spin" />
+            <Icon name="progress_activity" className="animate-spin text-sm" />
           ) : (
             <>
-              <Icon name="search" className="mr-1.5 text-sm" />
+              <Icon name="search" className="mr-1 sm:mr-1.5 text-xs sm:text-sm" />
               Search
             </>
           )}
@@ -118,7 +118,7 @@ function PropertySearch({
       {searched && (
         <div className="mt-2 max-h-72 overflow-y-auto rounded-lg border border-outline-variant bg-surface shadow-sm">
           {results.length === 0 ? (
-            <p className="px-4 py-3 text-sm text-on-surface-variant">
+            <p className="px-4 py-3 text-xs sm:text-sm text-on-surface-variant">
               No properties found for &ldquo;{query}&rdquo;
             </p>
           ) : (
@@ -130,11 +130,11 @@ function PropertySearch({
                   key={p.id}
                   onClick={() => onToggle(p)}
                   disabled={!isSelected && atMax}
-                  className={`flex w-full items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors hover:bg-surface-container ${
+                  className={`flex w-full items-center gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-2.5 text-left text-xs sm:text-sm transition-colors hover:bg-surface-container ${
                     isSelected ? "bg-primary/5" : ""
                   } ${!isSelected && atMax ? "cursor-not-allowed opacity-50" : ""}`}
                 >
-                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md bg-surface-container">
+                  <div className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 overflow-hidden rounded-md bg-surface-container">
                     {p.imageUrl ? (
                       <img
                         src={p.imageUrl}
@@ -154,14 +154,14 @@ function PropertySearch({
                     <p className="truncate font-medium text-on-surface">
                       {p.title}
                     </p>
-                    <p className="truncate text-xs text-on-surface-variant">
+                    <p className="truncate text-[10px] sm:text-xs text-on-surface-variant">
                       {p.location} &middot; {p.price}
                     </p>
                   </div>
                   {isSelected ? (
-                    <Icon name="check" className="shrink-0 text-primary" />
+                    <Icon name="check" className="shrink-0 text-primary text-sm sm:text-base" />
                   ) : (
-                    <span className="shrink-0 text-xs font-medium text-primary">
+                    <span className="shrink-0 text-[10px] sm:text-xs font-medium text-primary">
                       Add
                     </span>
                   )}
@@ -171,7 +171,7 @@ function PropertySearch({
           )}
         </div>
       )}
-      <p className="mt-1.5 text-xs text-on-surface-variant">
+      <p className="mt-1.5 text-[10px] sm:text-xs text-on-surface-variant">
         {selectedSlugs.size}/{MAX_COMPARE_ITEMS} selected
       </p>
     </div>
@@ -381,19 +381,21 @@ function ComparePageContent() {
     },
   ];
 
+  const gridCols = `minmax(46px, ${properties.length >= 4 ? "16%" : properties.length === 3 ? "18%" : "22%"}) repeat(${properties.length}, minmax(0, 1fr))`;
+
   return (
-    <div className="mx-auto max-w-container-max px-gutter py-8">
-      <div className="mb-6 flex items-center justify-between">
-        <h1 className="font-headline-md text-2xl font-bold text-on-surface">
+    <div className="mx-auto max-w-container-max px-1 sm:px-4 md:px-gutter py-2.5 sm:py-8">
+      <div className="mb-2.5 sm:mb-6 flex items-center justify-between gap-2">
+        <h1 className="font-headline-md text-base sm:text-2xl font-bold text-on-surface truncate">
           Compare Properties
         </h1>
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={handleClear}>
+        <div className="flex shrink-0 items-center gap-1 sm:gap-2">
+          <Button variant="ghost" size="sm" onClick={handleClear} className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-sm">
             Clear All
           </Button>
-          <Button asChild variant="ghost" size="sm">
+          <Button asChild variant="ghost" size="sm" className="h-7 sm:h-8 px-2 sm:px-3 text-[11px] sm:text-sm">
             <Link href="/">
-              <Icon name="arrow_forward" className="mr-1 rotate-180" />
+              <Icon name="arrow_forward" className="mr-0.5 sm:mr-1 rotate-180 text-xs sm:text-sm" />
               Back
             </Link>
           </Button>
@@ -403,77 +405,84 @@ function ComparePageContent() {
       {/* Inline search for adding more properties */}
       <PropertySearch selectedSlugs={selectedSlugs} onToggle={handleToggle} />
 
-      <div className="overflow-x-auto rounded-xl border border-outline-variant bg-surface shadow-sm">
-        <table className="w-full min-w-[600px] text-left text-sm">
-          <thead>
-            <tr>
-              <th className="sticky left-0 z-10 w-40 min-w-[160px] bg-surface-container p-4 font-semibold text-on-surface">
-                Property
-              </th>
-              {properties.map((p) => {
-                const coverUrl = listingCoverImageUrl(p.media);
-                return (
-                  <th
-                    key={p.id}
-                    className="min-w-[220px] max-w-[280px] p-4 align-top"
-                  >
-                    <div className="mb-3 h-32 overflow-hidden rounded-lg bg-surface-container">
-                      {coverUrl ? (
-                        <img
-                          src={coverUrl}
-                          alt={p.title}
-                          draggable={false}
-                          onContextMenu={(e) => e.preventDefault()}
-                          onDragStart={(e) => e.preventDefault()}
-                          className="h-full w-full object-cover"
-                        />
-                      ) : (
-                        <div className="flex h-full items-center justify-center text-xs text-on-surface-variant/50">
-                          No image
-                        </div>
-                      )}
-                    </div>
-                    <Link
-                      href={`/${p.slug}`}
-                      className="mb-1 block font-semibold text-on-surface hover:text-primary line-clamp-2"
-                    >
-                      {p.title}
-                    </Link>
-                    <p className="text-xs text-on-surface-variant">
-                      {p.listingCode}
-                    </p>
-                    <button
-                      onClick={() => handleRemove(p.id)}
-                      className="mt-2 text-xs font-medium text-error hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </th>
-                );
-              })}
-            </tr>
-          </thead>
-
-          <tbody>
-            {rows.map((row, idx) => (
-              <tr
-                key={row.key}
-                className={
-                  idx % 2 === 0 ? "bg-surface" : "bg-surface-container/50"
-                }
+      <div className="w-full overflow-hidden rounded-md border border-outline-variant bg-surface shadow-sm">
+        {/* Header Row */}
+        <div
+          className="grid border-b border-outline-variant bg-surface"
+          style={{ gridTemplateColumns: gridCols }}
+        >
+          <div className="flex flex-col justify-start border-r border-outline-variant/50 bg-surface-container p-1 sm:p-2.5 md:p-4 text-[9px] sm:text-xs md:text-sm font-semibold text-on-surface">
+            <span>Property</span>
+          </div>
+          {properties.map((p) => {
+            const coverUrl = listingCoverImageUrl(p.media);
+            return (
+              <div
+                key={p.id}
+                className="flex min-w-0 flex-col justify-between border-r border-outline-variant/30 p-1 sm:p-2.5 md:p-4 last:border-r-0"
               >
-                <td className="sticky left-0 z-10 border-r border-outline-variant/50 bg-inherit p-3 font-medium text-on-surface">
-                  {row.label}
-                </td>
-                {properties.map((p) => (
-                  <td key={p.id} className="p-3 text-on-surface-variant">
-                    {row.render(p)}
-                  </td>
-                ))}
-              </tr>
+                <div>
+                  <div className="mb-1 aspect-[16/10] w-full overflow-hidden rounded bg-surface-container sm:mb-2 sm:rounded-lg">
+                    {coverUrl ? (
+                      <img
+                        src={coverUrl}
+                        alt={p.title}
+                        draggable={false}
+                        onContextMenu={(e) => e.preventDefault()}
+                        onDragStart={(e) => e.preventDefault()}
+                        className="h-full w-full object-cover"
+                      />
+                    ) : (
+                      <div className="flex h-full items-center justify-center text-[8px] text-on-surface-variant/50 sm:text-xs">
+                        No image
+                      </div>
+                    )}
+                  </div>
+                  <Link
+                    href={`/${p.slug}`}
+                    className="mb-0.5 block line-clamp-2 text-[9px] font-semibold leading-tight text-on-surface hover:text-primary sm:text-xs md:text-sm"
+                  >
+                    {p.title}
+                  </Link>
+                  <p className="truncate text-[7px] text-on-surface-variant sm:text-[10px]">
+                    {p.listingCode}
+                  </p>
+                </div>
+                <button
+                  onClick={() => handleRemove(p.id)}
+                  className="mt-0.5 block text-left text-[8px] font-medium text-error hover:underline sm:mt-1.5 sm:text-xs"
+                >
+                  Remove
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Attribute Rows */}
+        {rows.map((row, idx) => (
+          <div
+            key={row.key}
+            className={`grid border-b border-outline-variant/20 last:border-b-0 ${
+              idx % 2 === 0 ? "bg-surface" : "bg-surface-container/40"
+            }`}
+            style={{ gridTemplateColumns: gridCols }}
+          >
+            <div className="flex items-center border-r border-outline-variant/50 p-1 text-[8px] font-medium leading-tight text-on-surface break-words sm:p-2.5 sm:text-xs md:text-sm">
+              {row.label}
+            </div>
+            {properties.map((p) => (
+              <div
+                key={p.id}
+                className="flex min-w-0 items-center border-r border-outline-variant/30 p-1 text-[8px] leading-tight text-on-surface-variant break-words last:border-r-0 sm:p-2.5 sm:text-xs md:text-sm"
+              >
+                <span className="w-full [overflow-wrap:anywhere] break-words">
+                  {row.render(p)}
+                </span>
+              </div>
             ))}
-          </tbody>
-        </table>
+          </div>
+        ))}
       </div>
     </div>
   );

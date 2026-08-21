@@ -8,6 +8,9 @@ interface ListingSidebarMapProps {
   latitude: number;
   longitude: number;
   title: string;
+  /** Fixed height in px for the map. When omitted the default responsive
+   *  heights (h-28 / sm:h-40) are used. */
+  height?: number;
 }
 
 type MapStyle = "satellite" | "street";
@@ -36,6 +39,7 @@ export function ListingSidebarMap({
   latitude,
   longitude,
   title,
+  height,
 }: ListingSidebarMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -205,9 +209,10 @@ export function ListingSidebarMap({
           ref={containerRef}
           className={cn(
             "w-full bg-surface-container",
-            expanded ? "h-full" : "h-28 sm:h-40",
+            expanded ? "h-full" : height ? "" : "h-28 sm:h-40",
           )}
           aria-label={`Map showing ${title}`}
+          style={height && !expanded ? { height } : undefined}
         />
       </div>
     </>

@@ -4,3 +4,5 @@ export type {
   KabadiCategoryViewData,
   KabadiCategoryItem,
 } from "./KabadiCategoryView";
+
+export * from "./scrape";

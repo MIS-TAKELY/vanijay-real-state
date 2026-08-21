@@ -25,36 +25,36 @@ const FOOTER_COLS = [
 
 export function KabadiFooter() {
   return (
-    <footer className="border-t border-kabadi-border bg-kabadi-surface">
+    <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-container-max px-gutter py-12">
         <div className="grid gap-10 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="flex size-9 items-center justify-center rounded-xl bg-kabadi-primary text-kabadi-on-primary">
+              <span className="flex size-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
                 <Recycle className="size-5" />
               </span>
-              <span className="font-display-lg text-headline-md font-bold text-kabadi-primary">
+              <span className="font-display-lg text-headline-md font-bold text-primary">
                 Kabadi
               </span>
             </div>
-            <p className="mt-4 text-sm leading-relaxed text-kabadi-muted">
+            <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
               Nepal&apos;s transparent scrap price guide. Know what your kabadi
               is worth before you sell — then book a doorstep pickup and get
               cash on the spot, weighed on a transparent digital scale.
             </p>
-            <p className="mt-4 flex items-center gap-2 text-sm text-kabadi-muted">
-              <MapPin className="size-4 text-kabadi-primary" />
+            <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
+              <MapPin className="size-4 text-primary" />
               Serving Kathmandu Valley &amp; major cities
             </p>
-            <p className="mt-1 flex items-center gap-2 text-sm text-kabadi-muted">
-              <Phone className="size-4 text-kabadi-primary" />
-              9800-KABADI (9800-522234)
+            <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
+              <Phone className="size-4 text-primary" />
+              9702634469
             </p>
           </div>
 
           {FOOTER_COLS.map((col) => (
             <div key={col.title}>
-              <h3 className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-kabadi-primary">
+              <h3 className="font-label-sm text-label-sm font-semibold uppercase tracking-wider text-primary">
                 {col.title}
               </h3>
               <ul className="mt-4 flex flex-col gap-2.5">
@@ -62,7 +62,7 @@ export function KabadiFooter() {
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-sm text-kabadi-muted transition-colors hover:text-kabadi-primary"
+                      className="text-sm text-muted-foreground transition-colors hover:text-primary"
                     >
                       {link.label}
                     </a>
@@ -73,9 +73,9 @@ export function KabadiFooter() {
           ))}
         </div>
 
-        <Separator className="mt-10 bg-kabadi-border" />
+        <Separator className="mt-10 bg-border" />
 
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-6 text-xs text-kabadi-muted">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-6 text-xs text-muted-foreground">
           <p>
             © {new Date().getFullYear()} Kabadi · Sell your scrap, get paid in
             cash

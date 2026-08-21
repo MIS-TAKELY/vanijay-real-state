@@ -2,96 +2,75 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { Flame, Search } from "lucide-react";
+import { Badge } from "../../ui/badge";
+import { Input } from "../../ui/input";
 import {
-  Badge,
-  Input,
   Table,
   TableBody,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
-  ToggleGroup,
-  ToggleGroupItem,
-} from "@repo/ui";
-import type { KabadiCategoryData } from "lib/kabadi/api";
-import {
-  categoryById,
-  formatRate,
-  KABADI_CATEGORIES,
-  KABADI_ITEMS,
-  RATES_LAST_UPDATED,
-  type KabadiCategoryId,
-} from "lib/kabadi/rates";
+} from "../../ui/table";
+import { ToggleGroup, ToggleGroupItem } from "../../ui/toggle-group";
+import type {
+  ScrapeCategorySummary,
+  ScrapeItemSummary,
+  OnSectionFieldChange,
+} from "./types";
+import { formatRate } from "./helpers";
+import { EditableField } from "./EditableField";
 
-type Filter = KabadiCategoryId | "all";
+interface RateCatalogProps {
+  categories: ScrapeCategorySummary[];
+  items?: ScrapeItemSummary[];
+  editable?: boolean;
+  onFieldChange?: OnSectionFieldChange;
+  ratesLastUpdated?: string;
+}
+
+type Filter = string | "all";
 
 function normalize(text: string): string {
   return text.toLowerCase().replace(/\s+/g, " ").trim();
 }
 
-interface RateCatalogProps {
-  categories?: KabadiCategoryData[];
-}
-
-export function RateCatalog({ categories }: RateCatalogProps) {
+export function RateCatalog({
+  categories,
+  items,
+  editable = false,
+  onFieldChange,
+  ratesLastUpdated = "today",
+}: RateCatalogProps) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<Filter>("all");
 
-  // Pick up a query submitted from the hero search (?q=...) on load.
+  const allItems: ScrapeItemSummary[] = items && items.length > 0
+    ? items
+    : categories.flatMap((c) => c.items ?? []);
+
   useEffect(() => {
+    if (typeof window === "undefined") return;
     const q = new URLSearchParams(window.location.search).get("q");
     if (q) setQuery(q);
   }, []);
 
-  // Build display data from API or fallback to hardcoded
-  const displayCategories = useMemo(() => {
-    if (categories && categories.length > 0) {
-      return categories.map((c) => ({
-        id: c.slug as KabadiCategoryId,
-        name: c.name,
-        nepali: c.nepali ?? "",
-        icon: c.icon ?? "",
-        blurb: c.blurb ?? "",
-      }));
-    }
-    return KABADI_CATEGORIES;
-  }, [categories]);
-
-  const displayItems = useMemo(() => {
-    if (categories && categories.length > 0) {
-      return categories.flatMap((c) =>
-        c.items.map((i) => ({
-          id: i.id,
-          name: i.name,
-          nepali: i.nepali ?? undefined,
-          category: c.slug as KabadiCategoryId,
-          unit: i.unit.toLowerCase() as "kg" | "piece",
-          rate: Number(i.rate),
-          note: i.note ?? undefined,
-          popular: i.popular,
-        })),
-      );
-    }
-    return KABADI_ITEMS;
-  }, [categories]);
-
-  const items = useMemo(() => {
+  const filteredItems = useMemo(() => {
     const q = normalize(query);
-    return displayItems.filter((item) => {
+    return allItems.filter((item) => {
       const inCategory = filter === "all" || item.category === filter;
       if (!inCategory) return false;
       if (!q) return true;
-      const catMeta = displayCategories.find((c) => c.id === item.category);
+      const catMeta = categories.find((c) => c.slug === item.category);
       const haystack = normalize(
         `${item.name} ${item.nepali ?? ""} ${catMeta?.name ?? ""}`,
       );
       return haystack.includes(q);
     });
-  }, [query, filter, displayItems, displayCategories]);
+  }, [query, filter, allItems, categories]);
 
   const getCategoryName = (slug: string) => {
-    const cat = displayCategories.find((c) => c.id === slug);
+    const cat = categories.find((c) => c.slug === slug);
     return cat?.name ?? "";
   };
 
@@ -101,29 +80,34 @@ export function RateCatalog({ categories }: RateCatalogProps) {
       className="scroll-mt-24 border-b border-border py-16 md:py-24"
     >
       <div className="mx-auto px-gutter">
-        {/* Header */}
         <div className="flex flex-wrap items-end justify-between gap-6">
           <div className="max-w-2xl">
             <p className="font-label-sm text-label-sm font-semibold uppercase tracking-[0.2em] text-primary">
               Today&apos;s Rates
             </p>
-            <h2 className="mt-2 font-display-lg text-4xl tracking-tight text-foreground">
-              What can I sell, and for how much?
-            </h2>
-            <p className="mt-3 text-base leading-relaxed text-muted-foreground">
-              Indicative buy rates across the Kathmandu Valley. Filter by
-              category or search any item — Nepali names work too (तामा,
-              पत्रिका, मोबाइल…).
-            </p>
+            <EditableField
+              tag="h2"
+              value="What can I sell, and for how much?"
+              onChange={(v) => onFieldChange?.("rateCatalog", "heading", v)}
+              editable={editable}
+              className="mt-2 font-display-lg text-4xl tracking-tight text-foreground"
+            />
+            <EditableField
+              tag="p"
+              value="Indicative buy rates across the Kathmandu Valley. Filter by category or search any item — Nepali names work too."
+              onChange={(v) => onFieldChange?.("rateCatalog", "description", v)}
+              editable={editable}
+              multiline
+              className="mt-3 text-base leading-relaxed text-muted-foreground"
+            />
           </div>
 
-          {/* Search */}
           <div className="relative w-full sm:w-80">
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
             <Input
               type="search"
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQuery(e.target.value)}
               aria-label="Search scrap items"
               placeholder="Search an item or Nepali name…"
               className="h-11 pl-9"
@@ -131,11 +115,10 @@ export function RateCatalog({ categories }: RateCatalogProps) {
           </div>
         </div>
 
-        {/* Category pills */}
         <ToggleGroup
           type="single"
           value={filter}
-          onValueChange={(value) => {
+          onValueChange={(value: string) => {
             if (value) setFilter(value as Filter);
           }}
           variant="outline"
@@ -149,18 +132,27 @@ export function RateCatalog({ categories }: RateCatalogProps) {
           >
             All items
           </ToggleGroupItem>
-          {displayCategories.map((cat) => (
+          {categories.map((cat) => (
             <ToggleGroupItem
               key={cat.id}
-              value={cat.id}
+              value={cat.slug}
               className="rounded-full px-4 font-medium"
             >
-              {cat.name}
+              {editable ? (
+                <EditableField
+                  value={cat.name}
+                  onChange={(v) =>
+                    onFieldChange?.(`category:${cat.id}`, "name", v)
+                  }
+                  editable
+                />
+              ) : (
+                cat.name
+              )}
             </ToggleGroupItem>
           ))}
         </ToggleGroup>
 
-        {/* Item list */}
         <div className="mt-8 overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
           <Table>
             <TableHeader>
@@ -174,14 +166,24 @@ export function RateCatalog({ categories }: RateCatalogProps) {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {items.map((item) => (
+              {filteredItems.map((item) => (
                 <TableRow
                   key={item.id}
                   className="border-border hover:bg-accent/50"
                 >
                   <TableCell className="py-3.5 pl-5">
                     <p className="flex items-center gap-2 text-[15px] font-medium text-foreground">
-                      {item.name}
+                      {editable ? (
+                        <EditableField
+                          value={item.name}
+                          onChange={(v) =>
+                            onFieldChange?.(`item:${item.id}`, "name", v)
+                          }
+                          editable
+                        />
+                      ) : (
+                        item.name
+                      )}
                       {item.popular && (
                         <Badge className="bg-gold/15 text-gold-deep">
                           <Flame />
@@ -211,19 +213,18 @@ export function RateCatalog({ categories }: RateCatalogProps) {
             </TableBody>
           </Table>
 
-          {items.length === 0 && (
+          {filteredItems.length === 0 && (
             <div className="p-12 text-center">
               <p className="text-base text-muted-foreground">
-                No items match &ldquo;{query}&rdquo;. Try &ldquo;copper&rdquo;, &ldquo;pet&rdquo;, &ldquo;fridge&rdquo; or a
-                Nepali name.
+                No items match &ldquo;{query}&rdquo;. Try &ldquo;copper&rdquo;, &ldquo;pet&rdquo;, &ldquo;fridge&rdquo; or a Nepali name.
               </p>
             </div>
           )}
         </div>
 
         <p className="mt-4 font-label-sm text-label-sm text-muted-foreground">
-          {items.length} item{items.length === 1 ? "" : "s"} · rates indicative
-          as of {RATES_LAST_UPDATED} · final price depends on condition,
+          {filteredItems.length} item{filteredItems.length === 1 ? "" : "s"} · rates indicative
+          as of {ratesLastUpdated} · final price depends on condition,
           quantity &amp; market — confirmed at weigh-in.
         </p>
       </div>

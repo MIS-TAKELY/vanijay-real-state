@@ -253,15 +253,16 @@ function ChipGroup({
         value={value}
         onValueChange={onChange}
         variant="outline"
+        spacing={2}
         aria-label={label}
-        className="flex flex-wrap justify-start gap-sm"
+        className="flex flex-wrap justify-start gap-1.5 sm:gap-2"
       >
         {options.map((o) => (
           <ToggleGroupItem
             key={o.value}
             value={o.value}
             aria-label={o.label}
-            className="rounded-full border px-3 py-1.5 text-[13px] font-medium data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:text-primary data-[state=off]:border-outline-variant data-[state=off]:text-on-surface-variant data-[state=off]:hover:border-primary/40"
+            className="rounded-full border border-outline-variant px-3 py-1.5 text-xs sm:text-[13px] font-medium transition-colors data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:text-primary data-[state=off]:text-on-surface-variant data-[state=off]:hover:border-primary/40"
           >
             {o.label}
           </ToggleGroupItem>
@@ -320,15 +321,16 @@ function FacingField({
           if (v) onChange(v);
         }}
         variant="outline"
+        spacing={2}
         aria-label="Facing"
-        className="flex flex-wrap justify-start gap-sm"
+        className="flex flex-wrap justify-start gap-1.5 sm:gap-2"
       >
         {FACING_DIRECTIONS.map((d) => (
           <ToggleGroupItem
             key={d.value}
             value={d.value}
             aria-label={d.label}
-            className="rounded-full border px-3 py-1.5 text-[13px] font-medium data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:text-primary data-[state=off]:border-outline-variant data-[state=off]:text-on-surface-variant data-[state=off]:hover:border-primary/40"
+            className="rounded-full border border-outline-variant px-3 py-1.5 text-xs sm:text-[13px] font-medium transition-colors data-[state=on]:border-primary data-[state=on]:bg-primary/5 data-[state=on]:text-primary data-[state=off]:text-on-surface-variant data-[state=off]:hover:border-primary/40"
           >
             {d.label}
           </ToggleGroupItem>
@@ -485,13 +487,17 @@ function PriceBlock({ draft, update, errors }: StepProps) {
       {isBuilding ? (
         <div className="flex flex-col gap-xs">
           <Label>Price per unit (auto-calculated)</Label>
-          <div className="grid grid-cols-2 gap-sm rounded-xl border border-primary/30 bg-primary/5 p-sm">
-            <span className="mono-stat text-lg font-bold text-primary">
-              {rateLabel.sqft !== "—" ? `${rateLabel.sqft} / sq.ft` : "—"}
-            </span>
-            <span className="mono-stat text-lg font-bold text-primary border-l border-primary/20 pl-sm">
-              {rateLabel.sqm !== "—" ? `${rateLabel.sqm} / sq.m` : "—"}
-            </span>
+          <div className="grid grid-cols-1 gap-2 rounded-xl border border-primary/30 bg-primary/5 p-3 sm:grid-cols-2 sm:gap-3">
+            <div className="flex flex-col min-w-0">
+              <span className="mono-stat text-sm sm:text-base font-bold text-primary break-words">
+                {rateLabel.sqft !== "—" ? `${rateLabel.sqft} / sq.ft` : "—"}
+              </span>
+            </div>
+            <div className="flex flex-col min-w-0 border-t border-primary/20 pt-2 sm:border-t-0 sm:border-l sm:pt-0 sm:pl-3">
+              <span className="mono-stat text-sm sm:text-base font-bold text-primary break-words">
+                {rateLabel.sqm !== "—" ? `${rateLabel.sqm} / sq.m` : "—"}
+              </span>
+            </div>
           </div>
           {perUnit == null && (
             <p className="text-[11px] leading-4 text-on-surface-variant">

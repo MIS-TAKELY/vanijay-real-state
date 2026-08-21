@@ -763,8 +763,8 @@ async function main() {
       key: "main",
       data: {
         brand: "MALPOTH",
-        phone: "9800522234",
-        phoneDisplay: "9800-KABADI",
+        phone: "9702634469",
+        phoneDisplay: "9702634469",
         email: "hello@malpoth.com",
       } as any,
     },
