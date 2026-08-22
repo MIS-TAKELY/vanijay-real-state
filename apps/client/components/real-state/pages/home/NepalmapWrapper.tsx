@@ -11,7 +11,7 @@ import { memo, useEffect, useMemo, useState } from "react";
 /** Single source of truth for the map's rendered height — the lazy-loading
  *  placeholder must occupy the same box as the hydrated map so the layout
  *  doesn't jump when the bundle arrives. */
-export const NEPAL_MAP_HEIGHT = "clamp(400px, 40vh, 440px)";
+export const NEPAL_MAP_HEIGHT = "clamp(100px, 34vh, 400px)";
 
 const LeafletNepalMapDynamic = dynamic(
   () => import("components/real-state/leaflet-map/LeafletNepalMap"),
@@ -33,6 +33,7 @@ const LeafletNepalMapDynamic = dynamic(
         }}
         aria-busy="true"
         aria-label="Loading interactive map"
+        // className={`h-${NEPAL_MAP_HEIGHT} xs:h-[50px]`}
       >
         Loading map…
       </div>

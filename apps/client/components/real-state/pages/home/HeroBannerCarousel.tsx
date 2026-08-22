@@ -91,7 +91,7 @@ function HeroBannerCarousel() {
 
   return (
     <section
-      className="relative w-full h-48 sm:h-56 md:h-72 lg:h-80 overflow-hidden bg-navy-deep"
+      className="relative w-full h-48 md:h-80 overflow-hidden bg-navy-deep"
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       aria-label={activeSlide?.headline || "Hero banner"}
@@ -115,7 +115,7 @@ function HeroBannerCarousel() {
             alt={slide.headline || "MALPOTH verified property listings in Nepal"}
             draggable={false}
             loading={index === 0 ? "eager" : "lazy"}
-            className="absolute inset-0 h-full w-full object-cover object-center"
+            className="absolute inset-0 h-full w-full object-contain object-center"
           />
           {/* Soft overlays so carousel controls stay readable */}
           <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/25 via-transparent to-transparent" />
