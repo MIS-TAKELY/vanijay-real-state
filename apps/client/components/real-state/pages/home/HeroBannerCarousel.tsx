@@ -93,15 +93,12 @@ function HeroBannerCarousel() {
 
   const activeSlide = heroSlides[current];
 
-  // Height caps: 192px on mobile, 320px from `md` up (mirrors h-48 / md:h-80,
-  // which stays as the fallback until the active poster's aspect is known).
-  const heightCap = frameWidth >= 768 ? 320 : 192;
+  // Fit the frame to the poster: full width at its natural aspect — no height
+  // cap so the entire image is visible without any clipping.
   const activeAspect = imageAspects[activeSlide?.key ?? String(current)];
-  // Fit the frame to the poster: full width at its natural aspect, capped so an
-  // oversized poster shows whole at the cap height instead of being clipped.
   const frameHeight =
     activeAspect && frameWidth > 0
-      ? Math.min(frameWidth / activeAspect, heightCap)
+      ? frameWidth / activeAspect
       : undefined;
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -126,7 +123,7 @@ function HeroBannerCarousel() {
   return (
     <section
       ref={frameRef}
-      className="relative w-full h-48 md:h-80 overflow-hidden bg-navy-deep"
+      className="relative w-full aspect-[16/7] overflow-hidden bg-navy-deep"
       style={frameHeight ? { height: `${frameHeight}px` } : undefined}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
@@ -162,7 +159,7 @@ function HeroBannerCarousel() {
                 );
               }
             }}
-            className="absolute inset-0 h-full w-full object-cover object-top"
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
           {/* Soft overlays so carousel controls stay readable */}
           <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/25 via-transparent to-transparent" />
