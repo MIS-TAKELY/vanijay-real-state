@@ -93,12 +93,11 @@ function HeroBannerCarousel() {
 
   const activeSlide = heroSlides[current];
 
-  // Fit the frame to the poster: full width at its natural aspect — no height
-  // cap so the entire image is visible without any clipping.
+  const heightCap = frameWidth >= 768 ? 293 : 87;
   const activeAspect = imageAspects[activeSlide?.key ?? String(current)];
   const frameHeight =
     activeAspect && frameWidth > 0
-      ? frameWidth / activeAspect
+      ? Math.min(frameWidth / activeAspect, heightCap)
       : undefined;
 
   const handleTouchStart = (e: React.TouchEvent) => {
@@ -123,7 +122,7 @@ function HeroBannerCarousel() {
   return (
     <section
       ref={frameRef}
-      className="relative w-full aspect-[16/7] overflow-hidden bg-navy-deep"
+      className="relative w-full h-[87px] md:h-[293px] overflow-hidden bg-navy-deep"
       style={frameHeight ? { height: `${frameHeight}px` } : undefined}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
