@@ -102,14 +102,14 @@ export default function PrivacyPolicyPage() {
         <p className={pClass}>
           You may request access to, correction of, or deletion of your
           personal information at any time by contacting us at
-          info@malpoth.com.
+          hello@malpoth.com.
         </p>
       </section>
 
       <section className={sectionClass}>
         <h2 className={h2Class}>7. Contact</h2>
         <p className={pClass}>
-          Questions about this policy can be sent to info@malpoth.com or by
+          Questions about this policy can be sent to hello@malpoth.com or by
           post to MALPOTH, Durbar Marg, Kathmandu, Nepal.
         </p>
       </section>

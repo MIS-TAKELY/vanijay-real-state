@@ -73,7 +73,7 @@ const organizationSchema = {
   },
   contactPoint: {
     "@type": "ContactPoint",
-    email: "info@malpoth.com",
+    email: "hello@malpoth.com",
     contactType: "customer service",
   },
   sameAs: [],

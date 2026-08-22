@@ -107,7 +107,7 @@ export function Footer() {
             <p className="font-body-md text-xs text-white/70 mono-stat sm:text-sm">
               Durbar Marg, Kathmandu
               <br />
-              info@malpoth.com
+              hello@malpoth.com
               <br />
               +977 9702634469
             </p>

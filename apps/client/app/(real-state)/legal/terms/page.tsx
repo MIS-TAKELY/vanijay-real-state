@@ -111,7 +111,7 @@ export default function TermsOfServicePage() {
         <p className={pClass}>
           We may update these terms from time to time; continued use of the
           platform constitutes acceptance of the revised terms. Questions can
-          be sent to info@malpoth.com.
+          be sent to hello@malpoth.com.
         </p>
       </section>
     </main>
