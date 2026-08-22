@@ -71,7 +71,7 @@ export function MetalPageTemplate({
         <Breadcrumb items={breadcrumbItems} />
 
         {/* Hero Section: Today's Price + unit/currency choosers + market overview */}
-        <section className="mb-6 grid gap-6 sm:mb-8 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-start">
+        <section className="mb-6 grid gap-6 sm:mb-8 sm:gap-8 lg:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)] lg:items-center">
           <HeroPricePanel
             metal={activeMetal}
             currency={currency}

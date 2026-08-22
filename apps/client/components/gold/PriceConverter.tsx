@@ -3,7 +3,6 @@
 import { useState } from "react";
 import type { CurrencyCode, MetalData, WeightUnit } from "../../constants/gold/metals";
 import {
-  CURRENCY_SYMBOLS,
   convertUnit,
   formatPrice,
   priceInCurrency,
@@ -122,8 +121,7 @@ export function PriceConverter({
           className="mt-1 text-xs text-on-surface-variant"
           style={{ fontFamily: "var(--font-body)" }}
         >
-          {CURRENCY_SYMBOLS[currency]} {formatPrice(priceInDisplayUnit, currency)} per{" "}
-          {unit} ({metal.symbol})
+          {formatPrice(priceInDisplayUnit, currency)} per {unit} ({metal.symbol})
         </p>
       </div>
 

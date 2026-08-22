@@ -69,6 +69,8 @@ export function MarketOverview({
     return sorted[0] ?? null;
   }, [metals]);
 
+  const allMetalIds = useMemo(() => metals.map((m) => m.id).join(","), [metals]);
+
   const toggle = (id: MetalId) => {
     setSelected((prev) =>
       prev.includes(id)
@@ -211,7 +213,7 @@ export function MarketOverview({
 
         <div className="flex items-center justify-between gap-3">
           <Link
-            href="/metals/compare"
+            href={`/metals/compare?ids=${allMetalIds}`}
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-gold-deep transition-colors hover:text-gold"
             style={{ fontFamily: "var(--font-body)" }}
           >

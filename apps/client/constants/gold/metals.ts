@@ -433,7 +433,7 @@ export function formatPrice(
   value: number,
   currency: CurrencyCode = "NPR",
 ): string {
-  return `${CURRENCY_SYMBOLS[currency]}${value.toLocaleString("en-US", {
+  return `${CURRENCY_SYMBOLS[currency]} ${value.toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;

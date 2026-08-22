@@ -51,12 +51,15 @@ export function MetalComparison() {
   const searchParams = useSearchParams();
 
   const selectedIds = useMemo(() => {
-    const raw = (searchParams.get("ids") ?? "gold,silver")
+    const raw = searchParams.get("ids")?.trim();
+    // No (or empty) ids param → compare every tracked asset.
+    if (!raw) return metals.map((m) => m.id);
+    const parsed = raw
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean);
-    return [...new Set(raw)] as MetalId[];
-  }, [searchParams]);
+    return [...new Set(parsed)] as MetalId[];
+  }, [searchParams, metals]);
 
   const selected = useMemo(
     () =>

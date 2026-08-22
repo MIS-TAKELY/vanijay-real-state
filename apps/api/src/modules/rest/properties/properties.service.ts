@@ -48,6 +48,9 @@ const PRICE_BANDS: Record<string, { gte?: number; lt?: number }> = {
   '1cr-plus': { gte: 10_000_000 },
 };
 
+// Google truncates SERP URLs around ~60 chars — keep slugs fully visible.
+const SLUG_MAX_LENGTH = 60;
+
 const PROPERTY_SUMMARY_INCLUDE = {
   location: true,
   landArea: true,
@@ -241,7 +244,7 @@ export class PropertiesService {
         verificationLevel: 'UNVERIFIED',
         publishedAt: new Date(),
         listingCode: await this.generateListingCode(),
-        slug: this.generateSlug(input.title),
+        slug: this.generateSlug(input.title, input.location),
         originalAskingPrice: input.askingPrice,
         ...(landArea && { landArea: { create: landArea } }),
         ...(location && { location: { create: location } }),
@@ -575,15 +578,62 @@ export class PropertiesService {
     return `PROP-${Date.now()}-${suffix}`;
   }
 
-  private generateSlug(title: string): string {
-    const base = title
-      .toLowerCase()
-      .trim()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '')
-      .slice(0, 60);
+  /**
+   * Builds a crawler-friendly, human-readable slug:
+   * `<title keywords>-<location keywords>-<short unique suffix>`.
+   *
+   * Location words (area → municipality → district) are appended only when
+   * the title doesn't already contain them, producing keyword-rich URLs like
+   * `/3bhk-house-for-sale-in-patan-lalitpur-a1b2`. The whole slug — suffix
+   * included — is capped at 60 chars (fully visible in Google SERPs) and is
+   * truncated on word boundaries so no token is ever cut mid-word.
+   */
+  private generateSlug(
+    title: string,
+    location?: {
+      areaName?: string | null;
+      municipality?: string | null;
+      district?: string | null;
+    },
+  ): string {
+    const slugify = (value: string): string =>
+      value
+        .normalize('NFKD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+
+    const tokens = slugify(title).split('-').filter(Boolean);
+    const seen = new Set(tokens);
+    for (const part of [
+      location?.areaName,
+      location?.municipality,
+      location?.district,
+    ]) {
+      if (!part) continue;
+      for (const token of slugify(part).split('-')) {
+        if (token && !seen.has(token)) {
+          tokens.push(token);
+          seen.add(token);
+        }
+      }
+    }
+
+    // Reserve room for the uniqueness suffix so the TOTAL stays under the cap.
     const suffix = Math.random().toString(36).slice(2, 6);
-    return `${base || 'property'}-${suffix}`;
+    const maxBaseLength = SLUG_MAX_LENGTH - suffix.length - 1;
+
+    let base = '';
+    for (const token of tokens) {
+      const candidate = base ? `${base}-${token}` : token;
+      if (candidate.length > maxBaseLength) break;
+      base = candidate;
+    }
+    // A single oversized token still gets a meaningful (hard-truncated) base.
+    const finalBase =
+      base || tokens[0]?.slice(0, maxBaseLength) || 'property';
+    return `${finalBase}-${suffix}`;
   }
 
   private static toNumber(

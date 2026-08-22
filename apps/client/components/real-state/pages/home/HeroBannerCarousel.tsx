@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Icon } from "@repo/ui";
 import { useContentStore } from "store/content";
 import { fetchCmsHeroBanners, type CmsHeroSlide } from "lib/api/services/cms";
@@ -27,6 +27,11 @@ function HeroBannerCarousel() {
   const [current, setCurrent] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
+  const [frameWidth, setFrameWidth] = useState(0);
+  /** Natural aspect ratio (width / height) per slide key, learned on load. */
+  const [imageAspects, setImageAspects] = useState<Record<string, number>>({});
 
   useEffect(() => {
     let cancelled = false;
@@ -66,9 +71,38 @@ function HeroBannerCarousel() {
     setCurrent((prev) => Math.min(prev, Math.max(heroSlides.length - 1, 0)));
   }, [heroSlides.length]);
 
+  /**
+   * Callback ref that keeps the banner's rendered width in state so the frame
+   * height can be fitted to each poster's aspect ratio (no clipping).
+   */
+  const frameRef = useCallback((el: HTMLElement | null) => {
+    observerRef.current?.disconnect();
+    observerRef.current = null;
+    sectionRef.current = el;
+    if (!el) return;
+    setFrameWidth(el.clientWidth);
+    const observer = new ResizeObserver((entries) => {
+      const width = entries[0]?.contentRect.width;
+      if (width) setFrameWidth(width);
+    });
+    observer.observe(el);
+    observerRef.current = observer;
+  }, []);
+
   if (!heroEnabled || heroSlides.length === 0) return null;
 
   const activeSlide = heroSlides[current];
+
+  // Height caps: 192px on mobile, 320px from `md` up (mirrors h-48 / md:h-80,
+  // which stays as the fallback until the active poster's aspect is known).
+  const heightCap = frameWidth >= 768 ? 320 : 192;
+  const activeAspect = imageAspects[activeSlide?.key ?? String(current)];
+  // Fit the frame to the poster: full width at its natural aspect, capped so an
+  // oversized poster shows whole at the cap height instead of being clipped.
+  const frameHeight =
+    activeAspect && frameWidth > 0
+      ? Math.min(frameWidth / activeAspect, heightCap)
+      : undefined;
 
   const handleTouchStart = (e: React.TouchEvent) => {
     if (e.touches[0]) {
@@ -91,7 +125,9 @@ function HeroBannerCarousel() {
 
   return (
     <section
+      ref={frameRef}
       className="relative w-full h-48 md:h-80 overflow-hidden bg-navy-deep"
+      style={frameHeight ? { height: `${frameHeight}px` } : undefined}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
       aria-label={activeSlide?.headline || "Hero banner"}
@@ -115,6 +151,17 @@ function HeroBannerCarousel() {
             alt={slide.headline || "MALPOTH verified property listings in Nepal"}
             draggable={false}
             loading={index === 0 ? "eager" : "lazy"}
+            onLoad={(e) => {
+              const { naturalWidth, naturalHeight } = e.currentTarget;
+              if (naturalWidth > 0 && naturalHeight > 0) {
+                const key = slide.key ?? String(index);
+                setImageAspects((prev) =>
+                  prev[key] === naturalWidth / naturalHeight
+                    ? prev
+                    : { ...prev, [key]: naturalWidth / naturalHeight },
+                );
+              }
+            }}
             className="absolute inset-0 h-full w-full object-contain object-center"
           />
           {/* Soft overlays so carousel controls stay readable */}

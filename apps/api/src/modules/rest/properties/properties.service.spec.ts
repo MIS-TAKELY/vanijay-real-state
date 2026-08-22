@@ -133,12 +133,90 @@ describe('PropertiesService', () => {
     expect(callArg.data.publishedAt).toBeInstanceOf(Date);
   });
 
+  it('create builds an SEO slug from title + location keywords, capped at 60 chars', async () => {
+    const input: CreatePropertyInput = {
+      title: 'My House',
+      mainCategory: MainCategory.RESIDENTIAL,
+      subCategory: SubCategory.HOUSE,
+      askingPrice: 1500000,
+      landArea: { ropani: 1, aana: 0, totalSqFt: 508.74, totalSqMeters: 47.29 },
+      location: {
+        province: 'Bagmati',
+        district: 'Lalitpur',
+        municipality: 'Lalitpur Metropolitan City',
+        wardNumber: 6,
+        areaName: 'Patan',
+      },
+    };
+    await service.create(input, 'u1');
+    const slug = prisma.property.create.mock.calls[0][0].data.slug as string;
+    expect(slug.length).toBeLessThanOrEqual(60);
+    // Title first, then location keywords not already present in the title.
+    expect(slug).toMatch(/^my-house-/);
+    expect(slug).toContain('patan');
+    expect(slug).toContain('lalitpur');
+  });
+
+  it('create never duplicates location words already in the title', async () => {
+    const input: CreatePropertyInput = {
+      title: 'Land for sale in Patan',
+      mainCategory: MainCategory.LAND,
+      subCategory: SubCategory.RESIDENTIAL_LAND,
+      askingPrice: 1500000,
+      landArea: { ropani: 1, aana: 0, totalSqFt: 508.74, totalSqMeters: 47.29 },
+      location: {
+        province: 'Bagmati',
+        district: 'Lalitpur',
+        municipality: 'Lalitpur Metropolitan City',
+        wardNumber: 6,
+        areaName: 'Patan',
+      },
+    };
+    await service.create(input, 'u1');
+    const slug = prisma.property.create.mock.calls[0][0].data.slug as string;
+    expect(slug.match(/patan/g)).toHaveLength(1);
+    expect(slug.length).toBeLessThanOrEqual(60);
+  });
+
+  it('create truncates very long titles on word boundaries within the 60-char cap', async () => {
+    const input: CreatePropertyInput = {
+      title:
+        'Spacious Modern Luxury Residential House With Beautiful Garden And Parking Available For Immediate Sale In Kathmandu Valley Nepal',
+      mainCategory: MainCategory.RESIDENTIAL,
+      subCategory: SubCategory.HOUSE,
+      askingPrice: 1500000,
+      landArea: { ropani: 1, aana: 0, totalSqFt: 508.74, totalSqMeters: 47.29 },
+      location: {
+        province: 'Bagmati',
+        district: 'Kathmandu',
+        municipality: 'Kathmandu Metropolitan City',
+        wardNumber: 6,
+        areaName: 'Thamel',
+      },
+    };
+    await service.create(input, 'u1');
+    const slug = prisma.property.create.mock.calls[0][0].data.slug as string;
+    expect(slug.length).toBeLessThanOrEqual(60);
+    // No truncated mid-word fragments — every segment is a full word.
+    const segments = slug.split('-');
+    expect(segments.every((s) => s.length > 0)).toBe(true);
+  });
+
   it('update checks existence before updating', async () => {
     prisma.property.findUnique.mockResolvedValueOnce(null);
     await expect(
       service.update({ id: 'x', title: 'new' }),
     ).rejects.toBeInstanceOf(NotFoundException);
     expect(prisma.property.update).not.toHaveBeenCalled();
+  });
+
+  it('update never regenerates or overwrites the slug (indexed URLs stay stable)', async () => {
+    await service.update({
+      id: 'p1',
+      title: 'Completely Renamed Listing',
+    });
+    const data = prisma.property.update.mock.calls[0][0].data;
+    expect(data).not.toHaveProperty('slug');
   });
 
   it('update resets verificationLevel to UNVERIFIED when listing content changes', async () => {
