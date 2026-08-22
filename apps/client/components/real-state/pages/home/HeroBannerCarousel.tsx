@@ -122,7 +122,7 @@ function HeroBannerCarousel() {
   return (
     <section
       ref={frameRef}
-      className="relative w-full h-[87px] md:h-[293px] overflow-hidden bg-navy-deep"
+      className="relative w-full h-[90px] md:h-[300px] overflow-hidden bg-navy-deep"
       style={frameHeight ? { height: `${frameHeight}px` } : undefined}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
