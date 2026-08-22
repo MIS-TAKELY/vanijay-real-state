@@ -93,11 +93,10 @@ function HeroBannerCarousel() {
 
   const activeSlide = heroSlides[current];
 
-  const heightCap = frameWidth >= 768 ? 293 : 87;
   const activeAspect = imageAspects[activeSlide?.key ?? String(current)];
   const frameHeight =
     activeAspect && frameWidth > 0
-      ? Math.min(frameWidth / activeAspect, heightCap)
+      ? frameWidth / activeAspect
       : undefined;
 
   const handleTouchStart = (e: React.TouchEvent) => {
