@@ -162,7 +162,7 @@ function HeroBannerCarousel() {
                 );
               }
             }}
-            className="absolute inset-0 h-full w-full object-contain object-center"
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
           {/* Soft overlays so carousel controls stay readable */}
           <div className="absolute inset-0 bg-gradient-to-r from-navy-deep/25 via-transparent to-transparent" />
