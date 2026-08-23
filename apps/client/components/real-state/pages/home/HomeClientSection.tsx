@@ -145,12 +145,12 @@ export function HomeClientSection({
       {/* Near the fold — code-split, loads right away */}
       <ListingsMarketplace />
       <RecentlyAdded />
-      {/* Deep below the fold — deferred until scrolled near so the map
-          bundle (~390 KB gzip), its tile fetches, and rail APIs never
-          compete with the LCP hero during initial load. */}
-      <DeferredMount fallback={<RecentlyAddedSkeleton />}>
-        <RecentlyViewed />
-      </DeferredMount>
+      {/* RecentlyViewed renders null for empty history — deferring it would
+          collapse its skeleton box and cause CLS, so it stays immediate. */}
+      <RecentlyViewed />
+      {/* Deep below the fold — deferred to post-load idle so the map bundle
+          (~390 KB gzip), its tile fetches, and rail APIs never compete with
+          the LCP hero during the critical rendering window. */}
       <DeferredMount fallback={<MapSkeleton />}>
         <NepalmapWrapper />
       </DeferredMount>

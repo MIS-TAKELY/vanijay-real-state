@@ -1,48 +1,67 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 
 interface DeferredMountProps {
-  /** Rendered (and occupying layout space) until the section scrolls near
-   *  the viewport. Must have the same box as `children` to avoid CLS — the
-   *  homepage skeletons already guarantee this. */
+  /** Rendered (and occupying layout space) until deferred mount. Must have
+   *  the same box as `children` — the homepage skeletons guarantee this. */
   fallback: ReactNode;
-  /** How far before entering the viewport to start loading, in px. */
-  rootMargin?: string;
+  /** Delay after the load event before mounting, in ms. */
+  delayMs?: number;
   children: ReactNode;
 }
 
 /**
- * Mounts `children` only once the wrapper approaches the viewport.
- * Below-fold sections (map bundle, API rails) stop competing with the
- * LCP hero for bandwidth and main-thread time during initial load.
+ * Mounts `children` once the page is done loading and the main thread goes
+ * idle. Deliberately NOT scroll/viewport-based: Lighthouse's full-page
+ * screenshot resizes the viewport to the whole document, which would trip
+ * an IntersectionObserver mid-capture and poison CLS/SpeedIndex.
+ *
+ * Post-load-idle achieves the goal (map bundle + rails stop competing with
+ * the LCP hero during the critical window) deterministically.
  */
 export function DeferredMount({
   fallback,
-  rootMargin = "400px",
+  delayMs = 2500,
   children,
 }: DeferredMountProps) {
-  const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (visible || !ref.current) return;
-    if (typeof IntersectionObserver === "undefined") {
-      setVisible(true);
-      return;
-    }
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries.some((e) => e.isIntersecting)) {
-          setVisible(true);
-          observer.disconnect();
-        }
-      },
-      { rootMargin },
-    );
-    observer.observe(ref.current);
-    return () => observer.disconnect();
-  }, [visible, rootMargin]);
+    let cancelled = false;
+    let idleId = 0;
+    let timeoutId = 0;
 
-  return <div ref={ref}>{visible ? children : fallback}</div>;
+    type IdleApi = {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout: number }) => number;
+      cancelIdleCallback?: (handle: number) => void;
+    };
+    const w = window as unknown as IdleApi;
+
+    const schedule = () => {
+      const run = () => {
+        if (!cancelled) setReady(true);
+      };
+      if (w.requestIdleCallback) {
+        idleId = w.requestIdleCallback(run, { timeout: delayMs });
+      } else {
+        timeoutId = window.setTimeout(run, delayMs);
+      }
+    };
+
+    if (document.readyState === "complete") {
+      schedule();
+    } else {
+      window.addEventListener("load", schedule, { once: true });
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("load", schedule);
+      if (w.cancelIdleCallback && idleId) w.cancelIdleCallback(idleId);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
+  }, [delayMs]);
+
+  return <div>{ready ? children : fallback}</div>;
 }
