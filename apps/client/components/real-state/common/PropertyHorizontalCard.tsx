@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Card, CardContent, Badge, Button, Icon } from "@repo/ui";
 import Link from "next/link";
+import { optimizeImageUrl } from "lib/image-url";
 
 export interface PropertyHorizontalCardProps {
   id: string;
@@ -71,7 +72,7 @@ export function PropertyHorizontalCard({
           className="block h-full"
         >
           <img
-            src={image}
+            src={optimizeImageUrl(image, 480)}
             alt={alt ?? title}
             className="h-full w-full object-cover"
             loading="lazy"

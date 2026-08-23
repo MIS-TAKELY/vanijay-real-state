@@ -1,6 +1,9 @@
 "use client";
 
 import L from "leaflet";
+// Bundled with this (client-only, code-split) chunk — avoids a third-party
+// unpkg request that was render-blocking the map's first paint.
+import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { DetailCard } from "../googlemap/components/DetailCard";
 import { MobileListToggle } from "../googlemap/components/MapControls";
@@ -341,13 +344,6 @@ export default function LeafletNepalMap({
         zIndex: 0,
       }}
     >
-      {/* Leaflet CSS via CDN */}
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossOrigin=""
-      />
       <div ref={containerRef} style={{ height: "100%", width: "100%" }} />
 
       {/* ── Top Controls: 3-column layout ─────────────────────────────── */}
@@ -420,6 +416,7 @@ export default function LeafletNepalMap({
         <select
           value={selectedRegion}
           onChange={(e) => setSelectedRegion(e.target.value)}
+          aria-label="Filter properties by region"
           style={{
             background: "rgba(10, 20, 13, 0.88)",
             backdropFilter: "blur(14px)",

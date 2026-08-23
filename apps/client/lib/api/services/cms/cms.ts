@@ -22,13 +22,16 @@ export const CMS_SLOTS = {
   cta: "CTA",
 } as const;
 
-/** Published content items for a placement (optionally one slot), ordered by sortOrder. */
+/** Published content items for a placement (optionally one slot), ordered by sortOrder.
+ *  Cached at the edge for 5 min so server components can render CMS content
+ *  into the initial HTML without slowing down the response. */
 export function fetchCmsItems(
   placement: string,
   slot?: string,
 ): Promise<CmsContentItem[]> {
   return apiFetch<CmsContentItem[]>(API_ENDPOINTS.cms.items(placement), {
     query: slot ? { slot } : undefined,
+    next: { revalidate: 300, tags: ["cms"] },
   });
 }
 

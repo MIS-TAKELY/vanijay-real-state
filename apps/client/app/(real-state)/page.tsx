@@ -1,6 +1,8 @@
 import { HomeClientSection } from "components/real-state/pages/home/HomeClientSection";
 import { HOME_FAQ_ITEMS } from "components/real-state/pages/home/AboutArchive";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
+import { fetchCmsHeroBanners, type CmsHeroSlide } from "lib/api/services/cms";
+import { optimizeImageUrl } from "lib/image-url";
 import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
@@ -190,8 +192,31 @@ const serviceSchema = {
  * ────────────────────────────────────────────────────────────────────── */
 
 export default async function HomePage() {
+  /* Server-fetch the hero slides so the LCP image URL is discoverable in the
+   * initial HTML (preload below) instead of arriving after a client-side
+   * CMS round-trip. Falls back to client-side defaults when the API is down. */
+  let heroSlides: CmsHeroSlide[] = [];
+  try {
+    heroSlides = await fetchCmsHeroBanners();
+  } catch {
+    heroSlides = [];
+  }
+  const lcpImage = heroSlides[0]
+    ? optimizeImageUrl(heroSlides[0].image, 1280)
+    : null;
+
   return (
     <>
+      {/* LCP preload — React hoists this into <head> during SSR */}
+      {lcpImage && (
+        <link
+          rel="preload"
+          as="image"
+          href={lcpImage}
+          fetchPriority="high"
+        />
+      )}
+
       {/* JSON-LD structured data */}
       <script
         type="application/ld+json"
@@ -240,7 +265,7 @@ export default async function HomePage() {
         >
           <div className="h-px w-full bg-outline-variant/60" />
         </div>
-        <HomeClientSection />
+        <HomeClientSection initialHeroSlides={heroSlides} />
       </main>
     </>
   );

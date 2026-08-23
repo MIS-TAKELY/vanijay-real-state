@@ -3,7 +3,11 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useContentStore } from "store/content";
 import { fetchCmsCategories, type CmsCategory } from "lib/api/services/cms";
+import { optimizeImageUrl } from "lib/image-url";
 import { resolveCategorySlug } from "constants/category-catalog";
+
+/** Tiles render at 80–96 CSS px — request ≤2× for retina sharpness. */
+const CATEGORY_IMAGE_WIDTH = 200;
 
 function useHorizontalDrag(ref: React.RefObject<HTMLDivElement | null>) {
   const [isDragging, setIsDragging] = useState(false);
@@ -122,7 +126,7 @@ function CategoryStrip() {
                 <div className="size-20 md:size-24 rounded-2xl overflow-hidden border border-outline-variant bg-surface transition-all duration-200 group-hover:-translate-y-1 group-hover:border-gold/50 group-hover:shadow-lg group-hover:shadow-gold/10">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={cat.image}
+                    src={optimizeImageUrl(cat.image, CATEGORY_IMAGE_WIDTH)}
                     alt={cat.name}
                     className="w-full h-full object-cover"
                     loading="lazy"

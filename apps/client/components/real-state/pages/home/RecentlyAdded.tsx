@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button, Icon } from "@repo/ui";
 import { HorizontalScrollSection } from "../../common/HorizontalScrollSection";
+import { RailSectionSkeleton } from "./skeletons";
 import {
   fetchRecentlyAddedProperties,
   toCardPropsFromItem,
@@ -50,31 +51,9 @@ function RecentlyAdded() {
   };
 
   if (loading) {
-    return (
-      <section className="py-6 md:py-14 relative z-10">
-        <div className="max-w-container-max mx-auto px-gutter">
-          <div className="flex items-end justify-between mb-4 md:mb-6">
-            <div>
-              <p className="mb-1.5 md:mb-2 flex items-center gap-2 font-label-sm text-[9px] md:text-[11px] uppercase tracking-[0.14em] md:tracking-[0.18em] text-gold-deep font-bold">
-                <span className="h-px w-5 md:w-7 bg-gold" aria-hidden />
-                Fresh on the market
-              </p>
-              <h2 className="font-headline-md text-xl md:text-headline-md text-navy font-bold tracking-tight">
-                Recently Added
-              </h2>
-            </div>
-          </div>
-          <div className="flex gap-3 md:gap-4 overflow-x-auto pb-4 pt-1 md:pt-2">
-            {[1, 2, 3, 4].map((i) => (
-              <div
-                key={i}
-                className="min-w-[220px] md:min-w-[280px] h-[300px] md:h-[420px] animate-pulse rounded-2xl bg-surface-container shrink-0"
-              />
-            ))}
-          </div>
-        </div>
-      </section>
-    );
+    /* Skeleton mirrors the loaded section's exact geometry (header + rail
+     * card sizes) so the swap produces zero layout shift. */
+    return <RailSectionSkeleton title="Recently Added" count={4} />;
   }
 
   if (items.length === 0) {

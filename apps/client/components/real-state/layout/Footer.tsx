@@ -65,7 +65,7 @@ export function Footer() {
             {footerLinks["The Archive"].map((link) => (
               <a
                 key={link.label}
-                className="font-label-sm text-label-sm text-white/70 transition-colors hover:text-gold"
+                className="font-label-sm text-label-sm text-white/70 transition-colors hover:text-gold py-[3px] -my-[3px]"
                 href={link.href}
               >
                 {link.label}
@@ -81,7 +81,7 @@ export function Footer() {
             {footerLinks.Compliance.map((link) => (
               <a
                 key={link.label}
-                className={`font-label-sm text-label-sm transition-colors ${
+                className={`font-label-sm text-label-sm transition-colors py-[3px] -my-[3px] ${
                   link.active
                     ? "font-bold text-gold underline underline-offset-4"
                     : "text-white/70 hover:text-gold"

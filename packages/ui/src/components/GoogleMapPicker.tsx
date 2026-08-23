@@ -1,5 +1,8 @@
 "use client";
 
+import L from "leaflet";
+// Bundled with the app instead of injected from unpkg at runtime.
+import "leaflet/dist/leaflet.css";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "../lib/utils";
 import { Button } from "./ui/button";
@@ -50,27 +53,6 @@ const TILE_LAYERS: Record<
   },
 };
 
-function loadLeafletScript(): Promise<any> {
-  if (typeof window === "undefined") return Promise.resolve(null);
-  if ((window as any).L) return Promise.resolve((window as any).L);
-
-  return new Promise((resolve, reject) => {
-    if (!document.getElementById("leaflet-css")) {
-      const link = document.createElement("link");
-      link.id = "leaflet-css";
-      link.rel = "stylesheet";
-      link.href = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.css";
-      document.head.appendChild(link);
-    }
-
-    const script = document.createElement("script");
-    script.src = "https://unpkg.com/leaflet@1.9.4/dist/leaflet.js";
-    script.onload = () => resolve((window as any).L);
-    script.onerror = (err) => reject(err);
-    document.head.appendChild(script);
-  });
-}
-
 export function GoogleMapPicker({
   value,
   onChange,
@@ -90,7 +72,6 @@ export function GoogleMapPicker({
   const mapRef = useRef<any>(null);
   const markerRef = useRef<any>(null);
   const tileLayerRef = useRef<any>(null);
-  const [L, setL] = useState<any>(null);
   /* eslint-enable @typescript-eslint/no-explicit-any */
 
   const [mapStyle, setMapStyle] = useState<MapStyle>("satellite");
@@ -108,25 +89,9 @@ export function GoogleMapPicker({
 
   const ignoreNextValueRef = useRef(false);
 
-  // Load Leaflet dynamically
+  // Init map — Leaflet and its CSS are bundled with this module.
   useEffect(() => {
-    let cancelled = false;
-    loadLeafletScript()
-      .then((leafletApi) => {
-        if (!cancelled && leafletApi) {
-          setL(leafletApi);
-        }
-      })
-      .catch((err) => console.error("Leaflet load error:", err));
-
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  // Init map when Leaflet is ready
-  useEffect(() => {
-    if (!L || !containerRef.current || mapRef.current) return;
+    if (!containerRef.current || mapRef.current) return;
 
     const initialCenter = valueRef.current ?? center;
 

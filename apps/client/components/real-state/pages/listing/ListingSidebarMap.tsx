@@ -2,6 +2,8 @@
 
 import { Icon } from "@repo/ui";
 import { cn } from "@repo/ui/lib/utils";
+// Bundled with this chunk — avoids a third-party unpkg request.
+import "leaflet/dist/leaflet.css";
 import { useEffect, useRef, useState } from "react";
 
 interface ListingSidebarMapProps {
@@ -156,12 +158,6 @@ export function ListingSidebarMap({
 
   return (
     <>
-      <link
-        rel="stylesheet"
-        href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-        crossOrigin=""
-      />
       <div
         ref={wrapperRef}
         className={cn(

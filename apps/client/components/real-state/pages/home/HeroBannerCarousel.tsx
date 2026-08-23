@@ -3,7 +3,11 @@
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Icon } from "@repo/ui";
 import { useContentStore } from "store/content";
-import { fetchCmsHeroBanners, type CmsHeroSlide } from "lib/api/services/cms";
+import {
+  fetchCmsHeroBanners,
+  type CmsHeroSlide,
+} from "lib/api/services/cms";
+import { optimizeImageUrl } from "lib/image-url";
 import type { HeroSlide } from "constants/varibles-constants";
 
 type Slide = HeroSlide & { key?: string; ctaHref?: string };
@@ -20,10 +24,23 @@ function toSlide(item: CmsHeroSlide): Slide {
   };
 }
 
-function HeroBannerCarousel() {
+interface HeroBannerCarouselProps {
+  /** Slides already fetched on the server — skips the client-side CMS
+   *  round-trip so the LCP image paints immediately. */
+  initialSlides?: CmsHeroSlide[];
+}
+
+/** Rendered banner width ceiling — Cloudinary/Unsplash deliver a resized
+ *  variant instead of the full upload (typically 1920px). */
+const HERO_IMAGE_WIDTH = 1280;
+
+function HeroBannerCarousel({ initialSlides }: HeroBannerCarouselProps) {
   const heroEnabled = useContentStore((s) => s.heroEnabled);
   const storeSlides = useContentStore((s) => s.heroSlides);
-  const [cmsSlides, setCmsSlides] = useState<CmsHeroSlide[] | null>(null);
+  // Seed from server data when available; null triggers the client fetch.
+  const [cmsSlides, setCmsSlides] = useState<CmsHeroSlide[] | null>(
+    initialSlides && initialSlides.length > 0 ? initialSlides : null,
+  );
   const [current, setCurrent] = useState(0);
   const [isHovering, setIsHovering] = useState(false);
   const [touchStart, setTouchStart] = useState<number | null>(null);
@@ -34,6 +51,8 @@ function HeroBannerCarousel() {
   const [imageAspects, setImageAspects] = useState<Record<string, number>>({});
 
   useEffect(() => {
+    // Skip the client fetch entirely when the server already provided slides.
+    if (cmsSlides) return;
     let cancelled = false;
     fetchCmsHeroBanners()
       .then((slides) => {
@@ -45,7 +64,7 @@ function HeroBannerCarousel() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [cmsSlides]);
 
   const heroSlides: Slide[] =
     cmsSlides && cmsSlides.length > 0 ? cmsSlides.map(toSlide) : storeSlides;
@@ -142,10 +161,12 @@ function HeroBannerCarousel() {
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- hero slide image */}
           <img
-            src={slide.image}
+            src={optimizeImageUrl(slide.image, HERO_IMAGE_WIDTH)}
             alt={slide.headline || "MALPOTH verified property listings in Nepal"}
             draggable={false}
             loading={index === 0 ? "eager" : "lazy"}
+            fetchPriority={index === 0 ? "high" : undefined}
+            decoding={index === 0 ? "sync" : "async"}
             onLoad={(e) => {
               const { naturalWidth, naturalHeight } = e.currentTarget;
               if (naturalWidth > 0 && naturalHeight > 0) {
@@ -165,19 +186,25 @@ function HeroBannerCarousel() {
         </div>
       ))}
 
-      {/* Dot indicators — gold for the active slide */}
-      <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-1.5 md:gap-2">
+      {/* Dot indicators — gold for the active slide. Each dot sits inside a
+          24px hit area so the controls meet WCAG 2.5.8 target size. */}
+      <div className="absolute bottom-3 md:bottom-8 left-1/2 -translate-x-1/2 z-30 flex items-center gap-0.5 md:gap-1">
         {heroSlides.map((_, index) => (
           <button
             key={index}
             onClick={() => goTo(index)}
-            className={`h-1.5 md:h-2 rounded-full transition-all duration-300 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 ${
-              index === current
-                ? "w-6 md:w-8 bg-gold"
-                : "w-1.5 md:w-2 bg-white/50 hover:bg-white/80"
-            }`}
             aria-label={`Go to slide ${index + 1}`}
-          />
+            aria-current={index === current}
+            className="flex size-6 items-center justify-center focus:outline-none focus-visible:ring-2 focus-visible:ring-white/50 rounded-full"
+          >
+            <span
+              className={`block h-1.5 md:h-2 rounded-full transition-all duration-300 ${
+                index === current
+                  ? "w-6 md:w-8 bg-gold"
+                  : "w-1.5 md:w-2 bg-white/50 hover:bg-white/80"
+              }`}
+            />
+          </button>
         ))}
       </div>
 

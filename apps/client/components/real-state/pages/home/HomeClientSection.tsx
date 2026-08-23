@@ -1,6 +1,11 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import type { CmsHeroSlide } from "lib/api/services/cms";
+import {
+  CardRailSkeleton,
+  RailSectionSkeleton,
+} from "./skeletons";
 
 /* ─── Skeleton placeholders ──────────────────────────────────────── */
 
@@ -21,24 +26,24 @@ function CategorySkeleton() {
   );
 }
 
+function RecentlyAddedSkeleton() {
+  return (
+    <RailSectionSkeleton title="Recently Added" count={4} />
+  );
+}
 
 function ListingsSkeleton() {
   return (
-    <section className="py-6 md:py-10">
-      <div className="max-w-container-max mx-auto px-gutter">
-        <div className="h-6 w-48 rounded bg-outline-variant/40 animate-pulse mb-6" />
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-64 rounded-2xl animate-pulse bg-outline-variant/20"
-            />
-          ))}
-        </div>
-      </div>
-    </section>
+    <>
+      <RailSectionSkeleton title="Featured Properties" />
+      <RailSectionSkeleton title="Trending Now" tinted />
+    </>
   );
 }
+
+/** Must occupy the same box as NepalmapWrapper's hydrated map
+ *  (NEPAL_MAP_HEIGHT) or the page jumps when the bundle arrives. */
+const MAP_PLACEHOLDER_HEIGHT = "clamp(100px, 34vh, 400px)";
 
 function MapSkeleton() {
   return (
@@ -46,7 +51,7 @@ function MapSkeleton() {
       <div
         style={{
           width: "100%",
-          height: "clamp(400px, 40vh, 440px)",
+          height: MAP_PLACEHOLDER_HEIGHT,
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
@@ -102,12 +107,12 @@ const ListingsMarketplace = dynamic(
 
 const RecentlyAdded = dynamic(
   () => import("./RecentlyAdded").then((m) => m.RecentlyAdded),
-  { ssr: false, loading: ListingsSkeleton },
+  { ssr: false, loading: RecentlyAddedSkeleton },
 );
 
 const RecentlyViewed = dynamic(
   () => import("./RecentlyViewed").then((m) => m.RecentlyViewed),
-  { ssr: false, loading: ListingsSkeleton },
+  { ssr: false, loading: RecentlyAddedSkeleton },
 );
 
 const NepalmapWrapper = dynamic(
@@ -122,12 +127,20 @@ const AboutArchive = dynamic(
 
 /* ─── Main client section ────────────────────────────────────────── */
 
-export function HomeClientSection() {
+interface HomeClientSectionProps {
+  /** Server-fetched CMS hero slides — skips the client-side round-trip so
+   *  the LCP image renders immediately. */
+  initialHeroSlides?: CmsHeroSlide[];
+}
+
+export function HomeClientSection({
+  initialHeroSlides,
+}: HomeClientSectionProps) {
   return (
     <>
       {/* Above the fold — statically imported, renders immediately */}
       <CategoryStrip />
-      <HeroBannerCarousel />
+      <HeroBannerCarousel initialSlides={initialHeroSlides} />
       {/* Below the fold — dynamically imported, code-split */}
       <ListingsMarketplace />
       <RecentlyAdded />
@@ -137,3 +150,5 @@ export function HomeClientSection() {
     </>
   );
 }
+
+export { CardRailSkeleton };

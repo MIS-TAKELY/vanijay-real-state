@@ -4,9 +4,13 @@ import { Icon, cn } from "@repo/ui";
 import Link from "next/link";
 import { useState } from "react";
 import type { CardProperty } from "lib/api/services/properties/types";
+import { optimizeImageUrl } from "lib/image-url";
 import { useIsMobile } from "lib/use-is-mobile";
 import { CompareToggleButton } from "./CompareToggleButton";
 import { SaveToFavoritesButton } from "./SaveToFavoritesButton";
+
+/** Cards render at 180–280 CSS px — request ≤2× for retina sharpness. */
+const CARD_IMAGE_WIDTH = 480;
 
 interface PropertyCardProps {
   property: {
@@ -136,7 +140,7 @@ export function PropertyCard({
               <div key={`${src}-${i}`} className="relative h-full w-full shrink-0">
                 {/* eslint-disable-next-line @next/next/no-img-element -- external upload URL */}
                 <img
-                  src={src}
+                  src={optimizeImageUrl(src, CARD_IMAGE_WIDTH)}
                   alt={i === current ? property.title : ""}
                   loading={i === 0 ? "eager" : "lazy"}
                   draggable={false}
@@ -192,18 +196,25 @@ export function PropertyCard({
             >
               <Icon name="chevron_right" className="text-base md:text-[18px]" />
             </button>
-            <div className="absolute bottom-2 md:bottom-3 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-1 md:gap-1.5">
+            <div className="absolute bottom-2 md:bottom-3 left-1/2 z-[2] flex -translate-x-1/2 items-center gap-0.5 md:gap-1">
               {images.map((_, i) => (
                 <button
                   key={i}
                   type="button"
                   aria-label={`Photo ${i + 1}`}
+                  aria-current={i === current}
                   onClick={() => setActive(i)}
-                  className={cn(
-                    "h-1.5 cursor-pointer rounded-full transition-all duration-300",
-                    i === current ? "w-4 bg-white" : "w-1.5 bg-white/60 hover:bg-white/90",
-                  )}
-                />
+                  className="flex size-6 cursor-pointer items-center justify-center"
+                >
+                  <span
+                    className={cn(
+                      "block h-1.5 rounded-full transition-all duration-300",
+                      i === current
+                        ? "w-4 bg-white"
+                        : "w-1.5 bg-white/60 hover:bg-white/90",
+                    )}
+                  />
+                </button>
               ))}
             </div>
           </>
