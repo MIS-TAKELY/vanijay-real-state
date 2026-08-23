@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { PropertiesService } from './properties.service';
+import { SitemapNotifyService } from './sitemap-notify.service';
 import { CreatePropertyInput } from './dto/create-property.input';
 import { PrismaClient, MainCategory, SubCategory } from '@repo/db';
 import { encodeCursor } from 'src/common/pagination';
@@ -59,6 +60,11 @@ describe('PropertiesService', () => {
       providers: [
         PropertiesService,
         { provide: PrismaClient, useValue: prisma },
+        // Fire-and-forget dependency — stubbed so tests never hit the network.
+        {
+          provide: SitemapNotifyService,
+          useValue: { notifySitemapChanged: jest.fn() },
+        },
       ],
     }).compile();
     service = module.get(PropertiesService);

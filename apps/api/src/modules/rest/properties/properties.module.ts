@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { PropertiesController } from './properties.controller';
 import { PropertiesResolver } from './properties.resolver';
 import { PropertiesService } from './properties.service';
+import { SitemapNotifyService } from './sitemap-notify.service';
 
 /**
  * One module declaring BOTH transports (REST controller + GraphQL resolver)
@@ -13,7 +14,7 @@ import { PropertiesService } from './properties.service';
  */
 @Module({
   controllers: [PropertiesController],
-  providers: [PropertiesResolver, PropertiesService],
+  providers: [PropertiesResolver, PropertiesService, SitemapNotifyService],
   exports: [PropertiesService],
 })
 export class PropertiesModule {}

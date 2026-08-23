@@ -8,6 +8,7 @@ import {
 } from 'src/common/pagination';
 import { CreatePropertyInput } from './dto/create-property.input';
 import { UpdatePropertyInput } from './dto/update-property.input';
+import { SitemapNotifyService } from './sitemap-notify.service';
 import { Property } from './entities/property.entity';
 import { SearchSuggestion } from './entities/search-suggestion.entity';
 
@@ -68,7 +69,10 @@ const PROPERTY_SUMMARY_INCLUDE = {
 
 @Injectable()
 export class PropertiesService {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(
+    private readonly prisma: PrismaClient,
+    private readonly sitemapNotify: SitemapNotifyService,
+  ) {}
 
   async findFeed(
     opts: {
@@ -284,6 +288,8 @@ export class PropertiesService {
         media: { orderBy: { sortOrder: 'asc' } },
       },
     });
+    // New LIVE listing — refresh /sitemap.xml immediately (fire-and-forget).
+    this.sitemapNotify.notifySitemapChanged();
     return PropertiesService.mapToResponse(row);
   }
 
@@ -371,12 +377,17 @@ export class PropertiesService {
         media: { orderBy: { sortOrder: 'asc' } },
       },
     });
+    // Content/status changes can move a listing in or out of LIVE — refresh
+    // /sitemap.xml immediately (fire-and-forget).
+    this.sitemapNotify.notifySitemapChanged();
     return PropertiesService.mapToResponse(row);
   }
 
   async remove(id: string): Promise<Property> {
     await this.exists(id);
     const row = await this.prisma.property.delete({ where: { id } });
+    // Deleted listing must leave /sitemap.xml immediately (fire-and-forget).
+    this.sitemapNotify.notifySitemapChanged();
     return PropertiesService.mapToResponse(row);
   }
 

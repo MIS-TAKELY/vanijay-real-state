@@ -33,6 +33,11 @@ services:
       - CLOUDINARY_API_KEY=${CLOUDINARY_API_KEY}
       - CLOUDINARY_API_SECRET=${CLOUDINARY_API_SECRET}
       - WHATSAPP_API_URL=${WHATSAPP_API_URL}
+      # Internal Docker DNS of the Next.js client — used to ping
+      # /api/revalidate/sitemap when properties change (dynamic sitemap).
+      - CLIENT_INTERNAL_URL=${CLIENT_INTERNAL_URL:-http://client:3000}
+      # Shared secret for the sitemap revalidation ping (must match the client).
+      - SITEMAP_REVALIDATE_SECRET=${SITEMAP_REVALIDATE_SECRET}
     labels:
       # HTTP → HTTPS redirect + HTTPS routing for the API domain
       - "traefik.enable=true"
@@ -71,6 +76,9 @@ services:
       - NODE_ENV=production
       - AUTH_API_URL=${AUTH_API_URL:-http://api:5000}
       - NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=${NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}
+      # Shared secret the API sends to /api/revalidate/sitemap so property
+      # create/delete instantly refreshes sitemap.xml (must match the API).
+      - SITEMAP_REVALIDATE_SECRET=${SITEMAP_REVALIDATE_SECRET}
     labels:
       - "traefik.enable=true"
       - "traefik.docker.network=dokploy-network"

@@ -1,6 +1,7 @@
 "use client";
 
-import { BouncingAppSwitcher, BrandLogo } from "@repo/ui";
+import { BouncingAppSwitcher, Button, Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@repo/ui";
+import { Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AppModeStrip } from "components/shared/AppModeStrip";
@@ -17,16 +18,12 @@ const NAV_LINKS: Array<{ label: string; href: string; metalId?: MetalId }> = [
   { label: "Diamond", href: "/diamond", metalId: "diamond" },
   { label: "Copper", href: "/copper", metalId: "copper" },
   { label: "Steel", href: "/steel", metalId: "steel" },
-  { label: "Compare", href: "/metals/compare" },
 ];
 
 export function MetalsNavbar() {
   const pathname = usePathname();
 
-  const isActive = (href: string) =>
-    href === "/metals/compare"
-      ? pathname.startsWith("/metals")
-      : pathname === href;
+  const isActive = (href: string) => pathname === href;
 
   return (
     <header className="sticky top-0 z-50 border-b border-outline-variant bg-surface/90 backdrop-blur-md">
@@ -79,10 +76,10 @@ export function MetalsNavbar() {
           </BouncingAppSwitcher>
         </div>
 
-        {/* Links — scrolls horizontally on small screens */}
+        {/* Desktop links — hidden on mobile */}
         <nav
           aria-label="Metals"
-          className="no-scrollbar flex min-w-0 flex-1 items-center justify-end gap-0.5 overflow-x-auto md:justify-center"
+          className="no-scrollbar hidden min-w-0 flex-1 items-center justify-center gap-0.5 overflow-x-auto md:flex"
         >
           {NAV_LINKS.map((link) => {
             const active = isActive(link.href);
@@ -112,6 +109,56 @@ export function MetalsNavbar() {
             );
           })}
         </nav>
+
+        {/* Mobile hamburger → side menu */}
+        <div className="ml-auto md:hidden">
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon-lg"
+              className="shrink-0 md:hidden"
+              aria-label="Toggle menu"
+            >
+              <Menu className="size-6" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent side="right" className="w-80 bg-surface">
+            <SheetHeader>
+              <SheetTitle className="sr-only">Precious Metals</SheetTitle>
+            </SheetHeader>
+            <nav aria-label="Metals" className="flex flex-col gap-1 px-4 pt-2">
+              {NAV_LINKS.map((link) => {
+                const active = isActive(link.href);
+                return (
+                  <SheetClose asChild key={link.href}>
+                    <Link
+                      href={link.href}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex items-center gap-3 rounded-lg px-3 py-3 text-base font-medium transition-colors hover:bg-[#103050]/[0.05] ${
+                        active
+                          ? "bg-[#103050]/[0.07] text-[#8A6D1D]"
+                          : "text-[#103050]/70"
+                      }`}
+                    >
+                      {link.metalId ? (
+                        <span
+                          className="h-2 w-2 rounded-full"
+                          style={{
+                            backgroundColor: METAL_META[link.metalId].accentColor,
+                          }}
+                          aria-hidden="true"
+                        />
+                      ) : null}
+                      <span>{link.label}</span>
+                    </Link>
+                  </SheetClose>
+                );
+              })}
+            </nav>
+          </SheetContent>
+        </Sheet>
+        </div>
       </div>
     </header>
   );

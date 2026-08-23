@@ -1072,10 +1072,10 @@ export function SearchFilters() {
                 className="inline-flex items-center gap-1 rounded-full border border-outline-variant bg-surface px-2.5 py-1 text-[11px] font-medium text-on-surface-variant transition-colors hover:border-gold/50 hover:bg-gold/5"
               >
                 <span className="text-on-surface-variant/60">
-                  {chip.label.split(":")[0]}:
+                  {chip.label}:
                 </span>
                 <span className="text-on-surface">
-                  {chip.label.split(":").slice(1).join(":").trim()}
+                  {chip.value}
                 </span>
                 <Icon name="close" className="text-[10px]" />
               </a>
