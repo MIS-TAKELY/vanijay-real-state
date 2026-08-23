@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import {
   Accordion,
   AccordionContent,
@@ -7,11 +8,34 @@ import {
   Container,
 } from "@repo/ui";
 import { ConvertorClient } from "components/real-state/pages/convertor/ConvertorClient";
+import {
+  CONVERSION_PAIRS,
+  pairTitleWords,
+} from "lib/land-conversions";
 import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { formatLandNumber, LAND_UNITS } from "lib/land-units";
 import { SITE_URL } from "lib/site";
 
 const PAGE_URL = `${SITE_URL}/convertor`;
+
+/**
+ * Pair directory grouped by source unit (insertion order preserved), used
+ * by the hub section that links every programmatic conversion page.
+ */
+const PAIRS_BY_SOURCE: Array<{
+  sourceLabel: string;
+  pairs: Array<{ slug: string; targetLabel: string }>;
+}> = Object.entries(
+  CONVERSION_PAIRS.reduce<
+    Record<string, Array<{ slug: string; targetLabel: string }>>
+  >((acc, p) => {
+    const words = pairTitleWords(p);
+    const list = acc[words.from.title] ?? [];
+    list.push({ slug: p.slug, targetLabel: words.to.title });
+    acc[words.from.title] = list;
+    return acc;
+  }, {}),
+).map(([sourceLabel, pairs]) => ({ sourceLabel, pairs }));
 
 const KEYWORDS = [
   "land unit converter",
@@ -30,7 +54,7 @@ const KEYWORDS = [
 ];
 
 export const metadata: Metadata = {
-  title: "Land Unit Converter — Ropani, Aana, Katha to Sq. ft | MALPOTH",
+  title: "Land Unit Converter — Ropani, Aana, Katha to Sq. ft",
   description:
     "Instantly and accurately convert Nepali land units (Ropani, Aana, Paisa, Daam, Bigha, Katha, Dhur) to international units (sq. ft, sq. m, acre, hectare). A free, minimalist land measurement converter for Nepal.",
   keywords: KEYWORDS,
@@ -242,6 +266,48 @@ export default function ConvertorPage() {
                     ))}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          </Container>
+        </section>
+
+        {/* ── Conversion directory (programmatic pair pages) ──────── */}
+        <section className="py-10 sm:py-14">
+          <Container>
+            <div className="mx-auto max-w-3xl">
+              <h2 className="font-display text-2xl font-semibold text-navy">
+                Dedicated converters
+              </h2>
+              <p className="mt-2 text-sm leading-relaxed text-on-surface-variant">
+                Every common Nepali ↔ international pairing has its own page —
+                with the exact factor, lookup tables in both directions and
+                answers to the questions people actually ask about that
+                conversion.
+              </p>
+
+              <div className="mt-6 grid gap-2 sm:grid-cols-2">
+                {PAIRS_BY_SOURCE.map(({ sourceLabel, pairs }) => (
+                  <div
+                    key={sourceLabel}
+                    className="rounded-xl border border-outline-variant bg-surface p-4 shadow-sm"
+                  >
+                    <p className="text-[11px] font-bold uppercase tracking-[0.14em] text-on-surface-variant">
+                      {sourceLabel} converts to
+                    </p>
+                    <ul className="mt-2 flex flex-wrap gap-x-1 gap-y-1.5">
+                      {pairs.map((p) => (
+                        <li key={p.slug}>
+                          <Link
+                            href={`/convertor/${p.slug}`}
+                            className="inline-flex items-center rounded-full border border-outline-variant bg-surface-container-low px-3 py-1 text-xs font-medium text-on-surface transition-colors duration-150 hover:border-primary/40 hover:bg-primary/5 hover:text-primary"
+                          >
+                            {p.targetLabel}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ))}
               </div>
             </div>
           </Container>

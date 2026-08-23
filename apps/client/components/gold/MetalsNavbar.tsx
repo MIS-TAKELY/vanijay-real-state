@@ -15,9 +15,13 @@ import Image from "next/image";
 const NAV_LINKS: Array<{ label: string; href: string; metalId?: MetalId }> = [
   { label: "Gold", href: "/gold", metalId: "gold" },
   { label: "Silver", href: "/silver", metalId: "silver" },
+  { label: "Platinum", href: "/platinum", metalId: "platinum" },
+  { label: "Palladium", href: "/palladium", metalId: "palladium" },
   { label: "Diamond", href: "/diamond", metalId: "diamond" },
   { label: "Copper", href: "/copper", metalId: "copper" },
   { label: "Steel", href: "/steel", metalId: "steel" },
+  { label: "Bitcoin", href: "/bitcoin", metalId: "bitcoin" },
+  { label: "Ethereum", href: "/ethereum", metalId: "ethereum" },
 ];
 
 export function MetalsNavbar() {

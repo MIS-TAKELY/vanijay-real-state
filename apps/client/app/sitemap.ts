@@ -2,8 +2,11 @@ import type { MetadataRoute } from "next";
 import { API_ENDPOINTS } from "lib/api/core/endpoints";
 import { apiUrl } from "lib/api/core/config";
 import { LANGUAGES, DEFAULT_LOCALE } from "lib/i18n";
+import { CONVERSION_PAIRS } from "lib/land-conversions";
 import { SITE_URL } from "lib/site";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
+import { DISTRICT_CATALOG } from "constants/district-catalog";
+import { UNIT_RATE_UNITS } from "components/gold/UnitRateTemplate";
 
 // Regenerate the sitemap at most once an hour (ISR-style). Listing detail
 // pages moved to /{slug} (SEO), so every LIVE listing gets a clean short URL.
@@ -30,9 +33,61 @@ const STATIC_ROUTES: Array<{
   // NOTE: /compare is intentionally excluded — it is a utility page whose
   // content depends on ?ids= query params; the bare URL shows an empty state.
   // NOTE: /scrape is excluded — it is disallowed in robots.txt.
-  // NOTE: /gold (precious metals) is a separate product; left indexable but
-  // not advertised in the real-estate sitemap.
 ];
+
+// Precious metals section (gold group) — live price pages. Daily refresh:
+// rates move continuously and each page's headline number changes with them.
+const METAL_SLUGS = [
+  "gold",
+  "silver",
+  "platinum",
+  "palladium",
+  "bitcoin",
+  "ethereum",
+  "copper",
+  "diamond",
+  "steel",
+] as const;
+
+const METAL_ROUTES: Array<{
+  path: string;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority: number;
+}> = [
+  ...METAL_SLUGS.map((slug) => ({
+    path: `/${slug}`,
+    changeFrequency: "daily" as const,
+    priority: 0.7,
+  })),
+  { path: "/metals/compare", changeFrequency: "weekly" as const, priority: 0.5 },
+];
+
+// Unit-rate programmatic pages (/gold/tola, /silver/gram, …). Only gold and
+// silver — the metals quoted in traditional Nepali units with genuine
+// per-unit search demand.
+const METAL_UNIT_ROUTES: Array<{
+  path: string;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority: number;
+}> = ["gold", "silver"].flatMap((metal) =>
+  UNIT_RATE_UNITS.map((u) => ({
+    path: `/${metal}/${u.id}`,
+    changeFrequency: "daily" as const,
+    priority: 0.6,
+  })),
+);
+
+// Programmatic conversion-pair pages (/convertor/ropani-to-square-feet, …).
+// Static tool content — factors never change — so a monthly refresh is plenty.
+const CONVERSION_ROUTES: Array<{
+  path: string;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority: number;
+}> = CONVERSION_PAIRS.map((p) => ({
+  path: `/convertor/${p.slug}`,
+  changeFrequency: "monthly",
+  priority: 0.6,
+}));
 
 // Category archive pages — one per verified register (daily as listings churn).
 const CATEGORY_ROUTES: Array<{
@@ -43,6 +98,20 @@ const CATEGORY_ROUTES: Array<{
   path: `/category/${c.slug}`,
   changeFrequency: "daily",
   priority: 0.7,
+}));
+
+// Programmatic district area guides (/area-guid/[district]). Weekly refresh:
+// inventory per district changes as parcels complete verification. Districts
+// without verified listings render a noindex page, so Google naturally drops
+// them until inventory exists.
+const DISTRICT_ROUTES: Array<{
+  path: string;
+  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+  priority: number;
+}> = DISTRICT_CATALOG.map((d) => ({
+  path: `/area-guid/${d.slug}`,
+  changeFrequency: "weekly",
+  priority: 0.6,
 }));
 
 interface SitemapSlug {
@@ -117,6 +186,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route.priority,
       }),
     ),
+    ...CONVERSION_ROUTES.map((route) =>
+      withAlternates({
+        url: `${SITE_URL}${route.path}`,
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
+      }),
+    ),
     ...CATEGORY_ROUTES.map((route) =>
       withAlternates({
         url: `${SITE_URL}${route.path}`,
@@ -124,6 +200,25 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route.priority,
       }),
     ),
+    ...DISTRICT_ROUTES.map((route) =>
+      withAlternates({
+        url: `${SITE_URL}${route.path}`,
+        changeFrequency: route.changeFrequency,
+        priority: route.priority,
+      }),
+    ),
+    // Precious metals (gold group) — no language alternates: the metals app
+    // is English-only for now.
+    ...METAL_ROUTES.map((route) => ({
+      url: `${SITE_URL}${route.path}`,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    })),
+    ...METAL_UNIT_ROUTES.map((route) => ({
+      url: `${SITE_URL}${route.path}`,
+      changeFrequency: route.changeFrequency,
+      priority: route.priority,
+    })),
     ...listingSlugs
       .filter(({ slug }) => slug && !isLikelyTestSlug(slug))
       .map(({ slug, updatedAt }) =>

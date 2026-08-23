@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { METAL_SEO_DATA } from "../../../constants/gold/seo-data";
 import { MetalPageTemplate } from "../../../components/gold/MetalPageTemplate";
+import { MetalJsonLd } from "../../../components/gold/MetalJsonLd";
+import { MetalUnitLinks } from "../../../components/gold/MetalUnitLinks";
 import { getTodayRates } from "lib/fenegosida";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -27,5 +29,13 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function SilverPage() {
   const todayRates = await getTodayRates();
-  return <MetalPageTemplate metalId="silver" todayRate={todayRates?.silver ?? null} />;
+  return (
+    <>
+      <MetalJsonLd metalId="silver" />
+      <div className="mx-auto w-full max-w-[1280px] px-4 pt-6 sm:px-6 md:pt-12">
+        <MetalUnitLinks metalId="silver" />
+      </div>
+      <MetalPageTemplate metalId="silver" todayRate={todayRates?.silver ?? null} />
+    </>
+  );
 }

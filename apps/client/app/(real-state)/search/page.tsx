@@ -12,47 +12,96 @@ import {
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Search Verified Properties | MALPOTH",
-  description:
-    "Search field-verified land, residential, commercial & apartment listings across Nepal by location, price, type, and size.",
-  keywords: [
-    "property search Nepal",
-    "search land for sale",
-    "find verified listings",
-    "Nepal real estate search",
-  ],
-  alternates: {
-    canonical: "/search",
-    languages: buildHreflang("/search"),
-  },
-  openGraph: {
-    title: "Search Verified Properties | MALPOTH",
-    description:
-      "Search field-verified land, residential, commercial & apartment listings across Nepal.",
-    url: `${SITE_URL}/search`,
-    siteName: "MALPOTH",
-    type: "website",
-    ...ogLocaleFor(),
-  },
-  twitter: {
-    card: "summary",
-    title: "Search Verified Properties | MALPOTH",
-    description:
-      "Search field-verified land, residential, commercial & apartment listings across Nepal.",
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
+/**
+ * Bare /search is the canonical, indexable search surface. Any filtered or
+ * queried state (q, district, price, …) is noindex,follow: those URLs are
+ * infinite permutations of the same template (thin/duplicate content risk)
+ * whose crawl budget is better spent on category + district pages.
+ */
+const FILTER_KEYS = [
+  "q",
+  "type",
+  "pr",
+  "dist",
+  "minS",
+  "maxS",
+  "mun",
+  "ward",
+  "bed",
+  "bath",
+  "face",
+  "road",
+  "cp",
+  "ng",
+  "cs",
+  "ft",
+  "sub",
+  "am",
+] as const;
+
+export async function generateMetadata({
+  searchParams,
+}: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}): Promise<Metadata> {
+  const params = await searchParams;
+  const isFiltered = FILTER_KEYS.some((k) => {
+    const v = params[k];
+    return Array.isArray(v) ? v.length > 0 : Boolean(v);
+  });
+
+  const title = "Search Verified Properties | MALPOTH";
+  const description =
+    "Search field-verified land, residential, commercial & apartment listings across Nepal by location, price, type, and size.";
+
+  if (isFiltered) {
+    return {
+      title,
+      robots: { index: false, follow: true },
+    };
+  }
+
+  return {
+    title,
+    description,
+    keywords: [
+      "property search Nepal",
+      "search land for sale",
+      "find verified listings",
+      "Nepal real estate search",
+    ],
+    alternates: {
+      canonical: "/search",
+      languages: buildHreflang("/search"),
+    },
+    openGraph: {
+      title,
+      description:
+        "Search field-verified land, residential, commercial & apartment listings across Nepal.",
+      url: `${SITE_URL}/search`,
+      siteName: "MALPOTH",
+      type: "website",
+      ...ogLocaleFor(),
+    },
+    twitter: {
+      card: "summary",
+      title,
+      description:
+        "Search field-verified land, residential, commercial & apartment listings across Nepal.",
+    },
+    robots: {
       index: true,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
-  },
-};
+  };
+}
 
 /**
  * CollectionPage + ItemList schema for the search results page. Enumerates

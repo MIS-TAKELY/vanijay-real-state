@@ -119,7 +119,7 @@ export function Hero() {
                 </div>
                 <Button
                   type="button"
-                  className="bg-primary text-on-primary px-6 py-3 text-label-sm font-semibold tracking-[0.4px] hover:bg-primary/90 cursor-pointer md:w-auto w-full h-auto"
+                  className="bg-primary text-secondary-container px-6 py-3 text-label-sm font-semibold tracking-[0.4px] hover:bg-primary/90 cursor-pointer md:w-auto w-full h-auto"
                 >
                   Search Records
                 </Button>
@@ -171,3 +171,6 @@ export function Hero() {
     </section>
   );
 }
+
+
+

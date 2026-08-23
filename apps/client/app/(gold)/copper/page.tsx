@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { METAL_SEO_DATA } from "../../../constants/gold/seo-data";
 import { MetalPageTemplate } from "../../../components/gold/MetalPageTemplate";
+import { MetalJsonLd } from "../../../components/gold/MetalJsonLd";
 
 export async function generateMetadata(): Promise<Metadata> {
   const seo = METAL_SEO_DATA.copper;
@@ -25,5 +26,10 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default function CopperPage() {
-  return <MetalPageTemplate metalId="copper" />;
+  return (
+    <>
+      <MetalJsonLd metalId="copper" />
+      <MetalPageTemplate metalId="copper" />
+    </>
+  );
 }

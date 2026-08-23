@@ -2,7 +2,27 @@
 
 import { Checkbox, Icon } from "@repo/ui";
 import { DISTRICTS } from "constants/varibles-constants";
+import { findDistrictByName, DISTRICT_CATALOG } from "constants/district-catalog";
 import { useState } from "react";
+import Link from "next/link";
+
+/**
+ * Resolve a ledger-card display name to its area-guide URL. Cards may show
+ * city names (e.g. "Pokhara") whose land records live under the parent
+ * district page ("Kaski"), so unmapped names fall back through the catalog.
+ */
+function ledgerHref(name: string): string {
+  const slug = findDistrictByName(name)?.slug;
+  if (slug) return `/area-guid/${slug}`;
+  // City-level display names → parent district (extend as needed).
+  const CITY_TO_DISTRICT: Record<string, string> = {
+    pokhara: "kaski",
+    biratnagar: "morang",
+    nepalgunj: "banke",
+    birgunj: "parsa",
+  };
+  return `/area-guid/${CITY_TO_DISTRICT[name.toLowerCase()] ?? name.toLowerCase().replace(/\s+/g, "-")}`;
+}
 
 const PROVINCES = [
   { key: "bagmati" as const, label: "Bagmati", count: 13 },
@@ -180,7 +200,7 @@ export function DistrictLedgers() {
                 <p className="text-sm text-on-surface-variant mt-1">
                   Showing{" "}
                   <span className="font-semibold text-on-surface">1–4</span> of{" "}
-                  <span className="font-semibold text-on-surface">74</span>{" "}
+                  <span className="font-semibold text-on-surface">{DISTRICT_CATALOG.length}</span>{" "}
                   records
                 </p>
               </div>
@@ -205,9 +225,11 @@ export function DistrictLedgers() {
             {/* District Cards */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               {DISTRICTS.map((d, i) => (
-                <article
+                <Link
                   key={d.name}
-                  className="group bg-surface border border-outline-variant rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-lg transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 cursor-pointer"
+                  href={ledgerHref(d.name)}
+                  aria-label={`${d.name} district land records — area guide`}
+                  className="group block bg-surface border border-outline-variant rounded-2xl overflow-hidden hover:border-primary/40 hover:shadow-lg transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1"
                   style={{
                     animation: `fadeIn 0.5s ease-out ${i * 0.1}s both`,
                   }}
@@ -304,7 +326,7 @@ export function DistrictLedgers() {
                       </span>
                     </div>
                   </div>
-                </article>
+                </Link>
               ))}
             </div>
 
@@ -321,7 +343,7 @@ export function DistrictLedgers() {
                 />
               </button>
               <p className="text-[11px] text-on-surface-variant">
-                Showing 4 of 74 indexed districts
+                Showing 4 of {DISTRICT_CATALOG.length} indexed districts
               </p>
             </div>
           </div>

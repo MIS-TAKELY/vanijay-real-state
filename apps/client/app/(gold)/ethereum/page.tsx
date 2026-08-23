@@ -4,7 +4,7 @@ import { MetalPageTemplate } from "../../../components/gold/MetalPageTemplate";
 import { MetalJsonLd } from "../../../components/gold/MetalJsonLd";
 
 export async function generateMetadata(): Promise<Metadata> {
-  const seo = METAL_SEO_DATA.diamond;
+  const seo = METAL_SEO_DATA.ethereum;
   return {
     title: seo.title,
     description: seo.description,
@@ -13,23 +13,23 @@ export async function generateMetadata(): Promise<Metadata> {
       title: seo.title,
       description: seo.description,
       type: "website",
-      url: "/diamond",
+      url: "/ethereum",
     },
     twitter: {
       card: "summary_large_image",
       title: seo.title,
       description: seo.description,
     },
-    alternates: { canonical: "/diamond" },
+    alternates: { canonical: "/ethereum" },
     robots: { index: true, follow: true },
   };
 }
 
-export default function DiamondPage() {
+export default function EthereumPage() {
   return (
     <>
-      <MetalJsonLd metalId="diamond" />
-      <MetalPageTemplate metalId="diamond" />
+      <MetalJsonLd metalId="ethereum" />
+      <MetalPageTemplate metalId="ethereum" />
     </>
   );
 }

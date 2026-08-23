@@ -467,6 +467,26 @@ function ToPanel({
 /* ------------------------------------------------------------------ */
 
 /**
+ * Where the FROM panel starts for a given unit: Nepali units map to their
+ * traditional system panel, international units to their own input field
+ * (falling back to sq ft for units without a dedicated field, e.g. Sq yd).
+ */
+function resolvePlacement(key: UnitKey): {
+  system: FromSystem;
+  source: "ropani" | "bigha" | IntUnit;
+} {
+  if (isNepaliUnit(key)) {
+    return systemOf(key) === "BIGHA"
+      ? { system: "bigha", source: "bigha" }
+      : { system: "ropani", source: "ropani" };
+  }
+  if ((INT_UNITS as readonly string[]).includes(key)) {
+    return { system: "int", source: key as IntUnit };
+  }
+  return { system: "int", source: "sqft" };
+}
+
+/**
  * Whole-component state lives in a single base area measured in sq ft,
  * plus a single base price rate measured per sq ft. Whichever field the
  * user last edited (on the left or the right) is the "source of truth",
@@ -475,31 +495,45 @@ function ToPanel({
  * The FROM side shows every unit at once — Ropani / Aana / Paisa / Daam,
  * Bigha / Katha / Dhur and the international units — and all of them stay
  * in sync with whatever the user typed last.
+ *
+ * `initialFrom`/`initialTo` pre-set the pair for embedded use on programmatic
+ * conversion pages (/convertor/{from}-to-{to}); defaults match the hub tool.
  */
-export function ConvertorClient() {
-  const [toUnit, setToUnit] = useState<UnitKey>("sqft");
+export function ConvertorClient({
+  initialFrom = "aana",
+  initialTo = "sqft",
+}: {
+  initialFrom?: UnitKey;
+  initialTo?: UnitKey;
+}) {
+  const initialBaseSqFt = convertLand(1, initialFrom, "sqft");
+  const initialPlacement = resolvePlacement(initialFrom);
+
+  const [toUnit, setToUnit] = useState<UnitKey>(initialTo);
   const [toValue, setToValue] = useState(
-    formatLandNumber(convertLand(1, "aana", "sqft")),
+    formatLandNumber(convertLand(1, initialFrom, initialTo)),
   );
 
   // Every unit on the FROM side — raw string values as typed.
   const [fromParts, setFromParts] = useState<PartInputs>(
     partsToInputs({
-      ...decomposeSqFtToParts(convertLand(1, "aana", "sqft"), "ROPANI"),
-      ...decomposeSqFtToParts(convertLand(1, "aana", "sqft"), "BIGHA"),
+      ...decomposeSqFtToParts(initialBaseSqFt, "ROPANI"),
+      ...decomposeSqFtToParts(initialBaseSqFt, "BIGHA"),
     }),
   );
   const [intValues, setIntValues] = useState<Record<IntUnit, string>>({
-    sqft: formatLandNumber(convertLand(1, "aana", "sqft")),
-    sqm: formatLandNumber(convertLand(1, "aana", "sqm")),
-    acre: formatLandNumber(convertLand(1, "aana", "acre")),
-    hectare: formatLandNumber(convertLand(1, "aana", "hectare")),
+    sqft: formatLandNumber(initialBaseSqFt),
+    sqm: formatLandNumber(convertLand(initialBaseSqFt, "sqft", "sqm")),
+    acre: formatLandNumber(convertLand(initialBaseSqFt, "sqft", "acre")),
+    hectare: formatLandNumber(convertLand(initialBaseSqFt, "sqft", "hectare")),
   });
   const [fromSource, setFromSource] = useState<"ropani" | "bigha" | IntUnit>(
-    "ropani",
+    initialPlacement.source,
   );
   // Which unit system the FROM panel shows in its dropdown.
-  const [fromSystem, setFromSystem] = useState<FromSystem>("ropani");
+  const [fromSystem, setFromSystem] = useState<FromSystem>(
+    initialPlacement.system,
+  );
 
   const [lastEdited, setLastEdited] = useState<"from" | "to">("from");
   const [copied, setCopied] = useState(false);

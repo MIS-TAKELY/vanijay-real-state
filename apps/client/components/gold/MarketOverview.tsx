@@ -21,8 +21,18 @@ interface MarketOverviewProps {
   currency: CurrencyCode;
 }
 
-/** Metals with a dedicated page. The rest link to the compare page. */
-const ROUTABLE_METALS: MetalId[] = ["gold", "silver", "diamond", "copper", "steel"];
+/** Metals with a dedicated page — all nine now have one. */
+const ROUTABLE_METALS: MetalId[] = [
+  "gold",
+  "silver",
+  "platinum",
+  "palladium",
+  "bitcoin",
+  "ethereum",
+  "copper",
+  "diamond",
+  "steel",
+];
 
 function MiniSparkline({ data, color }: { data: number[]; color: string }) {
   const svgPath = useMemo(() => {
