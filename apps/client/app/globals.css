@@ -467,3 +467,17 @@ body {
 .kabadi-float {
   animation: kabadi-float 6s ease-in-out infinite;
 }
+
+/* AppModeStrip row entrance — replaces framer-motion in the eager layout bundle. */
+@keyframes app-mode-in {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.app-mode-row {
+  animation: app-mode-in 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-mode-row { animation: none; }
+}

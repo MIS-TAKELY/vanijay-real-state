@@ -6,6 +6,7 @@ import {
   CardRailSkeleton,
   RailSectionSkeleton,
 } from "./skeletons";
+import { DeferredMount } from "./DeferredMount";
 
 /* ─── Skeleton placeholders ──────────────────────────────────────── */
 
@@ -141,12 +142,21 @@ export function HomeClientSection({
       {/* Above the fold — statically imported, renders immediately */}
       <CategoryStrip />
       <HeroBannerCarousel initialSlides={initialHeroSlides} />
-      {/* Below the fold — dynamically imported, code-split */}
+      {/* Near the fold — code-split, loads right away */}
       <ListingsMarketplace />
       <RecentlyAdded />
-      <RecentlyViewed />
-      <NepalmapWrapper />
-      <AboutArchive />
+      {/* Deep below the fold — deferred until scrolled near so the map
+          bundle (~390 KB gzip), its tile fetches, and rail APIs never
+          compete with the LCP hero during initial load. */}
+      <DeferredMount fallback={<RecentlyAddedSkeleton />}>
+        <RecentlyViewed />
+      </DeferredMount>
+      <DeferredMount fallback={<MapSkeleton />}>
+        <NepalmapWrapper />
+      </DeferredMount>
+      <DeferredMount fallback={<AboutSkeleton />}>
+        <AboutArchive />
+      </DeferredMount>
     </>
   );
 }

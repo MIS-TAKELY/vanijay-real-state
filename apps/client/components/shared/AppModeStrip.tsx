@@ -1,7 +1,6 @@
 "use client";
 import { Icon } from "@repo/ui";
 import { appModes } from "constants/varibles-constants";
-import { motion } from "framer-motion";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useRef, useState } from "react";
@@ -95,16 +94,12 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
           );
 
           return (
-            <motion.div
+            /* CSS keyframe animation replaces framer-motion here so this
+               layout-level component stays out of the eager bundle. */
+            <div
               key={mode.id}
-              initial={{ opacity: 0, x: -12 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                delay: 0.05 + index * 0.04,
-                type: "spring",
-                stiffness: 420,
-                damping: 26,
-              }}
+              className="app-mode-row"
+              style={{ animationDelay: `${0.05 + index * 0.04}s` }}
             >
               {mode.soon ? (
                 <div aria-disabled="true" className="cursor-not-allowed opacity-60">
@@ -119,7 +114,7 @@ function AppModeStrip({ compact = false }: { compact?: boolean }) {
                   {row}
                 </Link>
               )}
-            </motion.div>
+            </div>
           );
         })}
       </nav>

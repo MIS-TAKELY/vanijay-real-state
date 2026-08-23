@@ -201,18 +201,27 @@ export default async function HomePage() {
   } catch {
     heroSlides = [];
   }
-  const lcpImage = heroSlides[0]
-    ? optimizeImageUrl(heroSlides[0].image, 1280)
+  const firstHeroSlide = heroSlides[0];
+  const lcpImage = firstHeroSlide
+    ? optimizeImageUrl(firstHeroSlide.image, 1280)
+    : null;
+  const lcpSrcSet = firstHeroSlide
+    ? [480, 640, 860, 1080, 1280, 1600]
+        .map((w) => `${optimizeImageUrl(firstHeroSlide.image, w)} ${w}w`)
+        .join(", ")
     : null;
 
   return (
     <>
-      {/* LCP preload — React hoists this into <head> during SSR */}
+      {/* LCP preload — React hoists this into <head> during SSR.
+          imagesrcset lets the preload pick the same candidate as the
+          responsive <img> srcSet will. */}
       {lcpImage && (
         <link
           rel="preload"
           as="image"
           href={lcpImage}
+          {...(lcpSrcSet ? { imageSrcSet: lcpSrcSet, imageSizes: "100vw" } : {})}
           fetchPriority="high"
         />
       )}

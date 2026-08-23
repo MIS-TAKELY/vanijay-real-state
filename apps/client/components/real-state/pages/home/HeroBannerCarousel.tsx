@@ -34,6 +34,16 @@ interface HeroBannerCarouselProps {
  *  variant instead of the full upload (typically 1920px). */
 const HERO_IMAGE_WIDTH = 1280;
 
+/** Width variants for the responsive srcSet — the browser picks the
+ *  cheapest candidate that still covers its viewport × DPR. */
+const HERO_SRCSET_WIDTHS = [480, 640, 860, 1080, 1280, 1600];
+
+function heroSrcSet(image: string): string {
+  return HERO_SRCSET_WIDTHS.map(
+    (w) => `${optimizeImageUrl(image, w)} ${w}w`,
+  ).join(", ");
+}
+
 function HeroBannerCarousel({ initialSlides }: HeroBannerCarouselProps) {
   const heroEnabled = useContentStore((s) => s.heroEnabled);
   const storeSlides = useContentStore((s) => s.heroSlides);
@@ -162,6 +172,8 @@ function HeroBannerCarousel({ initialSlides }: HeroBannerCarouselProps) {
           {/* eslint-disable-next-line @next/next/no-img-element -- hero slide image */}
           <img
             src={optimizeImageUrl(slide.image, HERO_IMAGE_WIDTH)}
+            srcSet={heroSrcSet(slide.image)}
+            sizes="100vw"
             alt={slide.headline || "MALPOTH verified property listings in Nepal"}
             draggable={false}
             loading={index === 0 ? "eager" : "lazy"}
