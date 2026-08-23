@@ -61,11 +61,11 @@ export function Footer() {
         {/* The Archive — compact on mobile */}
         <div>
           <h4 className={headingClass}>The Archive</h4>
-          <div className="flex flex-col gap-xs">
+          <div className="flex flex-col gap-y-1">
             {footerLinks["The Archive"].map((link) => (
               <a
                 key={link.label}
-                className="font-label-sm text-label-sm text-white/70 transition-colors hover:text-gold py-[3px] -my-[3px]"
+                className="font-label-sm text-label-sm text-white/70 transition-colors hover:text-gold inline-flex min-h-6 items-center"
                 href={link.href}
               >
                 {link.label}
@@ -77,11 +77,11 @@ export function Footer() {
         {/* Compliance — compact on mobile, sits beside Archive */}
         <div>
           <h4 className={headingClass}>Compliance</h4>
-          <div className="flex flex-col gap-xs">
+          <div className="flex flex-col gap-y-1">
             {footerLinks.Compliance.map((link) => (
               <a
                 key={link.label}
-                className={`font-label-sm text-label-sm transition-colors py-[3px] -my-[3px] ${
+                className={`font-label-sm text-label-sm transition-colors inline-flex min-h-6 items-center ${
                   link.active
                     ? "font-bold text-gold underline underline-offset-4"
                     : "text-white/70 hover:text-gold"
