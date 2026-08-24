@@ -226,7 +226,15 @@ const NepalmapWrapper = memo(function NepalmapWrapper({
     [resolvedMarkers, height, JSON.stringify(rest)],
   );
 
-  return <LeafletNepalMapDynamic {...props} />;
+  /* Wrapped in the exact same <section> box as HomeClientSection's
+   * MapSkeleton fallback (py-6 md:py-14) so the skeleton → dynamic-loading
+   * → hydrated-map transitions are pixel-identical — otherwise the section
+   * padding collapses on swap and everything below shifts (CLS). */
+  return (
+    <section className="relative z-10 w-full py-6 md:py-14">
+      <LeafletNepalMapDynamic {...props} />
+    </section>
+  );
 });
 
 export default NepalmapWrapper;

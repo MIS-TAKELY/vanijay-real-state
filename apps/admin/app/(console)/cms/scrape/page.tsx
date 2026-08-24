@@ -19,6 +19,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
+  Textarea,
   toast,
 } from "@repo/ui";
 import { cn } from "@repo/ui";
@@ -31,6 +32,8 @@ import {
   kabadiSetRates,
   kabadiUpsertItem,
   kabadiDeleteItem,
+  kabadiSiteConfig,
+  kabadiUpdateSiteConfig,
   type KabadiCategory,
 } from "lib/api";
 
@@ -79,6 +82,38 @@ export default function ScrapeCmsPage() {
   /* ── Category visual editor ── */
   const [catEditorOpen, setCatEditorOpen] = useState(false);
   const [editingCat, setEditingCat] = useState<KabadiCategory | null>(null);
+
+  /* ── Footer editor ── */
+  const [footerOpen, setFooterOpen] = useState(false);
+  const [footer, setFooter] = useState({ description: "", serviceArea: "", phone: "" });
+  const [savingFooter, setSavingFooter] = useState(false);
+
+  async function openFooterEditor() {
+    setFooterOpen(true);
+    try {
+      const cfg = await kabadiSiteConfig();
+      setFooter({
+        description: (cfg?.description as string) ?? "",
+        serviceArea: (cfg?.serviceArea as string) ?? "",
+        phone: (cfg?.phone as string) ?? "",
+      });
+    } catch {
+      /* keep empty defaults */
+    }
+  }
+
+  async function handleSaveFooter() {
+    setSavingFooter(true);
+    try {
+      await kabadiUpdateSiteConfig(footer);
+      toast.success("Footer updated");
+      setFooterOpen(false);
+    } catch {
+      toast.error("Failed to update footer");
+    } finally {
+      setSavingFooter(false);
+    }
+  }
 
   async function load() {
     setLoading(true);
@@ -246,6 +281,13 @@ export default function ScrapeCmsPage() {
               onClick={() => setViewMode("table")}
             >
               Table
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={openFooterEditor}
+            >
+              Footer
             </Button>
             <Button
               variant="outline"
@@ -594,6 +636,68 @@ export default function ScrapeCmsPage() {
             </DialogClose>
             <Button size="sm" onClick={handleAddItem} className="gap-2">
               Add Item
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* ── Footer Editor Dialog ── */}
+      <Dialog open={footerOpen} onOpenChange={setFooterOpen}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Edit Kabadi Footer</DialogTitle>
+            <DialogDescription>
+              Update the description, service area, and phone number shown in
+              the scrape footer on the client site.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
+              <Label className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
+                Description
+              </Label>
+              <Textarea
+                rows={4}
+                placeholder="Nepal's transparent scrap price guide…"
+                value={footer.description}
+                onChange={(e) =>
+                  setFooter((p) => ({ ...p, description: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
+                Service Area
+              </Label>
+              <Input
+                placeholder="Serving Kathmandu Valley & major cities"
+                value={footer.serviceArea}
+                onChange={(e) =>
+                  setFooter((p) => ({ ...p, serviceArea: e.target.value }))
+                }
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label className="text-[11px] font-semibold uppercase tracking-wider text-on-surface-variant">
+                Phone
+              </Label>
+              <Input
+                placeholder="9702634469"
+                value={footer.phone}
+                onChange={(e) =>
+                  setFooter((p) => ({ ...p, phone: e.target.value }))
+                }
+              />
+            </div>
+          </div>
+          <DialogFooter>
+            <DialogClose asChild>
+              <Button variant="ghost" size="sm">
+                Cancel
+              </Button>
+            </DialogClose>
+            <Button size="sm" disabled={savingFooter} onClick={handleSaveFooter}>
+              {savingFooter ? "Saving…" : "Save"}
             </Button>
           </DialogFooter>
         </DialogContent>

@@ -1,8 +1,7 @@
 "use client";
 
 import dynamic from "next/dynamic";
-import type { CmsHeroSlide } from "lib/api/services/cms";
-import {
+import type { CmsHeroSlide } from "lib/api/services/cms";import {
   CardRailSkeleton,
   RailSectionSkeleton,
 } from "./skeletons";
@@ -132,10 +131,13 @@ interface HomeClientSectionProps {
   /** Server-fetched CMS hero slides — skips the client-side round-trip so
    *  the LCP image renders immediately. */
   initialHeroSlides?: CmsHeroSlide[];
+  /** Server-fetched CMS FAQ items (admin-managed, with static fallback). */
+  initialFaqs?: Array<{ q: string; a: string }>;
 }
 
 export function HomeClientSection({
   initialHeroSlides,
+  initialFaqs,
 }: HomeClientSectionProps) {
   return (
     <>
@@ -155,7 +157,7 @@ export function HomeClientSection({
         <NepalmapWrapper />
       </DeferredMount>
       <DeferredMount fallback={<AboutSkeleton />}>
-        <AboutArchive />
+        <AboutArchive items={initialFaqs} />
       </DeferredMount>
     </>
   );

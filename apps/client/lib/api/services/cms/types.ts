@@ -37,3 +37,24 @@ export interface CmsHeroSlide {
   ctaPrimary: string;
   ctaHref: string;
 }
+
+/** One FAQ row (question + answer) published through the admin CMS. */
+export interface CmsFaq {
+  q: string;
+  a: string;
+}
+
+/** Footer content managed through the admin CMS.
+ *  Two singleton items in the FOOTER slot: one for brand tagline,
+ *  one for contact details. */
+export interface CmsFooterContent {
+  /** Brand tagline shown under the logo. Falls back to the hardcoded
+   *  default when the CMS item is missing or unpublished. */
+  tagline: string;
+  /** Address line (e.g. "Bajraha, Itahari"). */
+  address: string;
+  /** Email address. */
+  email: string;
+  /** Phone number. */
+  phone: string;
+}

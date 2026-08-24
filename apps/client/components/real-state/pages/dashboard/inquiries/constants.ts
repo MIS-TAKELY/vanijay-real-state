@@ -241,7 +241,7 @@ export const SENT_INQUIRIES: Inquiry[] = [
     id: "s2",
     type: "WHATSAPP_CHAT",
     status: "IN_NEGOTIATION",
-    personName: "Durbar Marg Agent",
+    personName: "Bajraha Agent",
     isVerifiedLead: true,
     propertyCode: "KTM-209",
     message:
@@ -258,7 +258,7 @@ export const SENT_INQUIRIES: Inquiry[] = [
       {
         id: "sm3",
         side: "theirs",
-        author: "Durbar Marg Agent",
+        author: "Bajraha Agent",
         body: "Will check with the seller and revert by tomorrow EOD.",
         time: "1d ago",
       },

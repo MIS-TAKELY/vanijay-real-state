@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { CurrentUser } from 'src/common/decorators/current-user.decorator';
@@ -13,7 +14,7 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { AuthGuard } from 'src/common/guards/auth.guard';
 import { RolesGuard } from 'src/common/guards/role.guard';
 import { KabadiService } from './kabadi.service';
-import type { CategoryDto, ItemDto, SetRatesDto } from './kabadi.service';
+import type { CategoryDto, ItemDto, KabadiFooterDto, SetRatesDto } from './kabadi.service';
 
 @Controller()
 export class KabadiController {
@@ -30,7 +31,29 @@ export class KabadiController {
     return this.kabadi.getCategoryBySlug(slug);
   }
 
+  @Get('api/v1/kabadi/site-config')
+  getFooter() {
+    return this.kabadi.getFooter();
+  }
+
   // Admin
+  @Get('api/v1/admin/kabadi/site-config')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  getFooterAdmin() {
+    return this.kabadi.getFooter();
+  }
+
+  @Put('api/v1/admin/kabadi/site-config')
+  @UseGuards(AuthGuard, RolesGuard)
+  @Roles('ADMIN')
+  updateFooter(
+    @Body() dto: KabadiFooterDto,
+    @CurrentUser('id') actorId: string,
+  ) {
+    return this.kabadi.updateFooter(actorId, dto);
+  }
+
   @Get('api/v1/admin/kabadi/categories')
   @UseGuards(AuthGuard, RolesGuard)
   @Roles('ADMIN')

@@ -1,12 +1,30 @@
-@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@300;400;600&family=IBM+Plex+Mono:wght@400;500&display=swap");
 @import "tailwindcss";
 /* MALPOTH brand theme — single source of truth lives in @repo/ui/styles/malpoth.css */
 @import "../../../packages/ui/src/styles/malpoth.css";
 @source "../../../packages/ui";
 
+/* Brand fonts are self-hosted via next/font (see app/layout.tsx) — no
+   render-blocking request to Google Fonts and zero font-swap CLS.
+   malpoth.css defines its font tokens against literal family names
+   ("Fraunces", "Public Sans", "IBM Plex Mono"); re-map them onto the
+   next/font CSS variables here so every consumer keeps working. */
+:root {
+  --font-display-lg: var(--font-fraunces), serif;
+  --font-headline-md: var(--font-fraunces), serif;
+  --font-body-md: var(--font-public-sans), sans-serif;
+  --font-body-lg: var(--font-public-sans), sans-serif;
+  --font-label-sm: var(--font-public-sans), sans-serif;
+  --font-data-table: var(--font-ibm-plex-mono), monospace;
+  --font-data-price: var(--font-ibm-plex-mono), monospace;
+
+  --font-display: var(--font-fraunces), serif;
+  --font-body: var(--font-public-sans), sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), monospace;
+}
+
 body {
   background-color: #ffffff;
-  font-family: "Public Sans", sans-serif;
+  font-family: var(--font-public-sans), sans-serif;
   -webkit-font-smoothing: antialiased;
   color: #1b1c19;
   /* Prevent elastic overscroll bounce on mobile */
@@ -50,14 +68,6 @@ body {
   }
 }
 
-.material-symbols-outlined {
-  font-variation-settings:
-    "FILL" 0,
-    "wght" 300,
-    "GRAD" 0,
-    "opsz" 24;
-}
-
 .verification-stamp {
   border: 2px solid #103050;
   color: #103050;
@@ -83,7 +93,7 @@ body {
 }
 
 .mono-stat {
-  font-family: "IBM Plex Mono", monospace;
+  font-family: var(--font-ibm-plex-mono), monospace;
 }
 
 .blueprint-grid {
@@ -364,7 +374,7 @@ body {
 /* SunEditor customizations */
 .suneditor-wrapper .sun-editor {
   border: none !important;
-  font-family: "Public Sans", sans-serif;
+  font-family: var(--font-public-sans), sans-serif;
   background-color: transparent !important;
 }
 

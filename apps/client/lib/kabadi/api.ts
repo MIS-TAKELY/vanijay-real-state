@@ -50,6 +50,27 @@ export async function fetchKabadiCategories(): Promise<KabadiCategoryData[]> {
   });
 }
 
+export interface KabadiFooterData {
+  description?: string;
+  serviceArea?: string;
+  phone?: string;
+}
+
+/**
+ * Fetch the admin-managed kabadi footer content.
+ */
+export async function fetchKabadiFooter(): Promise<KabadiFooterData | null> {
+  try {
+    return await apiFetch<KabadiFooterData>("/api/v1/kabadi/site-config", {
+      skipServerCookies: true,
+      cache: "force-cache",
+      next: { revalidate: 3600, tags: ["kabadi", "kabadi-footer"] },
+    });
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Fetch a single kabadi category by slug with all its items.
  */

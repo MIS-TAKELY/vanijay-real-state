@@ -350,7 +350,6 @@ export default function EditListingPage() {
           className="ml-auto gap-1.5 text-xs"
           onClick={() => setTransferOpen(true)}
         >
-          <span className="material-symbols-outlined text-[14px]">swap_horiz</span>
           Transfer
         </Button>
       </div>
@@ -589,9 +588,7 @@ export default function EditListingPage() {
                       key={entry.id}
                       className="flex items-start gap-3 rounded-lg border border-outline-variant/50 bg-surface-container p-3"
                     >
-                      <span className="mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
-                        <span className="material-symbols-outlined text-[14px]">swap_horiz</span>
-                      </span>
+                     
                       <div className="min-w-0 flex-1">
                         <p className="text-sm text-on-surface">
                           {entry.summary || "Ownership transferred"}

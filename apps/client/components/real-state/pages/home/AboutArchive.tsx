@@ -28,7 +28,15 @@ export const HOME_FAQ_ITEMS: Array<{ q: string; a: string }> = [
   },
 ];
 
-export function AboutArchive() {
+interface AboutArchiveProps {
+  /** Server-fetched FAQ items from the admin CMS. Falls back to the
+   *  built-in HOME_FAQ_ITEMS when omitted or empty. */
+  items?: Array<{ q: string; a: string }>;
+}
+
+export function AboutArchive({ items }: AboutArchiveProps) {
+  const faqItems =
+    items && items.length > 0 ? items : HOME_FAQ_ITEMS;
   return (
     <section
       className="border-t border-outline-variant bg-surface-container-low"
@@ -44,7 +52,7 @@ export function AboutArchive() {
               Frequently asked questions
             </h2>
             <Accordion type="single" collapsible>
-              {HOME_FAQ_ITEMS.map((item, idx) => (
+              {faqItems.map((item, idx) => (
                 <AccordionItem
                   key={item.q}
                   value={`home-faq-${idx}`}

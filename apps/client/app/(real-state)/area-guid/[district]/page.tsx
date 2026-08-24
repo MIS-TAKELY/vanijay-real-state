@@ -1,8 +1,24 @@
 import { cache } from "react";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+  Badge,
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+  Icon,
+} from "@repo/ui";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
 import {
   DISTRICT_CATALOG,
   getDistrictBySlug,
+  TIER_META,
+  TOPOGRAPHY_META,
   type DistrictEntry,
 } from "constants/district-catalog";
 import { fetchFeedPageGraphql, type FeedPage } from "lib/api/services/properties";
@@ -375,15 +391,22 @@ export default async function DistrictAreaGuidePage({ params }: PageProps) {
         {/* ── Hero ── */}
         <section className="border-b border-outline-variant bg-surface-container">
           <div className="mx-auto max-w-container-max px-gutter py-xl">
-            <nav
-              aria-label="Breadcrumb"
-              className="mb-4 flex gap-1.5 text-[12px] text-on-surface-variant"
-            >
-              <Link href="/" className="hover:text-primary">Home</Link>
-              <span aria-hidden>/</span>
-              <Link href="/area-guid" className="hover:text-primary">Area Guides</Link>
-              <span aria-hidden>/</span>
-              <span className="text-on-surface">{district.name}</span>
+            <nav aria-label="Breadcrumb" className="mb-4">
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/area-guid">Area Guides</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>{district.name}</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
             </nav>
             <p className="mb-2 font-label-sm text-[11px] font-bold uppercase tracking-[0.8px] text-primary">
               Area Guide — {district.province} Province
@@ -435,6 +458,89 @@ export default async function DistrictAreaGuidePage({ params }: PageProps) {
                 </p>
               </div>
             ))}
+          </div>
+        </section>
+
+        {/* ── District profile — curated catalog metadata ── */}
+        <section className="border-b border-outline-variant">
+          <div className="mx-auto max-w-container-max px-gutter py-xl">
+            <h2 className="font-headline-md mb-4 text-xl font-semibold tracking-tight text-navy">
+              District Profile
+            </h2>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-2xl border border-outline-variant bg-surface p-5">
+                <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.5px] text-on-surface-variant">
+                  Topography
+                </p>
+                <p className="mt-1.5 flex items-center gap-2 font-medium text-navy">
+                  <Icon
+                    name={TOPOGRAPHY_META[district.topography].icon}
+                    className="text-[18px] text-primary/70"
+                  />
+                  {TOPOGRAPHY_META[district.topography].label}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-outline-variant bg-surface p-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.5px] text-on-surface-variant">
+                  Verification Tier
+                </p>
+                <Badge
+                  variant="outline"
+                  className="mt-2 border-primary/30 bg-secondary-container text-primary"
+                >
+                  {district.tier === "cadastral" && (
+                    <Icon name="verified" className="text-[12px]" />
+                  )}
+                  {TIER_META[district.tier].shortLabel}
+                </Badge>
+              </div>
+              <div className="rounded-2xl border border-outline-variant bg-surface p-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.5px] text-on-surface-variant">
+                  Indicative Base Rate
+                </p>
+                <p className="mono-stat mt-1 text-lg font-semibold text-navy">
+                  {stats.avgPricePerAana != null
+                    ? `${compactNpr(stats.avgPricePerAana)} / Aana`
+                    : district.avgRatePerAana != null
+                      ? `${compactNpr(district.avgRatePerAana)} / Aana*`
+                      : "Awaiting survey"}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-outline-variant bg-surface p-5">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.5px] text-on-surface-variant">
+                  Market Trend
+                </p>
+                <p
+                  className={`mono-stat mt-1 flex items-center gap-1 text-lg font-semibold ${
+                    district.trendPct == null
+                      ? "text-on-surface-variant"
+                      : district.trendPct > 0
+                        ? "text-primary"
+                        : "text-error"
+                  }`}
+                >
+                  {district.trendPct != null && district.trendPct > 0 && (
+                    <Icon name="trending_up" className="text-[18px]" />
+                  )}
+                  {district.trendPct != null && district.trendPct <= 0 && (
+                    <Icon name="trending_down" className="text-[18px]" />
+                  )}
+                  {district.trendPct == null
+                    ? "Stable / No data"
+                    : `${district.trendPct > 0 ? "+" : ""}${district.trendPct}% YOY`}
+                </p>
+              </div>
+            </div>
+            <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
+              {district.description}
+              {district.avgRatePerAana != null &&
+                stats.avgPricePerAana == null && (
+                  <span className="mt-1 block text-[11px] italic">
+                    * Curated indicative figure from MALPOTH&apos;s district
+                    survey — no live verified listings yet.
+                  </span>
+                )}
+            </p>
           </div>
         </section>
 
@@ -544,18 +650,26 @@ export default async function DistrictAreaGuidePage({ params }: PageProps) {
             <h2 className="font-headline-md mb-6 text-xl font-semibold tracking-tight text-navy">
               FAQs — {district.name} Property
             </h2>
-            <div className="flex flex-col divide-y divide-outline-variant rounded-sm bg-surface shadow-xs">
-              {faqItems.map((f) => (
-                <details key={f.q} className="group px-5 py-4">
-                  <summary className="cursor-pointer list-none font-medium text-navy marker:hidden">
+            <Accordion
+              type="single"
+              collapsible
+              className="rounded-sm border border-outline-variant bg-surface shadow-xs"
+            >
+              {faqItems.map((f, i) => (
+                <AccordionItem
+                  key={f.q}
+                  value={`faq-${i}`}
+                  className="border-outline-variant px-5 last:border-b-0"
+                >
+                  <AccordionTrigger className="text-left font-medium text-navy">
                     {f.q}
-                  </summary>
-                  <p className="mt-3 text-sm leading-relaxed text-on-surface-variant">
+                  </AccordionTrigger>
+                  <AccordionContent className="text-sm leading-relaxed text-on-surface-variant">
                     {f.a}
-                  </p>
-                </details>
+                  </AccordionContent>
+                </AccordionItem>
               ))}
-            </div>
+            </Accordion>
           </div>
         </section>
 

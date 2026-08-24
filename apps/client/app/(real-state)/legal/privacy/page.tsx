@@ -110,7 +110,7 @@ export default function PrivacyPolicyPage() {
         <h2 className={h2Class}>7. Contact</h2>
         <p className={pClass}>
           Questions about this policy can be sent to hello@malpoth.com or by
-          post to MALPOTH, Durbar Marg, Kathmandu, Nepal.
+          post to MALPOTH, Bajraha, Itahari, Nepal.
         </p>
       </section>
     </main>

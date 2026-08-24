@@ -1,6 +1,12 @@
 import { apiFetch } from "../../core/client";
 import { API_ENDPOINTS } from "../../core/endpoints";
-import type { CmsCategory, CmsContentItem, CmsHeroSlide } from "./types";
+import type {
+  CmsCategory,
+  CmsContentItem,
+  CmsFaq,
+  CmsFooterContent,
+  CmsHeroSlide,
+} from "./types";
 
 /** `ContentPlacement` enum values from the API. */
 export const CMS_PLACEMENTS = {
@@ -18,6 +24,7 @@ export const CMS_SLOTS = {
   section: "SECTION",
   contentBlock: "CONTENT_BLOCK",
   faq: "FAQ",
+  footer: "FOOTER",
   howItWorks: "HOW_IT_WORKS",
   cta: "CTA",
 } as const;
@@ -71,4 +78,60 @@ export async function fetchCmsHeroBanners(
       ctaPrimary: item.ctaLabel || "Explore Properties",
       ctaHref: item.ctaHref || "/search",
     }));
+}
+
+/**
+ * Homepage FAQ items managed through the admin CMS. The API returns only
+ * published FAQ-slot items ordered by `sortOrder` (question in `title`,
+ * answer in `body`). Returns an empty array when nothing is published —
+ * callers fall back to their static defaults.
+ */
+export async function fetchCmsFaqs(
+  placement = CMS_PLACEMENTS.realStateHome,
+): Promise<CmsFaq[]> {
+  const items = await fetchCmsItems(placement, CMS_SLOTS.faq);
+  return items
+    .filter((item) => item.published && item.title && item.body)
+    .map((item) => ({
+      q: item.title as string,
+      a: item.body as string,
+    }));
+}
+
+/** Footer content (brand tagline + contact info) managed through the
+ *  admin CMS. Two singleton items in the FOOTER slot — `brand` (tagline
+ *  in `body`) and `contact` (address/email/phone in `metadata`).
+ *  Returns hardcoded defaults when nothing is published or the API is down. */
+const FOOTER_DEFAULTS: CmsFooterContent = {
+  tagline:
+    "Nepal\u2019s first institutional land archive. Professionalizing " +
+    "real estate through rigorous field verification and legal " +
+    "transparency.",
+  address: "Bajraha, Itahari",
+  email: "hello@malpoth.com",
+  phone: "+977 9702634469",
+};
+
+export async function fetchCmsFooterContent(
+  placement = CMS_PLACEMENTS.realStateHome,
+): Promise<CmsFooterContent> {
+  try {
+    const items = await fetchCmsItems(placement, CMS_SLOTS.footer);
+    const result = { ...FOOTER_DEFAULTS };
+    for (const item of items) {
+      if (!item.published) continue;
+      if (item.key === "brand" && item.body) {
+        result.tagline = item.body;
+      }
+      if (item.key === "contact" && item.metadata) {
+        const meta = item.metadata as Record<string, unknown>;
+        if (typeof meta.address === "string") result.address = meta.address;
+        if (typeof meta.email === "string") result.email = meta.email;
+        if (typeof meta.phone === "string") result.phone = meta.phone;
+      }
+    }
+    return result;
+  } catch {
+    return FOOTER_DEFAULTS;
+  }
 }

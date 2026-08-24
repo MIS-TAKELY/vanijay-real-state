@@ -1253,3 +1253,42 @@ model SiteConfig {
     updatedAt DateTime @updatedAt
 }
 
+
+// ==========================================
+// AREA GUIDE — DISTRICT METADATA
+// ==========================================
+
+enum DistrictTopography {
+  VALLEY
+  TERAI
+  HILL
+  MOUNTAIN
+}
+
+enum DistrictTier {
+  CADASTRAL
+  FIELD
+  PENDING
+}
+
+/// Curated per-district land-market metadata powering the area-guide hub and
+/// district profile pages. Seeded from the static catalog; admins edit it via
+/// /cms/real-state/districts.
+model DistrictMeta {
+  id              String             @id @default(cuid())
+  slug            String             @unique // "kathmandu", "nawalparasi-east"
+  name            String // official district name
+  province        String // Koshi | Madhesh | Bagmati | Gandaki | Lumbini | Karnali | Sudurpashchim
+  topography      DistrictTopography @default(HILL)
+  tier            DistrictTier       @default(PENDING)
+  avgRatePerAana  Int? // indicative NPR per Aana (null = awaiting survey)
+  trendPct        Float? // YoY % (null = no data)
+  description     String?            @db.Text
+  updatedById     String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([province])
+  @@index([topography, tier])
+}

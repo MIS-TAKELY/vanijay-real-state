@@ -5,7 +5,35 @@ import { SerwistProvider } from "@serwist/turbopack/react";
 import { AuthModalListener } from "components/real-state/auth/AuthModalListener";
 import { buildHreflang } from "lib/i18n";
 import { SITE_URL } from "lib/site";
+import { Fraunces, IBM_Plex_Mono, Public_Sans } from "next/font/google";
 import "./globals.css";
+
+/* ── Self-hosted brand fonts ────────────────────────────────────────── */
+/* next/font downloads and self-hosts these at build time: no
+ * render-blocking request to fonts.googleapis.com / fonts.gstatic.com,
+ * no third-party connection on the critical path, and automatic
+ * size-adjust fallback metrics so font swapping causes zero CLS.
+ * The generated CSS variables are mapped onto the MALPOTH theme font
+ * tokens in globals.css (malpoth.css keeps its family-name tokens). */
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  axes: ["opsz"],
+  display: "swap",
+  variable: "--font-fraunces",
+});
+
+const publicSans = Public_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-public-sans",
+});
+
+const plexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-ibm-plex-mono",
+});
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -110,24 +138,21 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light">
+    <html
+      lang="en"
+      className={`light ${fraunces.variable} ${publicSans.variable} ${plexMono.variable}`}
+    >
       <head>
         <link rel="manifest" href="/manifest.json" />
         <link rel="apple-touch-icon" href="/icons/icon-192x192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="MALPOTH" />
-        {/* Preconnect to external origins for faster resource loading */}
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        {/* Cloudinary serves hero/property imagery (incl. the LCP image) —
+            warm the connection early. Font origins need no preconnect since
+            fonts are self-hosted via next/font; images.unsplash.com is only
+            used below the fold, so it was dropped as an unused preconnect. */}
         <link rel="preconnect" href="https://res.cloudinary.com" />
-        <link rel="preconnect" href="https://images.unsplash.com" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-          rel="stylesheet"
-        />
-        {/* DNS prefetch for API and image CDN origins */}
-        <link rel="dns-prefetch" href="//fonts.googleapis.com" />
       </head>
       <body className="text-on-surface">
         <SerwistProvider swUrl="/sw.js">

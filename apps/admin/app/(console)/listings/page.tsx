@@ -479,7 +479,6 @@ export default function ListingsPage() {
               className="gap-1.5 text-xs text-white"
               onClick={() => setBulkOpen(true)}
             >
-              <span className="material-symbols-outlined text-[14px] ">swap_horiz</span>
               Transfer selected
             </Button>
           </div>

@@ -397,6 +397,22 @@ export function kabadiDeleteItem(id: string) {
   });
 }
 
+export function kabadiSiteConfig() {
+  return apiFetch<Record<string, unknown> | null>(
+    "/api/v1/admin/kabadi/site-config",
+  );
+}
+
+export function kabadiUpdateSiteConfig(data: Record<string, unknown>) {
+  return apiFetch<Record<string, unknown>>(
+    "/api/v1/admin/kabadi/site-config",
+    {
+      method: "PUT",
+      body: data,
+    },
+  );
+}
+
 export function kabadiUpdateCategory(
   slug: string,
   patch: Record<string, unknown>,
@@ -840,4 +856,36 @@ export interface KabadiCategory {
     sortOrder: number;
     published: boolean;
   }[];
+}
+
+// Districts (area-guide metadata)
+
+export interface DistrictMeta {
+  id: string;
+  slug: string;
+  name: string;
+  province: string;
+  topography: "VALLEY" | "TERAI" | "HILL" | "MOUNTAIN";
+  tier: "CADASTRAL" | "FIELD" | "PENDING";
+  avgRatePerAana: number | null;
+  trendPct: number | null;
+  description: string | null;
+}
+
+export function districtsList() {
+  return apiFetch<DistrictMeta[]>("/api/v1/admin/districts");
+}
+
+export function districtUpsert(d: Partial<DistrictMeta> & { slug: string; name: string; province: string }) {
+  return apiFetch<DistrictMeta>("/api/v1/admin/districts", {
+    method: "POST",
+    body: d,
+  });
+}
+
+export function districtDelete(slug: string) {
+  return apiFetch<{ deleted: boolean }>(
+    `/api/v1/admin/districts/${encodeURIComponent(slug)}`,
+    { method: "DELETE" },
+  );
 }

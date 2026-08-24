@@ -26,9 +26,46 @@ export interface SetRatesDto {
   items: ItemDto[];
 }
 
+export const KABADI_FOOTER_KEY = 'kabadi_footer';
+
+export interface KabadiFooterDto {
+  description?: string;
+  serviceArea?: string;
+  phone?: string;
+}
+
 @Injectable()
 export class KabadiService {
   constructor(private readonly prisma: PrismaClient) {}
+
+  async getFooter() {
+    const row = await this.prisma.siteConfig.findUnique({
+      where: { key: KABADI_FOOTER_KEY },
+    });
+    return row?.data ?? null;
+  }
+
+  async updateFooter(actorId: string, dto: KabadiFooterDto) {
+    const row = await this.prisma.siteConfig.upsert({
+      where: { key: KABADI_FOOTER_KEY },
+      create: { key: KABADI_FOOTER_KEY, data: dto as any },
+      update: { data: dto as any },
+    });
+    try {
+      await this.prisma.adminAuditLog.create({
+        data: {
+          actorId,
+          action: 'update',
+          entity: 'kabadi_site_config',
+          entityId: row.id,
+          summary: 'Updated kabadi footer content',
+        },
+      });
+    } catch {
+      /* no-op */
+    }
+    return row.data;
+  }
 
   async listCategories(includeUnpublished = false) {
     return this.prisma.kabadiCategory.findMany({

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   Alert,
   AlertDialog,
@@ -30,6 +30,7 @@ import {
   CategoryFormDialog,
   type CategoryFormValues,
 } from "components/cms/CategoryFormDialog";
+import { FaqFormDialog, type FaqFormValues } from "components/cms/FaqFormDialog";
 import { PageHeader } from "components/ui/PageHeader";
 import {
   cmsDelete,
@@ -44,6 +45,8 @@ import {
 const PLACEMENT = "REAL_STATE_HOME" as const;
 const CATEGORY_SLOT = "CATEGORY" as const;
 const BANNER_SLOT = "HERO_BANNER" as const;
+const FAQ_SLOT = "FAQ" as const;
+const FOOTER_SLOT = "FOOTER" as const;
 
 function asMeta(value: unknown): Record<string, unknown> {
   if (value && typeof value === "object" && !Array.isArray(value)) {
@@ -73,6 +76,8 @@ function withSortOrder(items: CmsContentItem[]) {
 export default function RealStateCmsPage() {
   const [banners, setBanners] = useState<CmsContentItem[]>([]);
   const [categories, setCategories] = useState<CmsContentItem[]>([]);
+  const [faqs, setFaqs] = useState<CmsContentItem[]>([]);
+  const [footerItems, setFooterItems] = useState<CmsContentItem[]>([]);
   const [items, setItems] = useState<CmsContentItem[]>([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [loading, setLoading] = useState(true);
@@ -85,6 +90,9 @@ export default function RealStateCmsPage() {
   const [editingCategory, setEditingCategory] = useState<CmsContentItem | null>(
     null,
   );
+  const [faqOpen, setFaqOpen] = useState(false);
+  const [editingFaq, setEditingFaq] = useState<CmsContentItem | null>(null);
+  const [footerSaving, setFooterSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<CmsContentItem | null>(null);
   const [tab, setTab] = useState("banners");
 
@@ -139,8 +147,26 @@ export default function RealStateCmsPage() {
           .slice()
           .sort((a, b) => a.sortOrder - b.sortOrder),
       );
+      setFaqs(
+        all
+          .filter((i) => i.slot === FAQ_SLOT)
+          .slice()
+          .sort((a, b) => a.sortOrder - b.sortOrder),
+      );
+      setFooterItems(
+        all
+          .filter((i) => i.slot === FOOTER_SLOT)
+          .slice()
+          .sort((a, b) => a.sortOrder - b.sortOrder),
+      );
       setItems(
-        all.filter((i) => i.slot !== CATEGORY_SLOT && i.slot !== BANNER_SLOT),
+        all.filter(
+          (i) =>
+            i.slot !== CATEGORY_SLOT &&
+            i.slot !== BANNER_SLOT &&
+            i.slot !== FAQ_SLOT &&
+            i.slot !== FOOTER_SLOT,
+        ),
       );
       const nextCounts: Record<string, number> = {};
       for (const row of performance?.byType ?? []) {
@@ -218,6 +244,57 @@ export default function RealStateCmsPage() {
     }
   }
 
+  async function saveFaq(values: FaqFormValues) {
+    const key =
+      editingFaq?.key ??
+      `faq-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 6)}`;
+    setSaving(true);
+    try {
+      await cmsUpsertItem({
+        placement: PLACEMENT,
+        slot: FAQ_SLOT,
+        key,
+        title: values.question,
+        body: values.answer,
+        sortOrder: values.sortOrder,
+        published: values.published,
+      });
+      toast.success(editingFaq ? "FAQ saved" : "FAQ added");
+      setFaqOpen(false);
+      setEditingFaq(null);
+      await load(true);
+    } catch {
+      toast.error("Could not save FAQ");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function saveFooterItem(
+    key: string,
+    updates: { body?: string; metadata?: Record<string, unknown> },
+  ) {
+    const existing = footerItems.find((i) => i.key === key);
+    setFooterSaving(true);
+    try {
+      await cmsUpsertItem({
+        placement: PLACEMENT,
+        slot: FOOTER_SLOT,
+        key,
+        body: updates.body ?? existing?.body ?? null,
+        metadata: updates.metadata ?? existing?.metadata ?? null,
+        sortOrder: existing?.sortOrder ?? 0,
+        published: true,
+      });
+      toast.success(`${key === "brand" ? "Brand" : "Contact"} info saved`);
+      await load(true);
+    } catch {
+      toast.error("Could not save footer content");
+    } finally {
+      setFooterSaving(false);
+    }
+  }
+
   async function confirmDelete() {
     if (!deleteTarget) return;
     try {
@@ -251,6 +328,12 @@ export default function RealStateCmsPage() {
               </TabsTrigger>
               <TabsTrigger value="categories" className="px-4 py-2">
                 Category Cards
+              </TabsTrigger>
+              <TabsTrigger value="faqs" className="px-4 py-2">
+                FAQ
+              </TabsTrigger>
+              <TabsTrigger value="footer" className="px-4 py-2">
+                Footer
               </TabsTrigger>
               <TabsTrigger value="other" className="px-4 py-2">
                 Other Content
@@ -289,6 +372,31 @@ export default function RealStateCmsPage() {
                 onDelete={setDeleteTarget}
                 onOrdered={setCategories}
                 onRestore={() => void load(true)}
+              />
+            </TabsContent>
+
+            <TabsContent value="faqs">
+              <FaqSection
+                faqs={faqs}
+                onAdd={() => {
+                  setEditingFaq(null);
+                  setFaqOpen(true);
+                }}
+                onEdit={(item) => {
+                  setEditingFaq(item);
+                  setFaqOpen(true);
+                }}
+                onDelete={setDeleteTarget}
+                onOrdered={setFaqs}
+                onRestore={() => void load(true)}
+              />
+            </TabsContent>
+
+            <TabsContent value="footer">
+              <FooterSettingsSection
+                items={footerItems}
+                saving={footerSaving}
+                onSave={saveFooterItem}
               />
             </TabsContent>
 
@@ -333,6 +441,18 @@ export default function RealStateCmsPage() {
           if (!open) setEditingCategory(null);
         }}
         onSave={saveCategory}
+      />
+      <FaqFormDialog
+        key={faqOpen ? `faq-form-${editingFaq?.id ?? "new"}` : "faq-form-closed"}
+        open={faqOpen}
+        item={editingFaq}
+        nextSortOrder={faqs.length}
+        saving={saving}
+        onOpenChange={(open) => {
+          setFaqOpen(open);
+          if (!open) setEditingFaq(null);
+        }}
+        onSave={saveFaq}
       />
       <AlertDialog
         open={Boolean(deleteTarget)}
@@ -761,6 +881,324 @@ function CategorySection({
           );
         })}
       </AdminDataTable>
+    </div>
+  );
+}
+
+function FooterSettingsSection({
+  items,
+  saving,
+  onSave,
+}: {
+  items: CmsContentItem[];
+  saving: boolean;
+  onSave: (
+    key: string,
+    updates: { body?: string; metadata?: Record<string, unknown> },
+  ) => Promise<void> | void;
+}) {
+  const brandItem = items.find((i) => i.key === "brand");
+  const contactItem = items.find((i) => i.key === "contact");
+  const contactMeta = asMeta(contactItem?.metadata);
+
+  const [tagline, setTagline] = useState(
+    brandItem?.body ??
+      "Nepal\u2019s first institutional land archive. Professionalizing " +
+      "real estate through rigorous field verification and legal " +
+      "transparency.",
+  );
+  const [address, setAddress] = useState(
+    typeof contactMeta.address === "string"
+      ? contactMeta.address
+      : "Bajraha, Itahari",
+  );
+  const [email, setEmail] = useState(
+    typeof contactMeta.email === "string"
+      ? contactMeta.email
+      : "hello@malpoth.com",
+  );
+  const [phone, setPhone] = useState(
+    typeof contactMeta.phone === "string"
+      ? contactMeta.phone
+      : "+977 9702634469",
+  );
+
+  async function handleSaveBrand() {
+    await onSave("brand", { body: tagline.trim() });
+  }
+
+  async function handleSaveContact() {
+    await onSave("contact", {
+      metadata: {
+        address: address.trim(),
+        email: email.trim(),
+        phone: phone.trim(),
+      },
+    });
+  }
+
+  return (
+    <div className="flex flex-col gap-lg">
+      {/* Brand section */}
+      <div className="admin-surface border border-outline-variant rounded-xl p-md">
+        <div className="mb-md">
+          <h3 className="font-headline-md text-lg font-semibold text-on-surface">
+            Brand Tagline
+          </h3>
+          <p className="mt-1 text-sm text-on-surface-variant">
+            The tagline shown below the logo in the footer.
+          </p>
+        </div>
+        <div>
+          <Label htmlFor="footer-tagline">Tagline</Label>
+          <Textarea
+            id="footer-tagline"
+            rows={3}
+            value={tagline}
+            onChange={(e) => setTagline(e.target.value)}
+            className="bg-surface"
+          />
+        </div>
+        <div className="mt-md flex justify-end">
+          <Button
+            onClick={() => void handleSaveBrand()}
+            disabled={saving}
+            className="bg-on-surface text-surface hover:bg-on-surface/90"
+          >
+            {saving ? "Saving…" : "Save Brand"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Contact section */}
+      <div className="admin-surface border border-outline-variant rounded-xl p-md">
+        <div className="mb-md">
+          <h3 className="font-headline-md text-lg font-semibold text-on-surface">
+            Contact Information
+          </h3>
+          <p className="mt-1 text-sm text-on-surface-variant">
+            Address, email and phone displayed in the footer contact section.
+          </p>
+        </div>
+        <div className="grid gap-md sm:grid-cols-2">
+          <div>
+            <Label htmlFor="footer-address">Address</Label>
+            <Input
+              id="footer-address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+              className="bg-surface"
+            />
+          </div>
+          <div>
+            <Label htmlFor="footer-email">Email</Label>
+            <Input
+              id="footer-email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="bg-surface"
+            />
+          </div>
+          <div>
+            <Label htmlFor="footer-phone">Phone</Label>
+            <Input
+              id="footer-phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="bg-surface"
+            />
+          </div>
+        </div>
+        <div className="mt-md flex justify-end">
+          <Button
+            onClick={() => void handleSaveContact()}
+            disabled={saving}
+            className="bg-on-surface text-surface hover:bg-on-surface/90"
+          >
+            {saving ? "Saving…" : "Save Contact"}
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FaqSection({
+  faqs,
+  onAdd,
+  onEdit,
+  onDelete,
+  onOrdered,
+  onRestore,
+}: {
+  faqs: CmsContentItem[];
+  onAdd: () => void;
+  onEdit: (item: CmsContentItem) => void;
+  onDelete: (item: CmsContentItem) => void;
+  onOrdered: (items: CmsContentItem[]) => void;
+  onRestore: () => void;
+}) {
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  // Optimistic display order (list of ids) while dragging; `null` means
+  // "render the props as-is" so server updates always show through.
+  const [orderOverride, setOrderOverride] = useState<string[] | null>(null);
+
+  const rows = useMemo(() => {
+    if (!orderOverride) return faqs;
+    const byId = new Map(faqs.map((f) => [f.id, f]));
+    return orderOverride
+      .map((id) => byId.get(id))
+      .filter((f): f is CmsContentItem => Boolean(f));
+  }, [faqs, orderOverride]);
+
+  function handleDragStart(index: number) {
+    setDragIndex(index);
+  }
+
+  function handleDragOver(e: React.DragEvent, index: number) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "move";
+    if (dragIndex === null || dragIndex === index) return;
+    const ids = rows.map((r) => r.id);
+    const [moved] = ids.splice(dragIndex, 1);
+    if (!moved) return;
+    ids.splice(index, 0, moved);
+    setOrderOverride(ids);
+    setDragIndex(index);
+  }
+
+  async function handleDragEnd() {
+    const ordered = withSortOrder(rows);
+    const unchanged =
+      ordered.length === faqs.length &&
+      ordered.every((item, i) => item.id === faqs[i]?.id);
+    setDragIndex(null);
+    if (unchanged) return;
+    try {
+      await cmsReorder(
+        PLACEMENT,
+        FAQ_SLOT,
+        ordered.map((r) => r.id),
+      );
+      onOrdered(ordered);
+      setOrderOverride(null);
+      toast.success("FAQ order updated");
+    } catch {
+      toast.error("Order save failed");
+      setOrderOverride(null);
+      onRestore();
+    }
+  }
+
+  async function togglePublished(item: CmsContentItem, published: boolean) {
+    try {
+      await cmsPublish(item.id, published);
+      onOrdered(
+        rows.map((row) =>
+          row.id === item.id ? { ...row, published } : row,
+        ),
+      );
+      toast.success(published ? "FAQ activated" : "FAQ hidden");
+    } catch {
+      toast.error("Could not update status");
+    }
+  }
+
+  return (
+    <div>
+      <SectionHeader
+        title="Landing Page FAQ"
+        description="Questions and answers shown in the landing page FAQ section."
+        actionLabel="Add FAQ"
+        onAction={onAdd}
+      />
+      {rows.length === 0 ? (
+        <p className="text-sm text-on-surface-variant">
+          No FAQs yet — add one to get started.
+        </p>
+      ) : (
+        <AdminDataTable
+          minWidth={760}
+          columns={[
+            { label: "", className: "w-10" },
+            "Question",
+            "Answer",
+            "Sort Order",
+            "Active",
+            { label: "Actions", align: "right" },
+          ]}
+        >
+          {rows.map((row, index) => (
+            <AdminDataTable.Row
+              key={row.id}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDrop={(e) => e.preventDefault()}
+              className={dragIndex === index ? "opacity-40" : undefined}
+            >
+              <AdminDataTable.Cell className="w-10">
+                <button
+                  type="button"
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData("text/plain", String(index));
+                    handleDragStart(index);
+                  }}
+                  onDragEnd={() => void handleDragEnd()}
+                  className="flex h-9 w-9 cursor-grab items-center justify-center rounded-md text-on-surface-variant hover:bg-secondary-container hover:text-primary active:cursor-grabbing focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  aria-label={`Reorder ${row.title || row.key}`}
+                >
+                  <Icon name="drag_indicator" />
+                </button>
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="max-w-[260px] font-medium text-on-surface">
+                <span className="line-clamp-2">{row.title || row.key}</span>
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="max-w-[420px] text-on-surface-variant">
+                <span className="line-clamp-2">{row.body}</span>
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-on-surface-variant">
+                {index}
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell>
+                <Switch
+                  checked={row.published}
+                  onCheckedChange={(checked) =>
+                    void togglePublished(row, checked)
+                  }
+                  aria-label={`${row.published ? "Hide" : "Show"} ${
+                    row.title || row.key
+                  }`}
+                />
+              </AdminDataTable.Cell>
+              <AdminDataTable.Cell className="text-right">
+                <div className="flex justify-end gap-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    aria-label={`Edit ${row.title || row.key}`}
+                    onClick={() => onEdit(row)}
+                  >
+                    <Icon name="edit" />
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    className="text-error hover:text-error"
+                    aria-label={`Delete ${row.title || row.key}`}
+                    onClick={() => onDelete(row)}
+                  >
+                    <Icon name="delete" />
+                  </Button>
+                </div>
+              </AdminDataTable.Cell>
+            </AdminDataTable.Row>
+          ))}
+        </AdminDataTable>
+      )}
     </div>
   );
 }

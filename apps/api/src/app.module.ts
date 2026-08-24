@@ -28,6 +28,7 @@ import { GoldModule } from './modules/rest/gold/gold.module';
 import { KabadiModule } from './modules/rest/kabadi/kabadi.module';
 import { AdminModule } from './modules/rest/admin/admin.module';
 import { SettingsModule } from './modules/rest/settings/settings.module';
+import { DistrictsModule } from './modules/rest/districts/districts.module';
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { SettingsModule } from './modules/rest/settings/settings.module';
     KabadiModule,
     AdminModule,
     SettingsModule,
+    DistrictsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

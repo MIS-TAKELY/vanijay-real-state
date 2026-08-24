@@ -1,7 +1,12 @@
 import { HomeClientSection } from "components/real-state/pages/home/HomeClientSection";
 import { HOME_FAQ_ITEMS } from "components/real-state/pages/home/AboutArchive";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
-import { fetchCmsHeroBanners, type CmsHeroSlide } from "lib/api/services/cms";
+import {
+  fetchCmsFaqs,
+  fetchCmsHeroBanners,
+  type CmsFaq,
+  type CmsHeroSlide,
+} from "lib/api/services/cms";
 import { optimizeImageUrl } from "lib/image-url";
 import { buildHreflang, ogLocaleFor } from "lib/i18n";
 import { SITE_URL } from "lib/site";
@@ -94,17 +99,20 @@ const breadcrumbSchema = {
   ],
 };
 
-/** FAQPage schema — mirrors the visible FAQ in AboutArchive.
- *  Rich results appear directly in Google SERPs. */
-const faqSchema = {
-  "@context": "https://schema.org",
-  "@type": "FAQPage",
-  mainEntity: HOME_FAQ_ITEMS.map((item) => ({
-    "@type": "Question",
-    name: item.q,
-    acceptedAnswer: { "@type": "Answer", text: item.a },
-  })),
-};
+/** FAQPage schema builder — mirrors the visible FAQ rendered by AboutArchive.
+ *  Rich results appear directly in Google SERPs. Built per-request because the
+ *  items now come from the admin CMS. */
+function buildFaqSchema(items: Array<{ q: string; a: string }>) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: items.map((item) => ({
+      "@type": "Question",
+      name: item.q,
+      acceptedAnswer: { "@type": "Answer", text: item.a },
+    })),
+  };
+}
 
 /**
  * WebPage schema — explicit page type for the landing page.
@@ -201,6 +209,15 @@ export default async function HomePage() {
   } catch {
     heroSlides = [];
   }
+  /* Server-fetch the FAQ items managed in the admin CMS. Falls back to the
+   * built-in defaults when nothing is published or the API is down. */
+  let faqItems: Array<{ q: string; a: string }> = HOME_FAQ_ITEMS;
+  try {
+    const cmsFaqs: CmsFaq[] = await fetchCmsFaqs();
+    if (cmsFaqs.length > 0) faqItems = cmsFaqs;
+  } catch {
+    // keep static fallback
+  }
   const firstHeroSlide = heroSlides[0];
   const lcpImage = firstHeroSlide
     ? optimizeImageUrl(firstHeroSlide.image, 1280)
@@ -236,7 +253,7 @@ export default async function HomePage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(faqSchema),
+          __html: JSON.stringify(buildFaqSchema(faqItems)),
         }}
       />
       <script
@@ -274,7 +291,10 @@ export default async function HomePage() {
         >
           <div className="h-px w-full bg-outline-variant/60" />
         </div>
-        <HomeClientSection initialHeroSlides={heroSlides} />
+        <HomeClientSection
+        initialHeroSlides={heroSlides}
+        initialFaqs={faqItems}
+      />
       </main>
     </>
   );

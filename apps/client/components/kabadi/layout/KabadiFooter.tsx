@@ -1,6 +1,7 @@
 import { MapPin, Phone } from "lucide-react";
 import { Separator } from "@repo/ui";
 import { RATES_LAST_UPDATED } from "lib/kabadi/rates";
+import { fetchKabadiFooter, type KabadiFooterData } from "lib/kabadi/api";
 import Image from "next/image";
 import logo from "../../../public/logo.webp";
 import logoText from "../../../public/logo-text.webp";
@@ -26,7 +27,18 @@ const FOOTER_COLS = [
   },
 ];
 
-export function KabadiFooter() {
+const DEFAULT_FOOTER: KabadiFooterData = {
+  description:
+    "Nepal's transparent scrap price guide. Know what your kabadi is worth before you sell — then book a doorstep pickup and get cash on the spot, weighed on a transparent digital scale.",
+  serviceArea: "Serving Kathmandu Valley & major cities",
+  phone: "9702634469",
+};
+
+export async function KabadiFooter() {
+  const config = (await fetchKabadiFooter()) ?? DEFAULT_FOOTER;
+  const description = config.description || DEFAULT_FOOTER.description;
+  const serviceArea = config.serviceArea || DEFAULT_FOOTER.serviceArea;
+  const phone = config.phone || DEFAULT_FOOTER.phone;
   return (
     <footer className="border-t border-border bg-card">
       <div className="mx-auto max-w-container-max px-gutter py-12">
@@ -53,17 +65,15 @@ export function KabadiFooter() {
               </span>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-              Nepal&apos;s transparent scrap price guide. Know what your kabadi
-              is worth before you sell — then book a doorstep pickup and get
-              cash on the spot, weighed on a transparent digital scale.
+              {description}
             </p>
             <p className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
               <MapPin className="size-4 text-primary" />
-              Serving Kathmandu Valley &amp; major cities
+              {serviceArea}
             </p>
             <p className="mt-1 flex items-center gap-2 text-sm text-muted-foreground">
               <Phone className="size-4 text-primary" />
-              9702634469
+              {phone}
             </p>
           </div>
 

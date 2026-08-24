@@ -67,8 +67,8 @@ const organizationSchema = {
   foundingDate: "2024",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "Durbar Marg",
-    addressLocality: "Kathmandu",
+    streetAddress: "Bajraha",
+    addressLocality: "Itahari-7",
     addressCountry: "NP",
   },
   contactPoint: {

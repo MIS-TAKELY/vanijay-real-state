@@ -771,6 +771,22 @@ async function main() {
     update: {},
   });
 
+  // ---------- Kabadi footer (admin-editable scrape footer content) ----------
+  await prisma.siteConfig.upsert({
+    where: { key: "kabadi_footer" },
+    create: {
+      key: "kabadi_footer",
+      data: {
+        description:
+          "Nepal's transparent scrap price guide. Know what your kabadi is worth before you sell — then book a doorstep pickup and get cash on the spot, weighed on a transparent digital scale.",
+        serviceArea: "Serving Kathmandu Valley & major cities",
+        phone: "9702634469",
+      } as any,
+    },
+    update: {},
+  });
+  console.log("Kabadi footer seeded");
+
   // ---------- Admin user (MALPOTH operations console) ----------
   const adminEmail = process.env.ADMIN_SEED_EMAIL || "admin@malpoth.com";
   const adminPassword =

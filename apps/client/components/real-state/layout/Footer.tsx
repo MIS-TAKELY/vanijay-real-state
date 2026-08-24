@@ -6,6 +6,16 @@ import { FooterAppsSwitcher } from "./FooterAppsSwitcher";
 import logo from "../../../public/logo.webp";
 import logoText from "../../../public/logo-text.webp";
 
+export interface FooterProps {
+  /** CMS-managed footer content. Falls back to hardcoded defaults. */
+  content?: {
+    tagline?: string;
+    address?: string;
+    email?: string;
+    phone?: string;
+  };
+}
+
 const footerLinks = {
   "The Archive": [
     { label: "Area Guides", href: "/area-guid" },
@@ -23,7 +33,21 @@ const footerLinks = {
 const headingClass =
   "font-label-sm text-label-sm font-bold text-gold mb-sm uppercase tracking-[0.18em] text-[11px] md:mb-md";
 
-export function Footer() {
+const DEFAULTS = {
+  tagline:
+    "Nepal\u2019s first institutional land archive. Professionalizing " +
+    "real estate through rigorous field verification and legal " +
+    "transparency.",
+  address: "Bajraha, Itahari",
+  email: "hello@malpoth.com",
+  phone: "+977 9702634469",
+};
+
+export function Footer({ content }: FooterProps) {
+  const tagline = content?.tagline || DEFAULTS.tagline;
+  const address = content?.address || DEFAULTS.address;
+  const email = content?.email || DEFAULTS.email;
+  const phone = content?.phone || DEFAULTS.phone;
   return (
     <footer className="relative z-10 w-full mt-xl border-t border-gold/20 bg-navy-deep text-white safe-bottom">
       <div className="mx-auto grid max-w-container-max grid-cols-2 gap-md px-gutter py-md md:grid-cols-5 md:gap-md md:py-xl">
@@ -52,9 +76,7 @@ export function Footer() {
             </span>
           </div>
           <p className="font-body-md text-xs leading-relaxed text-white/70 sm:text-sm">
-            Nepal&apos;s first institutional land archive. Professionalizing
-            real estate through rigorous field verification and legal
-            transparency.
+            {tagline}
           </p>
         </div>
 
@@ -105,11 +127,11 @@ export function Footer() {
           <h4 className={headingClass}>Contact</h4>
           <div className="flex flex-col gap-sm sm:flex-row sm:items-start sm:gap-md md:flex-col md:gap-sm">
             <p className="font-body-md text-xs text-white/70 mono-stat sm:text-sm">
-              Durbar Marg, Kathmandu
+              {address}
               <br />
-              hello@malpoth.com
+              {email}
               <br />
-              +977 9702634469
+              {phone}
             </p>
             <div className="flex gap-sm">
               <Button

@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { Settings2 } from "lucide-react";
 import { useMemo, useState } from "react";
 import type {
   CurrencyCode,
@@ -93,14 +92,14 @@ export function MetalPageTemplate({
         </div>
 
         {/* Error banner — surfaced near the top so users see it immediately */}
-        {error && (
+        {/* {error && (
           <div
             className="mb-6 rounded-lg border border-red-500/25 bg-red-500/5 px-4 py-3 text-sm text-red-600 sm:mb-10"
             role="alert"
           >
             Live feed unavailable — showing cached quotes. {error}
           </div>
-        )}
+        )} */}
 
         {/* Divider */}
         <div className="mb-6 h-px w-full bg-outline-variant sm:mb-10" />
@@ -164,15 +163,6 @@ export function MetalPageTemplate({
         </p>
         <p className="mt-1">
           Malpoth Precious Metals &copy; {new Date().getFullYear()}
-        </p>
-        <p className="mt-3">
-          <Link
-            href="/admin/content"
-            className="inline-flex items-center gap-1 rounded-lg border border-outline-variant bg-surface px-3 py-1.5 text-xs text-on-surface-variant shadow-sm transition-colors hover:border-gold/40 hover:text-primary"
-          >
-            <Settings2 size={13} aria-hidden="true" />
-            Content admin
-          </Link>
         </p>
       </footer>
     </main>

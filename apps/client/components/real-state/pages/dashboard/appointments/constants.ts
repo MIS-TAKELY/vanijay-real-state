@@ -130,7 +130,7 @@ export const APPOINTMENTS: Appointment[] = [
     day: "28",
     month: "JUL",
     propertyCode: "KTM-209",
-    propertyArea: "Durbar Marg, Kathmandu",
+    propertyArea: "Bajraha, Itahari",
     type: "FIELD_VERIFICATION",
     officerName: "Rabi Thapa",
     status: "COMPLETED",
