@@ -220,12 +220,14 @@ export default async function HomePage() {
   }
   const firstHeroSlide = heroSlides[0];
   const lcpImage = firstHeroSlide
-    ? optimizeImageUrl(firstHeroSlide.image, 1280)
+    ? optimizeImageUrl(firstHeroSlide.image, 1920)
     : null;
   const lcpSrcSet = firstHeroSlide
-    ? [480, 640, 860, 1080, 1280, 1600]
-        .map((w) => `${optimizeImageUrl(firstHeroSlide.image, w)} ${w}w`)
-        .join(", ")
+    ? (firstHeroSlide.image.startsWith("/")
+        ? null
+        : [480, 640, 860, 1080, 1280, 1600, 1920]
+            .map((w) => `${optimizeImageUrl(firstHeroSlide.image, w)} ${w}w`)
+            .join(", "))
     : null;
 
   return (
