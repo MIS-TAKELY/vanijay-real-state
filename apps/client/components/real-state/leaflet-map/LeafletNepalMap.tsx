@@ -24,7 +24,7 @@ const TILE_PROVIDERS: Record<
   { url: string; options: L.TileLayerOptions }
 > = {
   dark: {
-    url: "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png",
+    url: `https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png?api_key=${process.env.NEXT_PUBLIC_CARTO_API_KEY ?? ""}`,
     options: { maxZoom: 19, subdomains: "abcd" },
   },
   satellite: {
