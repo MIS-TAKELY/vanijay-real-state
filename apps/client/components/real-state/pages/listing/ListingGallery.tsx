@@ -526,7 +526,7 @@ export function ListingGallery({
           <div
             role="tablist"
             aria-label="Media type"
-            className="flex w-full min-w-0 flex-nowrap gap-1 rounded-md bg-surface-container p-1 shadow-2xs @min-[36rem]:ml-auto @min-[36rem]:w-auto @min-[36rem]:min-w-[min(100%,19rem)] @min-[36rem]:max-w-lg @min-[36rem]:flex-1"
+            className="flex w-full min-w-0 flex-nowrap gap-1 rounded-md p-1 shadow-2xs @min-[36rem]:ml-auto @min-[36rem]:w-auto @min-[36rem]:min-w-[min(100%,19rem)] @min-[36rem]:max-w-lg @min-[36rem]:flex-1"
           >
             {hasImages && (
               <button
