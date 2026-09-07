@@ -57,21 +57,26 @@ export async function generateMetadata({
     )?.url;
     const location = formatLocation(property.location);
     const subType = labelEnum(property.subCategory, TYPE_LABELS);
+    const fallbackDesc = `${subType} for sale in ${location}. Price: ${formatNPR(property.askingPrice)}. Field-verified, cadastral-cleared.`;
+    const description = truncateMetaDescription(plainDesc || fallbackDesc);
+    const title =
+      location && location !== "Nepal"
+        ? `${property.title} in ${location}`
+        : property.title;
 
     return {
-      title: `${property.title} | MALPOTH`,
-      description:
-        plainDesc ||
-        `${subType} for sale in ${location}. Price: ${formatNPR(property.askingPrice)}. Verified by MALPOTH — cadastral-cleared, zero title disputes.`,
+      title,
+      description,
       alternates: {
         canonical: `/${slug}`,
         languages: buildHreflang(`/${slug}`),
       },
       openGraph: {
         title: property.title,
-        description:
+        description: truncateMetaDescription(
           plainDesc ||
-          `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
+            `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
+        ),
         images: ogImage
           ? [
               {
@@ -89,9 +94,10 @@ export async function generateMetadata({
       twitter: {
         card: "summary_large_image",
         title: property.title,
-        description:
+        description: truncateMetaDescription(
           plainDesc ||
-          `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
+            `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
+        ),
         images: ogImage ? [ogImage] : undefined,
       },
       robots: {
@@ -107,7 +113,7 @@ export async function generateMetadata({
       },
     };
   } catch {
-    return { title: "Listing not found | MALPOTH" };
+    return { title: "Listing not found", robots: { index: false } };
   }
 }
 
@@ -157,28 +163,34 @@ function partitionMedia(media: ApiPropertyMedia[] = []) {
  * ────────────────────────────────────────────────────────────────────── */
 
 /** Map property subCategory to schema.org housing/property types. */
-function schemaOrgPropertyType(
-  subCategory: string,
-): string {
+function schemaOrgPropertyType(subCategory: string): string {
   const map: Record<string, string> = {
     HOUSE: "House",
     APARTMENT: "Apartment",
-    TOWNHOUSE: "Townhouse",
+    TOWNHOUSE: "House",
     CONDOMINIUM: "Apartment",
-    PLOT: "Plot",
-    LAND: "Plot",
-    OFFICE: "Office",
+    PLOT: "LandPlot",
+    LAND: "LandPlot",
+    OFFICE: "OfficeBuilding",
     RETAIL: "Store",
     SHOP: "Store",
     WAREHOUSE: "Warehouse",
-    FACTORY: "Industrial",
+    FACTORY: "Warehouse",
     FARMHOUSE: "House",
     HERITAGE_HOME: "House",
     FLAT: "Apartment",
     ROOM: "Room",
-    FLOOR: "Floor",
+    FLOOR: "Apartment",
   };
-  return map[subCategory] ?? "Product";
+  return map[subCategory] ?? "Residence";
+}
+
+function truncateMetaDescription(text: string, max = 155): string {
+  const cleaned = text.replace(/\s+/g, " ").trim();
+  if (cleaned.length <= max) return cleaned;
+  const slice = cleaned.slice(0, max - 1);
+  const lastSpace = slice.lastIndexOf(" ");
+  return `${(lastSpace > 80 ? slice.slice(0, lastSpace) : slice).trimEnd()}…`;
 }
 
 /**
@@ -219,7 +231,7 @@ function buildListingJsonLd(property: ApiProperty) {
 
   const listing: Record<string, unknown> = {
     "@context": "https://schema.org",
-    "@type": "RealEstateListing",
+    "@type": ["RealEstateListing", schemaOrgPropertyType(property.subCategory)],
     "@id": `${url}#listing`,
     name: property.title,
     url,
@@ -366,7 +378,7 @@ function buildListingJsonLd(property: ApiProperty) {
     "@type": "WebPage",
     "@id": `${url}#webpage`,
     url,
-    name: `${property.title} | MALPOTH`,
+    name: property.title,
     description: plainDesc,
     isPartOf: { "@id": `${SITE_URL}/#website` },
     about: { "@id": `${SITE_URL}/#organization` },

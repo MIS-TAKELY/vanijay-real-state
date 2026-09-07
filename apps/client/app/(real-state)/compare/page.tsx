@@ -6,7 +6,7 @@ import ComparePage from "./compare-client";
 const PAGE_URL = `${SITE_URL}/compare`;
 
 export const metadata: Metadata = {
-  title: "Compare Properties Side by Side | MALPOTH",
+  title: "Compare Properties Side by Side",
   description:
     "Compare verified land and property listings in Nepal side by side — price, area, road access, facing and verification status in one table.",
   keywords: [
@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     languages: buildHreflang("/compare"),
   },
   openGraph: {
-    title: "Compare Properties Side by Side | MALPOTH",
+    title: "Compare Properties Side by Side",
     description:
       "Put verified listings side by side — price, area, road access and verification status in one table.",
     url: PAGE_URL,
@@ -31,19 +31,19 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Compare Properties Side by Side | MALPOTH",
+    title: "Compare Properties Side by Side",
     description:
       "Compare verified land and property listings in Nepal side by side.",
   },
+  // Utility page — content depends on ?ids=. Bare URL is thin; keep out of
+  // the index (already excluded from sitemap). Follow so shared compare links
+  // still pass equity to the underlying listings.
   robots: {
-    index: true,
+    index: false,
     follow: true,
     googleBot: {
-      index: true,
+      index: false,
       follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
     },
   },
 };
@@ -69,7 +69,7 @@ const webPageSchema = {
   "@type": "WebPage",
   "@id": `${PAGE_URL}#webpage`,
   url: PAGE_URL,
-  name: "Compare Properties Side by Side | MALPOTH",
+  name: "Compare Properties Side by Side",
   description:
     "Compare verified land and property listings in Nepal side by side — price, area, road access, facing and verification status in one table.",
   isPartOf: { "@id": `${SITE_URL}/#website` },

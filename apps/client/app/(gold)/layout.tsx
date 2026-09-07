@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { MetalsNavbar } from "../../components/gold/MetalsNavbar";
 
 export const metadata: Metadata = {
-  title: "Malpoth | Precious Metals Market",
+  title: "Precious Metals Market — Live NPR Rates",
   description:
     "Live NPR prices, trends, and historical data for gold, silver, platinum, palladium, bitcoin, ethereum, and copper.",
 };

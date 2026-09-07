@@ -12,9 +12,9 @@ import Link from "next/link";
 const PAGE_URL = `${SITE_URL}/area-guid`;
 
 export const metadata: Metadata = {
-  title: "Area Guides — Verified Land Records by District | MALPOTH",
+  title: "Area Guides — Verified Land Records by District",
   description:
-    "Explore cadastral-cleared land records across Nepal's 74 districts. Structured, archival-grade data on verified plots, road access and ownership history.",
+    "Explore cadastral-cleared land records across Nepal's 77 districts. Structured, archival-grade data on verified plots, road access and ownership history.",
   keywords: [
     "Nepal land records by district",
     "area guide Nepal real estate",
@@ -29,9 +29,9 @@ export const metadata: Metadata = {
     languages: buildHreflang("/area-guid"),
   },
   openGraph: {
-    title: "Area Guides — Verified Land Records by District | MALPOTH",
+    title: "Area Guides — Verified Land Records by District",
     description:
-      "A disciplined, archival view of Nepal's real estate — cadastral-cleared records and structured data across all 74 districts.",
+      "A disciplined, archival view of Nepal's real estate — cadastral-cleared records and structured data across all 77 districts.",
     url: PAGE_URL,
     siteName: "MALPOTH",
     type: "website",
@@ -39,9 +39,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Area Guides — Verified Land Records by District | MALPOTH",
+    title: "Area Guides — Verified Land Records by District",
     description:
-      "Cadastral-cleared land records across Nepal's 74 districts. Verified plots, road access and ownership history.",
+      "Cadastral-cleared land records across Nepal's 77 districts. Verified plots, road access and ownership history.",
   },
   robots: {
     index: true,
@@ -77,9 +77,9 @@ const collectionPageSchema = {
   "@type": "CollectionPage",
   "@id": `${PAGE_URL}#collection`,
   url: PAGE_URL,
-  name: "Area Guides — Verified Land Records by District | MALPOTH",
+  name: "Area Guides — Verified Land Records by District",
   description:
-    "Explore cadastral-cleared land records across Nepal's 74 districts. Structured, archival-grade data on verified plots, road access and ownership history.",
+    "Explore cadastral-cleared land records across Nepal's 77 districts. Structured, archival-grade data on verified plots, road access and ownership history.",
   isPartOf: { "@id": `${SITE_URL}/#website` },
   about: { "@id": `${SITE_URL}/#organization` },
   inLanguage: "en",
@@ -92,9 +92,9 @@ const webPageSchema = {
   "@type": "WebPage",
   "@id": `${PAGE_URL}#webpage`,
   url: PAGE_URL,
-  name: "Area Guides — Verified Land Records by District | MALPOTH",
+  name: "Area Guides — Verified Land Records by District",
   description:
-    "Explore cadastral-cleared land records across Nepal's 74 districts.",
+    "Explore cadastral-cleared land records across Nepal's 77 districts.",
   isPartOf: { "@id": `${SITE_URL}/#website` },
   about: { "@id": `${SITE_URL}/#organization` },
   mainEntity: { "@id": `${PAGE_URL}#collection` },

@@ -3,7 +3,7 @@ import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Land Act Compliance | MALPOTH",
+  title: "Land Act Compliance",
   description:
     "How MALPOTH listings comply with Nepal's land legislation — Lands Act 2021, Civil Code ownership provisions, and cadastral verification standards.",
   keywords: [
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     languages: buildHreflang("/legal/land-act-compliance"),
   },
   openGraph: {
-    title: "Land Act Compliance | MALPOTH",
+    title: "Land Act Compliance",
     description:
       "How MALPOTH listings comply with Nepal's land legislation and cadastral verification standards.",
     url: `${SITE_URL}/legal/land-act-compliance`,

@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import { AuthGate } from "components/real-state/layout/AuthGate";
 import { getSession } from "lib/auth-server";
+
+/** Auth/dashboard surfaces must never appear in search results. */
+export const metadata: Metadata = {
+  robots: { index: false, follow: false },
+};
 
 export default async function DashboardLayout({
   children,

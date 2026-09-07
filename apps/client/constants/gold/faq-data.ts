@@ -23,9 +23,9 @@ export const METAL_FAQS: Record<MetalId, FAQItem[]> = {
         "Gold prices are influenced by inflation expectations, central bank interest rates, geopolitical tensions, US dollar strength, mining supply, and ETF flows. Gold tends to rise during economic uncertainty.",
     },
     {
-      question: "Is gold a good investment in 2024?",
+      question: "Is gold a good investment in 2026?",
       answer:
-        "Gold has historically served as an inflation hedge and portfolio diversifier. With ongoing geopolitical risks and central bank buying, many analysts remain bullish. However, past performance does not guarantee future results.",
+        "Gold has historically served as an inflation hedge and portfolio diversifier. With ongoing geopolitical risks and continued central bank buying into 2026, many analysts remain constructive. However, past performance does not guarantee future results.",
     },
     {
       question: "What is the difference between 24K and 22K gold?",

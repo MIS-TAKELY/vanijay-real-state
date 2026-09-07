@@ -84,7 +84,7 @@ export function HeroPricePanel({
           style={{ backgroundColor: metal.accentColor }}
           aria-hidden="true"
         />
-        <h2
+        <h1
           className="text-lg font-medium tracking-tight text-on-surface-variant"
           style={{ fontFamily: "var(--font-display)" }}
         >
@@ -92,7 +92,7 @@ export function HeroPricePanel({
           <span className="ml-2 text-sm font-normal text-on-surface-variant/70">
             {metal.symbol}
           </span>
-        </h2>
+        </h1>
       </div>
 
       {/* Highlight: Today's price + unit dropdown right next to it */}

@@ -14,12 +14,12 @@ export const dynamic = "force-static";
 
 const content = `# MALPOTH — Verified Land & Property Archive
 
-> MALPOTH is Nepal's archive of record for land and property. Every listing is field-verified and cross-referenced against the official cadastral record (Naksa) and the Malpot land ownership ledger before publication. The archive covers land, residential, commercial, industrial and institutional property across 74 districts of Nepal, with zero title disputes.
+> MALPOTH is Nepal's archive of record for land and property. Every listing is field-verified and cross-referenced against the official cadastral record (Naksa) and the Malpot land ownership ledger before publication. The archive covers land, residential, commercial, industrial and institutional property across 77 districts of Nepal, with zero title disputes.
 
 ## Key facts
 
 - Founded: 2024, Kathmandu, Nepal
-- Coverage: 74 districts indexed, 12,000+ verified listings
+- Coverage: 77 districts indexed; verified listings grow continuously as field teams clear titles
 - Verification: 100% field-verified; cadastral-cleared before publication
 - Land units: 1 Aana = 342.25 sq ft (hill system); 1 Katha = 364.5 sq ft (Terai system); 1 Ropani = 16 Aana; 1 Bigha = 20 Katha
 

@@ -14,19 +14,8 @@ interface FAQAccordionProps {
 }
 
 export function FAQAccordion({ items, metalName }: FAQAccordionProps) {
-  const faqSchema = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: items.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer,
-      },
-    })),
-  };
-
+  // FAQPage JSON-LD is emitted server-side by MetalJsonLd so crawlers see it
+  // without waiting on client JS (and to avoid duplicate FAQ graphs).
   return (
     <section aria-labelledby="faq-heading">
       <h2
@@ -39,11 +28,6 @@ export function FAQAccordion({ items, metalName }: FAQAccordionProps) {
           About {metalName}
         </span>
       </h2>
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
-      />
 
       <Accordion type="single" collapsible className="w-full space-y-2">
         {items.map((item, i) => (

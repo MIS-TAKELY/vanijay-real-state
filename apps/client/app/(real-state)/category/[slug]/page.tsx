@@ -31,13 +31,24 @@ export async function generateMetadata({
   const category = getCategoryBySlug(slug);
   if (!category) {
     return {
-      title: "Category not found | MALPOTH",
+      title: "Category not found",
       robots: { index: false },
     };
   }
 
+  let hasListings = true;
+  try {
+    const feed = await fetchFeedPageGraphql({
+      first: 1,
+      type: category.slug,
+    });
+    hasListings = feed.items.length > 0;
+  } catch {
+    hasListings = true; // fail open so a transient API error does not noindex
+  }
+
   return {
-    title: `${category.title} | MALPOTH`,
+    title: category.title,
     description: category.description,
     keywords: category.keywords,
     alternates: {
@@ -57,17 +68,19 @@ export async function generateMetadata({
       title: category.title,
       description: category.description,
     },
-    robots: {
-      index: true,
-      follow: true,
-      googleBot: {
-        index: true,
-        follow: true,
-        "max-video-preview": -1,
-        "max-image-preview": "large",
-        "max-snippet": -1,
-      },
-    },
+    robots: hasListings
+      ? {
+          index: true,
+          follow: true,
+          googleBot: {
+            index: true,
+            follow: true,
+            "max-video-preview": -1,
+            "max-image-preview": "large",
+            "max-snippet": -1,
+          },
+        }
+      : { index: false, follow: true },
   };
 }
 
@@ -165,7 +178,7 @@ const webPageSchema = (category: { slug: string; title: string; description: str
   "@type": "WebPage",
   "@id": `${SITE_URL}/category/${category.slug}#webpage`,
   url: `${SITE_URL}/category/${category.slug}`,
-  name: `${category.title} | MALPOTH`,
+  name: category.title,
   description: category.description,
   isPartOf: { "@id": `${SITE_URL}/#website` },
   about: { "@id": `${SITE_URL}/#organization` },

@@ -63,19 +63,28 @@ export const metadata: Metadata = {
     languages: buildHreflang("/convertor"),
   },
   openGraph: {
-    title: "Land Unit Converter — Ropani, Aana, Katha to Sq. ft | MALPOTH",
+    title: "Land Unit Converter — Ropani, Aana, Katha to Sq. ft",
     description:
       "The fastest, most accurate land area converter for Nepal — Ropani, Aana, Bigha, Katha, Dhur to sq. ft, sq. m, acre and hectare. Free and instant.",
     url: PAGE_URL,
     siteName: "MALPOTH",
     type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-home.png`,
+        width: 1200,
+        height: 630,
+        alt: "MALPOTH Land Unit Converter",
+      },
+    ],
     ...ogLocaleFor(),
   },
   twitter: {
     card: "summary_large_image",
-    title: "Land Unit Converter — Ropani to Sq. ft, Katha to Sq. ft | MALPOTH",
+    title: "Land Unit Converter — Ropani to Sq. ft, Katha to Sq. ft",
     description:
       "Convert Ropani, Aana, Bigha, Katha and Dhur to sq. ft instantly. Nepal's most accurate land unit converter, free forever.",
+    images: [`${SITE_URL}/og-home.png`],
   },
   robots: {
     index: true,

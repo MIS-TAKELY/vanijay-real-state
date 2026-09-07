@@ -3,7 +3,7 @@ import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | MALPOTH",
+  title: "Privacy Policy",
   description:
     "How MALPOTH collects, uses and protects your personal information when you browse verified land and property listings in Nepal.",
   alternates: {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     languages: buildHreflang("/legal/privacy"),
   },
   openGraph: {
-    title: "Privacy Policy | MALPOTH",
+    title: "Privacy Policy",
     description:
       "How MALPOTH collects, uses and protects your personal information.",
     url: `${SITE_URL}/legal/privacy`,

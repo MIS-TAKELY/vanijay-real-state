@@ -3,7 +3,7 @@ import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Terms of Service | MALPOTH",
+  title: "Terms of Service",
   description:
     "The terms and conditions governing your use of MALPOTH — Nepal's verified land and property archive.",
   alternates: {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     languages: buildHreflang("/legal/terms"),
   },
   openGraph: {
-    title: "Terms of Service | MALPOTH",
+    title: "Terms of Service",
     description:
       "The terms and conditions governing your use of MALPOTH.",
     url: `${SITE_URL}/legal/terms`,

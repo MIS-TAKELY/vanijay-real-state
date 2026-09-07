@@ -44,7 +44,8 @@ export const viewport: Viewport = {
 
 const APP_NAME = "MALPOTH";
 const APP_DEFAULT_TITLE = "MALPOTH | Verified Land & Property Archive";
-const APP_TITLE_TEMPLATE = "%s - MALPOTH";
+/** Page titles omit the brand; this template appends it once. */
+const APP_TITLE_TEMPLATE = "%s | MALPOTH";
 const APP_DESCRIPTION = "The archive of record for legitimate land ownership in Nepal — field-verified land and property listings cross-referenced against cadastral records.";
 
 export const metadata: Metadata = {
@@ -82,7 +83,7 @@ export const metadata: Metadata = {
     description: APP_DESCRIPTION,
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: {
       default: APP_DEFAULT_TITLE,
       template: APP_TITLE_TEMPLATE,

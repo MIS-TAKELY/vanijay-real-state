@@ -25,7 +25,10 @@ export const metadata: Metadata = {
     siteName: "Kabadi",
     type: "website",
   },
-  robots: { index: true, follow: true },
+  // Blocked in robots.txt (/scrape) — keep page meta aligned so crawlers that
+  // ignore robots.txt (or if the disallow is later removed) still skip indexing
+  // until Kabadi has a deliberate SEO launch.
+  robots: { index: false, follow: false },
 };
 
 const schema = {

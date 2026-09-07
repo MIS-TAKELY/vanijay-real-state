@@ -155,7 +155,7 @@ export async function generateMetadata({
   const district = getDistrictBySlug(slug);
   if (!district) {
     return {
-      title: "Area guide not found | MALPOTH",
+      title: "Area guide not found",
       robots: { index: false },
     };
   }
@@ -275,7 +275,7 @@ const webPageSchema = (district: DistrictEntry, description: string) => ({
   "@type": "WebPage",
   "@id": `${pageUrl(district.slug)}#webpage`,
   url: pageUrl(district.slug),
-  name: `${district.name} District Land & Property Records | MALPOTH`,
+  name: `${district.name} District Land & Property Records`,
   description,
   isPartOf: { "@id": `${SITE_URL}/#website` },
   about: { "@id": `${SITE_URL}/#organization` },

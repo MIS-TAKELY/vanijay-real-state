@@ -17,7 +17,7 @@ import type { Metadata } from "next";
  * ────────────────────────────────────────────────────────────────────── */
 
 export const metadata: Metadata = {
-  title: "Verified Land & Property Listings in Nepal | MALPOTH",
+  title: "Verified Land & Property Listings in Nepal",
   description:
     "Browse field-verified land, residential, commercial & apartment listings across Nepal. Every plot cross-referenced against cadastral records — zero title disputes. Free search, compare & unit converter tools.",
   keywords: [
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     languages: buildHreflang("/"),
   },
   openGraph: {
-    title: "Verified Land & Property Listings in Nepal | MALPOTH",
+    title: "Verified Land & Property Listings in Nepal",
     description:
       "Nepal's archive of record for land and property. Field-verified listings cross-referenced against cadastral records — zero title disputes.",
     url: SITE_URL,
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Verified Land & Property Listings in Nepal | MALPOTH",
+    title: "Verified Land & Property Listings in Nepal",
     description:
       "Nepal's archive of record for land & property. Field-verified, cadastral-cleared, zero title disputes.",
     images: [`${SITE_URL}/og-home.png`],
@@ -123,7 +123,7 @@ const webPageSchema = {
   "@type": "WebPage",
   "@id": `${SITE_URL}/#webpage`,
   url: SITE_URL,
-  name: "Verified Land & Property Listings in Nepal | MALPOTH",
+  name: "Verified Land & Property Listings in Nepal",
   description:
     "Browse field-verified land, residential, commercial & apartment listings across Nepal. Every plot cross-referenced against cadastral records — zero title disputes.",
   isPartOf: { "@id": `${SITE_URL}/#website` },
@@ -133,7 +133,8 @@ const webPageSchema = {
     url: `${SITE_URL}/og-home.png`,
   },
   datePublished: "2024-01-01T00:00:00+05:45",
-  dateModified: new Date().toISOString().split("T")[0],
+  // Prefer a stable content date over per-request "now" (avoids churn in SERPs).
+  dateModified: "2026-09-07",
   breadcrumb: { "@id": `${SITE_URL}/#breadcrumb` },
   inLanguage: "en",
   potentialAction: {
@@ -180,16 +181,12 @@ const serviceSchema = {
     "@type": "OfferCatalog",
     name: "Verified Property Listings",
     itemListElement: CATEGORY_CATALOG.map((cat) => ({
-      "@type": "OfferCatalog",
-      name: cat.title,
-      numberOfItems: 0,
-      itemListElement: {
-        "@type": "Offer",
-        itemOffered: {
-          "@type": "Product",
-          name: cat.name,
-          description: cat.description,
-        },
+      "@type": "Offer",
+      itemOffered: {
+        "@type": "Service",
+        name: cat.name,
+        description: cat.description,
+        url: `${SITE_URL}/category/${cat.slug}`,
       },
     })),
   },

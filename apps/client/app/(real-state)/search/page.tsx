@@ -50,7 +50,7 @@ export async function generateMetadata({
     return Array.isArray(v) ? v.length > 0 : Boolean(v);
   });
 
-  const title = "Search Verified Properties | MALPOTH";
+  const title = "Search Verified Properties";
   const description =
     "Search field-verified land, residential, commercial & apartment listings across Nepal by location, price, type, and size.";
 

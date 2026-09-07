@@ -21,6 +21,8 @@ const footerLinks = {
     { label: "Area Guides", href: "/area-guid" },
     { label: "NRN", href: "/nrn-concierge" },
     { label: "Unit Converter", href: "/convertor" },
+    { label: "Gold Price", href: "/gold" },
+    { label: "Silver Price", href: "/silver" },
     { label: "About", href: "/about" },
   ],
   Compliance: [

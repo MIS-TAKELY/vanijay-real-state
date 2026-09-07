@@ -7,6 +7,7 @@ import { SITE_URL } from "lib/site";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
 import { DISTRICT_CATALOG } from "constants/district-catalog";
 import { UNIT_RATE_UNITS } from "components/gold/UnitRateTemplate";
+import { fetchFeedPageGraphql } from "lib/api/services/properties";
 
 // Regenerate the sitemap at most once an hour (ISR-style). Listing detail
 // pages moved to /{slug} (SEO), so every LIVE listing gets a clean short URL.
@@ -100,20 +101,6 @@ const CATEGORY_ROUTES: Array<{
   priority: 0.7,
 }));
 
-// Programmatic district area guides (/area-guid/[district]). Weekly refresh:
-// inventory per district changes as parcels complete verification. Districts
-// without verified listings render a noindex page, so Google naturally drops
-// them until inventory exists.
-const DISTRICT_ROUTES: Array<{
-  path: string;
-  changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
-  priority: number;
-}> = DISTRICT_CATALOG.map((d) => ({
-  path: `/area-guid/${d.slug}`,
-  changeFrequency: "weekly",
-  priority: 0.6,
-}));
-
 interface SitemapSlug {
   slug: string;
   updatedAt: string;
@@ -133,6 +120,41 @@ function isLikelyTestSlug(slug: string): boolean {
   return TEST_SLUG_PATTERN.test(slug);
 }
 
+/**
+ * Only advertise district area guides that have at least one verified listing.
+ * Empty districts render noindex on-page — listing them in the sitemap wastes
+ * crawl budget and creates GSC "Indexed though blocked" noise.
+ */
+async function districtRoutesWithInventory(): Promise<
+  Array<{
+    path: string;
+    changeFrequency: MetadataRoute.Sitemap[number]["changeFrequency"];
+    priority: number;
+  }>
+> {
+  const checks = await Promise.all(
+    DISTRICT_CATALOG.map(async (d) => {
+      try {
+        const feed = await fetchFeedPageGraphql({
+          first: 1,
+          district: d.name,
+        });
+        return feed.items.length > 0 ? d : null;
+      } catch {
+        return null;
+      }
+    }),
+  );
+
+  return checks
+    .filter((d): d is (typeof DISTRICT_CATALOG)[number] => d != null)
+    .map((d) => ({
+      path: `/area-guid/${d.slug}`,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
+    }));
+}
+
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let listingSlugs: SitemapSlug[] = [];
   try {
@@ -148,6 +170,14 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     listingSlugs = [];
   }
 
+  let districtRoutes: Awaited<ReturnType<typeof districtRoutesWithInventory>> =
+    [];
+  try {
+    districtRoutes = await districtRoutesWithInventory();
+  } catch {
+    districtRoutes = [];
+  }
+
   // Build language alternates for each URL.
   // For each enabled language other than the default, emit a separate
   // sitemap entry with the locale-prefixed URL and xhtml:link alternates.
@@ -159,7 +189,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
    * are enabled. Each entry gets `<xhtml:link rel="alternate" ...>` for
    * every enabled language + x-default.
    */
-  function withAlternates(entry: MetadataRoute.Sitemap[number]): MetadataRoute.Sitemap[number] {
+  function withAlternates(
+    entry: MetadataRoute.Sitemap[number],
+  ): MetadataRoute.Sitemap[number] {
     if (!hasMultipleLangs) return entry;
 
     const languages: Record<string, string> = {};
@@ -200,7 +232,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route.priority,
       }),
     ),
-    ...DISTRICT_ROUTES.map((route) =>
+    ...districtRoutes.map((route) =>
       withAlternates({
         url: `${SITE_URL}${route.path}`,
         changeFrequency: route.changeFrequency,

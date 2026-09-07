@@ -9,31 +9,32 @@ export interface MetalSEOData {
 
 export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
   gold: {
-    title:
-      "Live Gold Price Today | Real-Time Gold Rates Per Gram & Ounce | Malpoth",
+    title: "Live Gold Price Today in Nepal (NPR per Tola)",
     description:
-      "Track live gold prices in NPR & USD. Real-time spot rates, historical charts, bid/ask spreads, and investment guides updated every 60 seconds.",
+      "Live gold price today in NPR per tola & USD per ounce. Official Nepal rates, spot charts, bid/ask spreads, and investment guides — updated every 60 seconds.",
     keywords: [
       "gold price today",
       "live gold rate",
       "gold price NPR",
+      "gold price Nepal",
+      "gold per tola",
       "gold per gram",
       "gold per ounce",
       "XAU price",
+      "Fenegosida gold rate",
     ],
     faqQuestions: [
       "What is the current gold price per ounce?",
       "How is gold priced in Nepal?",
       "What affects gold prices?",
-      "Is gold a good investment in 2024?",
+      "Is gold a good investment in 2026?",
       "What is the difference between 24K and 22K gold?",
       "How often do gold prices update?",
       "What is the gold bid-ask spread?",
     ],
   },
   silver: {
-    title:
-      "Live Silver Price Today | Real-Time Silver Rates Per Ounce | Malpoth",
+    title: "Live Silver Price Today in Nepal (NPR per Tola)",
     description:
       "Track live silver prices with real-time updates. Historical data, industrial demand analysis, and silver investment insights.",
     keywords: [
@@ -54,7 +55,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   platinum: {
-    title: "Live Platinum Price Today | Real-Time Platinum Rates | Malpoth",
+    title: "Live Platinum Price Today — Real-Time Rates",
     description:
       "Track live platinum prices with real-time updates. Rarer than gold, critical for automotive and hydrogen technology.",
     keywords: [
@@ -74,7 +75,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   palladium: {
-    title: "Live Palladium Price Today | Real-Time Palladium Rates | Malpoth",
+    title: "Live Palladium Price Today — Real-Time Rates",
     description:
       "Track live palladium prices. Essential for emissions control, supply concentrated in Russia and South Africa.",
     keywords: [
@@ -94,7 +95,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   bitcoin: {
-    title: "Live Bitcoin Price Today | Real-Time BTC Rate | Malpoth",
+    title: "Live Bitcoin Price Today — Real-Time BTC Rate",
     description:
       "Track live Bitcoin prices with real-time updates. Digital gold with a hard supply cap of 21 million coins.",
     keywords: [
@@ -115,7 +116,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   ethereum: {
-    title: "Live Ethereum Price Today | Real-Time ETH Rate | Malpoth",
+    title: "Live Ethereum Price Today — Real-Time ETH Rate",
     description:
       "Track live Ethereum prices. Programmable money powering smart contracts, DeFi, and the largest app ecosystem in crypto.",
     keywords: [
@@ -135,7 +136,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   copper: {
-    title: "Live Copper Price Today | Real-Time Copper Rates | Malpoth",
+    title: "Live Copper Price Today — Real-Time Rates",
     description:
       "Track live copper prices. The industrial metal of electrification — wiring, motors, and clean energy grids.",
     keywords: [
@@ -156,8 +157,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   diamond: {
-    title:
-      "Live Diamond Price Today | Real-Time Diamond Rates Per Carat | Malpoth",
+    title: "Live Diamond Price Today — Rates Per Carat",
     description:
       "Track live diamond prices per carat. The ultimate store of value in gemstone form with industrial applications.",
     keywords: [
@@ -177,7 +177,7 @@ export const METAL_SEO_DATA: Record<MetalId, MetalSEOData> = {
     ],
   },
   steel: {
-    title: "Live Steel Price Today | Real-Time Steel Rates Per Ton | Malpoth",
+    title: "Live Steel Price Today — Rates Per Ton",
     description:
       "Track live steel prices per ton. The backbone of modern infrastructure reflecting global construction demand.",
     keywords: [

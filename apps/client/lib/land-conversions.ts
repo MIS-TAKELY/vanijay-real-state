@@ -271,7 +271,7 @@ export function pairKeywords(pair: ConversionPair): string[] {
   ];
 }
 
-/** Page <title>. The root layout template appends the "- MALPOTH" suffix. */
+/** Page <title>. The root layout template appends " | MALPOTH". */
 export function pairMetaTitle(pair: ConversionPair): string {
   const { from, to } = pairTitleWords(pair);
   return `${from.title} to ${to.title} Converter — Exact Nepal Land Units`;

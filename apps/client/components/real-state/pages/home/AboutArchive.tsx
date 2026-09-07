@@ -8,7 +8,7 @@ import {
 export const HOME_FAQ_ITEMS: Array<{ q: string; a: string }> = [
   {
     q: "What is MALPOTH?",
-    a: "MALPOTH is Nepal's archive of record for land and property — a marketplace where every listing is field-verified and cross-referenced against the official cadastral record (Naksa) and the Malpot land ownership ledger before publication. It covers land, homes, commercial and industrial property across 74 districts of Nepal.",
+    a: "MALPOTH is Nepal's archive of record for land and property — a marketplace where every listing is field-verified and cross-referenced against the official cadastral record (Naksa) and the Malpot land ownership ledger before publication. It covers land, homes, commercial and industrial property across 77 districts of Nepal.",
   },
   {
     q: "How does MALPOTH verify property listings?",
@@ -16,7 +16,7 @@ export const HOME_FAQ_ITEMS: Array<{ q: string; a: string }> = [
   },
   {
     q: "Which areas of Nepal does MALPOTH cover?",
-    a: "MALPOTH indexes property across 74 districts, from 77 Land Revenue Offices — including Kathmandu, Lalitpur and Bhaktapur in the Kathmandu Valley, Pokhara in Gandaki, and districts across the Terai plains.",
+    a: "MALPOTH indexes property across 77 districts, from 77 Land Revenue Offices — including Kathmandu, Lalitpur and Bhaktapur in the Kathmandu Valley, Pokhara in Gandaki, and districts across the Terai plains.",
   },
   {
     q: "Can foreigners buy land in Nepal?",

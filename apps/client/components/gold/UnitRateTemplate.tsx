@@ -129,6 +129,34 @@ export function UnitRateTemplate({
     ],
   };
 
+  const offerPrice = Number(
+    (officialPerUnit ?? pricePerUnit).toFixed(2),
+  ).toString();
+  const priceValidUntil = (() => {
+    const d = new Date();
+    d.setUTCDate(d.getUTCDate() + 1);
+    return d.toISOString().slice(0, 10);
+  })();
+  const image = `${SITE_URL}/og-home.png`;
+
+  const dataset = {
+    "@context": "https://schema.org",
+    "@type": "Dataset",
+    "@id": `${pageUrl}#dataset`,
+    name: `${meta.name} price per ${unit.label}`,
+    description: `Live ${meta.name.toLowerCase()} price per ${unit.label.toLowerCase()} in NPR — spot-derived and official Nepali market rates.`,
+    url: pageUrl,
+    creator: { "@id": `${SITE_URL}/#organization` },
+    temporalCoverage: priceValidUntil,
+    variableMeasured: {
+      "@type": "PropertyValue",
+      name: `${meta.name} per ${unit.label}`,
+      value: offerPrice,
+      unitText: unit.label,
+      currency: "NPR",
+    },
+  };
+
   const webPage = {
     "@context": "https://schema.org",
     "@type": "WebPage",
@@ -136,7 +164,9 @@ export function UnitRateTemplate({
     url: pageUrl,
     name: `${meta.name} Price per ${unit.label} Today`,
     description: `Live ${meta.name.toLowerCase()} price per ${unit.label.toLowerCase()} in NPR — spot-derived and official Nepali market rates.`,
+    primaryImageOfPage: { "@type": "ImageObject", url: image },
     isPartOf: { "@id": `${SITE_URL}/#website` },
+    mainEntity: { "@id": `${pageUrl}#dataset` },
     breadcrumb: { "@id": `${pageUrl}#breadcrumb` },
     inLanguage: "en",
   };
@@ -161,6 +191,10 @@ export function UnitRateTemplate({
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(webPage) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(dataset) }}
       />
       <script
         type="application/ld+json"

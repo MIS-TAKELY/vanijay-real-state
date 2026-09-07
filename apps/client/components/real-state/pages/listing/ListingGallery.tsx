@@ -2,7 +2,7 @@
 
 import { Button, Icon, cn } from "@repo/ui";
 import type { ApiPropertyMedia } from "lib/api/services/properties/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ListingVideo } from "./ListingVideo";
 import { VideoPoster } from "./VideoPoster";
@@ -22,6 +22,18 @@ type ListingGalleryProps = {
 };
 
 type MediaType = "photos" | "videos" | "documents";
+
+/**
+ * Fade-in classes applied to gallery <img>s — they start transparent and
+ * transition to full opacity once decoded instead of popping in abruptly.
+ */
+const fadeInOnLoad =
+  "opacity-0 transition-opacity duration-300 data-[loaded=true]:opacity-100";
+
+/** Marks an <img> as decoded so the fade-in transition completes. */
+function markImageLoaded(event: SyntheticEvent<HTMLImageElement>) {
+  event.currentTarget.dataset.loaded = "true";
+}
 
 export function ListingGallery({
   images,
@@ -616,11 +628,11 @@ export function ListingGallery({
                     data-thumb-index={idx}
                     onClick={() => scrollToPhoto(idx)}
                     className={cn(
-                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm border bg-surface-container transition-all duration-150 sm:w-full",
+                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm bg-surface-container transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
-                        ? "border-primary ring-2 ring-primary/40 opacity-100 shadow-xs"
-                        : "border-outline-variant/70 opacity-70 hover:border-primary/40 hover:opacity-100",
+                        ? "ring-2 ring-primary/40 opacity-100 shadow-xs"
+                        : "opacity-70 hover:opacity-100",
                     )}
                     aria-label={`View photo ${idx + 1}`}
                     aria-pressed={isActive}
@@ -631,7 +643,8 @@ export function ListingGallery({
                       alt=""
                       draggable={false}
                       onContextMenu={(e) => e.preventDefault()}
-                      className="h-full w-full object-cover"
+                      onLoad={markImageLoaded}
+                      className={cn("h-full w-full object-cover", fadeInOnLoad)}
                     />
                   </button>
                 );
@@ -641,7 +654,7 @@ export function ListingGallery({
 
           {/* ── Scroll-snap carousel ── */}
           {/* Outer wrapper keeps the aspect ratio and clips overflow */}
-          <div className="relative aspect-[4/3] w-full min-w-0 flex-1 select-none overflow-hidden rounded-sm border border-outline-variant bg-surface-container sm:aspect-[16/11]">
+          <div className="relative aspect-[4/3] w-full min-w-0 flex-1 select-none overflow-hidden rounded-sm bg-surface-container sm:aspect-[16/11]">
             {/* The scrollable track — browser handles touch physics natively */}
             <div
               ref={photoScrollRef}
@@ -670,7 +683,8 @@ export function ListingGallery({
                     loading={idx === 0 ? "eager" : "lazy"}
                     decoding="async"
                     onContextMenu={(e) => e.preventDefault()}
-                    className="h-full w-full object-contain"
+                    onLoad={markImageLoaded}
+                    className={cn("h-full w-full object-cover", fadeInOnLoad)}
                   />
                 </div>
               ))}
@@ -836,11 +850,11 @@ export function ListingGallery({
                     type="button"
                     onClick={() => setActiveDocIndex(idx)}
                     className={cn(
-                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm border bg-surface transition-all duration-150 sm:w-full",
+                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm bg-surface transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
-                        ? "border-primary ring-2 ring-primary/40 opacity-100 shadow-xs"
-                        : "border-outline-variant/70 opacity-70 hover:border-primary/40 hover:opacity-100",
+                        ? "ring-2 ring-primary/40 opacity-100 shadow-xs"
+                        : "opacity-70 hover:opacity-100",
                     )}
                     aria-label={`View cadastral map ${idx + 1}`}
                     aria-pressed={isActive}
@@ -851,7 +865,8 @@ export function ListingGallery({
                       alt=""
                       draggable={false}
                       onContextMenu={(e) => e.preventDefault()}
-                      className="h-full w-full object-contain p-1"
+                      onLoad={markImageLoaded}
+                      className={cn("h-full w-full object-contain", fadeInOnLoad)}
                     />
                   </button>
                 );
@@ -859,7 +874,7 @@ export function ListingGallery({
             </div>
           )}
 
-          <div className="min-w-0 flex-1 overflow-hidden rounded-sm border border-outline-variant bg-surface">
+          <div className="min-w-0 flex-1 overflow-hidden rounded-sm bg-surface">
             {/* Top Toolbar inside Document Card */}
             <div className="flex items-center justify-between gap-3 border-b border-outline-variant bg-surface-container/40 px-3.5 py-2 sm:px-4">
               <div className="flex min-w-0 items-center gap-2">
@@ -915,7 +930,11 @@ export function ListingGallery({
                       draggable={false}
                       loading={idx === 0 ? "eager" : "lazy"}
                       onContextMenu={(e) => e.preventDefault()}
-                      className="h-full w-full object-contain p-3 transition-transform duration-200 group-hover:scale-[1.015] sm:p-4"
+                      onLoad={markImageLoaded}
+                      className={cn(
+                        "h-full w-full object-contain transition-transform duration-200 group-hover:scale-[1.015]",
+                        fadeInOnLoad,
+                      )}
                     />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                       <div className="pointer-events-none flex items-center gap-1.5 rounded-sm bg-surface/90 px-3 py-1.5 text-xs font-semibold text-navy shadow-sm backdrop-blur-sm">
@@ -1216,6 +1235,7 @@ export function ListingGallery({
                   alt={lightboxCurrentMedia.alt}
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
+                  onLoad={markImageLoaded}
                   onDoubleClick={(e) => {
                     toggleDoubleTapZoom(e.clientX, e.clientY);
                   }}
@@ -1224,7 +1244,10 @@ export function ListingGallery({
                     transformOrigin: "center center",
                     transition: isPanning ? "none" : "transform 150ms ease-out",
                   }}
-                  className="max-h-full max-w-full rounded-md object-contain shadow-2xl"
+                  className={cn(
+                    "max-h-full max-w-full rounded-md object-contain shadow-2xl",
+                    fadeInOnLoad,
+                  )}
                 />
               )}
             </div>
@@ -1270,11 +1293,11 @@ export function ListingGallery({
                         setLightboxIndex(idx);
                       }}
                       className={cn(
-                        "relative aspect-[4/3] h-14 shrink-0 overflow-hidden rounded-sm border bg-black/40 transition-all duration-150",
+                        "relative aspect-[4/3] h-14 shrink-0 overflow-hidden rounded-sm bg-black/40 transition-all duration-150",
                         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
                         isActive
-                          ? "border-primary ring-2 ring-primary/80 opacity-100 scale-105 shadow-md"
-                          : "border-white/20 opacity-55 hover:border-white/60 hover:opacity-100",
+                          ? "ring-2 ring-primary/80 opacity-100 scale-105 shadow-md"
+                          : "opacity-55 hover:opacity-100",
                       )}
                       aria-label={`Go to item ${idx + 1}`}
                       aria-pressed={isActive}
@@ -1285,7 +1308,8 @@ export function ListingGallery({
                         alt=""
                         draggable={false}
                         onContextMenu={(e) => e.preventDefault()}
-                        className="h-full w-full object-cover"
+                        onLoad={markImageLoaded}
+                        className={cn("h-full w-full object-cover", fadeInOnLoad)}
                       />
                     </button>
                   );

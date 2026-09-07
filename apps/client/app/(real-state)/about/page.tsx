@@ -14,7 +14,7 @@ import type { Metadata } from "next";
 const PAGE_URL = `${SITE_URL}/about`;
 
 export const metadata: Metadata = {
-  title: "About MALPOTH | Nepal's Verified Land & Property Archive",
+  title: "About — Nepal's Verified Land & Property Archive",
   description:
     "MALPOTH is Nepal's first institutional land archive. Learn how we eliminate title disputes through rigorous field verification, cadastral cross-referencing, and legal transparency.",
   keywords: [
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     languages: buildHreflang("/about"),
   },
   openGraph: {
-    title: "About MALPOTH | Nepal's Verified Land & Property Archive",
+    title: "About — Nepal's Verified Land & Property Archive",
     description:
       "Nepal's first institutional land archive. Professionalizing real estate through rigorous field verification and legal transparency.",
     url: PAGE_URL,
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "About MALPOTH | Nepal's Verified Land & Property Archive",
+    title: "About — Nepal's Verified Land & Property Archive",
     description:
       "Nepal's first institutional land archive — rigorous field verification, cadastral cross-referencing, zero title disputes.",
   },

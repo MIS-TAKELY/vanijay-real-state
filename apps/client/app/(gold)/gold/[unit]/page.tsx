@@ -22,10 +22,10 @@ const UNIT_LABELS = Object.fromEntries(
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { unit } = await params;
   if (!isValidUnitRateCombo("gold", unit)) {
-    return { title: "Not found | Malpoth", robots: { index: false } };
+    return { title: "Not found", robots: { index: false } };
   }
   const label = UNIT_LABELS[unit] ?? unit;
-  const title = `Gold Price per ${label} Today — Live NPR Rate & Tola Conversion | Malpoth`;
+  const title = `Gold Price per ${label} Today — Live NPR Rate`;
   const description = `Live gold price per ${label.toLowerCase()} in NPR. Spot-derived rates, the official Nepali market tola rate, and exact conversions across tola, anna, sukhi, gram, kilo and troy ounce.`;
   return {
     title,
@@ -41,6 +41,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     openGraph: {
       title,
       description,
+      images: [{ url: "/og-home.png", width: 1200, height: 630, alt: title }],
       type: "website",
       url: `/gold/${unit}`,
     },
@@ -48,6 +49,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       card: "summary_large_image",
       title,
       description,
+      images: ["/og-home.png"],
     },
     robots: { index: true, follow: true },
   };
