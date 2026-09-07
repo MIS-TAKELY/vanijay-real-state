@@ -610,13 +610,13 @@ export function ListingGallery({
           role="tabpanel"
           id="panel-photos"
           aria-labelledby="tab-photos"
-          className="flex min-w-0 flex-col-reverse gap-2 sm:flex-row sm:items-stretch sm:gap-3"
+          className="flex min-w-0 flex-col-reverse gap-1.5 sm:flex-row sm:items-stretch sm:gap-1.5"
         >
           {/* Thumbnail strip */}
           {images.length > 1 && (
             <div
               ref={thumbStripRef}
-              className="no-scrollbar flex w-full flex-row gap-2 overflow-x-auto overscroll-x-contain py-1 sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:py-0.5"
+              className="no-scrollbar flex w-full flex-row gap-1.5 overflow-x-auto overscroll-x-contain py-1 sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:py-0"
               aria-label="Photo thumbnails"
             >
               {images.map((image, idx) => {
@@ -628,7 +628,7 @@ export function ListingGallery({
                     data-thumb-index={idx}
                     onClick={() => scrollToPhoto(idx)}
                     className={cn(
-                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm bg-surface-container transition-all duration-150 sm:w-full",
+                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden bg-surface-container transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
                         ? "ring-2 ring-primary/40 opacity-100 shadow-xs"
@@ -644,7 +644,7 @@ export function ListingGallery({
                       draggable={false}
                       onContextMenu={(e) => e.preventDefault()}
                       onLoad={markImageLoaded}
-                      className={cn("h-full w-full object-cover", fadeInOnLoad)}
+                      className={cn("absolute inset-0 size-full object-cover", fadeInOnLoad)}
                     />
                   </button>
                 );
@@ -654,7 +654,7 @@ export function ListingGallery({
 
           {/* ── Scroll-snap carousel ── */}
           {/* Outer wrapper keeps the aspect ratio and clips overflow */}
-          <div className="relative aspect-[4/3] w-full min-w-0 flex-1 select-none overflow-hidden rounded-sm bg-surface-container sm:aspect-[16/11]">
+          <div className="relative aspect-[4/3] w-full min-w-0 flex-1 select-none overflow-hidden bg-surface-container sm:aspect-[16/11]">
             {/* The scrollable track — browser handles touch physics natively */}
             <div
               ref={photoScrollRef}
@@ -684,7 +684,10 @@ export function ListingGallery({
                     decoding="async"
                     onContextMenu={(e) => e.preventDefault()}
                     onLoad={markImageLoaded}
-                    className={cn("h-full w-full object-cover", fadeInOnLoad)}
+                    className={cn(
+                      "absolute inset-0 size-full object-cover",
+                      fadeInOnLoad,
+                    )}
                   />
                 </div>
               ))}
