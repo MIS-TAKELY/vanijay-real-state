@@ -628,7 +628,7 @@ export function ListingGallery({
                     data-thumb-index={idx}
                     onClick={() => scrollToPhoto(idx)}
                     className={cn(
-                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden bg-surface-container transition-all duration-150 sm:w-full",
+                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
                         ? "ring-2 ring-primary/40 opacity-100 shadow-xs"
@@ -654,7 +654,7 @@ export function ListingGallery({
 
           {/* ── Scroll-snap carousel ── */}
           {/* Outer wrapper keeps the aspect ratio and clips overflow */}
-          <div className="relative aspect-[4/3] w-full min-w-0 flex-1 select-none overflow-hidden bg-surface-container sm:aspect-[16/11]">
+          <div className="relative aspect-[4/3] w-full min-w-0 flex-1 select-none overflow-hidden sm:aspect-[16/11]">
             {/* The scrollable track — browser handles touch physics natively */}
             <div
               ref={photoScrollRef}
@@ -694,7 +694,7 @@ export function ListingGallery({
             </div>
 
             {/* Counter Badge */}
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end bg-gradient-to-t from-black/60 via-black/20 to-transparent p-3 pt-8">
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end p-3">
               <span className="rounded-sm bg-black/65 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-white backdrop-blur-md">
                 {activeImageIndex + 1} / {images.length}
               </span>
@@ -758,11 +758,11 @@ export function ListingGallery({
                     type="button"
                     onClick={() => setActiveVideoIndex(idx)}
                     className={cn(
-                      "group relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm border bg-surface-container transition-all duration-150 sm:w-full",
+                      "group relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
-                        ? "border-primary ring-2 ring-primary/40 opacity-100 shadow-xs"
-                        : "border-outline-variant/70 opacity-70 hover:border-primary/40 hover:opacity-100",
+                        ? "ring-2 ring-primary/40 opacity-100 shadow-xs"
+                        : "opacity-70 hover:opacity-100",
                     )}
                     aria-label={`Play video ${idx + 1}`}
                     aria-pressed={isActive}
@@ -799,7 +799,7 @@ export function ListingGallery({
 
             {/* Pagination sits BELOW the player — never overlaps video controls */}
             {videos.length > 1 && (
-              <div className="flex items-center justify-between gap-3 rounded-sm border border-outline-variant/60 bg-surface-container/50 px-3 py-2">
+              <div className="flex items-center justify-between gap-3 px-1 py-1.5">
                 <button
                   type="button"
                   aria-label="Previous video"
@@ -853,7 +853,7 @@ export function ListingGallery({
                     type="button"
                     onClick={() => setActiveDocIndex(idx)}
                     className={cn(
-                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm bg-surface transition-all duration-150 sm:w-full",
+                      "relative aspect-[4/3] w-14 shrink-0 overflow-hidden rounded-sm transition-all duration-150 sm:w-full",
                       "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                       isActive
                         ? "ring-2 ring-primary/40 opacity-100 shadow-xs"
@@ -877,9 +877,9 @@ export function ListingGallery({
             </div>
           )}
 
-          <div className="min-w-0 flex-1 overflow-hidden rounded-sm bg-surface">
+          <div className="min-w-0 flex-1 overflow-hidden rounded-sm">
             {/* Top Toolbar inside Document Card */}
-            <div className="flex items-center justify-between gap-3 border-b border-outline-variant bg-surface-container/40 px-3.5 py-2 sm:px-4">
+            <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-3.5 py-2 sm:px-4">
               <div className="flex min-w-0 items-center gap-2">
                 <span className="inline-flex shrink-0 items-center rounded-sm bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
                   Naksa
@@ -920,7 +920,7 @@ export function ListingGallery({
                 {cadastralMaps.map((map, idx) => (
                   <div
                     key={`doc-slide-${idx}-${map.url}`}
-                    className="group relative h-full w-full shrink-0 snap-start cursor-zoom-in bg-surface-container/20"
+                    className="group relative h-full w-full shrink-0 snap-start cursor-zoom-in"
                     style={{ minWidth: "100%" }}
                     onClick={() => {
                       if (activeDocIndex === idx) openLightbox("documents", idx);
@@ -972,7 +972,7 @@ export function ListingGallery({
               )}
             </div>
 
-            <div className="border-t border-outline-variant/60 bg-surface-container/20 px-3.5 py-2">
+            <div className="border-t border-outline-variant/60 px-3.5 py-2">
               <p className="text-[11px] leading-relaxed text-on-surface-variant">
                 Naksa (cadastral map) is the official public land record showing
                 parcel boundaries and access roads. Click to zoom in high
