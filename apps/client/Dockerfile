@@ -18,7 +18,11 @@ ENV NEXT_PUBLIC_SITE_URL=$NEXT_PUBLIC_SITE_URL
 COPY package.json package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
 COPY apps/client ./apps/client
 COPY packages ./packages 
-RUN npm install -g turbo pnpm
+# Pin pnpm to the version that produced pnpm-lock.yaml (lockfileVersion 9.0).
+# `npm install -g pnpm` (unpinned) now installs pnpm 10+, whose standalone
+# @pnpm/exe engine identity check fails against pnpm-9 lockfiles:
+#   ERR_PNPM_PNPM_ENGINE_IDENTITY_UNVERIFIABLE
+RUN npm install -g turbo pnpm@9.0.0
 RUN pnpm install --frozen-lockfile
 RUN turbo build --filter=client
 

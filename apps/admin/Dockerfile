@@ -12,7 +12,10 @@ ENV AUTH_API_URL=$AUTH_API_URL
 COPY package.json package-lock.json* pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
 COPY apps/admin ./apps/admin
 COPY packages ./packages
-RUN npm install -g turbo pnpm
+# Pin pnpm to the version that produced pnpm-lock.yaml (lockfileVersion 9.0) —
+# unpinned `npm install -g pnpm` gets pnpm 10+, whose @pnpm/exe engine identity
+# check fails against pnpm-9 lockfiles (ERR_PNPM_PNPM_ENGINE_IDENTITY_UNVERIFIABLE).
+RUN npm install -g turbo pnpm@9.0.0
 RUN pnpm install --frozen-lockfile
 RUN turbo build --filter=admin
 

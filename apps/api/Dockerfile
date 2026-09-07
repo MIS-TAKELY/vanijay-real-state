@@ -3,7 +3,10 @@ WORKDIR /app
 RUN apk add --no-cache libc6-compat openssl
 
 FROM base AS builder
-RUN npm install -g turbo pnpm
+# Pin pnpm to the version that produced pnpm-lock.yaml (lockfileVersion 9.0) —
+# unpinned `npm install -g pnpm` gets pnpm 10+, whose @pnpm/exe engine identity
+# check fails against pnpm-9 lockfiles (ERR_PNPM_PNPM_ENGINE_IDENTITY_UNVERIFIABLE).
+RUN npm install -g turbo pnpm@9.0.0
 COPY package.json pnpm-lock.yaml* pnpm-workspace.yaml* yarn.lock* turbo.json ./
 COPY apps/api ./apps/api
 COPY packages ./packages
