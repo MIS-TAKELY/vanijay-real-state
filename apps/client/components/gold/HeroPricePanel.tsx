@@ -85,10 +85,10 @@ export function HeroPricePanel({
           aria-hidden="true"
         />
         <h1
-          className="text-lg font-medium tracking-tight text-on-surface-variant"
+          className="text-2xl font-semibold tracking-tight text-on-surface sm:text-3xl"
           style={{ fontFamily: "var(--font-display)" }}
         >
-          {metal.name}
+          {metal.name} Price Today
           <span className="ml-2 text-sm font-normal text-on-surface-variant/70">
             {metal.symbol}
           </span>

@@ -39,12 +39,12 @@ export function ContentBlockRenderer({ blocks }: ContentBlockRendererProps) {
           className="rounded-xl border border-outline-variant bg-surface p-4 shadow-sm sm:p-6 md:p-8"
         >
           <div>
-            <h3
+            <h2
               className="mb-2 text-xl font-medium tracking-tight text-on-surface"
               style={{ fontFamily: "var(--font-display)" }}
             >
               {block.title}
-            </h3>
+            </h2>
             {block.subtitle && (
               <p className="mb-4 text-sm text-on-surface-variant">
                 {block.subtitle}

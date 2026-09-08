@@ -102,14 +102,14 @@ export function MarketOverview({
       className="flex min-w-0 flex-col rounded-2xl border border-outline-variant bg-surface p-5 shadow-sm"
     >
       <div className="mb-4 flex items-center justify-between gap-3">
-        <h3
+        <h2
           id="market-overview-heading"
           className="flex items-center gap-2 text-[13px] font-semibold uppercase tracking-[0.16em] text-gold-deep"
           style={{ fontFamily: "var(--font-body)" }}
         >
           <span className="h-px w-6 bg-gold/60" aria-hidden="true" />
           Market Overview
-        </h3>
+        </h2>
         <span
           className="rounded-full border border-emerald-600/25 bg-emerald-500/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-600"
           style={{ fontFamily: "var(--font-body)" }}
