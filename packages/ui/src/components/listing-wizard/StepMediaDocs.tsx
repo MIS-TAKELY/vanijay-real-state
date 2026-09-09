@@ -12,7 +12,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
-import { useRef, useState } from "react";
+import { useRef, useState, type DragEvent } from "react";
 import { VideoPoster } from "./VideoPoster";
 import type { DraftDocument, DraftMedia } from "./draft";
 import { getErrorMessage, type StepProps, type WizardUploads } from "./types";
@@ -64,6 +64,8 @@ interface StepMediaDocsProps extends StepProps {
   uploads: WizardUploads;
 }
 
+type DropZoneName = "media" | "cadastral" | "documents";
+
 export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
   const mediaInputRef = useRef<HTMLInputElement>(null);
   const cadastralInputRef = useRef<HTMLInputElement>(null);
@@ -74,6 +76,9 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
   const [cadastralUploading, setCadastralUploading] = useState(false);
   const [selectedDocType, setSelectedDocType] = useState<string>("");
   const [docUploading, setDocUploading] = useState(false);
+  const [dragOver, setDragOver] = useState<DropZoneName | null>(null);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [dragOverIndex, setDragOverIndex] = useState<number | null>(null);
 
   const photos = draft.media.filter(
     (m) => m.type !== "VIDEO_WALKTHROUGH" && m.type !== "CADASTRAL_MAP",
@@ -211,6 +216,35 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
     }
   };
 
+  /**
+   * Reorder a photo within the media list. The first photo is the listing
+   * cover, so dragging a photo to the front makes it the cover. Videos and
+   * the cadastral map keep their relative positions.
+   */
+  const reorderPhotos = (from: number, to: number) => {
+    if (from === to) return;
+    const photoItems = draft.media.filter(
+      (m) => m.type !== "VIDEO_WALKTHROUGH" && m.type !== "CADASTRAL_MAP",
+    );
+    const [moved] = photoItems.splice(from, 1);
+    if (!moved) return;
+    photoItems.splice(to, 0, moved);
+    // Rebuild media in place: swap in the reordered photos while keeping
+    // videos and the cadastral map at their original positions.
+    const nextMedia: DraftMedia[] = [];
+    let photoIdx = 0;
+    for (const m of draft.media) {
+      if (m.type !== "VIDEO_WALKTHROUGH" && m.type !== "CADASTRAL_MAP") {
+        const next = photoItems[photoIdx];
+        photoIdx += 1;
+        if (next) nextMedia.push(next);
+      } else {
+        nextMedia.push(m);
+      }
+    }
+    update({ media: nextMedia });
+  };
+
   const handleDocumentFile = async (files: FileList | null) => {
     const file = files?.[0];
     if (!file || !selectedDocType) return;
@@ -296,6 +330,45 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
     }
   };
 
+  const handleDragOver = (e: DragEvent<HTMLDivElement>, zone: DropZoneName) => {
+    // Only react to file drags (from the OS). Reordering existing photos
+    // drags an element, which has no "Files" type — don't highlight the zone.
+    if (!Array.from(e.dataTransfer.types).includes("Files")) return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = "copy";
+    setDragOver(zone);
+  };
+
+  const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
+    // dragleave also fires when moving between child elements — only clear
+    // once the pointer actually leaves the dropzone itself.
+    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) {
+      setDragOver(null);
+    }
+  };
+
+  const dropFiles = (
+    e: DragEvent<HTMLDivElement>,
+    zone: DropZoneName,
+    onFiles: (files: FileList | null) => void,
+  ) => {
+    e.preventDefault();
+    setDragOver(null);
+    const files = e.dataTransfer?.files ?? null;
+    if (files && files.length > 0) onFiles(files);
+  };
+
+  const handleDocumentDrop = (files: FileList | null) => {
+    if (!files || files.length === 0) return;
+    if (!selectedDocType) {
+      setUploadError(
+        "Select a document type first, then drop or upload the file.",
+      );
+      return;
+    }
+    void handleDocumentFile(files);
+  };
+
   return (
     <div className="flex flex-col gap-md">
       {/* ====================== Photo & Video uploader ====================== */}
@@ -310,7 +383,7 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
           </span>
           {photos.length > 0 ? (
             <span className="mono-stat text-[11px] text-on-surface-variant">
-              First photo = cover
+              First photo = cover · drag photos to reorder
             </span>
           ) : null}
         </div>
@@ -329,7 +402,47 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
           {photos.map((photo, i) => (
             <div
               key={photo.publicId ?? `${photo.url}-${i}`}
-              className="relative"
+              draggable
+              onDragStart={(e) => {
+                setDragIndex(i);
+                setDragOverIndex(null);
+                e.dataTransfer.effectAllowed = "move";
+                // Required for Firefox to initiate the drag.
+                e.dataTransfer.setData("text/plain", photo.url);
+              }}
+              onDragEnd={() => {
+                setDragIndex(null);
+                setDragOverIndex(null);
+              }}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = "move";
+                if (dragOverIndex !== i) setDragOverIndex(i);
+              }}
+              onDragLeave={(e) => {
+                if (
+                  !e.currentTarget.contains(e.relatedTarget as Node | null) &&
+                  dragOverIndex === i
+                ) {
+                  setDragOverIndex(null);
+                }
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                if (dragIndex !== null && dragIndex !== i) {
+                  reorderPhotos(dragIndex, i);
+                }
+                setDragIndex(null);
+                setDragOverIndex(null);
+              }}
+              className={cn(
+                "relative cursor-grab select-none active:cursor-grabbing",
+                dragIndex === i && "opacity-50",
+                dragOverIndex === i &&
+                  dragIndex !== null &&
+                  dragIndex !== i &&
+                  "rounded-xl ring-2 ring-primary",
+              )}
             >
               <div className="relative h-28 w-full overflow-hidden rounded-xl">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -343,6 +456,19 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
                     Cover
                   </span>
                 )}
+                {dragOverIndex === i &&
+                  dragIndex !== null &&
+                  dragIndex !== i && (
+                    <span className="absolute inset-x-0 top-2 mx-auto w-fit rounded bg-primary/90 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                      Drop here
+                    </span>
+                  )}
+                <span
+                  className="absolute bottom-2 left-2 flex h-5 w-5 items-center justify-center rounded-full bg-surface/80 text-on-surface-variant"
+                  title="Drag to reorder"
+                >
+                  <Icon name="drag_indicator" className="text-[14px]" />
+                </span>
                 <Button
                   type="button"
                   variant="ghost"
@@ -423,20 +549,41 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             uploadedVideos.length +
               pending.filter((p) => p.kind === "video").length <
               MAX_VIDEOS) && (
-            <Button
-              type="button"
-              variant="outline"
-              className={cn(DROP, "h-28 border-outline-variant")}
+            <div
+              role="button"
+              tabIndex={0}
+              aria-label="Add photos and videos"
               onClick={() => mediaInputRef.current?.click()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  mediaInputRef.current?.click();
+                }
+              }}
+              onDragOver={(e) => handleDragOver(e, "media")}
+              onDragLeave={handleDragLeave}
+              onDrop={(e) => dropFiles(e, "media", handleMediaFiles)}
+              className={cn(
+                DROP,
+                "h-28 gap-0 border-outline-variant select-none outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                dragOver === "media" &&
+                  "border-primary bg-secondary-container/40 text-primary",
+              )}
             >
               <span className="flex flex-col items-center gap-1 text-center px-1">
                 <Icon name="videocam" className="text-[26px]" />
-                <span className="text-[12px] font-medium leading-tight">Add photos & videos</span>
+                <span className="text-[12px] font-medium leading-tight">
+                  {dragOver === "media"
+                    ? "Drop to upload"
+                    : "Add photos & videos"}
+                </span>
                 <span className="text-[9px] text-on-surface-variant leading-tight">
-                  Images / Videos, max 50 MB
+                  {dragOver === "media"
+                    ? "Release to upload images / videos"
+                    : "Drag & drop or click — images / videos, max 50 MB"}
                 </span>
               </span>
-            </Button>
+            </div>
           )}
         </div>
       </div>
@@ -590,21 +737,37 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             </div>
           </div>
         ) : (
-          <Button
-            type="button"
-            variant="outline"
+          <div
+            role="button"
+            tabIndex={0}
+            aria-label="Upload cadastral map (naksa)"
             onClick={() => cadastralInputRef.current?.click()}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                cadastralInputRef.current?.click();
+              }
+            }}
+            onDragOver={(e) => handleDragOver(e, "cadastral")}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => dropFiles(e, "cadastral", handleCadastralFile)}
             className={cn(
               DROP,
-              "h-auto flex-col gap-1 py-md border-outline-variant",
+              "h-auto flex-col gap-1 py-md border-outline-variant select-none outline-none focus-visible:ring-2 focus-visible:ring-primary",
+              dragOver === "cadastral" &&
+                "border-primary bg-secondary-container/40 text-primary",
             )}
           >
             <Icon name="map" className="text-[28px]" />
             <span className="text-[13px] font-medium">
-              Cadastral map (Naksa)
+              {dragOver === "cadastral"
+                ? "Drop naksa to upload"
+                : "Cadastral map (Naksa)"}
             </span>
             <span className="text-[11px] text-on-surface-variant">
-              PDF / image, max 10MB
+              {dragOver === "cadastral"
+                ? "Release to upload"
+                : "Drag & drop or click — PDF / image, max 10MB"}
             </span>
             {cadastralUploading ? (
               <span className="flex items-center gap-1 text-[12px] text-primary">
@@ -615,7 +778,7 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
                 Uploading…
               </span>
             ) : null}
-          </Button>
+          </div>
         )}
         <div className="flex flex-col gap-xs">
           <Label>
@@ -626,7 +789,8 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
           </Label>
           <p className="text-[11px] text-on-surface-variant">
             Lalpurja, citizenship, tax clearance — reviewed during verification.
-            PDF or image, max 10 MB each.
+            PDF or image, max 10 MB each. Drag & drop a file here or click
+            Upload.
           </p>
 
           <input
@@ -637,7 +801,16 @@ export function StepMediaDocs({ draft, update, uploads }: StepMediaDocsProps) {
             onChange={(e) => handleDocumentFile(e.target.files)}
           />
 
-          <div className="flex min-w-0 items-center gap-2">
+          <div
+            onDragOver={(e) => handleDragOver(e, "documents")}
+            onDragLeave={handleDragLeave}
+            onDrop={(e) => dropFiles(e, "documents", handleDocumentDrop)}
+            className={cn(
+              "flex min-w-0 items-center gap-2 rounded-xl border border-transparent p-1 -m-1 transition-colors",
+              dragOver === "documents" &&
+                "border-dashed border-primary bg-secondary-container/40",
+            )}
+          >
             <div className="min-w-0 flex-1">
               <Select value={selectedDocType} onValueChange={setSelectedDocType}>
                 <SelectTrigger className="w-full min-w-0 truncate text-xs sm:text-sm">
