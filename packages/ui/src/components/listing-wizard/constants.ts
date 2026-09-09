@@ -203,7 +203,7 @@ export const PRICE_UNITS: PriceUnit[] = [
 /** Default "price per" unit for each unit system (the common market rate). */
 export const PRICE_UNIT_DEFAULT: Record<UnitSystem, string> = {
   ROPANI: "aana",
-  BIGHA: "katha",
+  BIGHA: "dhur",
 };
 
 /* ------------------------------- road / facing ------------------------- */

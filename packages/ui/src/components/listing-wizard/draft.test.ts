@@ -239,7 +239,7 @@ assert(
   pricePerUnitFor(oneDhur, "dhur"),
   123456789,
 );
-assert("Default unit for BIGHA land = katha", priceUnitKey(oneDhur), "katha");
+assert("Default unit for BIGHA land = dhur", priceUnitKey(oneDhur), "dhur");
 assert("hasPricingArea true with area", hasPricingArea(oneDhur), true);
 assert(
   "Rates cover every PRICE_UNITS key",
