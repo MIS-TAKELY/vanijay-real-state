@@ -1184,7 +1184,7 @@ export function ListingGallery({
 
           {/* Main Stage */}
           <div
-            className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-surface-container-low/40 p-2 sm:p-6"
+            className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-white p-2 sm:p-6"
             onWheel={(e) => {
               if (lightboxTab === "videos") return;
               e.preventDefault();
@@ -1312,7 +1312,7 @@ export function ListingGallery({
                     transition: isPanning ? "none" : "transform 150ms ease-out",
                   }}
                   className={cn(
-                    "max-h-full max-w-full rounded-md object-contain shadow-xl ring-1 ring-black/5 bg-white",
+                    "max-h-full max-w-full object-contain",
                     fadeInOnLoad,
                   )}
                 />
