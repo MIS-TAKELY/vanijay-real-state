@@ -881,7 +881,7 @@ export function ListingGallery({
             {/* Top Toolbar inside Document Card */}
             <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-3.5 py-2 sm:px-4">
               <div className="flex min-w-0 items-center gap-2">
-                <span className="inline-flex shrink-0 items-center rounded-sm bg-primary/10 px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
+                <span className="inline-flex shrink-0 items-center rounded-sm px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
                   Naksa
                 </span>
                 <span className="truncate text-xs font-semibold text-navy">
@@ -994,28 +994,93 @@ export function ListingGallery({
           role="dialog"
           aria-modal="true"
           aria-label="Media Lightbox Viewer"
-          className="fixed inset-0 z-[200] flex flex-col bg-navy-deep/95 text-surface select-none backdrop-blur-xl animate-in fade-in duration-200"
+          className="fixed inset-0 z-[200] flex flex-col bg-white text-on-surface select-none animate-in fade-in duration-200"
           onClick={(e) => {
             if (e.target === e.currentTarget && zoomScale <= 1) {
               closeLightbox();
             }
           }}
         >
-          {/* Top Bar: Title, Category Badge, Zoom Controls, Actions */}
-          <header className="flex shrink-0 items-center justify-between border-b border-white/10 bg-black/40 px-3.5 py-2.5 backdrop-blur-md sm:px-6">
+          {/* Top Bar: Title, Category Badge / Tabs, Zoom Controls, Actions */}
+          <header className="flex shrink-0 items-center justify-between border-b border-outline-variant/60 bg-white/95 px-3.5 py-2.5 backdrop-blur-md sm:px-6 shadow-2xs">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="inline-flex shrink-0 items-center rounded-sm bg-primary/25 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
-                {lightboxTab === "photos"
-                  ? "Photo"
-                  : lightboxTab === "documents"
-                    ? "Naksa"
-                    : "Video"}
-              </span>
+              {availableTabsCount > 1 ? (
+                <div className="flex items-center gap-1 rounded-md border border-outline-variant/60 bg-surface-container-low p-0.5">
+                  {hasImages && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLightboxTab("photos");
+                        setLightboxIndex(0);
+                        resetZoom();
+                      }}
+                      className={cn(
+                        "flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold transition-colors",
+                        lightboxTab === "photos"
+                          ? "bg-primary text-on-primary shadow-2xs"
+                          : "text-on-surface-variant hover:text-on-surface",
+                      )}
+                    >
+                      <Icon name="photo_library" className="text-[14px]" />
+                      <span className="hidden sm:inline">Photos</span>
+                      <span className="tabular-nums opacity-85">({images.length})</span>
+                    </button>
+                  )}
+                  {hasVideos && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLightboxTab("videos");
+                        setLightboxIndex(0);
+                        resetZoom();
+                      }}
+                      className={cn(
+                        "flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold transition-colors",
+                        lightboxTab === "videos"
+                          ? "bg-primary text-on-primary shadow-2xs"
+                          : "text-on-surface-variant hover:text-on-surface",
+                      )}
+                    >
+                      <Icon name="videocam" className="text-[14px]" />
+                      <span className="hidden sm:inline">Videos</span>
+                      <span className="tabular-nums opacity-85">({videos.length})</span>
+                    </button>
+                  )}
+                  {hasDocs && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLightboxTab("documents");
+                        setLightboxIndex(0);
+                        resetZoom();
+                      }}
+                      className={cn(
+                        "flex items-center gap-1 rounded-sm px-2 py-0.5 text-xs font-semibold transition-colors",
+                        lightboxTab === "documents"
+                          ? "bg-primary text-on-primary shadow-2xs"
+                          : "text-on-surface-variant hover:text-on-surface",
+                      )}
+                    >
+                      <Icon name="map" className="text-[14px]" />
+                      <span className="hidden sm:inline">Naksa</span>
+                      <span className="tabular-nums opacity-85">({cadastralMaps.length})</span>
+                    </button>
+                  )}
+                </div>
+              ) : (
+                <span className="inline-flex shrink-0 items-center rounded-sm bg-primary/10 border border-primary/20 px-2 py-0.5 text-[11px] font-bold uppercase tracking-wider text-primary">
+                  {lightboxTab === "photos"
+                    ? "Photo"
+                    : lightboxTab === "documents"
+                      ? "Naksa"
+                      : "Video"}
+                </span>
+              )}
               <div className="min-w-0">
-                <p className="truncate text-xs font-semibold text-surface sm:text-sm">
+                <p className="truncate text-xs font-semibold text-navy sm:text-sm">
                   {lightboxCurrentMedia.alt || title}
                 </p>
-                <p className="text-[11px] font-medium tabular-nums text-surface-variant/80">
+                <p className="text-[11px] font-medium tabular-nums text-on-surface-variant">
                   {lightboxIndex + 1} of {getLightboxMediaCount()}
                 </p>
               </div>
@@ -1025,19 +1090,19 @@ export function ListingGallery({
             <div className="flex shrink-0 items-center gap-1 sm:gap-2">
               {/* Zoom controls for Photos and Documents */}
               {lightboxTab !== "videos" && (
-                <div className="flex items-center gap-0.5 rounded-md border border-white/10 bg-white/5 p-0.5">
+                <div className="flex items-center gap-0.5 rounded-lg border border-outline-variant/70 bg-surface-container-low/90 p-0.5 shadow-2xs">
                   <button
                     type="button"
                     onClick={handleZoomOut}
                     disabled={zoomScale <= 1}
-                    className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 disabled:opacity-30 sm:h-8 sm:w-8"
+                    className="flex h-7 w-7 items-center justify-center rounded-md text-on-surface transition-all duration-150 hover:bg-white hover:text-navy hover:shadow-xs disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-on-surface sm:h-8 sm:w-8"
                     title="Zoom out (-)"
                     aria-label="Zoom out"
                   >
                     <Icon name="zoom_out" className="text-[18px]" />
                   </button>
 
-                  <span className="min-w-[3rem] text-center text-[11px] font-semibold tabular-nums text-surface/90">
+                  <span className="min-w-[3.25rem] text-center text-[11px] font-semibold tabular-nums text-on-surface">
                     {Math.round(zoomScale * 100)}%
                   </span>
 
@@ -1045,7 +1110,7 @@ export function ListingGallery({
                     type="button"
                     onClick={handleZoomIn}
                     disabled={zoomScale >= 4}
-                    className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 disabled:opacity-30 sm:h-8 sm:w-8"
+                    className="flex h-7 w-7 items-center justify-center rounded-md text-on-surface transition-all duration-150 hover:bg-white hover:text-navy hover:shadow-xs disabled:opacity-30 disabled:hover:bg-transparent disabled:hover:text-on-surface sm:h-8 sm:w-8"
                     title="Zoom in (+)"
                     aria-label="Zoom in"
                   >
@@ -1056,7 +1121,7 @@ export function ListingGallery({
                     <button
                       type="button"
                       onClick={resetZoom}
-                      className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 sm:h-8 sm:w-8"
+                      className="flex h-7 w-7 items-center justify-center rounded-md text-on-surface transition-all duration-150 hover:bg-white hover:text-navy hover:shadow-xs sm:h-8 sm:w-8"
                       title="Reset zoom (0)"
                       aria-label="Reset zoom"
                     >
@@ -1067,7 +1132,7 @@ export function ListingGallery({
                   <button
                     type="button"
                     onClick={handleRotate}
-                    className="flex h-7 w-7 items-center justify-center rounded-sm text-surface/90 transition-colors hover:bg-white/15 sm:h-8 sm:w-8"
+                    className="flex h-7 w-7 items-center justify-center rounded-md text-on-surface transition-all duration-150 hover:bg-white hover:text-navy hover:shadow-xs sm:h-8 sm:w-8"
                     title="Rotate 90° (r)"
                     aria-label="Rotate"
                   >
@@ -1082,7 +1147,7 @@ export function ListingGallery({
                   href={lightboxCurrentMedia.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hidden h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-white/5 text-surface transition-colors hover:bg-white/15 sm:flex"
+                  className="hidden h-8 w-8 items-center justify-center rounded-lg border border-outline-variant/70 bg-surface-container-low/90 text-on-surface transition-all duration-150 hover:bg-white hover:text-navy hover:shadow-xs sm:flex"
                   title="Open original file"
                   aria-label="Open original"
                 >
@@ -1094,7 +1159,7 @@ export function ListingGallery({
               <button
                 type="button"
                 onClick={toggleFullscreen}
-                className="hidden h-8 w-8 items-center justify-center rounded-md border border-white/10 bg-white/5 text-surface transition-colors hover:bg-white/15 sm:flex"
+                className="hidden h-8 w-8 items-center justify-center rounded-lg border border-outline-variant/70 bg-surface-container-low/90 text-on-surface transition-all duration-150 hover:bg-white hover:text-navy hover:shadow-xs sm:flex"
                 title={isFullscreen ? "Exit fullscreen" : "Enter fullscreen (f)"}
                 aria-label="Toggle fullscreen"
               >
@@ -1105,22 +1170,21 @@ export function ListingGallery({
               </button>
 
               {/* Close Button */}
-              <Button
+              <button
                 type="button"
-                variant="ghost"
-                size="icon"
                 onClick={closeLightbox}
-                className="h-8 w-8 rounded-md bg-white/10 text-white hover:bg-white/20 active:scale-95"
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-outline-variant/70 bg-surface-container-low/90 text-on-surface transition-all duration-150 hover:border-error/30 hover:bg-error/10 hover:text-error active:scale-95 sm:h-8 sm:w-8"
                 aria-label="Close viewer (Esc)"
+                title="Close (Esc)"
               >
                 <Icon name="close" className="text-[20px]" />
-              </Button>
+              </button>
             </div>
           </header>
 
           {/* Main Stage */}
           <div
-            className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden p-2 sm:p-4"
+            className="relative flex min-h-0 flex-1 items-center justify-center overflow-hidden bg-surface-container-low/40 p-2 sm:p-6"
             onWheel={(e) => {
               if (lightboxTab === "videos") return;
               e.preventDefault();
@@ -1209,10 +1273,10 @@ export function ListingGallery({
                   e.stopPropagation();
                   prevLightboxItem();
                 }}
-                className="absolute left-3 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white shadow-xl backdrop-blur-md transition-all duration-150 hover:bg-black/85 hover:scale-105 active:scale-95 sm:left-6 sm:h-13 sm:w-13"
+                className="absolute left-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant/70 bg-white/95 text-navy shadow-md backdrop-blur-md transition-all duration-150 hover:bg-white hover:border-primary/40 hover:scale-105 hover:shadow-lg active:scale-95 sm:left-6 sm:h-12 sm:w-12"
                 aria-label="Previous item"
               >
-                <Icon name="chevron_left" className="text-[26px] sm:text-[30px]" />
+                <Icon name="chevron_left" className="text-[26px] sm:text-[28px]" />
               </button>
             )}
 
@@ -1225,7 +1289,7 @@ export function ListingGallery({
               )}
             >
               {lightboxTab === "videos" ? (
-                <div className="h-full max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-xl bg-black shadow-2xl">
+                <div className="h-full max-h-[85vh] w-full max-w-4xl overflow-hidden rounded-xl bg-black shadow-xl border border-outline-variant/40">
                   <ListingVideo
                     url={lightboxCurrentMedia.url}
                     title={lightboxCurrentMedia.alt}
@@ -1248,7 +1312,7 @@ export function ListingGallery({
                     transition: isPanning ? "none" : "transform 150ms ease-out",
                   }}
                   className={cn(
-                    "max-h-full max-w-full rounded-md object-contain shadow-2xl",
+                    "max-h-full max-w-full rounded-md object-contain shadow-xl ring-1 ring-black/5 bg-white",
                     fadeInOnLoad,
                   )}
                 />
@@ -1263,20 +1327,20 @@ export function ListingGallery({
                   e.stopPropagation();
                   nextLightboxItem();
                 }}
-                className="absolute right-3 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-black/60 text-white shadow-xl backdrop-blur-md transition-all duration-150 hover:bg-black/85 hover:scale-105 active:scale-95 sm:right-6 sm:h-13 sm:w-13"
+                className="absolute right-3 z-20 flex h-11 w-11 items-center justify-center rounded-full border border-outline-variant/70 bg-white/95 text-navy shadow-md backdrop-blur-md transition-all duration-150 hover:bg-white hover:border-primary/40 hover:scale-105 hover:shadow-lg active:scale-95 sm:right-6 sm:h-12 sm:w-12"
                 aria-label="Next item"
               >
-                <Icon name="chevron_right" className="text-[26px] sm:text-[30px]" />
+                <Icon name="chevron_right" className="text-[26px] sm:text-[28px]" />
               </button>
             )}
           </div>
 
           {/* Bottom Filmstrip Thumbnails */}
           {getLightboxMediaCount() > 1 && (
-            <footer className="border-t border-white/10 bg-black/50 px-4 py-2.5 backdrop-blur-md">
+            <footer className="border-t border-outline-variant/60 bg-white/95 px-4 py-2.5 backdrop-blur-md shadow-2xs">
               <div
                 ref={lightboxThumbStripRef}
-                className="no-scrollbar mx-auto flex max-w-5xl items-center gap-2 overflow-x-auto py-1"
+                className="no-scrollbar mx-auto flex max-w-5xl items-center gap-2.5 overflow-x-auto py-1"
                 aria-label="Lightbox thumbnails filmstrip"
               >
                 {(lightboxTab === "photos"
@@ -1296,11 +1360,11 @@ export function ListingGallery({
                         setLightboxIndex(idx);
                       }}
                       className={cn(
-                        "relative aspect-[4/3] h-14 shrink-0 overflow-hidden rounded-sm bg-black/40 transition-all duration-150",
-                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary",
+                        "relative aspect-[4/3] h-14 shrink-0 overflow-hidden rounded-md border transition-all duration-150",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40",
                         isActive
-                          ? "ring-2 ring-primary/80 opacity-100 scale-105 shadow-md"
-                          : "opacity-55 hover:opacity-100",
+                          ? "border-primary ring-2 ring-primary/80 ring-offset-2 ring-offset-white opacity-100 scale-105 shadow-sm"
+                          : "border-outline-variant/70 bg-surface-container opacity-60 hover:opacity-100 hover:border-primary/40",
                       )}
                       aria-label={`Go to item ${idx + 1}`}
                       aria-pressed={isActive}

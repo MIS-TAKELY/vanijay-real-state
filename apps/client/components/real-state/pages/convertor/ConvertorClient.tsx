@@ -498,20 +498,35 @@ function resolvePlacement(key: UnitKey): {
  *
  * `initialFrom`/`initialTo` pre-set the pair for embedded use on programmatic
  * conversion pages (/convertor/{from}-to-{to}); defaults match the hub tool.
+ * `initialSqFt`/`initialTotalPrice` pre-fill the area and selling price when
+ * the converter is embedded on listing pages, so buyers can price-check any
+ * fraction of the plot without retyping the listing's figures.
  */
 export function ConvertorClient({
   initialFrom = "aana",
   initialTo = "sqft",
+  initialSqFt,
+  initialTotalPrice,
 }: {
   initialFrom?: UnitKey;
   initialTo?: UnitKey;
+  /** Pre-fill every field with this exact area (sq ft) instead of 1 unit. */
+  initialSqFt?: number;
+  /** Pre-fill the total selling price (NPR) alongside `initialSqFt`. */
+  initialTotalPrice?: number;
 }) {
-  const initialBaseSqFt = convertLand(1, initialFrom, "sqft");
+  const initialAreaSqFt =
+    typeof initialSqFt === "number" &&
+    Number.isFinite(initialSqFt) &&
+    initialSqFt > 0
+      ? initialSqFt
+      : null;
+  const initialBaseSqFt = initialAreaSqFt ?? convertLand(1, initialFrom, "sqft");
   const initialPlacement = resolvePlacement(initialFrom);
 
   const [toUnit, setToUnit] = useState<UnitKey>(initialTo);
   const [toValue, setToValue] = useState(
-    formatLandNumber(convertLand(1, initialFrom, initialTo)),
+    formatLandNumber(convertLand(initialBaseSqFt, "sqft", initialTo)),
   );
 
   // Every unit on the FROM side — raw string values as typed.
@@ -541,8 +556,22 @@ export function ConvertorClient({
   // Selling price. The FROM side stores the TOTAL price for the whole
   // land; the TO side shows that same rate expressed per toUnit. Both are
   // editable — editing either keeps the other in sync.
-  const [priceFrom, setPriceFrom] = useState("");
-  const [priceTo, setPriceTo] = useState("");
+  const initialPrice =
+    typeof initialTotalPrice === "number" &&
+    Number.isFinite(initialTotalPrice) &&
+    initialTotalPrice > 0
+      ? initialTotalPrice
+      : null;
+  const [priceFrom, setPriceFrom] = useState(
+    initialPrice == null ? "" : formatMoney(initialPrice),
+  );
+  const [priceTo, setPriceTo] = useState(
+    initialPrice == null
+      ? ""
+      : formatMoney(
+          (initialPrice / initialBaseSqFt) * convertLand(1, initialTo, "sqft"),
+        ),
+  );
 
   /** Sq ft of one Nepali system's parts only (avoids double counting). */
   const systemSqFt = (system: UnitSystem): number => {

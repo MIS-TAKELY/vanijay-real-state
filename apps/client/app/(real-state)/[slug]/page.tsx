@@ -7,6 +7,7 @@ import { ListingDescription } from "components/real-state/pages/listing/ListingD
 import { ListingGallery } from "components/real-state/pages/listing/ListingGallery";
 import { ListingLocationCard } from "components/real-state/pages/listing/ListingLocationCard";
 import { MobilePriceBar } from "components/real-state/pages/listing/MobilePriceBar";
+import { ConvertorClient } from "components/real-state/pages/convertor/ConvertorClient";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
 import { ApiError } from "lib/api/core/client";
 import { fetchPropertyByGraphql } from "lib/api/services/properties";
@@ -854,6 +855,50 @@ export default async function ListingDetailPage({ params }: PageProps) {
 
         {/* Similar Properties Section */}
         <SimilarProperties propertyId={property.id} />
+
+        {/* Land unit converter — pre-filled with this plot, sits above the
+            site footer so buyers can convert the listing's area into any
+            Nepali or international unit and price any fraction of it. */}
+        {hasLand && (
+          <section aria-label="Land unit converter" className="mt-2 md:mt-4">
+            <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+              <div className="min-w-0">
+                <p className="mb-1.5 flex items-center gap-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-gold-deep">
+                  <span aria-hidden="true" className="h-px w-7 bg-gold" />
+                  Free tool
+                </p>
+                <h2 className="font-headline-md text-lg font-semibold tracking-tight text-navy sm:text-xl">
+                  Land unit converter
+                </h2>
+                <p className="mt-1 max-w-xl text-sm leading-relaxed text-on-surface-variant">
+                  This listing&apos;s area and asking price are loaded below —
+                  convert the plot into Ropani, Aana, Paisa, Daam, Bigha,
+                  Katha, Dhur, sq. ft and more, or price any fraction of it.
+                </p>
+              </div>
+              <Link
+                href="/convertor"
+                className="inline-flex shrink-0 items-center gap-1 text-sm font-semibold text-gold-deep underline-offset-4 transition-colors hover:text-navy hover:underline"
+              >
+                Full converter
+                <Icon name="arrow_forward" className="text-data-table" />
+              </Link>
+            </div>
+            <ConvertorClient
+              initialFrom={
+                property.landArea?.bigha ||
+                property.landArea?.katha ||
+                property.landArea?.dhur
+                  ? "bigha"
+                  : "ropani"
+              }
+              initialSqFt={property.landArea?.totalSqFt}
+              initialTotalPrice={
+                property.askingPrice > 0 ? property.askingPrice : undefined
+              }
+            />
+          </section>
+        )}
       </main>
 
       {/* Mobile sticky price + primary actions */}
