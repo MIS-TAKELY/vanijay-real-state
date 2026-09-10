@@ -98,15 +98,15 @@ export function getSocialOgImageUrl(src: string | undefined): string | undefined
     }
     const assetPath = parts.slice(assetPathIndex).join("/");
     const secureBase = base.replace(/^http:/, "https:");
-    return `${secureBase}c_fill,w_1200,h_630,f_jpg,q_auto:eco/${assetPath}`;
+    return `${secureBase}c_fill,g_auto,w_1000,h_1000,f_jpg,q_auto:eco/${assetPath}`;
   }
 
   try {
     const url = new URL(src);
     if (url.hostname === "images.unsplash.com") {
       url.protocol = "https:";
-      url.searchParams.set("w", "1200");
-      url.searchParams.set("h", "630");
+      url.searchParams.set("w", "1000");
+      url.searchParams.set("h", "1000");
       url.searchParams.set("fit", "crop");
       url.searchParams.set("fm", "jpg");
       url.searchParams.set("q", "75");
