@@ -25,6 +25,7 @@ import {
   type ApiPropertyMedia,
 } from "lib/api/services/properties/types";
 import { buildHreflang, ogLocaleFor } from "lib/i18n";
+import { getSocialOgImageUrl } from "lib/image-url";
 import { SITE_URL } from "lib/site";
 import type { Metadata } from "next";
 import Link from "next/link";
@@ -53,9 +54,6 @@ export async function generateMetadata({
   try {
     const property = await fetchPropertyByGraphql(slug);
     const plainDesc = stripHtml(property.description);
-    const ogImage = (property.media ?? []).find(
-      (m) => !m.type || m.type === "IMAGE",
-    )?.url;
     const location = formatLocation(property.location);
     const subType = labelEnum(property.subCategory, TYPE_LABELS);
     const fallbackDesc = `${subType} for sale in ${location}. Price: ${formatNPR(property.askingPrice)}. Field-verified, cadastral-cleared.`;
@@ -65,6 +63,24 @@ export async function generateMetadata({
         ? `${property.title} in ${location}`
         : property.title;
 
+    // Pick best image for social preview: prefer marked cover image, then first image.
+    // getSocialOgImageUrl resizes to 1200x630 and compresses to <300KB JPEG for WhatsApp/FB crawlers.
+    const sortedMedia = [...(property.media ?? [])].sort(
+      (a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0),
+    );
+    const imageMedia = sortedMedia.filter((m) => !m.type || m.type === "IMAGE");
+    const rawOgImage =
+      imageMedia.find((m) => m.isCover)?.url ?? imageMedia[0]?.url;
+    const ogImage =
+      getSocialOgImageUrl(rawOgImage) ?? `${SITE_URL}/og-home.jpg`;
+
+    // Social card description: Punchy price + location (e.g. "NPR 36,050,000 — Bajraha, Sunsari")
+    const priceFormatted = formatNPR(property.askingPrice);
+    const socialDescription =
+      property.askingPrice && property.askingPrice > 0
+        ? `${priceFormatted} — ${location}`
+        : `${subType} for sale in ${location}`;
+
     return {
       title,
       description,
@@ -73,33 +89,31 @@ export async function generateMetadata({
         languages: buildHreflang(`/${slug}`),
       },
       openGraph: {
-        title: property.title,
-        description: truncateMetaDescription(
-          plainDesc ||
-            `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
-        ),
-        images: ogImage
-          ? [
-              {
-                url: ogImage,
-                width: 1200,
-                height: 630,
-                alt: `${property.title} — ${location}`,
-              },
-            ]
-          : undefined,
+        title: {
+          absolute: property.title,
+        },
+        description: socialDescription,
+        images: [
+          {
+            url: ogImage,
+            secureUrl: ogImage,
+            width: 1200,
+            height: 630,
+            type: "image/jpeg",
+            alt: `${property.title} — ${location}`,
+          },
+        ],
         type: "website",
         siteName: "MALPOTH",
         ...ogLocaleFor(),
       },
       twitter: {
         card: "summary_large_image",
-        title: property.title,
-        description: truncateMetaDescription(
-          plainDesc ||
-            `${formatNPR(property.askingPrice)} — ${location}. Verified by MALPOTH.`,
-        ),
-        images: ogImage ? [ogImage] : undefined,
+        title: {
+          absolute: property.title,
+        },
+        description: socialDescription,
+        images: [ogImage],
       },
       robots: {
         index: true,

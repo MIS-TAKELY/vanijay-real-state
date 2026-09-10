@@ -8,6 +8,8 @@
  *   /image/upload/{transform-chain}/v{version}/{path}
  */
 
+import { SITE_URL } from "./site";
+
 const CLOUDINARY_BASE =
   /^(https?:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(.*)$/;
 
@@ -60,6 +62,72 @@ export function optimizeImageUrl(src: string | undefined, width: number): string
     }
     return src;
   } catch {
+    return src;
+  }
+}
+
+/**
+ * Generates an optimized OpenGraph / social share image URL (< 300KB)
+ * formatted specifically for WhatsApp, Facebook, Twitter, and LinkedIn crawlers.
+ *
+ * WhatsApp crawler has a hard limit: images > 300KB are completely dropped,
+ * showing only a text card without any image thumbnail.
+ *
+ * This function:
+ * 1. Resizes to standard 1200x630 (1.91:1) OpenGraph dimensions with center crop.
+ * 2. Forces JPEG (`f_jpg`), avoiding uncompressed PNGs or crawler-incompatible formats.
+ * 3. Applies eco compression (`q_auto:eco`) ensuring payload stays well under 300KB (~120-180KB).
+ * 4. Ensures the URL is absolute HTTPS (using SITE_URL for relative paths).
+ */
+export function getSocialOgImageUrl(src: string | undefined): string | undefined {
+  if (!src) return undefined;
+
+  const cloudinary = src.match(CLOUDINARY_BASE);
+  if (cloudinary && cloudinary[1]) {
+    const base = cloudinary[1];
+    const rest = cloudinary[2] ?? "";
+    const parts = rest.split("/");
+    let assetPathIndex = 0;
+    const firstSegment = parts[0];
+    if (
+      firstSegment &&
+      (firstSegment.includes(",") ||
+        /^(?:[a-z]{1,3}_|dpr_|fl_|pg_)/i.test(firstSegment))
+    ) {
+      assetPathIndex = 1;
+    }
+    const assetPath = parts.slice(assetPathIndex).join("/");
+    const secureBase = base.replace(/^http:/, "https:");
+    return `${secureBase}c_fill,w_1200,h_630,f_jpg,q_auto:eco/${assetPath}`;
+  }
+
+  try {
+    const url = new URL(src);
+    if (url.hostname === "images.unsplash.com") {
+      url.protocol = "https:";
+      url.searchParams.set("w", "1200");
+      url.searchParams.set("h", "630");
+      url.searchParams.set("fit", "crop");
+      url.searchParams.set("fm", "jpg");
+      url.searchParams.set("q", "75");
+      return url.toString();
+    }
+    if (url.protocol === "http:") {
+      url.protocol = "https:";
+      return url.toString();
+    }
+    if (url.pathname === "/og-home.png" || url.pathname.endsWith("/og-home.png")) {
+      url.pathname = url.pathname.replace(/\/og-home\.png$/, "/og-home.jpg");
+      return url.toString();
+    }
+    return src;
+  } catch {
+    if (src === "/og-home.png" || src.endsWith("/og-home.png")) {
+      return `${SITE_URL}/og-home.jpg`;
+    }
+    if (src.startsWith("/")) {
+      return `${SITE_URL}${src}`;
+    }
     return src;
   }
 }
