@@ -719,12 +719,14 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 property.location && "sm:grid-cols-2",
               )}
             >
-              <ListingLocationCard
-                location={property.location}
-                title={property.title}
-                compact
-                mapHeight={105}
-              />
+              <div className="hidden sm:block">
+                <ListingLocationCard
+                  location={property.location}
+                  title={property.title}
+                  compact
+                  mapHeight={105}
+                />
+              </div>
 
               <div className="hidden sm:block">
                 <ListingDecisionCard

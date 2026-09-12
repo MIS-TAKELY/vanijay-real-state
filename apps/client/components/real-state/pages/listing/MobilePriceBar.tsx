@@ -13,7 +13,6 @@ import {
 import { cn } from "@repo/ui/lib/utils";
 import { AddToCartButton } from "components/real-state/common/AddToCartButton";
 import { CallSellerButton } from "components/real-state/common/CallSellerButton";
-import { SaveToFavoritesButton } from "components/real-state/common/SaveToFavoritesButton";
 import { useMemo, useState } from "react";
 import { useCompareStore } from "store/compare";
 
@@ -117,12 +116,6 @@ export function MobilePriceBar({
           <AddToCartButton
             propertyId={propertyId}
             title={title}
-            variant="outline"
-            compact
-            className="h-10 shrink-0 rounded-sm border-outline-variant px-3 text-xs font-semibold"
-          />
-          <SaveToFavoritesButton
-            propertyId={propertyId}
             variant="outline"
             compact
             className="h-10 shrink-0 rounded-sm border-outline-variant px-3 text-xs font-semibold"

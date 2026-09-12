@@ -478,7 +478,7 @@ export function ListingGallery({
   return (
     <section className="@container min-w-0">
       {/* Header with Title & Media Tabs */}
-      <header className="mb-2 flex min-w-0 flex-col gap-2.5 @min-[36rem]:mb-3 @min-[36rem]:flex-row @min-[36rem]:items-center @min-[36rem]:justify-between @min-[36rem]:gap-3">
+      <header className="mb-2 hidden sm:flex min-w-0 flex-col gap-2.5 @min-[36rem]:mb-3 @min-[36rem]:flex-row @min-[36rem]:items-center @min-[36rem]:justify-between @min-[36rem]:gap-3">
         <div className="flex min-w-0 shrink-0 items-center justify-between gap-2 @min-[36rem]:justify-start">
           <h2 className="font-headline-md text-base font-semibold tracking-tight text-navy @min-[22rem]:text-lg">
             <span className="@max-[19.9rem]:hidden">Media &amp; Documents</span>
@@ -687,6 +687,73 @@ export function ListingGallery({
               ))}
             </div>
 
+            {/* Mobile-only media type pill switcher — overlaid on image top-right */}
+            {availableTabsCount > 1 && (
+              <div
+                role="tablist"
+                aria-label="Media type"
+                className="absolute right-2.5 top-2.5 z-10 flex items-center gap-1 sm:hidden"
+              >
+                {hasImages && (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === "photos"}
+                    aria-controls="panel-photos"
+                    onClick={(e) => { e.stopPropagation(); setActiveTab("photos"); }}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                      activeTab === "photos"
+                        ? "bg-white text-navy shadow-sm"
+                        : "bg-black/50 text-white",
+                    )}
+                    aria-label={`Photos (${images.length})`}
+                  >
+                    <Icon name="photo_library" className="text-[13px]" aria-hidden />
+                    <span>{images.length}</span>
+                  </button>
+                )}
+                {hasVideos && (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === "videos"}
+                    aria-controls="panel-videos"
+                    onClick={(e) => { e.stopPropagation(); setActiveTab("videos"); }}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                      activeTab === "videos"
+                        ? "bg-white text-navy shadow-sm"
+                        : "bg-black/50 text-white",
+                    )}
+                    aria-label={`Videos (${videos.length})`}
+                  >
+                    <Icon name="videocam" className="text-[13px]" aria-hidden />
+                    <span>{videos.length}</span>
+                  </button>
+                )}
+                {hasDocs && (
+                  <button
+                    type="button"
+                    role="tab"
+                    aria-selected={activeTab === "documents"}
+                    aria-controls="panel-documents"
+                    onClick={(e) => { e.stopPropagation(); setActiveTab("documents"); }}
+                    className={cn(
+                      "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                      activeTab === "documents"
+                        ? "bg-white text-navy shadow-sm"
+                        : "bg-black/50 text-white",
+                    )}
+                    aria-label={`Docs (${cadastralMaps.length})`}
+                  >
+                    <Icon name="map" className="text-[13px]" aria-hidden />
+                    <span>{cadastralMaps.length}</span>
+                  </button>
+                )}
+              </div>
+            )}
+
             {/* Counter Badge */}
             <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end p-3">
               <span className="rounded-sm bg-black/65 px-2.5 py-1 text-[11px] font-semibold tabular-nums text-white backdrop-blur-md">
@@ -720,7 +787,7 @@ export function ListingGallery({
             <button
               type="button"
               onClick={() => openLightbox("photos", activeImageIndex)}
-              className="absolute right-2.5 top-2.5 flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:scale-105 hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
+              className="absolute right-2.5 top-2.5 hidden sm:flex h-9 w-9 items-center justify-center rounded-sm bg-surface/95 text-on-surface shadow-md backdrop-blur-sm transition-all duration-150 hover:scale-105 hover:bg-surface active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 sm:h-10 sm:w-10"
               aria-label="Open fullscreen gallery"
               title="Open full view"
             >
@@ -783,7 +850,64 @@ export function ListingGallery({
           {/* Video player + navigation stacked vertically */}
           <div className="flex min-w-0 flex-1 flex-col gap-2">
             {/* aspect-video gives the player a proper 16:9 height so ListingVideo renders correctly */}
-            <div className="aspect-video w-full overflow-hidden rounded-sm border border-outline-variant bg-black">
+            <div className="relative aspect-video w-full overflow-hidden rounded-sm border border-outline-variant bg-black">
+              {/* Mobile-only frosted pill switcher — overlaid top-right */}
+              {availableTabsCount > 1 && (
+                <div
+                  role="tablist"
+                  aria-label="Media type"
+                  className="absolute right-2.5 top-2.5 z-10 flex items-center gap-1 sm:hidden"
+                >
+                  {hasImages && (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === "photos"}
+                      onClick={(e) => { e.stopPropagation(); setActiveTab("photos"); }}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                        activeTab === "photos" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                      )}
+                      aria-label={`Photos (${images.length})`}
+                    >
+                      <Icon name="photo_library" className="text-[13px]" aria-hidden />
+                      <span>{images.length}</span>
+                    </button>
+                  )}
+                  {hasVideos && (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === "videos"}
+                      onClick={(e) => { e.stopPropagation(); setActiveTab("videos"); }}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                        activeTab === "videos" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                      )}
+                      aria-label={`Videos (${videos.length})`}
+                    >
+                      <Icon name="videocam" className="text-[13px]" aria-hidden />
+                      <span>{videos.length}</span>
+                    </button>
+                  )}
+                  {hasDocs && (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === "documents"}
+                      onClick={(e) => { e.stopPropagation(); setActiveTab("documents"); }}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                        activeTab === "documents" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                      )}
+                      aria-label={`Docs (${cadastralMaps.length})`}
+                    >
+                      <Icon name="map" className="text-[13px]" aria-hidden />
+                      <span>{cadastralMaps.length}</span>
+                    </button>
+                  )}
+                </div>
+              )}
               <ListingVideo
                 url={activeVideo.url}
                 title={activeVideo.altText ?? `${title} — video walkthrough`}
@@ -872,37 +996,67 @@ export function ListingGallery({
           )}
 
           <div className="min-w-0 flex-1 overflow-hidden rounded-sm">
-            {/* Top Toolbar inside Document Card */}
-            <div className="flex items-center justify-between gap-3 border-b border-outline-variant px-3.5 py-2 sm:px-4">
-              <div className="flex min-w-0 items-center gap-2">
-                <span className="inline-flex shrink-0 items-center rounded-sm px-2 py-0.5 text-[11px] font-bold uppercase tracking-[0.08em] text-primary">
-                  Naksa
-                </span>
-                <span className="truncate text-xs font-semibold text-navy">
-                  Cadastral Map (Parcel Record)
-                </span>
-              </div>
-              <div className="flex shrink-0 items-center gap-2">
-                {cadastralMaps.length > 1 && (
-                  <span className="text-xs font-medium tabular-nums text-on-surface-variant">
-                    {activeDocIndex + 1} / {cadastralMaps.length}
-                  </span>
-                )}
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => openLightbox("documents", activeDocIndex)}
-                  className="h-7 gap-1 px-2 text-xs font-medium text-navy hover:border-primary hover:text-primary"
-                >
-                  <Icon name="zoom_in" className="text-[16px]" />
-                  <span>Inspect &amp; Zoom</span>
-                </Button>
-              </div>
-            </div>
+
 
             {/* ── Scroll-snap cadastral map carousel ── */}
             <div className="relative aspect-[4/3] w-full select-none overflow-hidden sm:aspect-[16/11]">
+              {/* Mobile-only frosted pill switcher — overlaid top-right */}
+              {availableTabsCount > 1 && (
+                <div
+                  role="tablist"
+                  aria-label="Media type"
+                  className="absolute right-2.5 top-2.5 z-10 flex items-center gap-1 sm:hidden"
+                >
+                  {hasImages && (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === "photos"}
+                      onClick={(e) => { e.stopPropagation(); setActiveTab("photos"); }}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                        activeTab === "photos" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                      )}
+                      aria-label={`Photos (${images.length})`}
+                    >
+                      <Icon name="photo_library" className="text-[13px]" aria-hidden />
+                      <span>{images.length}</span>
+                    </button>
+                  )}
+                  {hasVideos && (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === "videos"}
+                      onClick={(e) => { e.stopPropagation(); setActiveTab("videos"); }}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                        activeTab === "videos" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                      )}
+                      aria-label={`Videos (${videos.length})`}
+                    >
+                      <Icon name="videocam" className="text-[13px]" aria-hidden />
+                      <span>{videos.length}</span>
+                    </button>
+                  )}
+                  {hasDocs && (
+                    <button
+                      type="button"
+                      role="tab"
+                      aria-selected={activeTab === "documents"}
+                      onClick={(e) => { e.stopPropagation(); setActiveTab("documents"); }}
+                      className={cn(
+                        "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
+                        activeTab === "documents" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                      )}
+                      aria-label={`Docs (${cadastralMaps.length})`}
+                    >
+                      <Icon name="map" className="text-[13px]" aria-hidden />
+                      <span>{cadastralMaps.length}</span>
+                    </button>
+                  )}
+                </div>
+              )}
               {/* Native scroll-snap track — each map is one full-width slide */}
               <div
                 ref={docScrollRef}
