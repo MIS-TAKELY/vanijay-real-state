@@ -6,6 +6,7 @@ import { type SyntheticEvent, useCallback, useEffect, useRef, useState } from "r
 import { createPortal } from "react-dom";
 import { ListingVideo } from "./ListingVideo";
 import { VideoPoster } from "./VideoPoster";
+import Image from "next/image";
 
 export type GalleryImage = {
   url: string;
@@ -40,8 +41,7 @@ export function ListingGallery({
   videos = [],
   cadastralMaps = [],
   title,
-  fallbackGradient,
-}: ListingGalleryProps) {
+  fallbackGradient}: ListingGalleryProps) {
   const hasImages = images.length > 0;
   const hasVideos = videos.length > 0;
   const hasDocs = cadastralMaps.length > 0;
@@ -321,8 +321,7 @@ export function ListingGallery({
     handleZoomOut,
     resetZoom,
     handleRotate,
-    toggleFullscreen,
-  ]);
+    toggleFullscreen]);
 
   // Lock body scroll cleanup on unmount
   useEffect(() => {
@@ -355,8 +354,7 @@ export function ListingGallery({
       if (leftDiff < 0 || leftDiff + aRect.width > cRect.width) {
         strip.scrollTo({
           left: strip.scrollLeft + leftDiff - cRect.width / 2 + aRect.width / 2,
-          behavior: "smooth",
-        });
+          behavior: "smooth"});
       }
     }
     if (strip.scrollHeight > strip.clientHeight) {
@@ -364,8 +362,7 @@ export function ListingGallery({
       if (topDiff < 0 || topDiff + aRect.height > cRect.height) {
         strip.scrollTo({
           top: strip.scrollTop + topDiff - cRect.height / 2 + aRect.height / 2,
-          behavior: "smooth",
-        });
+          behavior: "smooth"});
       }
     }
   }, [activeImageIndex, activeDocIndex, activeTab]);
@@ -410,8 +407,7 @@ export function ListingGallery({
         container.scrollTo({
           left:
             container.scrollLeft + leftDiff - cRect.width / 2 + aRect.width / 2,
-          behavior: "smooth",
-        });
+          behavior: "smooth"});
       }
     }
   }, [lightboxIndex, lightboxOpen, lightboxTab]);
@@ -460,24 +456,21 @@ export function ListingGallery({
       return {
         url: item?.url || "",
         alt: item?.altText || `${title} - Photo ${lightboxIndex + 1}`,
-        type: "photo" as const,
-      };
+        type: "photo" as const};
     }
     if (lightboxTab === "documents") {
       const item = cadastralMaps[lightboxIndex];
       return {
         url: item?.url || "",
         alt: item?.altText || `Naksa (Cadastral Map) ${lightboxIndex + 1}`,
-        type: "document" as const,
-      };
+        type: "document" as const};
     }
     if (lightboxTab === "videos") {
       const item = videos[lightboxIndex];
       return {
         url: item?.url || "",
         alt: item?.altText || `Video walkthrough ${lightboxIndex + 1}`,
-        type: "video" as const,
-      };
+        type: "video" as const};
     }
     return { url: "", alt: "", type: "photo" as const };
   })();
@@ -637,14 +630,14 @@ export function ListingGallery({
                     aria-label={`View photo ${idx + 1}`}
                     aria-pressed={isActive}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={image.url}
                       alt=""
-                      draggable={false}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onLoad={markImageLoaded}
+                      width={180}
+                      height={135}
                       className={cn("absolute inset-0 size-full object-cover", fadeInOnLoad)}
+                      onLoad={markImageLoaded}
+                      draggable={false}
                     />
                   </button>
                 );
@@ -675,19 +668,20 @@ export function ListingGallery({
                     }
                   }}
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={image.url}
                     alt={image.altText ?? `${title} - photo ${idx + 1}`}
-                    draggable={false}
-                    loading={idx === 0 ? "eager" : "lazy"}
-                    decoding="async"
-                    onContextMenu={(e) => e.preventDefault()}
-                    onLoad={markImageLoaded}
+                    width={1920}
+                    height={1280}
                     className={cn(
                       "absolute inset-0 size-full object-cover",
                       fadeInOnLoad,
                     )}
+                    loading={idx === 0 ? "eager" : "lazy"}
+                    decoding="async"
+                    onLoad={markImageLoaded}
+                    draggable={false}
+                    onContextMenu={(e) => e.preventDefault()}
                   />
                 </div>
               ))}
@@ -862,14 +856,14 @@ export function ListingGallery({
                     aria-label={`View cadastral map ${idx + 1}`}
                     aria-pressed={isActive}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={map.url}
                       alt=""
-                      draggable={false}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onLoad={markImageLoaded}
+                      width={180}
+                      height={135}
                       className={cn("h-full w-full object-contain", fadeInOnLoad)}
+                      onLoad={markImageLoaded}
+                      draggable={false}
                     />
                   </button>
                 );
@@ -926,18 +920,19 @@ export function ListingGallery({
                       if (activeDocIndex === idx) openLightbox("documents", idx);
                     }}
                   >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={map.url}
                       alt={map.altText ?? "Naksa (Cadastral Map)"}
-                      draggable={false}
-                      loading={idx === 0 ? "eager" : "lazy"}
-                      onContextMenu={(e) => e.preventDefault()}
-                      onLoad={markImageLoaded}
+                      width={1920}
+                      height={1280}
                       className={cn(
                         "h-full w-full object-contain transition-transform duration-200 group-hover:scale-[1.015]",
                         fadeInOnLoad,
                       )}
+                      loading={idx === 0 ? "eager" : "lazy"}
+                      onLoad={markImageLoaded}
+                      onContextMenu={(e) => e.preventDefault()}
+                      draggable={false}
                     />
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 transition-opacity duration-150 group-hover:opacity-100">
                       <div className="pointer-events-none flex items-center gap-1.5 rounded-sm bg-surface/90 px-3 py-1.5 text-xs font-semibold text-navy shadow-sm backdrop-blur-sm">
@@ -1207,8 +1202,7 @@ export function ListingGallery({
               setIsPanning(true);
               panStartRef.current = {
                 x: e.clientX - panOffset.x,
-                y: e.clientY - panOffset.y,
-              };
+                y: e.clientY - panOffset.y};
             }}
             onMouseMove={(e) => {
               if (!isPanning || zoomScale <= 1) return;
@@ -1226,14 +1220,12 @@ export function ListingGallery({
                 setIsPanning(true);
                 panStartRef.current = {
                   x: t.clientX - panOffset.x,
-                  y: t.clientY - panOffset.y,
-                };
+                  y: t.clientY - panOffset.y};
               } else {
                 lightboxTouchStartRef.current = {
                   x: t.clientX,
                   y: t.clientY,
-                  time: Date.now(),
-                };
+                  time: Date.now()};
               }
             }}
             onTouchMove={(e) => {
@@ -1296,10 +1288,11 @@ export function ListingGallery({
                   />
                 </div>
               ) : (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={lightboxCurrentMedia.url}
                   alt={lightboxCurrentMedia.alt}
+                  width={1920}
+                  height={1280}
                   draggable={false}
                   onContextMenu={(e) => e.preventDefault()}
                   onLoad={markImageLoaded}
@@ -1309,8 +1302,7 @@ export function ListingGallery({
                   style={{
                     transform: `translate(${panOffset.x}px, ${panOffset.y}px) scale(${zoomScale}) rotate(${rotation}deg)`,
                     transformOrigin: "center center",
-                    transition: isPanning ? "none" : "transform 150ms ease-out",
-                  }}
+                    transition: isPanning ? "none" : "transform 150ms ease-out"}}
                   className={cn(
                     "max-h-full max-w-full object-contain",
                     fadeInOnLoad,
@@ -1369,14 +1361,14 @@ export function ListingGallery({
                       aria-label={`Go to item ${idx + 1}`}
                       aria-pressed={isActive}
                     >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
+                      <Image
                         src={item.url}
                         alt=""
-                        draggable={false}
-                        onContextMenu={(e) => e.preventDefault()}
-                        onLoad={markImageLoaded}
+                        width={200}
+                        height={150}
                         className={cn("h-full w-full object-cover", fadeInOnLoad)}
+                        onLoad={markImageLoaded}
+                        draggable={false}
                       />
                     </button>
                   );

@@ -1,5 +1,6 @@
 import { Button, Icon } from "@repo/ui";
 import type { ProfileData } from "./constants";
+import Image from "next/image";
 
 interface IdentityCardProps {
   profile: ProfileData;
@@ -26,11 +27,14 @@ export function IdentityCard({ profile }: IdentityCardProps) {
           <div className="relative">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-navy text-gold shadow-sm">
               {profile.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={profile.avatarUrl}
                   alt={profile.name}
+                  width={80}
+                  height={80}
                   className="h-full w-full rounded-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <span className="mono-stat text-2xl font-bold">{initials}</span>

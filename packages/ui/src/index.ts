@@ -348,6 +348,13 @@ export { reverseGeocodeGoogle } from "./components/googleReverseGeocode";
 export type { GoogleReverseGeocodeOptions } from "./components/googleReverseGeocode";
 
 /* ------------------------------------------------------------------ */
+/* Image components with performance optimizations                     */
+/* ------------------------------------------------------------------ */
+
+export { OptimizedImage } from "./components/OptimizedImage";
+export type { OptimizedImageProps } from "./components/OptimizedImage";
+
+/* ------------------------------------------------------------------ */
 /* Kabadi / Scrape shared editable components                          */
 /* ------------------------------------------------------------------ */
 

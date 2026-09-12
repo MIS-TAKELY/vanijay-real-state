@@ -23,7 +23,16 @@ const nextConfig = withSerwist({
         hostname: "images.unsplash.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "img.youtube.com",
+      },
     ],
+    // Local static images in the public folder
+    domains: [],
+    // Allow local images from public folder
+    deviceSizes: [640, 768, 1024, 1280, 1536, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 200, 256, 384, 480, 512],
   },
 
   turbopack: {

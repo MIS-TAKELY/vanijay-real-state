@@ -4,6 +4,7 @@ import { Button, Icon } from "@repo/ui";
 import Link from "next/link";
 import { useCompareStore } from "store/compare";
 import { getSecureMediaUrl } from "@repo/ui";
+import Image from "next/image";
 
 export function CompareBar() {
   const { items, clear } = useCompareStore();
@@ -23,10 +24,14 @@ export function CompareBar() {
               title={item.title}
             >
               {item.imageUrl ? (
-                <img
+                <Image
                   src={getSecureMediaUrl(item.imageUrl)}
                   alt=""
+                  width={40}
+                  height={40}
                   className="h-full w-full object-cover"
+                  loading="lazy"
+                  decoding="async"
                 />
               ) : (
                 <span className="truncate px-1">{item.title.slice(0, 2)}</span>

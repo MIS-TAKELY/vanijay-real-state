@@ -5,10 +5,10 @@ import { Icon } from "@repo/ui";
 import { useContentStore } from "store/content";
 import {
   fetchCmsHeroBanners,
-  type CmsHeroSlide,
-} from "lib/api/services/cms";
-import { optimizeImageUrl } from "lib/image-url";
+  type CmsHeroSlide} from "lib/api/services/cms";
+import { optimizeImageUrl, generateSrcSet } from "lib/image-url";
 import type { HeroSlide } from "constants/varibles-constants";
+import Image from "next/image";
 
 type Slide = HeroSlide & { key?: string; ctaHref?: string };
 
@@ -20,8 +20,7 @@ function toSlide(item: CmsHeroSlide): Slide {
     subheadline: item.subheadline,
     ctaPrimary: item.ctaPrimary,
     ctaSecondary: "List Your Property",
-    ctaHref: item.ctaHref,
-  };
+    ctaHref: item.ctaHref};
 }
 
 interface HeroBannerCarouselProps {
@@ -40,9 +39,7 @@ const HERO_SRCSET_WIDTHS = [480, 640, 860, 1080, 1280, 1600, 1920];
 
 function heroSrcSet(image: string): string {
   if (image.startsWith("/")) return "";
-  return HERO_SRCSET_WIDTHS.map(
-    (w) => `${optimizeImageUrl(image, w)} ${w}w`,
-  ).join(", ");
+  return generateSrcSet(image, HERO_SRCSET_WIDTHS);
 }
 
 function HeroBannerCarousel({ initialSlides }: HeroBannerCarouselProps) {
@@ -140,16 +137,16 @@ function HeroBannerCarousel({ initialSlides }: HeroBannerCarouselProps) {
           aria-hidden={index !== current}
         >
           {/* eslint-disable-next-line @next/next/no-img-element -- hero slide image */}
-          <img
+          <Image
             src={optimizeImageUrl(slide.image, HERO_IMAGE_WIDTH)}
-            srcSet={heroSrcSet(slide.image) || undefined}
-            sizes="100vw"
+            width={HERO_IMAGE_WIDTH}
+            height={Math.round(HERO_IMAGE_WIDTH * 500 / 1920)}
             alt={slide.headline || "MALPOTH verified property listings in Nepal"}
+            className="object-cover object-center"
             draggable={false}
             loading={index === 0 ? "eager" : "lazy"}
             fetchPriority={index === 0 ? "high" : undefined}
             decoding={index === 0 ? "sync" : "async"}
-            className="absolute inset-0 h-full w-full object-cover object-center"
           />
         </div>
       ))}

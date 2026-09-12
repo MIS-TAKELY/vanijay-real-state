@@ -4,15 +4,14 @@ import { Button, Icon } from "@repo/ui";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { useDebounce } from "hooks/use-debounce";
 import {
   fetchFeedPage,
-  fetchPropertyBySlug,
-} from "lib/api/services/properties/properties";
+  fetchPropertyBySlug} from "lib/api/services/properties/properties";
 import type {
   ApiProperty,
-  CardProperty,
-} from "lib/api/services/properties/types";
+  CardProperty} from "lib/api/services/properties/types";
 import {
   formatNPR,
   formatLocation,
@@ -21,8 +20,7 @@ import {
   labelEnum,
   toCardProps,
   TYPE_LABELS,
-  VERIFICATION_LABELS,
-} from "lib/api/services/properties/types";
+  VERIFICATION_LABELS} from "lib/api/services/properties/types";
 import { listingCoverImageUrl } from "lib/media/videoThumbnail";
 import { useCompareStore, MAX_COMPARE_ITEMS } from "store/compare";
 
@@ -32,8 +30,7 @@ import { useCompareStore, MAX_COMPARE_ITEMS } from "store/compare";
 
 function PropertySearch({
   selectedSlugs,
-  onToggle,
-}: {
+  onToggle}: {
   selectedSlugs: Set<string>;
   onToggle: (property: CardProperty) => void;
 }) {
@@ -136,13 +133,15 @@ function PropertySearch({
                 >
                   <div className="h-9 w-9 sm:h-10 sm:w-10 shrink-0 overflow-hidden rounded-md bg-surface-container">
                     {p.imageUrl ? (
-                      <img
+                      <Image
                         src={p.imageUrl}
                         alt=""
+                        width={40}
+                        height={40}
+                        className="h-full w-full object-cover"
                         draggable={false}
                         onContextMenu={(e) => e.preventDefault()}
                         onDragStart={(e) => e.preventDefault()}
-                        className="h-full w-full object-cover"
                       />
                     ) : (
                       <div
@@ -314,31 +313,26 @@ function ComparePageContent() {
     {
       label: "Price",
       key: "price",
-      render: (p) => formatNPR(p.askingPrice),
-    },
+      render: (p) => formatNPR(p.askingPrice)},
     {
       label: "Price / Aana",
       key: "pricePerAana",
       render: (p) =>
         isLandPropertyType(p.mainCategory) && p.pricePerAana
           ? formatNPR(p.pricePerAana)
-          : "\u2014",
-    },
+          : "\u2014"},
     {
       label: "Type",
       key: "type",
-      render: (p) => labelEnum(p.subCategory, TYPE_LABELS),
-    },
+      render: (p) => labelEnum(p.subCategory, TYPE_LABELS)},
     {
       label: "Location",
       key: "location",
-      render: (p) => formatLocation(p.location),
-    },
+      render: (p) => formatLocation(p.location)},
     {
       label: "Land Area",
       key: "area",
-      render: (p) => formatLandArea(p.landArea) ?? "\u2014",
-    },
+      render: (p) => formatLandArea(p.landArea) ?? "\u2014"},
     {
       label: "Road Access",
       key: "road",
@@ -347,28 +341,23 @@ function ComparePageContent() {
         if (p.roadAccessWidthFt) parts.push(`${p.roadAccessWidthFt} ft`);
         if (p.roadType) parts.push(labelEnum(p.roadType, {}));
         return parts.length > 0 ? parts.join(", ") : "\u2014";
-      },
-    },
+      }},
     {
       label: "Facing",
       key: "facing",
-      render: (p) => (p.facing ? labelEnum(p.facing, {}) : "\u2014"),
-    },
+      render: (p) => (p.facing ? labelEnum(p.facing, {}) : "\u2014")},
     {
       label: "Corner Plot",
       key: "corner",
-      render: (p) => (p.isCornerPlot ? "Yes" : "No"),
-    },
+      render: (p) => (p.isCornerPlot ? "Yes" : "No")},
     {
       label: "Verification",
       key: "verification",
-      render: (p) => labelEnum(p.verificationLevel, VERIFICATION_LABELS),
-    },
+      render: (p) => labelEnum(p.verificationLevel, VERIFICATION_LABELS)},
     {
       label: "Status",
       key: "status",
-      render: (p) => labelEnum(p.status, {}),
-    },
+      render: (p) => labelEnum(p.status, {})},
     {
       label: "Listed",
       key: "listed",
@@ -376,10 +365,7 @@ function ComparePageContent() {
         new Date(p.createdAt).toLocaleDateString("en-NP", {
           year: "numeric",
           month: "short",
-          day: "numeric",
-        }),
-    },
-  ];
+          day: "numeric"})}];
 
   const gridCols = `minmax(46px, ${properties.length >= 4 ? "16%" : properties.length === 3 ? "18%" : "22%"}) repeat(${properties.length}, minmax(0, 1fr))`;
 
@@ -424,13 +410,15 @@ function ComparePageContent() {
                 <div>
                   <div className="mb-1 aspect-[16/10] w-full overflow-hidden rounded bg-surface-container sm:mb-2 sm:rounded-lg">
                     {coverUrl ? (
-                      <img
+                      <Image
                         src={coverUrl}
                         alt={p.title}
+                        width={600}
+                        height={375}
+                        className="h-full w-full object-cover"
                         draggable={false}
                         onContextMenu={(e) => e.preventDefault()}
                         onDragStart={(e) => e.preventDefault()}
-                        className="h-full w-full object-cover"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-[8px] text-on-surface-variant/50 sm:text-xs">

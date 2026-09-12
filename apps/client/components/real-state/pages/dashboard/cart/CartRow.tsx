@@ -4,9 +4,13 @@ import {
   FALLBACK_GRADIENT,
   TYPE_GRADIENTS,
   formatLocation,
-  formatNPR,
-} from "lib/api/services/properties/types";
+  formatNPR} from "lib/api/services/properties/types";
 import Link from "next/link";
+import { optimizeImageUrl, generateSrcSet } from "lib/image-url";
+import Image from "next/image";
+
+const CART_IMAGE_WIDTH = 280;
+const CART_SIZES = "(max-width: 640px) 100vw, 80px";
 
 interface CartRowProps {
   item: CartItem;
@@ -29,14 +33,15 @@ export function CartRow({ item, busy, onQuantity, onRemove }: CartRowProps) {
         className="relative block h-28 w-full shrink-0 overflow-hidden rounded-xl sm:h-20 sm:w-28"
       >
         {cover ? (
-          // eslint-disable-next-line @next/next/no-img-element -- external upload URL; see PropertyCard
-          <img
-            src={cover.url}
+          <Image
+            src={optimizeImageUrl(cover.url, CART_IMAGE_WIDTH)}
             alt={cover.altText ?? property.title}
-            draggable={false}
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
+            width={CART_IMAGE_WIDTH}
+            height={200}
             className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
+            draggable={false}
           />
         ) : (
           <div className={`h-full w-full bg-gradient-to-br ${gradient}`} />

@@ -4,13 +4,16 @@ import { Icon, cn } from "@repo/ui";
 import Link from "next/link";
 import { useState } from "react";
 import type { CardProperty } from "lib/api/services/properties/types";
-import { optimizeImageUrl } from "lib/image-url";
+import Image from "next/image";
+import { generateSrcSet, optimizeImageUrl } from "lib/image-url";
 import { useIsMobile } from "lib/use-is-mobile";
 import { CompareToggleButton } from "./CompareToggleButton";
 import { SaveToFavoritesButton } from "./SaveToFavoritesButton";
 
 /** Cards render at 180–280 CSS px — request ≤2× for retina sharpness. */
 const CARD_IMAGE_WIDTH = 480;
+const CARD_IMAGE_HEIGHT = 320; // 3:2 aspect ratio
+const CARD_SIZES = "(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw";
 
 interface PropertyCardProps {
   property: {
@@ -91,8 +94,15 @@ function BrandedPlaceholder() {
       aria-hidden
     >
       <div className="absolute inset-0 topo-bg" />
-      {/* eslint-disable-next-line @next/next/no-img-element -- static brand asset */}
-      <img src="/logo.webp" alt="" className="relative z-10 w-12 md:w-16 opacity-80" draggable={false} />
+      <Image
+        src="/logo.webp"
+        alt=""
+        width={48}
+        height={48}
+        className="relative z-10 w-12 md:w-16 opacity-80"
+        draggable={false}
+        priority
+      />
     </div>
   );
 }
@@ -100,8 +110,7 @@ function BrandedPlaceholder() {
 export function PropertyCard({
   property,
   onFavoriteChange,
-  className,
-}: PropertyCardProps) {
+  className}: PropertyCardProps) {
   const isMobile = useIsMobile();
   const href = `/${property.id}`;
   const rawImages = (property.images ?? []).filter(Boolean);
@@ -138,15 +147,16 @@ export function PropertyCard({
           >
             {images.map((src, i) => (
               <div key={`${src}-${i}`} className="relative h-full w-full shrink-0">
-                {/* eslint-disable-next-line @next/next/no-img-element -- external upload URL */}
-                <img
+                <Image
                   src={optimizeImageUrl(src, CARD_IMAGE_WIDTH)}
                   alt={i === current ? property.title : ""}
-                  loading={i === 0 ? "eager" : "lazy"}
-                  draggable={false}
-                  onContextMenu={(e) => e.preventDefault()}
-                  onDragStart={(e) => e.preventDefault()}
+                  width={CARD_IMAGE_WIDTH}
+                  height={CARD_IMAGE_HEIGHT}
                   className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                  loading={i === 0 ? "eager" : "lazy"}
+                  priority={i === 0}
+                  decoding={i === 0 ? "sync" : "async"}
+                  draggable={false}
                 />
               </div>
             ))}

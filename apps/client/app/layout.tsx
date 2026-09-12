@@ -3,6 +3,7 @@ import { Toaster } from "@repo/ui";
 import { Suspense } from "react";
 import { SerwistProvider } from "@serwist/turbopack/react";
 import { AuthModalListener } from "components/real-state/auth/AuthModalListener";
+import { GoogleAnalytics } from "components/shared/GoogleAnalytics";
 import { buildHreflang } from "lib/i18n";
 import { SITE_URL } from "lib/site";
 import { Fraunces, IBM_Plex_Mono, Public_Sans } from "next/font/google";
@@ -165,6 +166,12 @@ export default function RootLayout({
           <Toaster position="top-center" richColors />
           <Suspense fallback={null}>
             <AuthModalListener />
+          </Suspense>
+          {/* GA4 — renders nothing unless NEXT_PUBLIC_GA_MEASUREMENT_ID is set. */}
+          <Suspense fallback={null}>
+            <GoogleAnalytics
+              gaId={process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID ?? ""}
+            />
           </Suspense>
         </SerwistProvider>
       </body>

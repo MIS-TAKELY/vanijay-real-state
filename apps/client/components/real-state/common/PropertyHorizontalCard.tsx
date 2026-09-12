@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { Card, CardContent, Badge, Button, Icon } from "@repo/ui";
 import Link from "next/link";
-import { optimizeImageUrl } from "lib/image-url";
+import { optimizeImageUrl, generateSrcSet } from "lib/image-url";
+import Image from "next/image";
 
 export interface PropertyHorizontalCardProps {
   id: string;
@@ -36,8 +37,7 @@ export function PropertyHorizontalCard({
   href = "/",
   badge,
   onFavoriteChange,
-  className,
-}: PropertyHorizontalCardProps) {
+  className}: PropertyHorizontalCardProps) {
   const [favorite, setFavorite] = useState(false);
 
   const toggleFavorite = () => {
@@ -59,8 +59,7 @@ export function PropertyHorizontalCard({
         "transition-all duration-200",
         "md:hover:-translate-y-1",
         "snap-start",
-        className ?? "",
-      ]
+        className ?? ""]
         .filter(Boolean)
         .join(" ")}
     >
@@ -71,14 +70,15 @@ export function PropertyHorizontalCard({
           aria-label={`${title} — view details`}
           className="block h-full"
         >
-          <img
+           <Image
             src={optimizeImageUrl(image, 480)}
             alt={alt ?? title}
+            width={480}
+            height={320}
             className="h-full w-full object-cover"
             loading="lazy"
+            decoding="async"
             draggable={false}
-            onContextMenu={(e) => e.preventDefault()}
-            onDragStart={(e) => e.preventDefault()}
           />
         </Link>
 

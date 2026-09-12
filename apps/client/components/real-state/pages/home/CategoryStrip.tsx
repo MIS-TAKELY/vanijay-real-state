@@ -3,8 +3,9 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useContentStore } from "store/content";
 import { fetchCmsCategories, type CmsCategory } from "lib/api/services/cms";
-import { optimizeImageUrl } from "lib/image-url";
+import { optimizeImageUrl, generateSrcSet } from "lib/image-url";
 import { resolveCategorySlug } from "constants/category-catalog";
+import Image from "next/image";
 
 /** Tiles render at 80–96 CSS px — request ≤2× for retina sharpness. */
 const CATEGORY_IMAGE_WIDTH = 200;
@@ -42,8 +43,7 @@ function useHorizontalDrag(ref: React.RefObject<HTMLDivElement | null>) {
     onMouseDown,
     onMouseMove,
     onMouseUp,
-    onMouseLeave,
-  };
+    onMouseLeave};
 }
 
 function CategoryStrip() {
@@ -125,14 +125,15 @@ function CategoryStrip() {
               >
                 <div className="size-20 md:size-24 rounded-2xl overflow-hidden border border-outline-variant bg-surface transition-all duration-200 group-hover:-translate-y-1 group-hover:border-gold/50 group-hover:shadow-lg group-hover:shadow-gold/10">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
+                  <Image
                     src={optimizeImageUrl(cat.image, CATEGORY_IMAGE_WIDTH)}
                     alt={cat.name}
+                    width={CATEGORY_IMAGE_WIDTH}
+                    height={120}
                     className="w-full h-full object-cover"
                     loading="lazy"
+                    decoding="async"
                     draggable={false}
-                    onContextMenu={(e) => e.preventDefault()}
-                    onDragStart={(e) => e.preventDefault()}
                   />
                 </div>
                 <span className="font-label-sm text-label-sm text-on-surface text-center leading-snug max-w-full whitespace-nowrap truncate transition-colors group-hover:text-navy group-hover:font-semibold">
