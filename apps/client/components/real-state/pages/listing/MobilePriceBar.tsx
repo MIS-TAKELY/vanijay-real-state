@@ -57,34 +57,30 @@ export function MobilePriceBar({
       )}
     >
       <div className="flex flex-col gap-2.5 px-4 pt-3 pb-[max(env(safe-area-inset-bottom),0.875rem)]">
-        <div className="flex flex-col gap-1 min-w-0">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
-            Asking Price
-          </span>
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-1.5 gap-y-0.5">
+          <p className="mono-stat text-lg font-extrabold text-gold-deep leading-none">
+            {showPerUnit
+              ? isTotal
+                ? formatNPR(pricing.askingPrice)
+                : perUnit != null
+                  ? formatNPR(perUnit)
+                  : "—"
+              : formatNPR(pricing.askingPrice)}
+          </p>
 
-          <div className="flex items-center justify-between gap-2 min-w-0">
-            <p className="mono-stat text-lg font-extrabold text-gold-deep truncate leading-none">
-              {showPerUnit
-                ? isTotal
-                  ? formatNPR(pricing.askingPrice)
-                  : perUnit != null
-                    ? formatNPR(perUnit)
-                    : "—"
-                : formatNPR(pricing.askingPrice)}
-            </p>
-
-            {showPerUnit && (
-              <div className="relative inline-flex shrink-0 items-center rounded-sm border border-outline-variant bg-surface-container/80 px-2 py-0.5 shadow-2xs">
-                {!isTotal && (
-                  <span className="mr-1 text-[11px] font-medium text-on-surface-variant">
-                    per
-                  </span>
-                )}
+          {showPerUnit && (
+            <span className="inline-flex shrink-0 items-baseline gap-1">
+              {!isTotal && (
+                <span className="text-[11px] font-medium text-on-surface-variant">
+                  per
+                </span>
+              )}
+              <span className="relative inline-flex items-center">
                 <select
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
                   aria-label="Price unit"
-                  className="cursor-pointer appearance-none bg-transparent pr-3.5 text-xs font-bold text-navy outline-none"
+                  className="h-6 cursor-pointer appearance-none border-0 bg-transparent py-0 pr-4 pl-0 text-xs font-bold text-navy outline-none"
                 >
                   {[
                     { key: "total", label: "Total" },
@@ -100,12 +96,12 @@ export function MobilePriceBar({
                 </select>
                 <Icon
                   name="expand_more"
-                  className="pointer-events-none absolute right-1 text-[13px] text-on-surface-variant"
+                  className="pointer-events-none absolute right-0 text-[13px] text-on-surface-variant"
                   aria-hidden
                 />
-              </div>
-            )}
-          </div>
+              </span>
+            </span>
+          )}
         </div>
 
         {/* Action CTAs */}

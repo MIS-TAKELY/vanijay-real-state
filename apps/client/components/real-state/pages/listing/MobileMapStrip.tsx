@@ -57,7 +57,7 @@ export function MobileMapStrip({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Open in Google Maps"
-          className="pointer-events-auto ml-auto inline-flex shrink-0 items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-navy shadow-sm backdrop-blur-md transition-opacity active:opacity-70"
+          className="pointer-events-auto ml-auto animate-bounce-ball inline-flex shrink-0 items-center gap-1 rounded-full bg-white/90 px-2.5 py-1 text-[11px] font-bold text-navy shadow-sm backdrop-blur-md transition-opacity active:opacity-70"
         >
           <Icon name="open_in_new" className="text-[12px]" aria-hidden />
           Maps

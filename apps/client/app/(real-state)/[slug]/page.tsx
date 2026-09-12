@@ -447,7 +447,7 @@ function buildListingJsonLd(property: ApiProperty) {
     speakable: {
       "@type": "SpeakableSpecification",
       cssSelector: [
-        ".font-headline-md", // H1 title
+        "h1", // H1 title
       ],
     },
   };
@@ -753,7 +753,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
           <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
             <header className="min-w-0">
               <div className="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-1.5 sm:gap-x-2.5">
-                <h1 className="font-headline-md text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
+                <h1 className="font-sans text-pretty text-2xl font-bold tracking-tight text-navy sm:text-3xl">
                   {property.title}
                 </h1>
 
@@ -785,7 +785,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label="Open in Google Maps"
-                          className="inline-flex shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface px-2.5 py-0.5 text-[11px] font-bold text-navy shadow-xs transition-colors hover:bg-surface-container active:opacity-70 sm:hidden"
+                          className="animate-bounce-ball inline-flex shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface px-2.5 py-0.5 text-[11px] font-bold text-navy shadow-xs transition-colors hover:bg-surface-container active:opacity-70 sm:hidden"
                         >
                           <Icon name="open_in_new" className="text-[12px]" aria-hidden />
                           <span>Maps</span>
@@ -814,7 +814,12 @@ export default async function ListingDetailPage({ params }: PageProps) {
             {/* Location details */}
             {locationSpecs.some(([, value]) => Boolean(value)) && (
               <section>
-                <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                <h2 className="mb-1.5 flex items-center gap-2 font-sans text-lg font-semibold tracking-tight text-navy">
+                  <Icon
+                    name="location_on"
+                    className="shrink-0 text-[20px] text-gold-deep"
+                    aria-hidden
+                  />
                   Location
                 </h2>
                 <div className="rounded-sm bg-surface p-5 sm:p-6 shadow-xs">
@@ -843,7 +848,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
             {/* Specifications */}
             {allSpecs.some(([, value]) => Boolean(value)) && (
               <section>
-                <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                <h2 className="mb-1.5 font-sans text-lg font-semibold tracking-tight text-navy">
                   Specifications
                 </h2>
                 <div className="rounded-sm bg-surface p-5 sm:p-6 shadow-xs">
@@ -901,7 +906,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                   return (
                     <div key={tIdx}>
                       {table.heading && (
-                        <h2 className="mb-3 font-headline-md text-lg font-semibold tracking-tight text-navy">
+                        <h2 className="mb-1.5 font-headline-md text-lg font-semibold tracking-tight text-navy">
                           {table.heading}
                         </h2>
                       )}

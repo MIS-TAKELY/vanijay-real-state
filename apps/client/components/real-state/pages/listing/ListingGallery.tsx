@@ -81,6 +81,8 @@ export function ListingGallery({
   const docScrollRef = useRef<HTMLDivElement>(null);
   // Flag to distinguish programmatic scrolls from user swipes
   const programmaticScrollRef = useRef(false);
+  const isSwipingPhotoRef = useRef(false);
+  const touchStartPhotoRef = useRef<{ x: number; y: number } | null>(null);
 
   // Touch & Pan refs for Lightbox
   const panStartRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -605,11 +607,11 @@ export function ListingGallery({
           aria-labelledby="tab-photos"
           className="flex min-w-0 flex-col-reverse gap-1.5 sm:flex-row sm:items-stretch sm:gap-1.5"
         >
-          {/* Thumbnail strip */}
+          {/* Thumbnail strip — hidden on mobile, visible on desktop / tablet (sm+) */}
           {images.length > 1 && (
             <div
               ref={thumbStripRef}
-              className="no-scrollbar flex w-full flex-row gap-1.5 overflow-x-auto overscroll-x-contain py-1 sm:w-20 sm:shrink-0 sm:flex-col sm:overflow-y-auto sm:overscroll-y-contain sm:py-0"
+              className="no-scrollbar hidden sm:flex sm:w-20 sm:shrink-0 sm:flex-col sm:gap-1.5 sm:overflow-y-auto sm:overscroll-y-contain sm:py-0"
               aria-label="Photo thumbnails"
             >
               {images.map((image, idx) => {
@@ -652,6 +654,29 @@ export function ListingGallery({
             <div
               ref={photoScrollRef}
               onScroll={handlePhotoScroll}
+              onTouchStart={(e) => {
+                const touch = e.touches[0];
+                if (touch) {
+                  touchStartPhotoRef.current = { x: touch.clientX, y: touch.clientY };
+                  isSwipingPhotoRef.current = false;
+                }
+              }}
+              onTouchMove={(e) => {
+                const touch = e.touches[0];
+                if (touch && touchStartPhotoRef.current) {
+                  const dx = Math.abs(touch.clientX - touchStartPhotoRef.current.x);
+                  const dy = Math.abs(touch.clientY - touchStartPhotoRef.current.y);
+                  if (dx > 8 || dy > 8) {
+                    isSwipingPhotoRef.current = true;
+                  }
+                }
+              }}
+              onTouchEnd={() => {
+                setTimeout(() => {
+                  isSwipingPhotoRef.current = false;
+                  touchStartPhotoRef.current = null;
+                }, 200);
+              }}
               className="no-scrollbar absolute inset-0 flex snap-x snap-mandatory overflow-x-auto overscroll-x-contain"
               style={{ scrollBehavior: "auto" }}
               aria-label="Photo viewer — swipe to browse"
@@ -662,7 +687,8 @@ export function ListingGallery({
                   className="relative h-full w-full shrink-0 snap-start cursor-zoom-in"
                   style={{ minWidth: "100%" }}
                   onClick={() => {
-                    // Only open lightbox if the user isn't mid-swipe
+                    // Only open lightbox if the user tapped, not mid-swipe or dragging
+                    if (isSwipingPhotoRef.current) return;
                     if (Math.abs(activeImageIndex - idx) === 0) {
                       openLightbox("photos", idx);
                     }

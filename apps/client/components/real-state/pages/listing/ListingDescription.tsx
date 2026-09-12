@@ -72,7 +72,7 @@ export function ListingDescription({ html }: ListingDescriptionProps) {
 
   return (
     <section className="flex flex-col gap-1.5">
-      <h2 className="font-headline-md text-lg font-semibold tracking-tight text-navy">
+      <h2 className="font-sans text-lg font-semibold tracking-tight text-navy">
         Description
       </h2>
 
