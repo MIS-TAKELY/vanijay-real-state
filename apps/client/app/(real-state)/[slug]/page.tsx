@@ -15,7 +15,6 @@ import { ListingDescription } from "components/real-state/pages/listing/ListingD
 import { ListingGallery } from "components/real-state/pages/listing/ListingGallery";
 import { ListingLocationCard } from "components/real-state/pages/listing/ListingLocationCard";
 import { MobilePriceBar } from "components/real-state/pages/listing/MobilePriceBar";
-import { MobileMapStrip } from "components/real-state/pages/listing/MobileMapStrip";
 import { ConvertorClient } from "components/real-state/pages/convertor/ConvertorClient";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
 import { ApiError } from "lib/api/core/client";
@@ -468,6 +467,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
   const gradient = TYPE_GRADIENTS[property.subCategory] ?? FALLBACK_GRADIENT;
   const area = formatLandArea(property.landArea);
   const location = formatLocation(property.location);
+  const hasCoords =
+    property.location?.latitude != null && property.location?.longitude != null;
+  const mapsHref = hasCoords
+    ? `https://www.google.com/maps/search/?api=1&query=${property.location!.latitude},${property.location!.longitude}`
+    : null;
   const listedAt = formatFreshnessDate(property.createdAt);
   const updatedAt = formatFreshnessDate(property.updatedAt);
   const hasLand = Boolean(property.landArea && property.landArea.totalSqFt > 0);
@@ -761,29 +765,46 @@ export default async function ListingDetailPage({ params }: PageProps) {
                     >
                       ·
                     </span>
-                    <p className="inline-flex min-w-0 max-w-full items-center gap-1 text-sm text-on-surface-variant sm:max-w-[min(100%,28rem)]">
-                      <Icon
-                        name="location_on"
-                        className="shrink-0 text-[16px]"
-                        aria-hidden
-                      />
-                      <span className="truncate">{location}</span>
-                    </p>
+                    {mapsHref ? (
+                      <div className="inline-flex min-w-0 max-w-full items-center gap-2">
+                        <Link
+                          href={mapsHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex min-w-0 max-w-full items-center gap-1 text-sm text-on-surface-variant transition-colors hover:text-navy hover:underline sm:max-w-[min(100%,28rem)]"
+                        >
+                          <Icon
+                            name="location_on"
+                            className="shrink-0 text-[16px]"
+                            aria-hidden
+                          />
+                          <span className="truncate">{location}</span>
+                        </Link>
+                        <Link
+                          href={mapsHref}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label="Open in Google Maps"
+                          className="inline-flex shrink-0 items-center gap-1 rounded-full border border-outline-variant bg-surface px-2.5 py-0.5 text-[11px] font-bold text-navy shadow-xs transition-colors hover:bg-surface-container active:opacity-70 sm:hidden"
+                        >
+                          <Icon name="open_in_new" className="text-[12px]" aria-hidden />
+                          <span>Maps</span>
+                        </Link>
+                      </div>
+                    ) : (
+                      <p className="inline-flex min-w-0 max-w-full items-center gap-1 text-sm text-on-surface-variant sm:max-w-[min(100%,28rem)]">
+                        <Icon
+                          name="location_on"
+                          className="shrink-0 text-[16px]"
+                          aria-hidden
+                        />
+                        <span className="truncate">{location}</span>
+                      </p>
+                    )}
                   </>
                 )}
               </div>
             </header>
-
-            {/* Mobile-only compact map strip — between gallery and title */}
-            {property.location?.latitude != null &&
-              property.location?.longitude != null && (
-                <MobileMapStrip
-                  latitude={property.location.latitude}
-                  longitude={property.location.longitude}
-                  title={property.title}
-                  locationLabel={location}
-                />
-              )}
 
             {/* Description */}
             {property.description && (
