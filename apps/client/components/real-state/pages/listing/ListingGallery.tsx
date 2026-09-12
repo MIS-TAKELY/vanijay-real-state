@@ -789,7 +789,7 @@ export function ListingGallery({
 
             {/* Left / Right arrows */}
             {images.length > 1 && (
-              <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2 sm:px-3">
+              <div className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center justify-between px-2 sm:flex sm:px-3">
                 <button
                   type="button"
                   aria-label="Previous photo"
@@ -1126,7 +1126,7 @@ export function ListingGallery({
 
               {/* Left / Right arrows */}
               {cadastralMaps.length > 1 && (
-                <div className="pointer-events-none absolute inset-y-0 left-0 right-0 flex items-center justify-between px-2">
+                <div className="pointer-events-none absolute inset-y-0 left-0 right-0 hidden items-center justify-between px-2 sm:flex">
                   <button
                     type="button"
                     aria-label="Previous document"
