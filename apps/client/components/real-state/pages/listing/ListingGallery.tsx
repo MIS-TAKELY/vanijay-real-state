@@ -717,12 +717,12 @@ export function ListingGallery({
                   <button
                     type="button"
                     role="tab"
-                    aria-selected={activeTab === "videos"}
+                    aria-selected={showingVideos}
                     aria-controls="panel-videos"
                     onClick={(e) => { e.stopPropagation(); setActiveTab("videos"); }}
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
-                      activeTab === "videos"
+                      showingVideos
                         ? "bg-white text-navy shadow-sm"
                         : "bg-black/50 text-white",
                     )}
@@ -736,12 +736,12 @@ export function ListingGallery({
                   <button
                     type="button"
                     role="tab"
-                    aria-selected={activeTab === "documents"}
+                    aria-selected={showingDocs}
                     aria-controls="panel-documents"
                     onClick={(e) => { e.stopPropagation(); setActiveTab("documents"); }}
                     className={cn(
                       "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
-                      activeTab === "documents"
+                      showingDocs
                         ? "bg-white text-navy shadow-sm"
                         : "bg-black/50 text-white",
                     )}
@@ -862,11 +862,11 @@ export function ListingGallery({
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={activeTab === "photos"}
+                      aria-selected={showingPhotos}
                       onClick={(e) => { e.stopPropagation(); setActiveTab("photos"); }}
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
-                        activeTab === "photos" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                        showingPhotos ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
                       )}
                       aria-label={`Photos (${images.length})`}
                     >
@@ -894,11 +894,11 @@ export function ListingGallery({
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={activeTab === "documents"}
+                      aria-selected={showingDocs}
                       onClick={(e) => { e.stopPropagation(); setActiveTab("documents"); }}
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
-                        activeTab === "documents" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                        showingDocs ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
                       )}
                       aria-label={`Docs (${cadastralMaps.length})`}
                     >
@@ -1011,11 +1011,11 @@ export function ListingGallery({
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={activeTab === "photos"}
+                      aria-selected={showingPhotos}
                       onClick={(e) => { e.stopPropagation(); setActiveTab("photos"); }}
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
-                        activeTab === "photos" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                        showingPhotos ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
                       )}
                       aria-label={`Photos (${images.length})`}
                     >
@@ -1027,11 +1027,11 @@ export function ListingGallery({
                     <button
                       type="button"
                       role="tab"
-                      aria-selected={activeTab === "videos"}
+                      aria-selected={showingVideos}
                       onClick={(e) => { e.stopPropagation(); setActiveTab("videos"); }}
                       className={cn(
                         "inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[11px] font-semibold backdrop-blur-md transition-all duration-150 active:scale-95",
-                        activeTab === "videos" ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
+                        showingVideos ? "bg-white text-navy shadow-sm" : "bg-black/50 text-white",
                       )}
                       aria-label={`Videos (${videos.length})`}
                     >
