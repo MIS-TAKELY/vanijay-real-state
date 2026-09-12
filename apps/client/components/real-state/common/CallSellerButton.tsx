@@ -5,7 +5,6 @@ import { ApiError } from "lib/api/core/client";
 import {
   fetchSellerContact,
   trackPropertyPhoneClick,
-  type SellerContact,
 } from "lib/api/services/analytics";
 import { useState } from "react";
 
@@ -24,21 +23,20 @@ export function CallSellerButton({
   compact = false,
   className,
 }: CallSellerButtonProps) {
-  const [contact, setContact] = useState<SellerContact | null>(null);
   const [loading, setLoading] = useState(false);
 
-  const reveal = async () => {
+  const handleCall = async () => {
     setLoading(true);
     try {
-      const next = await fetchSellerContact(propertyId);
-      if (!next?.phoneNumber) {
+      const contact = await fetchSellerContact(propertyId);
+      if (!contact?.phoneNumber) {
         toast.error("This seller has not added a contact number yet");
         return;
       }
-      setContact(next);
       trackPropertyPhoneClick(propertyId).catch(() => {
         // Silently fail - analytics should not break the UI
       });
+      window.location.href = `tel:${contact.phoneNumber}`;
     } catch (error) {
       toast.error(
         error instanceof ApiError
@@ -50,29 +48,11 @@ export function CallSellerButton({
     }
   };
 
-  if (contact) {
-    return (
-      <a
-        href={`tel:${contact.phoneNumber}`}
-        className={cn(
-          compact
-            ? "inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-md bg-gold px-4 py-2 font-semibold text-on-gold transition-colors hover:bg-gold/90"
-            : "mt-2 flex w-full items-center justify-center gap-2 rounded-md border border-outline-variant px-4 py-2 font-semibold text-on-surface transition-colors hover:bg-surface-container",
-          className,
-        )}
-        onClick={() => trackPropertyPhoneClick(propertyId).catch(() => {})}
-      >
-        <Icon name="call" className="text-[18px]" />
-        {contact.phoneNumber}
-      </a>
-    );
-  }
-
   return (
     <Button
       type="button"
       variant={variant}
-      onClick={() => void reveal()}
+      onClick={() => void handleCall()}
       disabled={loading}
       className={cn(
         compact &&
@@ -81,7 +61,7 @@ export function CallSellerButton({
       )}
     >
       <Icon name="PhoneCall" className="text-[18px]" />
-      {loading ? "Loading…" : compact ? "Call" : "Call Seller"}
+      {loading ? "Connecting…" : compact ? "Call" : "Call Seller"}
     </Button>
   );
 }

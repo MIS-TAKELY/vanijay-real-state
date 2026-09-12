@@ -11,10 +11,13 @@ import {
   type PriceContext,
 } from "@repo/ui";
 import { cn } from "@repo/ui/lib/utils";
-import { AddToCartButton } from "components/real-state/common/AddToCartButton";
 import { CallSellerButton } from "components/real-state/common/CallSellerButton";
 import { SaveToFavoritesButton } from "components/real-state/common/SaveToFavoritesButton";
-import { type ApiPropertyLocation } from "lib/api/services/properties/types";
+import { WhatsAppSellerButton } from "components/real-state/common/WhatsAppSellerButton";
+import {
+  formatLocation,
+  type ApiPropertyLocation,
+} from "lib/api/services/properties/types";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import { ListingSidebarMap } from "./ListingSidebarMap";
@@ -149,11 +152,16 @@ export function ListingDecisionCard({
           className="min-h-9 h-9 w-full rounded-sm bg-gold px-2 text-xs font-semibold text-on-gold shadow-xs hover:bg-gold/90"
         />
         <div className="flex min-w-0 gap-1.5">
-          <AddToCartButton
+          <WhatsAppSellerButton
             propertyId={propertyId}
             title={title}
-            variant="outline"
-            className="min-h-8 h-8 flex-1 min-w-0 rounded-sm border-outline-variant px-2 text-xs font-semibold"
+            price={
+              pricing.askingPrice > 0
+                ? formatNPR(pricing.askingPrice)
+                : undefined
+            }
+            location={location ? formatLocation(location) : undefined}
+            className="min-h-8 h-8 flex-1 min-w-0 rounded-sm bg-[#25D366] text-white px-2 text-xs font-semibold hover:bg-[#20bd5a]"
           />
           <SaveToFavoritesButton
             propertyId={propertyId}

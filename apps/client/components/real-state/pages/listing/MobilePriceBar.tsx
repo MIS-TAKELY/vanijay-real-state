@@ -11,8 +11,8 @@ import {
   type PriceContext,
 } from "@repo/ui";
 import { cn } from "@repo/ui/lib/utils";
-import { AddToCartButton } from "components/real-state/common/AddToCartButton";
 import { CallSellerButton } from "components/real-state/common/CallSellerButton";
+import { WhatsAppSellerButton } from "components/real-state/common/WhatsAppSellerButton";
 import { useMemo, useState } from "react";
 import { useCompareStore } from "store/compare";
 
@@ -20,13 +20,14 @@ interface MobilePriceBarProps {
   propertyId: string;
   title?: string;
   pricing: PriceContext;
+  location?: string;
 }
 
 /**
  * Mobile-only sticky bottom bar:
  * - "Asking Price" label, then highlighted NPR + unit converter beside it
  *   (per-unit by default; "Total" is an opt-in dropdown option)
- * - Bottom line: Full action buttons (Call Seller, Cart, Favorite)
+ * - Bottom line: Full action buttons (Call Seller, WhatsApp)
  *
  * Hidden on sm+ where the sidebar/grid decision card takes over.
  */
@@ -34,6 +35,7 @@ export function MobilePriceBar({
   pricing,
   propertyId,
   title,
+  location,
 }: MobilePriceBarProps) {
   const compareCount = useCompareStore((s) => s.items.length);
   const isBuilding = isBuildingType(pricing.subCategory);
@@ -111,14 +113,20 @@ export function MobilePriceBar({
           <CallSellerButton
             propertyId={propertyId}
             variant="default"
+            compact
             className="h-10 flex-1 min-w-0 rounded-sm bg-gold text-on-gold font-semibold text-xs shadow-xs hover:bg-gold/90"
           />
-          <AddToCartButton
+          <WhatsAppSellerButton
             propertyId={propertyId}
             title={title}
-            variant="outline"
+            price={
+              pricing.askingPrice > 0
+                ? formatNPR(pricing.askingPrice)
+                : undefined
+            }
+            location={location}
             compact
-            className="h-10 shrink-0 rounded-sm border-outline-variant px-3 text-xs font-semibold"
+            className="h-10 flex-1 min-w-0 rounded-sm bg-[#25D366] text-white font-semibold text-xs shadow-xs hover:bg-[#20bd5a]"
           />
         </div>
       </div>

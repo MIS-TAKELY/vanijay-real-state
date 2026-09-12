@@ -968,6 +968,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
         pricing={pricing}
         propertyId={property.id}
         title={property.title}
+        location={location}
       />
     </>
   );
