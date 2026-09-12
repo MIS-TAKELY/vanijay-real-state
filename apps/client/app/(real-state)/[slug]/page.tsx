@@ -15,6 +15,7 @@ import { ListingDescription } from "components/real-state/pages/listing/ListingD
 import { ListingGallery } from "components/real-state/pages/listing/ListingGallery";
 import { ListingLocationCard } from "components/real-state/pages/listing/ListingLocationCard";
 import { MobilePriceBar } from "components/real-state/pages/listing/MobilePriceBar";
+import { MobileMapStrip } from "components/real-state/pages/listing/MobileMapStrip";
 import { ConvertorClient } from "components/real-state/pages/convertor/ConvertorClient";
 import { CATEGORY_CATALOG } from "constants/category-catalog";
 import { ApiError } from "lib/api/core/client";
@@ -669,7 +670,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
       />
       <PropertyViewTracker propertyId={property.id} />
       <main className="mx-auto w-full max-w-7xl px-4 py-5 sm:px-6 lg:px-8">
-        <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-8">
+        <div className="grid min-w-0 items-start gap-3 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] lg:gap-8">
           {/* LEFT — sticky gallery column */}
           <div className="flex min-w-0 flex-col gap-3 lg:sticky lg:top-20 lg:self-start lg:gap-3.5">
             <nav className="min-w-0 overflow-hidden" aria-label="Breadcrumb">
@@ -713,6 +714,8 @@ export default async function ListingDetailPage({ params }: PageProps) {
               fallbackGradient={gradient}
             />
 
+            
+
             <div
               className={cn(
                 "grid grid-cols-1 gap-3",
@@ -739,6 +742,8 @@ export default async function ListingDetailPage({ params }: PageProps) {
               </div>
             </div>
           </div>
+
+          
 
           {/* RIGHT — scrolling details column */}
           <div className="flex min-w-0 flex-col gap-5 lg:gap-6">
@@ -768,6 +773,17 @@ export default async function ListingDetailPage({ params }: PageProps) {
                 )}
               </div>
             </header>
+
+            {/* Mobile-only compact map strip — between gallery and title */}
+            {property.location?.latitude != null &&
+              property.location?.longitude != null && (
+                <MobileMapStrip
+                  latitude={property.location.latitude}
+                  longitude={property.location.longitude}
+                  title={property.title}
+                  locationLabel={location}
+                />
+              )}
 
             {/* Description */}
             {property.description && (
