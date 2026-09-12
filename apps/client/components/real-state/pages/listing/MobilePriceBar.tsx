@@ -25,8 +25,8 @@ interface MobilePriceBarProps {
 
 /**
  * Mobile-only sticky bottom bar:
- * - Top line: Total summary (when per-unit pricing is shown)
- * - Middle: "Asking Price" label, then highlighted NPR + unit converter beside it
+ * - "Asking Price" label, then highlighted NPR + unit converter beside it
+ *   (per-unit by default; "Total" is an opt-in dropdown option)
  * - Bottom line: Full action buttons (Call Seller, Cart, Favorite)
  *
  * Hidden on sm+ where the sidebar/grid decision card takes over.
@@ -42,9 +42,10 @@ export function MobilePriceBar({
     !isBuilding && hasPricingArea(pricing) && pricing.askingPrice > 0;
 
   const [unit, setUnit] = useState(() => priceUnitKey(pricing));
+  const isTotal = unit === "total";
   const perUnit = useMemo(
-    () => (showPerUnit ? pricePerUnitFor(pricing, unit) : null),
-    [pricing, unit, showPerUnit],
+    () => (showPerUnit && !isTotal ? pricePerUnitFor(pricing, unit) : null),
+    [pricing, unit, showPerUnit, isTotal],
   );
 
   return (
@@ -55,15 +56,6 @@ export function MobilePriceBar({
       )}
     >
       <div className="flex flex-col gap-2.5 px-4 pt-3 pb-[max(env(safe-area-inset-bottom),0.875rem)]">
-        {showPerUnit && (
-          <p className="text-[11px] font-medium text-on-surface-variant tabular-nums leading-none">
-            Total:{" "}
-            <span className="font-semibold text-navy">
-              {formatNPR(pricing.askingPrice)}
-            </span>
-          </p>
-        )}
-
         <div className="flex flex-col gap-1 min-w-0">
           <span className="text-[10px] font-bold uppercase tracking-wider text-on-surface-variant">
             Asking Price
@@ -72,26 +64,36 @@ export function MobilePriceBar({
           <div className="flex items-center justify-between gap-2 min-w-0">
             <p className="mono-stat text-lg font-extrabold text-gold-deep truncate leading-none">
               {showPerUnit
-                ? perUnit != null
-                  ? formatNPR(perUnit)
-                  : "—"
+                ? isTotal
+                  ? formatNPR(pricing.askingPrice)
+                  : perUnit != null
+                    ? formatNPR(perUnit)
+                    : "—"
                 : formatNPR(pricing.askingPrice)}
             </p>
 
             {showPerUnit && (
               <div className="relative inline-flex shrink-0 items-center rounded-sm border border-outline-variant bg-surface-container/80 px-2 py-0.5 shadow-2xs">
-                <span className="mr-1 text-[11px] font-medium text-on-surface-variant">
-                  per
-                </span>
+                {!isTotal && (
+                  <span className="mr-1 text-[11px] font-medium text-on-surface-variant">
+                    per
+                  </span>
+                )}
                 <select
                   value={unit}
                   onChange={(e) => setUnit(e.target.value)}
                   aria-label="Price unit"
                   className="cursor-pointer appearance-none bg-transparent pr-3.5 text-xs font-bold text-navy outline-none"
                 >
-                  {PRICE_UNITS.map((u) => (
-                    <option key={u.key} value={u.key}>
-                      {u.label}
+                  {[
+                    { key: "total", label: "Total" },
+                    ...PRICE_UNITS.map((u) => ({
+                      key: u.key,
+                      label: u.label,
+                    })),
+                  ].map((o) => (
+                    <option key={o.key} value={o.key}>
+                      {o.label}
                     </option>
                   ))}
                 </select>

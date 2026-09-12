@@ -213,6 +213,7 @@ function FromPanel({
   parts,
   intValues,
   price,
+  hidePriceField = false,
   onChangeSystem,
   onPartChange,
   onIntChange,
@@ -223,6 +224,10 @@ function FromPanel({
   parts: PartInputs;
   intValues: Record<IntUnit, string>;
   price: string;
+  /** When true (embedded on a land listing), the total-price input is hidden
+   *  so the intimidating total isn't shown up-front — the area stays fully
+   *  convertible. */
+  hidePriceField?: boolean;
   onChangeSystem: (system: FromSystem) => void;
   onPartChange: (key: LandPartKey, text: string) => void;
   onIntChange: (unit: IntUnit, text: string) => void;
@@ -316,34 +321,37 @@ function FromPanel({
         </div>
       )}
 
-      {/* Total selling price — the whole land */}
-      <div className="mt-4 border-t border-outline-variant/70 pt-4">
-        <label
-          htmlFor="convertor-from-price"
-          className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] text-on-surface-variant"
-        >
-          I want to sell this land for
-        </label>
-        <div className="flex items-center gap-2">
-          <span
-            aria-hidden="true"
-            className="shrink-0 text-sm font-semibold text-on-surface-variant"
+      {/* Total selling price — the whole land (hidden when embedded on a
+          land listing so the total isn't shown up-front) */}
+      {!hidePriceField && (
+        <div className="mt-4 border-t border-outline-variant/70 pt-4">
+          <label
+            htmlFor="convertor-from-price"
+            className="mb-1.5 block text-[11px] font-bold uppercase tracking-[0.14em] text-on-surface-variant"
           >
-            {CURRENCY_SYMBOL}
-          </span>
-          <Input
-            id="convertor-from-price"
-            type="text"
-            inputMode="decimal"
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="5,00,000"
-            value={price}
-            onChange={(e) => onChangePrice(e.target.value)}
-            className="mono-stat h-11 min-w-0 flex-1 rounded-lg border-outline-variant bg-surface px-3 text-base font-semibold text-on-surface transition-[border-color,box-shadow] duration-200 focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/25"
-          />
+            I want to sell this land for
+          </label>
+          <div className="flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              className="shrink-0 text-sm font-semibold text-on-surface-variant"
+            >
+              {CURRENCY_SYMBOL}
+            </span>
+            <Input
+              id="convertor-from-price"
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="5,00,000"
+              value={price}
+              onChange={(e) => onChangePrice(e.target.value)}
+              className="mono-stat h-11 min-w-0 flex-1 rounded-lg border-outline-variant bg-surface px-3 text-base font-semibold text-on-surface transition-[border-color,box-shadow] duration-200 focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/25"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -356,6 +364,7 @@ function ToPanel({
   unit,
   value,
   price,
+  hidePriceField = false,
   onChangeUnit,
   onChangeValue,
   onChangePrice,
@@ -365,6 +374,9 @@ function ToPanel({
   unit: UnitKey;
   value: string;
   price: string;
+  /** When true (embedded on a land listing), the per-unit money block is
+   *  hidden so no price figure is shown up-front. */
+  hidePriceField?: boolean;
   onChangeUnit: (unit: UnitKey) => void;
   onChangeValue: (text: string) => void;
   onChangePrice: (text: string) => void;
@@ -382,7 +394,7 @@ function ToPanel({
             2
           </span>
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-on-surface-variant">
-            Money per unit
+            {hidePriceField ? "Converted area" : "Money per unit"}
           </span>
         </span>
         {onCopy && (
@@ -423,41 +435,44 @@ function ToPanel({
         className="mono-stat h-14 rounded-lg border-outline-variant bg-surface px-4 text-xl font-semibold text-on-surface shadow-sm transition-[border-color,box-shadow] duration-200 focus-visible:border-primary focus-visible:ring-[3px] focus-visible:ring-primary/25 md:text-2xl"
       />
 
-      {/* Money you get for one unit of the chosen unit — the answer */}
-      <div
-        aria-live="polite"
-        className="mt-4 rounded-lg border-t-2 border-gold/50 pt-4"
-      >
-        <label
-          htmlFor="convertor-to-price"
-          className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-on-surface-variant"
+      {/* Money you get for one unit of the chosen unit — the answer
+          (hidden when embedded on a land listing) */}
+      {!hidePriceField && (
+        <div
+          aria-live="polite"
+          className="mt-4 rounded-lg border-t-2 border-gold/50 pt-4"
         >
-          <span
-            aria-hidden="true"
-            className="h-1.5 w-1.5 rounded-full bg-gold"
-          />
-          Money you get per {unitLabel(unit)}
-        </label>
-        <div className="flex items-center gap-2">
-          <span
-            aria-hidden="true"
-            className="shrink-0 text-sm font-semibold text-gold-deep"
+          <label
+            htmlFor="convertor-to-price"
+            className="mb-1.5 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-[0.14em] text-on-surface-variant"
           >
-            {CURRENCY_SYMBOL}
-          </span>
-          <Input
-            id="convertor-to-price"
-            type="text"
-            inputMode="decimal"
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="—"
-            value={price}
-            onChange={(e) => onChangePrice(e.target.value)}
-            className="mono-stat h-12 min-w-0 flex-1 rounded-lg border-gold/50 bg-surface px-3 text-lg font-bold text-gold-deep transition-[border-color,box-shadow] duration-200 focus-visible:border-gold focus-visible:ring-[3px] focus-visible:ring-gold/25"
-          />
+            <span
+              aria-hidden="true"
+              className="h-1.5 w-1.5 rounded-full bg-gold"
+            />
+            Money you get per {unitLabel(unit)}
+          </label>
+          <div className="flex items-center gap-2">
+            <span
+              aria-hidden="true"
+              className="shrink-0 text-sm font-semibold text-gold-deep"
+            >
+              {CURRENCY_SYMBOL}
+            </span>
+            <Input
+              id="convertor-to-price"
+              type="text"
+              inputMode="decimal"
+              autoComplete="off"
+              spellCheck={false}
+              placeholder="—"
+              value={price}
+              onChange={(e) => onChangePrice(e.target.value)}
+              className="mono-stat h-12 min-w-0 flex-1 rounded-lg border-gold/50 bg-surface px-3 text-lg font-bold text-gold-deep transition-[border-color,box-shadow] duration-200 focus-visible:border-gold focus-visible:ring-[3px] focus-visible:ring-gold/25"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }
@@ -507,6 +522,7 @@ export function ConvertorClient({
   initialTo = "sqft",
   initialSqFt,
   initialTotalPrice,
+  hidePriceField = false,
 }: {
   initialFrom?: UnitKey;
   initialTo?: UnitKey;
@@ -514,6 +530,9 @@ export function ConvertorClient({
   initialSqFt?: number;
   /** Pre-fill the total selling price (NPR) alongside `initialSqFt`. */
   initialTotalPrice?: number;
+  /** When true (embedded on a land listing), every total/price field is
+   *  hidden so the intimidating full price isn't shown up-front. */
+  hidePriceField?: boolean;
 }) {
   const initialAreaSqFt =
     typeof initialSqFt === "number" &&
@@ -562,15 +581,17 @@ export function ConvertorClient({
     initialTotalPrice > 0
       ? initialTotalPrice
       : null;
+  // When the price field is hidden (embedded on a land listing), never
+  // pre-fill or show a price — the converter stays a pure area converter.
   const [priceFrom, setPriceFrom] = useState(
-    initialPrice == null ? "" : formatMoney(initialPrice),
+    !hidePriceField && initialPrice != null ? formatMoney(initialPrice) : "",
   );
   const [priceTo, setPriceTo] = useState(
-    initialPrice == null
-      ? ""
-      : formatMoney(
+    !hidePriceField && initialPrice != null
+      ? formatMoney(
           (initialPrice / initialBaseSqFt) * convertLand(1, initialTo, "sqft"),
-        ),
+        )
+      : "",
   );
 
   /** Sq ft of one Nepali system's parts only (avoids double counting). */
@@ -795,6 +816,7 @@ export function ConvertorClient({
               parts={fromParts}
               intValues={intValues}
               price={priceFrom}
+              hidePriceField={hidePriceField}
               onChangeSystem={handleSystemChange}
               onPartChange={handlePartChange}
               onIntChange={handleIntChange}
@@ -816,6 +838,7 @@ export function ConvertorClient({
               unit={toUnit}
               value={toValue}
               price={priceTo}
+              hidePriceField={hidePriceField}
               onChangeUnit={handleToUnitChange}
               onChangeValue={handleToChange}
               onChangePrice={handlePriceToChange}

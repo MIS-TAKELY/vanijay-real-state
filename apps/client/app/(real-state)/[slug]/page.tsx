@@ -1,4 +1,12 @@
-import { Icon, cn } from "@repo/ui";
+import {
+  Icon,
+  PRICE_UNITS,
+  cn,
+  hasPricingArea,
+  isBuildingType,
+  pricePerUnitFor,
+  priceUnitKey,
+} from "@repo/ui";
 import { PropertyViewTracker } from "components/real-state/common/PropertyViewTracker";
 import { stripHtml } from "components/real-state/googlemap/utils";
 import { SimilarProperties } from "components/real-state/pages/home/SimilarProperties";
@@ -56,7 +64,28 @@ export async function generateMetadata({
     const plainDesc = stripHtml(property.description);
     const location = formatLocation(property.location);
     const subType = labelEnum(property.subCategory, TYPE_LABELS);
-    const fallbackDesc = `${subType} for sale in ${location}. Price: ${formatNPR(property.askingPrice)}. Field-verified, cadastral-cleared.`;
+
+    // Land listings show a per-unit converter, so advertise the per-unit rate
+    // (per Dhur for Bigha-system land, per Aana for Ropani) instead of the
+    // intimidating total — this matches the default price shown on the page.
+    const pricing = priceContextFromApiProperty(property);
+    const showPerUnitPrice =
+      !isBuildingType(property.subCategory) &&
+      hasPricingArea(pricing) &&
+      property.askingPrice > 0;
+    const priceText = showPerUnitPrice
+      ? (() => {
+          const unitKey = priceUnitKey(pricing);
+          const rate = pricePerUnitFor(pricing, unitKey);
+          const unitLabel =
+            PRICE_UNITS.find((u) => u.key === unitKey)?.label ?? unitKey;
+          return rate != null
+            ? `${formatNPR(rate)} / ${unitLabel}`
+            : formatNPR(property.askingPrice);
+        })()
+      : formatNPR(property.askingPrice);
+
+    const fallbackDesc = `${subType} for sale in ${location}. Price: ${priceText}. Field-verified, cadastral-cleared.`;
     const description = truncateMetaDescription(plainDesc || fallbackDesc);
     const title =
       location && location !== "Nepal"
@@ -74,11 +103,12 @@ export async function generateMetadata({
     const ogImage =
       getSocialOgImageUrl(rawOgImage) ?? `${SITE_URL}/og-home.jpg`;
 
-    // Social card description: Punchy price + location (e.g. "NPR 36,050,000 — Bajraha, Sunsari")
-    const priceFormatted = formatNPR(property.askingPrice);
+    // Social card description: Punchy price + location. For land with a
+    // per-unit converter, share the per-unit rate (e.g. "NPR 5,00,000 / Dhur
+    // — Bajraha, Sunsari") instead of the large total.
     const socialDescription =
       property.askingPrice && property.askingPrice > 0
-        ? `${priceFormatted} — ${location}`
+        ? `${priceText} — ${location}`
         : `${subType} for sale in ${location}`;
 
     return {
@@ -870,9 +900,11 @@ export default async function ListingDetailPage({ params }: PageProps) {
         {/* Similar Properties Section */}
         <SimilarProperties propertyId={property.id} />
 
-        {/* Land unit converter — pre-filled with this plot, sits above the
-            site footer so buyers can convert the listing's area into any
-            Nepali or international unit and price any fraction of it. */}
+        {/* Land unit converter — pre-filled with this plot's area, sits above
+            the site footer so buyers can convert the listing's area into any
+            Nepali or international unit. The total price is intentionally not
+            pre-filled here — it's only revealed via the "Total" option in the
+            asking-price selector. */}
         {hasLand && (
           <section aria-label="Land unit converter" className="mt-2 md:mt-4">
             <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
@@ -885,9 +917,9 @@ export default async function ListingDetailPage({ params }: PageProps) {
                   Land unit converter
                 </h2>
                 <p className="mt-1 max-w-xl text-sm leading-relaxed text-on-surface-variant">
-                  This listing&apos;s area and asking price are loaded below —
-                  convert the plot into Ropani, Aana, Paisa, Daam, Bigha,
-                  Katha, Dhur, sq. ft and more, or price any fraction of it.
+                  This listing&apos;s area is loaded below — convert the plot
+                  into Ropani, Aana, Paisa, Daam, Bigha, Katha, Dhur, sq. ft
+                  and more.
                 </p>
               </div>
               <Link
@@ -907,9 +939,7 @@ export default async function ListingDetailPage({ params }: PageProps) {
                   : "ropani"
               }
               initialSqFt={property.landArea?.totalSqFt}
-              initialTotalPrice={
-                property.askingPrice > 0 ? property.askingPrice : undefined
-              }
+              hidePriceField
             />
           </section>
         )}
